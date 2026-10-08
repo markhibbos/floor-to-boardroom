@@ -1042,15 +1042,15 @@ const empHash=n=>{let h=7;for(const c of String(n||""))h=(h*31+c.charCodeAt(0))>
 const EMP_COLS=["#1D5FA8","#B3262E","#2F7A3E","#7A1F2B","#B8862B","#5B3E8E","#1F7A7A","#C8582A","#2B3A44","#8E3E6E"];
 const empInitials=n=>String(n||"").split(/[^A-Za-z&]+/).filter(w=>w&&!/^(the|of|and|&|ltd|llp|plc)$/i.test(w)).map(w=>w[0].toUpperCase()).join("").slice(0,3)||"HQ";
 function empBack(){
- const h=empHash(S.bank),style=h%4,tint=EMP_COLS[(h>>3)%EMP_COLS.length];let b="";
- if(style===0)for(let i=0;i<8;i++){const ht=18+((h>>(i%8))+i*29)%46;b+=rc(i*42+(h%17),96-ht,30,ht,"#9AA8B3",'opacity=".35"')}
+ const h=empHash(S.bank),style=h%4,tint=EMP_COLS[(h>>>3)%EMP_COLS.length];let b="";
+ if(style===0)for(let i=0;i<8;i++){const ht=18+((h>>>(i%8))+i*29)%46;b+=rc(i*42+(h%17),96-ht,30,ht,"#9AA8B3",'opacity=".35"')}
  else if(style===1)b+=`<path d="M0 96 Q60 ${50+h%20} 120 80 T240 ${60+h%25} T320 74 V96Z" fill="#7FA36B" opacity=".45"/>`;
  else if(style===2)for(let i=0;i<9;i++)b+=`<circle cx="${i*38+(h%23)}" cy="${80-(i*13+h)%14}" r="${12+(i*7+h)%8}" fill="#6E9A5E" opacity=".4"/>`;
  else b+=rc(20+h%60,46,8,50,"#A7A08F",'opacity=".45"')+`<path d="M${16+h%60} 46 L${24+h%60} 22 L${32+h%60} 46Z" fill="#A7A08F" opacity=".45"/>`+rc(60+h%40,70,40,26,"#B9AE98",'opacity=".4"');
  return b+rc(0,94,320,2,tint,'opacity=".5"');
 }
 function empFront(r){
- const h=empHash(S.bank),col=EMP_COLS[(h>>3)%EMP_COLS.length],ini=empInitials(S.bank),gold=r>=4;
+ const h=empHash(S.bank),col=EMP_COLS[(h>>>3)%EMP_COLS.length],ini=empInitials(S.bank),gold=r>=4;
  let f=`<g transform="translate(8 8)"><rect width="${20+ini.length*9}" height="18" rx="4" fill="${gold?"#E9C46A":col}" stroke="${gold?"#B8862B":"#fff"}" stroke-width="1.5"/><text x="${10+ini.length*4.5}" y="13" font-size="10" font-weight="700" fill="${gold?"#5A3E0E":"#fff"}" text-anchor="middle" font-family="system-ui,sans-serif">${ini}</text></g>`;
  for(let i=0;i<r;i++)f+=`<path transform="translate(${30+ini.length*9+i*11} 11) scale(.5)" d="M10 0 L13 7 L20 7 L14 12 L16 20 L10 15 L4 20 L6 12 L0 7 L7 7Z" fill="#E9C46A"/>`;
  if(r>=3)f+=rc(306,6,2,30,"#555")+`<path d="M308 6 L320 10 L308 14Z" fill="${col}"/>`;
