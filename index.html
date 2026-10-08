@@ -315,7 +315,7 @@ a.btn.primary{color:var(--on-accent)}
 .town-key .dot{margin:0;flex:none;width:10px;height:10px}
 .town-key b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .town-key .sub{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media (max-width:460px){.subtabs{grid-template-columns:repeat(3,1fr)!important}}
+@media (max-width:460px){.subtabs{grid-template-columns:repeat(4,1fr)!important}.subtabs button{font-size:12.5px;padding:8px 4px}}
 .paper{background:#F6F1E4;color:#1A1A1A;border-radius:6px;padding:14px 14px 10px;font-family:Georgia,"Times New Roman",serif;margin-top:4px}
 .paper-mast{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px double #1A1A1A;padding-bottom:6px;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 .paper-mast b{font-family:"Old English Text MT",Georgia,serif;font-size:26px;text-transform:none;letter-spacing:0;font-weight:700}
@@ -417,6 +417,9 @@ a.btn.primary{color:var(--on-accent)}
 .fold{margin:6px 0}.fold summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);list-style:none;padding:4px 0}
 .fold summary::-webkit-details-marker{display:none}.fold summary::before{content:"▸ ";}.fold[open] summary::before{content:"▾ "}
 .choices .odds.danger{color:var(--down);font-weight:600}
+.subtabs-wrap,#workBoard,#pointsHelp,.mail.pending,.sel-steps{scroll-margin-top:150px;scroll-margin-bottom:170px}
+.choices button:disabled{opacity:.55}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.menu-grid .btn{width:100%;margin:0}.menu-grid .btn:last-child:nth-child(odd){grid-column:1/-1}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -474,12 +477,12 @@ a.btn.primary{color:var(--on-accent)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --glass:rgba(22,38,50,.55);--glass-strong:rgba(18,32,42,.78);--glass-soft:rgba(30,48,62,.42);
   --glass-edge:rgba(255,255,255,.13);--glass-line:rgba(255,255,255,.08);--glass-shadow:0 12px 32px rgba(0,0,0,.35);
-  --glass-hi:inset 0 1px 0 rgba(255,255,255,.10);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.10);--sel-bg:rgba(215,167,68,.24);--note-bg:rgba(215,167,68,.12);
   --field:radial-gradient(1100px 620px at 8% -8%,#3A2C12 0%,transparent 60%),radial-gradient(900px 560px at 108% 6%,#12324A 0%,transparent 58%),radial-gradient(900px 700px at 50% 115%,#173A2A 0%,transparent 62%),#0B141B;}}
 :root[data-theme="dark"]{
   --glass:rgba(22,38,50,.55);--glass-strong:rgba(18,32,42,.78);--glass-soft:rgba(30,48,62,.42);
   --glass-edge:rgba(255,255,255,.13);--glass-line:rgba(255,255,255,.08);--glass-shadow:0 12px 32px rgba(0,0,0,.35);
-  --glass-hi:inset 0 1px 0 rgba(255,255,255,.10);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.10);--sel-bg:rgba(215,167,68,.24);--note-bg:rgba(215,167,68,.12);
   --field:radial-gradient(1100px 620px at 8% -8%,#3A2C12 0%,transparent 60%),radial-gradient(900px 560px at 108% 6%,#12324A 0%,transparent 58%),radial-gradient(900px 700px at 50% 115%,#173A2A 0%,transparent 62%),#0B141B;}
 body{background:transparent}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field);pointer-events:none}
@@ -499,10 +502,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
 .mail{background:var(--glass-soft);border-radius:18px}
 .mail.pending{box-shadow:var(--glass-hi),inset 3px 0 0 var(--accent)}
 .own{background:var(--glass-soft);border-radius:14px}
-.note{background:rgba(240,227,198,.55);border-radius:14px}
+.note{background:var(--note-bg,rgba(240,227,198,.55));border-radius:14px}
 .choices button{background:var(--glass-strong);border-radius:14px}
 .desk-pick button,.trait-pick button{background:var(--glass-soft);border-radius:14px}
-.desk-pick button.on,.trait-pick button.on{background:rgba(240,227,198,.75)}
+.desk-pick button.on,.trait-pick button.on{background:var(--sel-bg,rgba(240,227,198,.75));box-shadow:0 0 0 2px var(--accent),var(--glass-hi)}
 .seg button{background:var(--glass-soft);border-radius:10px}
 .subtabs button{background:var(--glass-soft)}
 .icon-btn{background:var(--glass-soft);border-radius:12px}
@@ -592,7 +595,7 @@ const REVIEW_DAYS=15;
 /* Time: each turn is about a month of your life, so 12 turns make a year */
 const YEAR=12, START_YEAR=2027, MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const PENSION_ACCESS=57, STATE_PENSION=67;
-const AGE0={bank:22,elec:17,plumb:17,hair:17,chef:18,tech:22,foot:16,law:23,doc:24,teach:22,police:20,pol:22,pilot:20,nurse:21,fire:20,vet:24,arch:24,music:18,influencer:19,soldier:18,astronaut:28,spy:23,tvchef:25,clubowner:35,actor:21};
+const AGE0={bank:22,elec:17,plumb:17,hair:17,chef:18,tech:22,foot:16,law:23,doc:24,teach:22,police:20,pol:22,pilot:20,nurse:21,fire:20,vet:24,arch:24,music:18,influencer:19,soldier:18,astronaut:28,spy:23,tvchef:25,clubowner:35,actor:21,manager:30};
 const ageAt=(s,day)=>s.age0+((day??s.day)-1)/YEAR;
 const age=()=>ageAt(S);
 const ageInt=()=>Math.floor(age()+1e-9);
@@ -1061,7 +1064,7 @@ function workArt(){
  if(S.front)return frontArt();
  if(S.sel)return selArt();
  if(S.sabb)return sabbArt();
- const r=S.rank,id={clubowner:"foot",tvchef:"chef",actor:"music"}[S.path]||S.path;let g="";const W=320,G=96;
+ const r=S.rank,id={clubowner:"foot",manager:"foot",tvchef:"chef",actor:"music"}[S.path]||S.path;let g="";const W=320,G=96;
  const van=(x,col,logo)=>`<g transform="translate(${x} 0)"><rect x="0" y="52" width="74" height="36" rx="4" fill="#F2F4F5"/><path d="M74 60 L92 60 L102 74 L102 88 L74 88Z" fill="#E4E8EA"/><path d="M78 63 L90 63 L97 73 L78 73Z" fill="#9CC0D2"/>${rc(0,70,74,3,col)}${logo}${rc(4,48,62,3,"#8E969A")}<circle cx="20" cy="89" r="8" fill="#1B1B1B"/><circle cx="20" cy="89" r="3.5" fill="#C9CDD1"/><circle cx="84" cy="89" r="8" fill="#1B1B1B"/><circle cx="84" cy="89" r="3.5" fill="#C9CDD1"/></g>`;
  g+=rc(0,G,W,24,"var(--ground)");
  if(id==="bank"){for(let i=0;i<9;i++){const h=30+((i*37)%50);g+=rc(i*36,G-h-10,30,h+10,i%2?"#5E7586":"#4B6272");for(let y=G-h;y<G-6;y+=8)g+=rc(i*36+5,y,20,3,"var(--win)",'opacity=".5"')}
@@ -1773,6 +1776,27 @@ const CAREERS={
   offerFrom:"A consortium behind ",
   winText:"Three strong reviews at the top. You sell up at a record price and watch from the directors' box forever.",
   banText:"League sanctions hit 100. The league forces you to sell up and bans you from owning a club."},
+ manager:{id:"manager",secret:1,n:"Football manager",mech:"jobs",blurb:"Youth team coach to national team manager.",teamFrom:1,heatName:"Board pressure",heatShort:"Pressure",outName:"Results",fmt:"pts",lift:"Dugout ladder",
+  employers:["Thamesmead Town FC","Northbridge United","Ashford City","Kingsway Rovers","Riverside Athletic"],
+  ranks:[
+   {t:"Youth team coach",place:"Cones, bibs and sixteen-year-olds",sal:32e3,cap:6,js:1,pm:.6,bonus:.05,repName:"Board confidence"},
+   {t:"Assistant manager",place:"The manager's right hand",sal:70e3,cap:8,js:1,pm:1,bonus:.05,repName:"Board confidence"},
+   {t:"Lower-league manager",place:"Your own dugout at last",sal:150e3,cap:24,js:2.5,pm:1.2,bonus:.05,repName:"Board confidence"},
+   {t:"Premier Leek manager",place:"The biggest stage in football",sal:2.5e6,cap:30,js:3,pm:1.4,bonus:.03,repName:"Fans' faith"},
+   {t:"National team manager",place:"The most scrutinised job in the country",sal:3e6,cap:300,js:25,pm:1.6,bonus:.02,repName:"Nation's faith"}],
+  promo:["","You're the assistant manager. One step from the hot seat.","You've got your own dugout.","The Premier Leek. Every decision is on the evening news.","You manage your country. Three strong reviews and you retire a legend."],
+  appr:[{n:"Rush it",pay:1,h:.7,q:-.22,risk:2},{n:"Proper prep",pay:1,h:1,q:0,risk:1},{n:"Obsessive detail",pay:1.25,h:1.35,q:.12,risk:.5}],
+  big:["","",""," (whole squad)"," (whole nation)"],
+  jobs:[{n:"Run a training session",h:3,pay:80,d:.2,tag:"training"},{n:"Scout a player",h:4,pay:110,d:.3,tag:"transfers"},{n:"Press conference",h:2,pay:70,d:.35,tag:"media",risk:1},
+   {n:"Tactics for the derby",h:6,pay:240,d:.5,tag:"matchday"},{n:"Match day",h:8,pay:300,d:.55,tag:"matchday",risk:1},{n:"Youth team trials",h:3,pay:90,d:.25,tag:"academy"},
+   {n:"Sign a loan player",h:4,pay:150,d:.4,tag:"transfers",rmin:1},{n:"Settle a dressing-room row",h:3,pay:120,d:.45,tag:"squad",rmin:1},{n:"A cup run",h:8,pay:420,d:.6,tag:"matchday",rmin:2},{n:"A European night",h:8,pay:520,d:.6,tag:"matchday",rmin:3}],
+  trends:{training:{n:"Training",up:["New sports science lab opens at the training ground"],dn:["Injury crisis hits the squad"]},transfers:{n:"Transfers",up:["Transfer window opens with money to spend"],dn:["Board freezes the transfer budget"]},
+   media:{n:"Media",up:["Your team is the talk of the TV pundits"],dn:["Tabloids smell blood after a bad run"]},matchday:{n:"Match day",up:["Sell-out crowd expected for the big game"],dn:["Fixture pile-up: three games in a week"]},
+   academy:{n:"Academy",up:["Academy produces a golden generation"],dn:["Top youngster poached by a rival"]},squad:{n:"Squad",up:["Dressing room harmony after a winning run"],dn:["Senior players unhappy with their minutes"]}},
+  noise:["Manager of the month award announced","VAR controversy rumbles on","Pundits split over the title race","Fan group calls for a new stadium"],
+  offerFrom:"The chairman of ",
+  winText:"Three strong reviews as national manager. You retire with a statue outside the stadium.",
+  banText:"Board pressure hit 100. You're sacked, and no club will touch you."},
  actor:{id:"actor",secret:1,n:"Actor",mech:"jobs",blurb:"Drama school graduate to Oscar-winning legend.",teamFrom:3,heatName:"Bad press",heatShort:"Bad press",outName:"Earnings",lift:"Billing",
   employers:["Independent","Silverline Talent","Marquee Agency","Hollywood Hills Management","Westwood & Co"],
   ranks:[
@@ -1800,7 +1824,7 @@ const PEN={bank:{n:"Bank pension",emp:.1},elec:{n:"Workplace pension",emp:.03,se
  police:{n:"Police Pension",emp:.31,db:1},pol:{n:"Parliamentary pension",emp:.15,db:1},pilot:{n:"Airline pension",emp:.12},
  nurse:{n:"NHS Pension",emp:.237,db:1},fire:{n:"Firefighters' Pension",emp:.287,db:1},vet:{n:"Practice pension",emp:.05},arch:{n:"Practice pension",emp:.06},
  music:{n:"Personal pension",emp:0,self:[0,1,2,3,4]},influencer:{n:"Personal pension",emp:0,self:[0,1,2,3,4]},soldier:{n:"Armed Forces Pension",emp:.3,db:1},
- astronaut:{n:"Civil Service Pension",emp:.27,db:1},spy:{n:"Civil Service Pension",emp:.27,db:1},tvchef:{n:"Personal pension",emp:0,self:[0,1,2,3,4]},clubowner:{n:"Company pension",emp:.05},actor:{n:"Personal pension",emp:0,self:[0,1,2,3,4]}};
+ astronaut:{n:"Civil Service Pension",emp:.27,db:1},spy:{n:"Civil Service Pension",emp:.27,db:1},tvchef:{n:"Personal pension",emp:0,self:[0,1,2,3,4]},clubowner:{n:"Company pension",emp:.05},manager:{n:"Company pension",emp:.05},actor:{n:"Personal pension",emp:0,self:[0,1,2,3,4]}};
 const PEN_RATES=[0,5,8,12,15];
 const CAR_=()=>CAREERS[S.path||"bank"];
 const RK=()=>CAR_().ranks;
@@ -2387,7 +2411,7 @@ const RIVAL_CTX={soldier:["The after-action briefing","your patrol plan","your c
  hair:["The salon staff meeting","your new look","the salon owner"],elec:["The site meeting","your fix","the site manager"],plumb:["The site meeting","your fix","the site manager"],tech:["The sprint review","your code","the CTO"],
  law:["The client meeting","your research","the partner"],pilot:["The crew debrief","your quick thinking on the last flight","the chief pilot"],vet:["The practice meeting","your diagnosis","the practice owner"],arch:["The design review","your design","the client"],
  music:["A record label meeting","your song idea","the label boss"],influencer:["A brand meeting","your video idea","the brand manager"],tvchef:["The production meeting","your recipe","the producer"],actor:["A rehearsal","your idea for the scene","the director"],
- astronaut:["The mission debrief","your fix for the docking fault","the flight director"],spy:["The operations briefing","your intelligence","the head of station"],clubowner:["The board meeting","your transfer plan","the chairman"],pol:["A party meeting","your policy idea","the party leader"]};
+ astronaut:["The mission debrief","your fix for the docking fault","the flight director"],spy:["The operations briefing","your intelligence","the head of station"],clubowner:["The board meeting","your transfer plan","the chairman"],pol:["A party meeting","your policy idea","the party leader"],manager:["The board meeting","your tactics","the chairman"]};
 function rivalCtx(){const c=RIVAL_CTX[S.path]||["A team meeting","your work","your boss"];return{where:c[0],work:c[1],role:c[2]}}
 EV.push(
  {id:"rvf_place",career:"foot",r:[0,3],again:18,cond:s=>!!s.rival,from:"The training ground",t:"{r} wants your shirt",b:"{r}, a new signing in your position, is flying in training. The manager has noticed.",c:[
@@ -2495,7 +2519,7 @@ function slotRow(x,label){
   <span class="slot-btns"><button class="btn sm" data-act="slotload" data-id="${x.slot}">Load</button>${x.slot!=="auto"?`${S&&!S.placeholder&&!S.over?`<button class="btn sm" data-act="slotsave" data-id="${x.slot}">Overwrite</button>`:""}<button class="btn sm" data-act="slotdel" data-id="${x.slot}" aria-label="Delete slot ${x.slot}">Delete</button>`:""}</span></li>`;
 }
 async function savesModal(msg){
- const cloudBlock=!canCloud?`<p class="hint">Cloud saves need the game to be opened from the server (not as a file).</p>`
+ const cloudBlock=!canCloud?`<p class="hint">Cloud saves aren&#39;t available in this version. Your games save on this device, so download a backup now and then to keep a copy safe.</p>`
   :cloudCode?`<div class="label" style="margin-bottom:6px">Cloud saves are on</div>
    <div class="code-row"><input class="code-box mono" id="codeBox" value="${fmtCode(cloudCode)}" readonly aria-label="Your sync code"><button class="btn sm" data-act="copycode">Copy</button></div>
    <p class="hint" style="margin:6px 0 0">Enter this code on your phone or another computer to play the same games. Keep it private: anyone with it can load and overwrite your saves.</p>
@@ -2560,7 +2584,7 @@ function renderHome(){
   ${has?`<button class="btn ${nw?"":"primary"} big home-btn" data-act="continue"><span>Continue</span><small>${esc(S.name)} · ${esc(R().t)} · Age ${ageInt()} · ${money(netWorth())}</small></button>`:""}
   <button class="btn ${has||nw?"":"primary"} big home-btn" data-act="newcareer"><span>New game</span><small>Pick from ${Object.keys(CAREERS).filter(k=>!isLocked(k)).length} careers${Object.keys(CAREERS).some(isLocked)?` · ${Object.keys(CAREERS).filter(isLocked).length} secret ones to unlock`:""}</small></button>
   <button class="btn big home-btn" data-act="daily"><span>Daily challenge</span><small>${(()=>{const p=dailyPlan(todayKey()),m=dailyMine(p.date);return m?`Played today · legacy ${m.legacy.toLocaleString("en-GB")}`:`Today: ${CAREERS[p.career].n} · same start for everyone`})()}</small></button>
-  <button class="btn big home-btn" data-act="saves"><span>Load a game</span><small>Save slots, cloud sync and backup files</small></button>
+  <button class="btn big home-btn" data-act="saves"><span>Load a game</span><small>${canCloud?"Save slots, cloud sync and backup files":"Save slots and backup files"}</small></button>
   <div class="home-row"><button class="btn" data-act="hof">Hall of fame</button><button class="btn" data-act="help">How to play</button></div>`;
 }
 
@@ -2728,8 +2752,8 @@ function ageDay(notes){
  /* Footballers age out of the game */
  if(S.path==="foot"&&S.fb){if(a>=32)S.fb.fit=Math.min(S.fb.fit,100-(a-31)*9);
   if(a>=35&&!S.over&&(S.flags.boots==null||S.day-S.flags.boots>=YEAR))pushDyn({id:"boots"+S.day,from:"Your body",t:"Time to hang up your boots?",b:`You're ${Math.floor(a)}. Your knees ache after every game and the young lads are faster than you.`,c:a>=38?[
-    {t:"Retire from football and start a new career",fx:{act:"switchprompt"},o:"A guard of honour at your final game."}]:[
-    {t:"Retire from football and start a new career",fx:{act:"switchprompt"},o:"A guard of honour at your final game."},
+    {t:"Retire from football",fx:{act:"secondact"},o:"A guard of honour at your final game. So, what next?"}]:[
+    {t:"Retire from football",fx:{act:"secondact"},o:"A guard of honour at your final game. So, what next?"},
     {t:"One more season",fx:{flag:"boots",rep:-2},o:"You'll go out on your own terms."}]})}
  /* State pension age */
  if(a>=STATE_PENSION&&!S.over&&S.flags.statepension==null){S.flags.statepension=S.day;pushDyn({id:"spa",from:"The Department for Work and Pensions",t:"You've reached State Pension age",b:`You're ${STATE_PENSION}. Your State Pension starts now, and your pension pot of ${money(S.pension.pot)} is ready when you are.`,c:[
@@ -2770,6 +2794,7 @@ const BIZ={
  astronaut:{n:"Space tourism start-up",d:"Selling seats to the edge of space.",cost:500e3,profit:30e3,vol:1,minRank:2},
  spy:{n:"Private intelligence firm",d:"Discreet investigations for very rich clients.",cost:60e3,profit:6e3,vol:.5,minRank:2},
  tvchef:{n:"Restaurant chain",d:"Your recipes in every high street.",cost:150e3,profit:12e3,vol:.6,minRank:1},
+ manager:{n:"Children's football academy",d:"Weekend coaching for the next generation.",cost:60e3,profit:6e3,vol:.4,minRank:1},
  clubowner:{n:"Sports bar franchise",d:"Big screens, wings and your club's colours.",cost:120e3,profit:10e3,vol:.5},
  actor:{n:"Film production company",d:"Make the films you want to star in.",cost:200e3,profit:15e3,vol:1,minRank:2}
 };
@@ -3599,6 +3624,7 @@ const MINI={
  spy:["Crack the safe","Stop the dial on the right number.","Click. You're in.","Open, eventually.","An alarm sounds."],
  tvchef:["Plate up on camera","Serve it as the director counts down.","Picture perfect!","It'll do for daytime.","It slides off the plate. Live."],
  clubowner:["Deadline-day deal","Sign before the clock hits midnight.","Signed with seconds to spare!","Signed. Just.","The fax arrives at 12:01."],
+ manager:["Touchline instructions","Shout at exactly the right moment.","The winger hears you and scores!","They sort of heard you.","The fourth official books you."],
  actor:["Nail the take","Deliver the line on your mark.","One take! The crew applauds.","Good enough. Moving on.","Take forty-seven."]
 };
 const MINI_ALT=[["Win the room","Speak at exactly the right moment in a big meeting.","The room hangs on every word.","Solid. People nod.","You talk over the boss."],
@@ -3642,7 +3668,7 @@ function miniTap(){
 const WORK_SPOT={bank:[200,92,"The City"],law:[188,104,"The City"],tech:[232,78,"Tech quarter"],pol:[150,138,"Westminster"],doc:[118,96,"The hospital"],nurse:[118,96,"The hospital"],
  teach:[262,150,"The school"],police:[170,70,"Police station"],fire:[92,150,"Fire station"],elec:[290,112,"Trade park"],plumb:[290,112,"Trade park"],hair:[214,180,"High street"],chef:[226,172,"High street"],
  vet:[66,118,"Vet surgery"],arch:[244,104,"Design studio"],music:[204,48,"The studios"],influencer:[204,48,"The studios"],foot:[300,58,"The stadium"],pilot:[30,40,"The airport"],soldier:[40,214,"The barracks"],
- astronaut:[44,58,"The space centre"],spy:[160,112,"An unmarked building"],tvchef:[204,48,"The TV studios"],clubowner:[300,58,"The stadium"],actor:[204,48,"The film studios"]};
+ astronaut:[44,58,"The space centre"],spy:[160,112,"An unmarked building"],tvchef:[204,48,"The TV studios"],manager:[300,58,"The stadium"],clubowner:[300,58,"The stadium"],actor:[204,48,"The film studios"]};
 function homeSpot(){
  const t=S.home.t,a=S.home.area||"";
  if(t==="parents")return[318,190,"Mum and Dad's"];
@@ -3778,7 +3804,7 @@ function budgetHTML(d,btn){
 /* ============ Crime, courts and prison ============ */
 const CAREER_CRIME={bank:"market abuse",law:"fraud",doc:"gross negligence",nurse:"wilful neglect of patients",police:"misconduct in public office",pol:"misconduct in public office",fire:"misconduct in public office",
  tech:"computer misuse",pilot:"endangering an aircraft",teach:"abuse of a position of trust",elec:"breaching safety law",plumb:"breaching gas safety law",hair:"fraud",chef:"breaching food safety law",
- foot:"match fixing",vet:"animal cruelty",arch:"breaching building safety law",music:"fraud",influencer:"fraud",soldier:"misconduct on deployment",astronaut:"misconduct in public office",spy:"breaching the Official Secrets Act",tvchef:"fraud",clubowner:"financial fraud",actor:"fraud"};
+ foot:"match fixing",manager:"bribery",vet:"animal cruelty",arch:"breaching building safety law",music:"fraud",influencer:"fraud",soldier:"misconduct on deployment",astronaut:"misconduct in public office",spy:"breaching the Official Secrets Act",tvchef:"fraud",clubowner:"financial fraud",actor:"fraud"};
 const REGULATED=["doc","nurse","teach","police","law","pol","soldier","pilot","fire","vet"];
 const yrs=m=>m<12?`${m} months`:`${Math.round(m/12*10)/10} years`;
 function mkTrial(crime,months){
@@ -3871,7 +3897,7 @@ const partnerCost=()=>{if(!inLove())return 0;const t=PT[S.rel.trait]||{};return(
 /* Single? Go looking, rather than waiting for luck */
 function loveSec(){
  if(!isSingle()||S.prison||S.front||S.sel||S.over||ageAt(S)<18||ageAt(S)>=75)return"";const wait=3-(S.day-(S.loveTry??-99));
- return `<div class="love-cta"><div class="label">Looking for love?</div><p class="hint" style="margin:4px 0 8px">Try Swipr, speed dating, a blind date or a singles holiday in your free time.</p><button class="btn sm primary" data-act="lifetab" data-v="people">Go to People &amp; fun</button></div>`;
+ return `<div class="love-cta"><div class="label">Looking for love?</div><p class="hint" style="margin:4px 0 8px">Try Swipr, speed dating, a blind date or a singles holiday in your free time.</p><button class="btn sm primary" data-act="lifetab" data-v="people">Go to People</button></div>`;
  return `<div class="love-cta"><div class="label">Looking for love?</div><div class="btn-row" style="margin-top:6px"><button class="btn sm primary" data-act="lovego" data-k="app" ${wait>0?"disabled":""}>Try the dating app</button><button class="btn sm" data-act="lovego" data-k="out" ${wait>0?"disabled":""}>Go out and meet people</button></div><p class="hint" style="margin:6px 0 0">${wait>0?`${S.loveMsg&&S.loveTry===S.day?esc(S.loveMsg)+" ":""}You can try again in ${wait} month${wait>1?"s":""}.`:"The dating app puts three matches in your inbox. A night out costs a little and you might meet someone. Chance meetings can still pop up too."}</p></div>`;
 }
 function loveGo(k){
@@ -3928,6 +3954,7 @@ const SECRETS={
  spy:{hint:"Reach sergeant as a soldier or police officer",ok:()=>bestRankIn("soldier")>=2||bestRankIn("police")>=2},
  tvchef:{hint:"Become a head chef",ok:()=>bestRankIn("chef")>=3},
  clubowner:{hint:"Be worth £20m",ok:()=>netWorth()>=20e6},
+ manager:{hint:"Become a first-team regular as a footballer",ok:()=>bestRankIn("foot")>=2},
  actor:{hint:"Reach the top three rungs as a musician or influencer",ok:()=>bestRankIn("music")>=2||bestRankIn("influencer")>=2}
 };
 const UNLOCK_KEY="ftb-unlocks";
@@ -4110,6 +4137,9 @@ function seasonHTML(d,btn){
 }
 
 /* Events that only make sense in office-style jobs are kept away from careers they don't suit */
+/* Story events that only make sense in office-style careers */
+const ONLY_FOR={st_sued:["bank","law","arch","tech"],st_fraud:["bank","law","arch","tech","clubowner"],st_abroad:["bank","law","arch","tech"]};
+for(const[id,v]of Object.entries(ONLY_FOR)){const e=EV.find(x=>x.id===id);if(e)e.only=v}
 const NOT_FOR={bs_favour:['foot'],st_fraud:['foot'],st_sued:['foot'],st_abroad:['foot'],wr_wfh:['foot'],wr_ai:['foot'],wr_hot:['foot'],wr_redund:['foot'],wr_freeze:['foot'],fr_job:['foot']};
 for(const[id,l]of Object.entries(NOT_FOR)){const e=EV.find(x=>x.id===id);if(e)e.notFor=(e.notFor||[]).concat(l)}
 /* ============ Moments: big animated cards for the milestones of a life ============ */
@@ -4162,6 +4192,7 @@ const CL_DEF={
  music:{n:"The Official Charts-ish",solo:1,names:["Lola Vance","The Midnight Foxes","Kai Reyes","Dusty Halo","Marnie Blue","Static Hearts","Jojo Okafor","Velvet Engine","Ruby Shore"]},
  influencer:{n:"Top Creators Chart",solo:1,names:["GlowWithGemma","DanDoesDIY","Chef Rocco Eats","FitWithFaye","TheTechTwins","PrankLord Pete","MindfulMia","GamerGrace","TravelTom"]},
  tvchef:{n:"TV Chef Popularity Poll",solo:1,names:["Gino D'Amore-ish","Nadia Pierce","Big Rick Stone","Jamie Oilver","Mary Barry","Tom Kitchener","Priya Kaur","Ollie Hollywood","Delia Dawson"]},
+ manager:{n:"The league table",tail:"FC"},
  actor:{n:"Box Office Stars",solo:1,names:["Chris Hemsfield","Margot Robbins","Idris Albert","Florence Pew","Tom Hollow","Olivia Coleham","Dev Patten","Emma Stone-ish","Ryan Gosford"]}
 };
 /* Awards by career: [early career, established, the very top] */
@@ -4173,7 +4204,7 @@ const AWARDS={bank:["Rookie Trader of the Year","Banker of the Year","Lifetime A
  pilot:["Cadet of the Year","Captain of the Year","Aviation Hall of Fame"],vet:["Graduate Vet of the Year","Vet of the Year","Animal Welfare Lifetime Award"],arch:["Young Architect of the Year","Architect of the Year","The Stirlin' Prize"],
  music:["Breakthrough Artist","Album of the Year","Outstanding Contribution to Music"],influencer:["Rising Creator","Creator of the Year","Internet Legend Award"],soldier:["Recruit of the Year","Soldier of the Year","Military Cross-ish"],
  astronaut:["Rookie Astronaut","Spacewalker of the Year","Pioneer of Space"],spy:["Promising Officer (classified)","Operative of the Year (classified)","The Chief's Star (very classified)"],tvchef:["Best Newcomer","TV Chef of the Year","Golden Spatula"],
- clubowner:["Best New Owner","Chairman of the Year","Football Hall of Fame"],actor:["Best Newcomer","Best Actor","Lifetime Achievement Oscar-ish"]};
+ clubowner:["Best New Owner","Chairman of the Year","Football Hall of Fame"],manager:["Coach of the Year","Manager of the Year","A knighthood-ish for services to football"],actor:["Best Newcomer","Best Actor","Lifetime Achievement Oscar-ish"]};
 function clNames(){
  const d=CL_DEF[S.path]||{n:"Industry Rankings"},C=CAR_();
  if(d.solo)return[S.name,...d.names];
@@ -4236,8 +4267,8 @@ function clSec(){
 }
 
 /* ============ Changing career ============ */
-const RETRAIN={bank:0,elec:5000,plumb:5000,hair:4000,chef:3000,tech:8000,foot:0,law:20000,doc:60000,teach:9000,police:0,pol:0,pilot:90000,nurse:9000,fire:0,vet:60000,arch:30000,music:2000,influencer:1000,soldier:0,astronaut:0,spy:0,tvchef:0,clubowner:2000000,actor:9000};
-const RETRAIN_NOTE={law:"Law conversion course and training contract",doc:"Graduate-entry medicine",teach:"Teacher training (PGCE)",pilot:"Commercial pilot's licence",vet:"Graduate-entry veterinary degree",arch:"Architecture qualifications",tech:"Coding bootcamp",elec:"Electrical qualifications",plumb:"Plumbing and gas safety qualifications",hair:"Hairdressing diploma",chef:"Culinary course",nurse:"Nursing degree",music:"A van and some decent kit",influencer:"A ring light",clubowner:"Buying a club",actor:"Drama school"};
+const RETRAIN={bank:0,elec:5000,plumb:5000,hair:4000,chef:3000,tech:8000,foot:0,manager:2000,law:20000,doc:60000,teach:9000,police:0,pol:0,pilot:90000,nurse:9000,fire:0,vet:60000,arch:30000,music:2000,influencer:1000,soldier:0,astronaut:0,spy:0,tvchef:0,clubowner:2000000,actor:9000};
+const RETRAIN_NOTE={manager:"Coaching badges",law:"Law conversion course and training contract",doc:"Graduate-entry medicine",teach:"Teacher training (PGCE)",pilot:"Commercial pilot's licence",vet:"Graduate-entry veterinary degree",arch:"Architecture qualifications",tech:"Coding bootcamp",elec:"Electrical qualifications",plumb:"Plumbing and gas safety qualifications",hair:"Hairdressing diploma",chef:"Culinary course",nurse:"Nursing degree",music:"A van and some decent kit",influencer:"A ring light",clubowner:"Buying a club",actor:"Drama school"};
 function switchOk(id){
  const a=age();
  if(id===S.path&&!S.over)return"Your current career";
@@ -4257,6 +4288,27 @@ function switchModal(fromOver){
   <p>You keep your home, car, money, family and pension. You start again at the bottom of the new ladder, and pay for any training up front.</p>
   <div class="desk-pick switch-pick">${list}</div>
   <div class="btn-row"><button class="btn" data-act="${fromOver?"backtoend":"hide"}">${fromOver?"Back":"Stay where I am"}</button></div>`);
+}
+/* When a career winds down, offer next careers that fit, starting a rung or two up, with training paid */
+const SECOND_ACTS={
+ foot:{why:"Your playing days are over",opts:[["manager",s=>s.rank>=3?1:0,"Go into management","Your playing experience means you skip straight past the cones."],["influencer",s=>s.rank>=3?2:1,"Become a TV pundit and podcaster","Opinions, a nice suit and a lot of airtime."],["clubowner",()=>0,"Buy a club","You've seen how it's done. Now you own one.",()=>netWorth()>=5e6],["teach",()=>0,"Become a PE teacher","Shin pads, whistles and the next generation."]]},
+ soldier:{why:"After years of service, it's time to leave the army",when:s=>age()>=40||(s.day-s.careerStart)>=22*12,opts:[["police",()=>1,"Join the police, fast-tracked","Your discipline counts for a lot."],["spy",()=>1,"Intelligence work","They've had their eye on you for years."],["fire",()=>1,"Join the fire service","Running towards danger is nothing new."],["pol",()=>0,"Stand for Parliament as a veteran","A campaign built on service."]]},
+ astronaut:{why:"Your flying days in space are over",when:()=>age()>=50,opts:[["pol",()=>1,"Go into politics","An astronaut on the ballot paper wins a lot of votes."],["teach",()=>1,"Teach science","Every child wants to hear about space."],["influencer",()=>2,"Become a space celebrity","Documentaries, books and talk shows."]]},
+ music:{why:"Touring is getting harder on the body",when:()=>age()>=45,opts:[["actor",()=>1,"Move into acting","Your stage presence translates."],["teach",()=>0,"Become a music teacher","Pass it on."],["influencer",()=>2,"TV talent-show judge","Sit in the big red chair and say 'it's a no from me'."]]},
+ influencer:{why:"The algorithm has moved on",when:()=>age()>=40,opts:[["actor",()=>1,"Try acting","You've been performing for years anyway."],["tvchef",()=>0,"Front a TV cookery show","Your followers will tune in."],["pol",()=>0,"Go into politics","You know how to get attention."]]},
+ police:{why:"Thirty years on the force",when:s=>age()>=55||(s.day-s.careerStart)>=30*12,opts:[["spy",()=>1,"Security and intelligence","Your contacts are gold."],["law",()=>0,"Retrain as a lawyer","You know how cases are won and lost."],["pol",()=>0,"Stand as a crime commissioner-ish MP","Tough on crime, with experience."]]},
+ pilot:{why:"Mandatory retirement is coming for airline pilots",when:()=>age()>=60,opts:[["teach",()=>1,"Become a flight instructor-ish teacher","Teach the next generation."],["influencer",()=>1,"Aviation YouTube channel","Cockpit videos get millions of views."]]}
+};
+function secondActMorning(){
+ const sa=SECOND_ACTS[S.path];if(!sa||!sa.when||S.over||S.prison||S.front||S.sel||S.sabb)return;
+ if(S.day-(S.flags["sa_"+S.path]??-99)<36||!sa.when(S)||S.inbox.some(m=>!m.done&&/^sa_/.test(m.id)))return;
+ S.flags["sa_"+S.path]=S.day;pushSecondAct(true);
+}
+function pushSecondAct(canStay){
+ const sa=SECOND_ACTS[S.path];if(!sa)return;const c=sa.opts.filter(o=>!o[4]||o[4]()).map(([id,rk,t,o])=>{const r=Math.min(rk(S),3);return{t:`${t} (start as ${CAREERS[id].ranks[r].t.toLowerCase()})`,fx:{act:"saGo",id,rank:r},o}});
+ c.push({t:"See every career",fx:{act:"switchprompt"},o:"You look at all your options."});
+ if(canStay)c.push({t:"Not yet: carry on",fx:{},o:"You've got a few more years in you."});
+ pushDyn({id:"sa_"+S.day,from:"A new chapter",t:"What comes next?",b:`${sa.why}. Your experience opens some doors, with your training paid and a head start.`,c});
 }
 function switchCareer(id){
  const C=CAREERS[id],cost=RETRAIN[id]||0,prev=CAR_();
@@ -4602,6 +4654,13 @@ Object.assign(ACTS,{
   goSick(2+Math.floor(rnd()*3),-20);F.until=Math.min(F.until,S.day+1);S.log.unshift({d:S.day,t:"Wounded in action and sent home."});
   moment({tone:"solemn",icon:"heart",kicker:"Wounded in action",title:"Coming home early",sub:"The surgeons say you'll recover. Your war is over for now."})},
  tour:()=>{if(!S.front&&!S.over)deploy(false,6)},
+ secondact:()=>{S.flags.boots=S.day;pushSecondAct(false)},
+ saGo:fx=>{const prev=CAR_().n,club=S.path==="foot"?S.bank:null,cost=RETRAIN[fx.id]||0;switchCareer(fx.id);S.wealth+=cost;
+  if(fx.rank){S.rank=fx.rank;S.rankSince=S.day;S.peak=Math.max(S.peak,S.rank)}S.rep=Math.max(S.rep,60);
+  if(club&&CAR_().employers.includes(club))S.bank=club;
+  if(CAREERS[fx.id].secret)try{const u=unlocked();if(!u.includes(fx.id)){u.push(fx.id);localStorage.setItem(UNLOCK_KEY,JSON.stringify(u))}}catch(e){}
+  S.log.unshift({d:S.day,t:`A second act: from ${prev.toLowerCase()} to ${R().t.toLowerCase()}.`});
+  moment({icon:"rocket",kicker:"A second act",title:R().t,sub:`From ${prev.toLowerCase()} to a new life at ${S.bank}.`,big:true})},
  bonds:()=>{S.bondsDue=(S.bondsDue||0)+6000}
 });
 
@@ -5434,7 +5493,7 @@ function friendsModal(msg){
  const mine=alivePeople().filter(p=>p.fc);
  showModal(`<div class="label">Play with friends</div><h2 style="margin-top:4px">Put your friends in your game</h2>
   <p>Send your code to a friend. When they add it, you appear in their game as an old school friend, and they can appear in yours.</p>
-  <div class="label">Your code</div><div class="codebox"><code id="myCode">${esc(myCode())}</code><button class="btn sm" data-act="copycode">Copy</button></div>
+  <div class="label">Your code</div><div class="codebox"><code id="myCode">${esc(myCode())}</code><button class="btn sm" data-act="copyfcode">Copy</button></div>
   <div class="label" style="margin-top:12px">Add a friend's code</div><div class="codebox"><input id="fcIn" type="text" placeholder="FTB-..." autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn sm primary" data-act="addcode">Add</button></div>
   ${msg?`<p class="hint" style="margin-top:6px">${esc(msg)}</p>`:""}
   ${mine.length?`<div class="label" style="margin-top:12px">Friends in your game</div><p class="hint" style="margin:2px 0 0">${mine.map(p=>esc(p.n)).join(", ")}</p>`:""}
@@ -5469,6 +5528,30 @@ function returnWeave(){
  else if((S.exes||[]).length&&S.friend&&r<1){const x=pick(S.exes);pushDyn({id,from:S.friend.n,t:`${x.n} and ${S.friend.n}?`,b:`${S.friend.n} has something to tell you. They've been seeing ${x.n}, your ex. It's serious.`,c:[{t:"Give them your blessing",fx:{karma:4,home:-2},o:"It's weird. But you're happy for them. Mostly."},{t:"You can't accept it",fx:{act:"friendcut"},o:`You and ${S.friend.n} stop speaking.`}]})}
 }
 
+EV.push(
+ {id:"mg_ultimatum",career:"manager",r:[1,4],again:18,from:"The chairman",t:"The board's ultimatum",b:"Four defeats in a row. The chairman says you've got three games to save your job.",c:[
+  {t:"Go back to basics and defend",p:.6,win:{fx:{pnl:3,rep:5,heat:-10},o:"Three clean sheets. The chairman shakes your hand a bit too firmly."},lose:{fx:{rep:-8,heat:15},o:"Two draws and a defeat. You're living on borrowed time."}},
+  {t:"Go for broke: all-out attack",p:.45,win:{fx:{pnl:5,rep:8,heat:-12},o:"Nine goals in three games. The fans sing your name."},lose:{fx:{rep:-10,heat:20},o:"You lose 4-3 twice. Entertaining. Fatal."}}]},
+ {id:"mg_star",career:"manager",r:[1,4],again:24,from:"Your star striker's agent",t:"Your best player wants out",b:"Your top scorer has asked for a transfer to a bigger club, two weeks before the derby.",c:[
+  {t:"Sell him and reinvest",fx:{pnl:2,rep:-2,cash:10},o:"The fans are furious, until the new signing scores on debut."},
+  {t:"Refuse and keep him",p:.6,win:{fx:{pnl:3,rep:4},o:"He sulks, then scores the derby winner."},lose:{fx:{pnl:-2,rep:-4,heat:6},o:"He refuses to train. The dressing room splits."}}]},
+ {id:"mg_ref",career:"manager",again:12,from:"The touchline",t:"A shocking decision",b:"A last-minute penalty that clearly wasn't a foul costs you the game.",c:[
+  {t:"Rant at the referee on live TV",fx:{rep:3,heat:10,gbp:-5000,fixed:1},o:"The clip goes viral, the fans love it, and the league fines you £5,000."},
+  {t:"Stay calm: 'I'll watch it back'",fx:{rep:-1,karma:2},o:"Dignified. The pundits praise your class."}]},
+ {id:"mg_youth",career:"manager",again:24,from:"The academy",t:"A sixteen-year-old wonderkid",b:"The academy coach swears this kid is the best he's ever seen.",c:[
+  {t:"Throw him in for the big game",p:.55,win:{fx:{pnl:4,rep:8},o:"He scores twice. A star is born, and you found him."},lose:{fx:{rep:-4},o:"He freezes. You take him off at half-time."}},
+  {t:"Bring him on slowly",fx:{pnl:1,rep:2},o:"Patience. He'll be ready next season."}]},
+ {id:"mg_dressing",career:"manager",r:[1,4],again:18,from:"Your captain",t:"Dressing-room revolt",b:"Senior players say your training is too hard and your tactics are too rigid.",c:[
+  {t:"Back down and listen",fx:{rep:2,stress:-3},o:"The mood lifts. You lose a bit of authority."},
+  {t:"Drop the ringleaders",p:.55,win:{fx:{pnl:3,rep:6},o:"The kids you bring in play out of their skins."},lose:{fx:{rep:-8,heat:10},o:"Results collapse and the story leaks."}}]},
+ {id:"mg_country",career:"manager",r:[3,3],again:36,from:"The FA-ish",t:"Your country needs you",b:"The national team job is vacant, and your name is top of the list.",c:[
+  {t:"Throw your hat in the ring",p:.5,win:{fx:{act:"promote2",rep:10},o:"You're the new national manager. The press conference is standing room only."},lose:{fx:{rep:-2},o:"They go for someone else. You'll always wonder."}},
+  {t:"Stay with your club",fx:{rep:4},o:"The fans chant your name at the next home game."}]},
+ {id:"mg_pundit",career:"manager",again:36,from:"A TV producer",t:"A pundit's chair",b:"A TV channel wants you on their big-match panel when you're not managing.",c:[
+  {t:"Do it for the extra cash",fx:{cash:20,stress:4},o:"You're surprisingly good on telly."},
+  {t:"Focus on the job",fx:{rep:2},o:"The board likes your focus."}]}
+);
+ACTS.promote2=()=>{if(S.rank<4){promote()}};
 Object.assign(ACTS,{
  sabb:fx=>{S.sabb={kind:fx.kind,since:S.day,until:S.day+(fx.kind==="travel"?12:24),m:0};S.flags[fx.kind==="travel"?"travelled":"studying"]=S.day;S.log.unshift({d:S.day,t:fx.kind==="travel"?"Took a year out to travel.":"Went back to university."})},
  cobiz:()=>{const d=BIZ[S.path];if(!d)return;S.wealth+=Math.round(d.cost/2);startBiz();if(S.friend)S.friend.bond=clamp(S.friend.bond+15,0,100)},
@@ -5755,7 +5838,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -5857,7 +5940,7 @@ function jobsClose(off){
   const p=clamp(.78+S.skill/300+ap.q-cd.d*.45+(isTeam()?(S.morale-55)/400:0),.05,.97),roll=rnd();
   let earn,lab;
   if(roll<p){const great=roll<p*.3;earn=cd.pay*ap.pay*tr*(great?1.15:1);repD+=great?1.4:.7;lab=great?"Delighted customer":"Done"}
-  else{earn=cd.pay*ap.pay*tr*.35;repD-=1.6;lab="Went wrong";if(ap.risk>1||cd.risk){heat+=(ap.risk>1?3:1.2)*(cd.risk?1.3:1);lab="Went wrong, safety concern"}}
+  else{earn=cd.pay*ap.pay*tr*.35;repD-=1.6;lab="Went wrong";if(ap.risk>1||cd.risk){heat+=(ap.risk>1?3:1.2)*(cd.risk?1.3:1);lab=cd.risk?"Went wrong, safety concern":"Went wrong: corners were cut"}}
   earn*=(1+expBonus(cd.tag))*mf;if(off)earn*=.5;
   S.skill=clamp(S.skill+.5*(1-S.skill/110)*(hasT("brainy")?1.4:1)*(hasT("laidback")?.75:1),0,100);
   tot+=earn;lines.push([`${cd.n} · ${lab}`,earn]);noteJob(cd,ai,lab,cd.h*ap.h)}
@@ -5868,7 +5951,7 @@ function jobsClose(off){
 }
 /* Review target maths, shared by the jobs board and the career tab */
 function targetInfo(){const t=rankTarget(),left=Math.max(1,REVIEW_DAYS-(S.day-S.reviewStart)),need=Math.max(0,t-S.reviewPnl);return{t,left,need,per:need/left,base:t/REVIEW_DAYS,unit:CAR_().fmt==="pts"?"points":"amounts"}}
-function pointsHelpText(){const x=targetInfo();return `<b>What the ${x.unit} mean:</b> everything you do at work adds to your ${esc(CAR_().outName.toLowerCase())}. Your review target is <b>${fmtOut(x.t)}</b> and you have ${fmtOut(S.reviewPnl)} so far, with ${x.left} month${x.left>1?"s":""} until your review: aim for about <b>${fmtOut(x.per)} a month</b>. Figures are "about" because skill, difficulty, luck and the news change the result.`}
+function pointsHelpText(){const x=targetInfo();return `Everything you do at work adds to your ${esc(CAR_().outName.toLowerCase())}. Your review target is <b>${fmtOut(x.t)}</b> and you have ${fmtOut(S.reviewPnl)} so far, with ${x.left} month${x.left>1?"s":""} until your review: aim for about <b>${fmtOut(x.per)} a month</b>. Figures are "about" because skill, difficulty, luck and the news change the result.`}
 const foldOpen=id=>{try{return localStorage.getItem("ftb-fold-"+id)!=="0"}catch(e){return true}};
 const fold=(id,title,html,attr="")=>`<details class="fold" data-fold="${id}" ${attr} ${foldOpen(id)?"open":""}><summary>${title}</summary>${html}</details>`;
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.matches&&d.matches("details[data-fold]"))try{localStorage.setItem("ftb-fold-"+d.dataset.fold,d.open?"1":"0")}catch(x){}},true);
@@ -6076,7 +6159,7 @@ function renderLife(){
 }
 const openShops={};
 /* Life sub-tabs keep the pane short. The choice is a per-device preference. */
-const LIFE_TABS=[["money","Money"],["home","Home & car"],["family","Family & health"],["people","People & fun"],["things","Things"],["lifestyle","Lifestyle"],["town","Town"]];
+const LIFE_TABS=[["money","Money"],["home","Home"],["family","Family"],["people","People"],["things","Things"],["lifestyle","Lifestyle"],["town","Town"]];
 let lifeTab="money";try{const v=localStorage.getItem("ftb-lifetab");if(LIFE_TABS.some(t=>t[0]===v))lifeTab=v}catch(e){}
 function lifeTabsBar(){return `<div class="pane-sec subtabs-wrap"><div class="subtabs" role="tablist" aria-label="Life sections">${LIFE_TABS.map(([k,n])=>`<button role="tab" data-act="lifetab" data-v="${k}" class="${lifeTab===k?"on":""}" aria-selected="${lifeTab===k}">${n}</button>`).join("")}</div></div>`}
 function pensionSec(){
@@ -6339,7 +6422,7 @@ function endModal(){
  challengeCheck(null);checkUnlocks(null);
  let [t,b]=ENDINGS[S.over]||ENDINGS.fired;const L=legacy(),a=ageInt();
  if(S.over==="won"){t=S.path==="foot"?"World champion":S.path==="pol"?"A landslide legacy":"Retired at the top";b=CAR_().winText}
- if(S.over==="banned"){t={bank:"Banned by the regulator",foot:"Banned from football",elec:"Struck off",plumb:"Struck off",hair:"Shut down",chef:"Shut down",tech:"Career over",law:"Struck off",doc:"Struck off",teach:"Barred from teaching",police:"Dismissed",pol:"Resigned in disgrace",pilot:"Licence revoked",nurse:"Struck off",fire:"Dismissed",vet:"Struck off",arch:"Struck off",music:"Dropped",influencer:"Cancelled",soldier:"Dishonourably discharged",astronaut:"Grounded",spy:"Disavowed",tvchef:"Off the air",clubowner:"Forced to sell",actor:"Blacklisted"}[S.path]||"Career over";b=CAR_().banText}
+ if(S.over==="banned"){t={bank:"Banned by the regulator",foot:"Banned from football",manager:"Sacked and blacklisted",elec:"Struck off",plumb:"Struck off",hair:"Shut down",chef:"Shut down",tech:"Career over",law:"Struck off",doc:"Struck off",teach:"Barred from teaching",police:"Dismissed",pol:"Resigned in disgrace",pilot:"Licence revoked",nurse:"Struck off",fire:"Dismissed",vet:"Struck off",arch:"Struck off",music:"Dropped",influencer:"Cancelled",soldier:"Dishonourably discharged",astronaut:"Grounded",spy:"Disavowed",tvchef:"Off the air",clubowner:"Forced to sell",actor:"Blacklisted"}[S.path]||"Career over";b=CAR_().banText}
  if(S.over==="fired"&&S.path==="foot"){t="Released";b="The club releases you."}
  if(S.over==="fired"&&S.path==="pol"){t="Deselected";b="Your local party picks someone else. Your political career is over."}
  if(S.over==="retired"){t=a>=PENSION_ACCESS?"Retired":"Retired early";b=`You retire at ${a}.${S.lump?` You took ${money(S.lump)} tax-free from your pension, and the rest pays about ${money(pensionIncome())} a year`:""}${a<STATE_PENSION?`, with the State Pension to come at ${STATE_PENSION}.`:", on top of the State Pension."}`}
@@ -6386,6 +6469,7 @@ function careerIcon(id){const st='fill="none" stroke="currentColor" stroke-width
   spy:`<path d="M6 18 C10 12 28 12 32 18 Z" fill="currentColor"/><path ${st} d="M4 19 H34"/><circle cx="13" cy="26" r="4" ${st}/><circle cx="25" cy="26" r="4" ${st}/><path ${st} d="M17 26 H21"/>`,
   tvchef:`<rect x="5" y="10" width="28" height="20" rx="3" ${st}/><path ${st} d="M14 4 L19 10 L24 4 M14 34 H24"/>`,
   clubowner:`<path ${st} d="M11 6 H27 V14 A8 8 0 0 1 11 14 Z M11 9 H6 A5 5 0 0 0 11 15 M27 9 H32 A5 5 0 0 1 27 15 M19 22 V29 M13 32 H25"/>`,
+  manager:`<rect x="7" y="5" width="24" height="29" rx="3" ${st}/><path ${st} d="M14 5 V3 H24 V5 M12 14 H26 M12 20 L16 24 M16 20 L12 24 M22 20 A2 2 0 1 0 22.01 20 M24 26 L20 29"/>`,
   actor:`<path d="M19 4 L23 14 L34 14 L25 21 L28 32 L19 25 L10 32 L13 21 L4 14 L15 14 Z" fill="currentColor"/>`}[id]||"";
  return `<svg viewBox="0 0 38 38" width="34" height="34" aria-hidden="true" style="color:var(--accent);flex:none">${g}</svg>`}
 function lockedCard(c){return `<button class="locked" disabled aria-label="A secret career, still locked">${careerIcon("lock")}<span><b style="font-size:16px">Secret career</b><span>${esc(SECRETS[c.id].hint)} to unlock.</span></span></button>`}
@@ -6411,7 +6495,7 @@ function startModal(){
 }
 function menuModal(){
  showModal(`<h2>Menu</h2><p>${esc(S.name)}, ${esc(R().t)}, age ${ageInt()}. Your game saves automatically on this device${cloudCode?" and in the cloud":""}.</p>
-  <div class="btn-row"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
+  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
  markets:`<tr><td><b>1. Read the brief</b><br>Each morning's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
@@ -6451,7 +6535,7 @@ document.addEventListener("click",e=>{
  if(a==="luck"){playLuck(t.dataset.k);return}
  if(a==="trophies"){trophyModal();return}
  if(a==="friends"){friendsModal();return}
- if(a==="copycode"){try{navigator.clipboard.writeText(myCode());t.textContent="Copied"}catch(e){}return}
+ if(a==="copyfcode"){try{navigator.clipboard.writeText(myCode());t.textContent="Copied"}catch(e){}return}
  if(a==="addcode"){addFriendCode((document.getElementById("fcIn")||{}).value);return}
  if(a==="catchup2"){const p=personBy(t.dataset.p);if(p&&freeLeft()>0){useFree();const c=Math.round(40*Math.max(1,priceScale()*2)/10)*10;S.wealth-=c;p.bond=clamp(p.bond+12,0,100);p.last=S.day;S.homeLife=clamp(S.homeLife+2,0,100);S.stress=clamp(S.stress-3,0,100);save();render()}return}
  if(a==="itembuy"){const d=SHOP.find(x=>x.k===t.dataset.k);if(d&&S.wealth>=d.price&&!hasItem(d.k)){S.wealth-=d.price;addItem(d.k,d.n,d.price,"Bought it.");S.log.unshift({d:S.day,t:`Bought ${d.n.replace(/^An? /,"").toLowerCase()}.`});sfx.coin();save();render()}return}
