@@ -462,6 +462,12 @@ a.btn.primary{color:var(--on-accent)}
 @media (max-width:480px){.town-key{grid-template-columns:1fr}}
 .goals small .linkbtn{font-size:inherit}
 .folk-face{width:30px;height:30px;border-radius:50%;overflow:hidden;display:block}
+.item-pic{width:44px;height:44px;flex:none;align-self:center}.owned-row{display:flex;gap:10px;align-items:flex-start}.owned-row .owned-main{flex:1;min-width:0}
+.person .face{float:left;width:36px;height:36px;border-radius:50%;margin-right:10px}.person>div:first-child{overflow:hidden}
+.rel .ring.ring-face{width:56px;height:56px;padding:0;overflow:hidden}.rel .ring.ring-face svg{width:100%;height:100%;display:block}
+.kid-faces{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}.kid-faces span{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--muted)}.kid-faces .face{border-radius:50%}
+.moment-photo{margin:10px auto 8px;max-width:270px;position:relative;transform:rotate(var(--r,-2deg));animation:mpop .5s cubic-bezier(.2,1.4,.4,1)}.moment-photo .moment-badge{position:absolute;right:-14px;top:-14px;width:48px;height:48px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
+.end-art{margin:0 auto 10px;max-width:360px}.end-art .pola{cursor:default}.hobby-pic{max-width:300px;margin:6px auto 10px;cursor:default}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -4266,7 +4272,7 @@ function nextMoment(){
  el.className="moment "+(sad?"sad":"joy");
  el.innerHTML=`<div class="moment-rays" aria-hidden="true"></div><div class="moment-card" role="dialog" aria-live="assertive" aria-label="${esc(o.title)}">
   <div class="moment-kicker">${esc(o.kicker||"")}</div>
-  <svg class="moment-icon" viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS[o.icon||"star"]||MOMENT_ICONS.star}</svg>
+  ${o.ph?momentPhoto(o.ph,o.icon):`<svg class="moment-icon" viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS[o.icon||"star"]||MOMENT_ICONS.star}</svg>`}
   <h2>${esc(o.title)}</h2>${o.sub?`<p>${esc(o.sub)}</p>`:""}
   <button class="btn ${sad?"":"primary"} big" data-act="momentok">${sad?"Continue":"Brilliant"}</button></div>`;
  el.hidden=false;
@@ -5219,9 +5225,9 @@ function itemsWeave(notes){
 function itemsSec(){
  const its=S.items||[];
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Things you own</h2><span class="label">${its.length?money(itemsValue()):"Nothing special yet"}</span></div>
-  ${its.length?`<div class="owned">${its.map(i=>`<div class="owned-row"><div><b>${esc(i.n)}</b><div class="hint">Since ${shortDate(i.bought)} · worth about ${money(i.value)}</div>${i.notes.length?`<ul class="owned-notes">${i.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}</div><div class="owned-btns"><button class="btn sm" data-act="itemgive" data-i="${i.id}">Give</button><button class="btn sm" data-act="itemsell" data-i="${i.id}">Sell</button></div></div>`).join("")}</div>`:`<p class="hint" style="margin:0">Things you buy can turn into stories: gifts for your children, valuations, race days, heirlooms.</p>`}</div>
+  ${its.length?`<div class="owned">${its.map(i=>`<div class="owned-row">${itemPic(i)}<div class="owned-main"><b>${esc(i.n)}</b><div class="hint">Since ${shortDate(i.bought)} · worth about ${money(i.value)}</div>${i.notes.length?`<ul class="owned-notes">${i.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}</div><div class="owned-btns"><button class="btn sm" data-act="itemgive" data-i="${i.id}">Give</button><button class="btn sm" data-act="itemsell" data-i="${i.id}">Sell</button></div></div>`).join("")}</div>`:`<p class="hint" style="margin:0">Things you buy can turn into stories: gifts for your children, valuations, race days, heirlooms.</p>`}</div>
   <div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Treat yourself</h2><span class="label">Cash ${money(S.wealth)}</span></div>
-  <div class="shop">${SHOP.map(d=>`<div class="shop-row"><div><b>${esc(d.n)}</b><div class="hint">${esc(d.d)}</div></div><button class="btn sm" data-act="itembuy" data-k="${d.k}" ${S.wealth<d.price||hasItem(d.k)?"disabled":""}>${hasItem(d.k)?"Owned":money(d.price)}</button></div>`).join("")}</div></div>`;
+  <div class="shop">${SHOP.map(d=>`<div class="shop-row">${itemPic(d)}<div style="flex:1"><b>${esc(d.n)}</b><div class="hint">${esc(d.d)}</div></div><button class="btn sm" data-act="itembuy" data-k="${d.k}" ${S.wealth<d.price||hasItem(d.k)?"disabled":""}>${hasItem(d.k)?"Owned":money(d.price)}</button></div>`).join("")}</div></div>`;
 }
 function peopleSec(){
  peopleSync();const ps=alivePeople().sort((a,b)=>b.bond-a.bond),gone=(S.people||[]).filter(p=>!p.alive).slice(-4);
@@ -5348,7 +5354,7 @@ function tiylModal(i){
  const m=ms[i];
  showModal(`<div class="tiyl ${m.tone==="sad"||m.tone==="solemn"?"sad":""}"><div class="label">This is your life · ${i+1} of ${n}</div>
   <div class="tiyl-when">${shortDate(m.d)} · age ${Math.floor(ageAt(S,m.d))}</div>
-  <svg class="moment-icon" viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS[m.i]||MOMENT_ICONS.star}</svg>
+  ${m.ph?momentPhoto(m.ph,m.i):`<svg class="moment-icon" viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS[m.i]||MOMENT_ICONS.star}</svg>`}
   <div class="moment-kicker">${esc(m.k||"")}</div><h2>${esc(m.t)}</h2>${m.s?`<p>${esc(m.s)}</p>`:""}
   <div class="btn-row"><button class="btn" data-act="tiyl" data-i="${i-1}" ${i?"":"disabled"}>Back</button><button class="btn primary" data-act="tiyl" data-i="${i+1}">${i===n-1?"The end":"Next"}</button></div></div>`);
 }
@@ -7049,7 +7055,7 @@ const SCARF_C=["#2F6E6A","#7A1F2B","#3E4C8A","#C27A2C","#5A3A60","#1C2329","#B85
 const TEE_C=["#5F6B75","#3E6FB0","#B3262E","#4BBA85","#E9C46A","#7A4E8C","#E07A2E","#2B3A44","#D96A8A","#6B8E23"];
 const BALDING=["short","sidepart","quiff","buzz","mohawk","mullet","curly","afro","pixie"];
 const h32=s=>{let h=2166136261;for(const ch of String(s))h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0};
-const seeded=seed=>{let h=h32(seed)||1;return()=>{h^=h<<13;h>>>=0;h^=h>>>17;h^=h<<5;h>>>=0;return h/4294967296}};
+const seeded=seed=>{let a=h32(seed)||1;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 function avDefault(seed,sex){
  const r=seed!=null?seeded(seed):rnd,pk=a=>a[Math.floor(r()*a.length)];
  const sx=sex==="m"||sex==="f"||sex==="x"?sex:r()<.5?"m":"f",look=sx==="x"?(r()<.5?"m":"f"):sx;
@@ -7066,6 +7072,7 @@ function avUp(av){
 const AVL=(d,c,w,o)=>`<path d="${d}" stroke="${c}" stroke-width="${w||1}" fill="none" stroke-linecap="round"${o?` stroke-opacity="${o}"`:""}/>`;
 /* The drawing itself, in a 100 x 100 box. s can be the live game or a snapshot from a photo. */
 function avatarInner(s){
+ if(s.ageOver!=null&&s.ageOver<13)return childInner(s);
  const av=avUp(s.av||(s.av=avDefault())),a=s.ageOver??ageAt(s),w=clamp(av.w||0,0,1),sex=av.sex||"x",fem=sex==="f"||(sex==="x"&&!["short","sidepart","quiff","buzz","shaved","mohawk","mullet"].includes(av.style)&&av.face==="none");
  const nw=s.nw!=null?s.nw:typeof netWorth==="function"&&s===S?netWorth():0;
  const skin=AV2_SKIN[(av.skin||0)%11],base=AV2_HAIR[(av.hair||0)%11],grey=a<18?0:clamp((a-40)/28,0,1);
@@ -7093,6 +7100,7 @@ function avatarInner(s){
   case"xmas":body=torso("#B3262E")+AVL(`M${20-sh} 90 L26 86 L32 90 L38 86 L44 90 L50 86 L56 90 L62 86 L68 90 L74 86 L${80+sh} 90`,"#F2F4F5",2)+[30,50,70].map(x=>pC(x,95,1.6,"#F2F4F5")).join("")+AVL("M42 75 Q50 82 58 75","#7A1F2B",3);break;
   case"hols":{const c=TEE_C[((av.tee||0)+3)%TEE_C.length];body=torso(c)+[[28,86],[40,94],[62,88],[72,96],[50,82],[34,98]].map(([x,y])=>pC(x,y,2.2,"#F6E7A8")+pC(x,y,.9,"#E07A2E")).join("")+`<path d="M42 75 L50 84 L58 75" fill="none" stroke="#fff" stroke-width="2"/>`;break}
   case"hosp":body=torso("#A9C8DA")+[[30,88],[46,94],[62,86],[70,96],[38,98]].map(([x,y])=>pC(x,y,1.2,"#6E8FA5")).join("");break;
+  case"sport":body=torso("#4BBA85")+pR(40,82,20,14,"#F7F7F2")+`<text x="50" y="93" font-size="8" font-weight="800" fill="#2B2B2B" text-anchor="middle" font-family="system-ui">${100+(h32(s.seed||"me")%900)}</text>`;break;
   case"kit":body=torso("#B3262E")+AVL("M42 75 Q50 82 58 75","#F2F4F5",3)+`<text x="50" y="96" font-size="11" font-weight="800" fill="#F2F4F5" text-anchor="middle" font-family="system-ui">${(h32(s.seed||"me")%11)+1}</text>`;break;
   default:body=torso(TEE_C[(av.tee||0)%TEE_C.length])+AVL("M42 75 Q50 82 58 75",avMix(TEE_C[(av.tee||0)%TEE_C.length],"#000",.25),3);
  }
@@ -7281,7 +7289,7 @@ function phProps(ph,me){
   case"gift":out.push(`<g transform="translate(${Math.min(176,mx+ms*.5)} 124)">${pR(-12,0,24,20,"#3E6FB0")}${pR(-2,0,4,20,"#F6D44A")}${pR(-12,6,24,4,"#F6D44A")}${pP("M0 0 Q-10 -10 -8 0 M0 0 Q10 -10 8 0","none",'stroke="#F6D44A" stroke-width="2"')}</g>`);break;
   case"cheque":out.push(`<g transform="translate(100 128) rotate(-4)">${pR(-60,-10,120,30,"#F7F4EC",'stroke="#7FB2E5" stroke-width="2"')}<text x="0" y="10" font-size="13" font-weight="800" fill="#2B3A50" text-anchor="middle" font-family="system-ui">${esc(String(x||"£1,000,000"))}</text></g>`);out.push(conf());break;
   case"car":{const c=x||"#3E6FB0";out.push(`<g transform="translate(118 104)"><path d="M0 34 V22 Q2 16 12 14 L26 4 H58 L72 14 Q80 16 80 22 V34Z" fill="${c}"/>${pR(30,8,14,9,"#9CC0D2")}${pR(46,8,14,9,"#9CC0D2")}${pC(18,36,8,"#1B1B1B")}${pC(64,36,8,"#1B1B1B")}${pC(18,36,3,"#ccc")}${pC(64,36,3,"#ccc")}</g>`);break}
-  case"stone":out.push(`<g transform="translate(100 62)"><path d="M-36 88 V10 Q0 -22 36 10 V88Z" fill="#9AA0A6" stroke="#7F868A" stroke-width="2"/><text x="0" y="16" font-size="10" font-weight="700" fill="#3A3F44" text-anchor="middle" font-family="serif">R.I.P.</text><text x="0" y="34" font-size="8" fill="#3A3F44" text-anchor="middle" font-family="serif">${esc(String(x||"").slice(0,18))}</text>${pC(-18,82,4,"#E86A7A")}${pC(-12,84,4,"#F6D44A")}${pC(16,83,4,"#F2F4F5")}</g>`);break;
+  case"stone":out.push(`<g transform="${(ph.c||[]).length?"translate(34 86) scale(.68)":"translate(100 62)"}"><path d="M-36 88 V10 Q0 -22 36 10 V88Z" fill="#9AA0A6" stroke="#7F868A" stroke-width="2"/><text x="0" y="16" font-size="10" font-weight="700" fill="#3A3F44" text-anchor="middle" font-family="serif">R.I.P.</text><text x="0" y="34" font-size="8" fill="#3A3F44" text-anchor="middle" font-family="serif">${esc(String(x||"").slice(0,18))}</text>${pC(-18,82,4,"#E86A7A")}${pC(-12,84,4,"#F6D44A")}${pC(16,83,4,"#F2F4F5")}</g>`);break;
   case"boxes":out.push(pR(130,110,34,30,"#C9A87A",'stroke="#9A7A4E"')+pR(150,88,30,24,"#C9A87A",'stroke="#9A7A4E"')+AVL("M134 120 H160","#9A7A4E",1));break;
   case"mic":out.push(AVL(`M${mx+ms*.42} ${my+ms*.62} V150`,"#555",2)+`<ellipse cx="${mx+ms*.42}" cy="${my+ms*.58}" rx="3.5" ry="5" fill="#333"/>`);break;
   case"ball":out.push(pC(Math.min(184,mx+ms*.5),140,9,"#fff",'stroke="#333"')+pP(`M${Math.min(184,mx+ms*.5)-4} 136 l4 -3 4 3 -1.5 5 h-5Z`,"#333"));break;
@@ -7297,7 +7305,7 @@ function phProps(ph,me){
 function phPerson(code,ph){
  const [r,name,sx,ag]=String(code).split(":");
  if(r==="me")return{me:1,a:ph.a,st:{av:Object.assign({},ph.av||S.av,{w:ph.w}),ageOver:ph.a,photo:1,outfit:ph.o||(PH_HOME.includes(ph.sc)?"casual":undefined),hat:ph.h,path:ph.p,nw:ph.nw,smile:!ph.sad,seed:"me"}};
- if(["dog","cat"].includes(r)||r==="pet")return{pet:r==="pet"?name:r};
+ if(["dog","cat"].includes(r)||r==="pet")return{pet:r==="pet"?name:r,pn:r==="pet"?"":name};
  if(r==="baby")return{baby:1};
  const sex=r==="mum"?"f":r==="dad"?"m":sx==="m"||sx==="f"?sx:undefined,a=+(r==="mum"||r==="dad"?sx:ag)||30,av=avDefault(name+r,sex);
  if(a<16){av.face="none";av.bald=false;av.glasses=false;av.lips=false}
@@ -7310,11 +7318,11 @@ function photoSVG(ph,av,cls){
  const ppl=(ph.c||["me"]).map(c=>phPerson(c,Object.assign({av},ph))).filter(Boolean);
  const humans=ppl.filter(p=>p.st),pets=ppl.filter(p=>p.pet),babies=ppl.filter(p=>p.baby);
  const size=p=>p.a<6?44:p.a<12?54:p.a<16?66:84,step=p=>size(p)*(humans.length>3?.56:.66);
- let tot=humans.reduce((t,p)=>t+step(p),0),x=100-tot/2+(humans[0]?step(humans[0])/2:0)-(pets.length?10:0),me=null,people="";
+ let tot=humans.reduce((t,p)=>t+step(p),0),x=100-tot/2+(humans[0]?step(humans[0])/2:0)-(pets.length?(humans.length>3?24:16):0)+(ph.pr==="stone"&&humans.length?30:0),me=null,people="";
  humans.forEach((p,i)=>{const z=size(p),y=150-z+(z<84?0:2);if(p.me)me=[x,y,z];
   people+=`<svg x="${(x-z/2).toFixed(1)}" y="${y}" width="${z}" height="${z}" viewBox="0 0 100 100" overflow="visible">${avatarInner(p.st)}</svg>`;if(i<humans.length-1)x+=(step(p)+step(humans[i+1]))/2});
  const petSVG=(k,px)=>k==="cat"?`<g transform="translate(${px} 128)" fill="#8E969A"><ellipse cx="0" cy="12" rx="12" ry="9"/><circle cx="10" cy="0" r="7"/><path d="M5 -5 L7 -12 L10 -6Z M12 -6 L15 -12 L16 -4Z"/><path d="M-12 12 Q-22 4 -16 -6" stroke="#8E969A" stroke-width="3" fill="none"/>${pC(12,-1,1,"#2B2B2B")}</g>`:`<g transform="translate(${px} 124)" fill="#8C5A3C"><ellipse cx="0" cy="12" rx="15" ry="8"/><circle cx="14" cy="2" r="7.5"/><path d="M16 -3 L22 -7 L21 3Z" fill="#6B4430"/>${pR(-11,16,4,10,"#8C5A3C")}${pR(7,16,4,10,"#8C5A3C")}<path d="M-15 10 Q-24 2 -20 -4" stroke="#8C5A3C" stroke-width="3" fill="none"/>${pC(17,1,1,"#1B1B1B")}</g>`;
- const petsOut=pets.map((p,i)=>petSVG(p.pet,i%2?28:176)).join("");
+ const petsOut=pets.map((p,i)=>petPic(p.pet,i%2?28:176,p.pn)).join("");
  const prop=babies.length&&ph.pr!=="baby"?phProps(Object.assign({},ph,{pr:"baby"}),me):"";
  return `<svg viewBox="0 0 200 150" class="${cls||"photo-svg"}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${bg}${people}${petsOut}${prop}${phProps(ph,me)}</svg>`;
 }
@@ -7325,8 +7333,8 @@ function castNow(o){
  if(o.kids)for(const k of S.children){const ka=kidAge(k);if(ka<0)continue;if(ka<1){c.push("baby");continue}if(o.kids!=="all"&&ka>=18)continue;c.push(`kid:${k.n}:${genderOf(k.n)}:${Math.floor(ka)}`)}
  if(o.folks)for(const f of (S.folks||[]).filter(f=>f.alive))c.push(`${f.r==="par"?"fr":f.r}:${f.n}:${f.r==="par"?"x:":""}${Math.floor(folkAge(f))}`);
  if(o.fr&&S.friend)c.push(`fr:${S.friend.n.split(" ")[0]}:${genderOf(S.friend.n)}:${Math.max(18,a+(h32(S.friend.n)%7)-3)}`);
- if(o.pet&&S.pet)c.push(S.pet.kind==="cat"?"cat":"dog");
- const ppl=c.filter(x=>!["dog","cat"].includes(x)),pets=c.filter(x=>["dog","cat"].includes(x));
+ if(o.pet&&S.pet)c.push((S.pet.kind==="cat"?"cat":"dog")+":"+S.pet.n);
+ const ppl=c.filter(x=>!/^(dog|cat)\b/.test(x)),pets=c.filter(x=>/^(dog|cat)\b/.test(x));
  return [...ppl.slice(0,5),...pets];
 }
 function phBase(){const nw=typeof netWorth==="function"?netWorth():0;return{a:Math.floor(age()),w:+(((S.av&&S.av.w)||.15)).toFixed(2),p:S.path,nw:nw>=5e6?5e6:nw>=5e5?5e5:nw>=4e4?4e4:0}}
@@ -7376,7 +7384,7 @@ function snap(o){
  S.memories.push({d:S.day,i:o.i||"camera",k:o.k||"",t:o.t,s:o.s||"",tone:o.tone,quiet:1,ph:Object.assign(phBase(),o.ph||{})});
  while(S.memories.length>160){const j=S.memories.findIndex(x=>x.quiet);S.memories.splice(j>=0?j:0,1)}
 }
-{const _mo=moment;moment=function(o){_mo(o);try{const ms=S&&!S.placeholder&&S.memories,m=ms&&ms[ms.length-1];if(m&&!m.ph&&m.t===o.title&&m.d===S.day){const ph=photoFor(m);if(ph)m.ph=Object.assign(phBase(),ph)}}catch(e){}}}
+{const _mo=moment;moment=function(o){let ph=null;try{if(S&&!S.placeholder&&o&&o.title){const p=photoFor({d:S.day,i:o.icon,k:o.kicker,t:o.title,s:o.sub,tone:o.tone});if(p)ph=Object.assign(phBase(),p)}}catch(e){}if(ph&&o)o.ph=ph;_mo(o);try{const ms=S&&!S.placeholder&&S.memories,m=ms&&ms[ms.length-1];if(m&&!m.ph&&ph&&m.t===o.title&&m.d===S.day)m.ph=ph}catch(e){}}}
 /* Older saves: work out a picture for moments from before the album existed */
 const albumPhotos=()=>(S.memories||[]).map((m,idx)=>{if(m.ph)return{m,idx,ph:m.ph};if(m.turn||m.np)return null;let ph=null;try{ph=photoFor(m)}catch(e){}if(!ph){return null}m.ph=Object.assign(phBase(),ph,{a:Math.floor(ageAt(S,m.d))});return{m,idx,ph:m.ph}}).filter(Boolean);
 const phAgeFilter=(a,now)=>{const yrs=Math.max(0,now-a);return yrs>=6?`filter:sepia(${Math.min(.55,yrs*.012).toFixed(2)}) saturate(${(1-Math.min(.35,yrs*.007)).toFixed(2)})`:""};
@@ -7407,7 +7415,7 @@ function photoModal(idx){
 }
 /* The album travels with your life record: up to 18 photos, the big moments first */
 function albumForRecord(){
- const seen=new Set(),uniq=p=>{const k=String(p.m.t).replace(/d+/g,"#")+p.ph.sc;if(seen.has(k))return false;seen.add(k);return true};
+ const seen=new Set(),uniq=p=>{const k=String(p.m.t).replace(/\d+/g,"#")+p.ph.sc;if(seen.has(k))return false;seen.add(k);return true};
  const ps=albumPhotos(),big=ps.filter(p=>!p.m.quiet).reverse().filter(uniq).reverse(),quiet=ps.filter(p=>p.m.quiet&&!/birthday/i.test(p.m.t)||p.m.quiet&&/(18th|21st|30th|40th|50th|60th|70th)/.test(p.m.t));
  let pickd=big.slice(-14);const room=18-pickd.length;
  if(room>0&&quiet.length){if(quiet.length<=room)pickd.push(...quiet);else{const stepQ=quiet.length/room;for(let i=0;i<room;i++)pickd.push(quiet[Math.floor(i*stepQ)])}}
@@ -7478,7 +7486,7 @@ function xmasMorning(){
   if(ok.length&&rnd()<.6&&!S.front){const e=pick(ok);S.used[e.id]=S.day;const kid=S.children.find(k=>kidAge(k)>=4&&kidAge(k)<14);
    const fill=t=>String(t).replace(/\{p\}/g,inLove()?S.rel.name.split(" ")[0]:"them").replace(/\{k\}/g,kid?kid.n:"your child");
    pushDyn({id:e.id+"_"+S.day,life:1,from:fill(e.from),t:fill(e.t),b:fill(e.b),c:e.c.map(c=>JSON.parse(fill(JSON.stringify(c))))})}
-  const c=S.front?["me"]:castNow({pt:1,kids:"all",folks:rnd()<.5,pet:1}),n=c.filter(x=>!["dog","cat"].includes(x)).length;
+  const c=S.front?["me"]:castNow({pt:1,kids:"all",folks:rnd()<.5,pet:1}),n=c.filter(x=>!/^(dog|cat)\b/.test(x)).length;
   const lost=(S.folks||[]).find(f=>!f.alive&&f.died>0&&S.day-f.died<12);
   const cap=S.front?"Christmas on the front line":lost?`The first Christmas without ${lost.r==="mum"?"Mum":lost.r==="dad"?"Dad":lost.n}`:n===1?"Christmas for one":n===2?"Christmas for two":n>=5?"The big family Christmas":"Christmas at home";
   snap({i:"tree",k:"Christmas",t:cap,s:S.front?"Tinned turkey and a carol over the radio.":pick(XMAS_LINES[n===1?"alone":n===2?"couple":n>=5?"big":"family"]),ph:{sc:S.front?"war":"xmas",c,o:S.front?"uniform":rnd()<.6?"xmas":undefined,h:S.front?"helmet":"santa",pr:S.front?"":"gift",sad:lost?1:0}});
@@ -7970,6 +7978,165 @@ function inboxArt(m,e){
  let svg="";try{svg=IA[k]()}catch(x){return""}
  return `<div class="mail-art" aria-hidden="true"><svg viewBox="0 0 ${IA_W} ${IA_H}" preserveAspectRatio="xMidYMid slice">${svg}</svg></div>`;
 }
+
+/* ============ Filling the picture gaps: things you own, faces for people, children, pets, hobbies, big moments, endings and more workplaces ============ */
+
+/* ---- Children: rounder faces, bigger eyes, no grown-up features ---- */
+function childInner(s){
+ const av=avUp(s.av),a=s.ageOver,sex=av.sex,skin=AV2_SKIN[(av.skin||0)%11],hairC=AV2_HAIR[(av.hair||0)%8],tod=a<4,eyeC=AV2_EYES[(av.eyes||0)%5];
+ const tee=s.outfit==="xmas"?"#B3262E":s.outfit==="wedding"?"#F2F4F5":s.outfit==="black"?"#2B2B2B":s.outfit==="hols"?"#E9C46A":TEE_C[(av.tee||0)%TEE_C.length];
+ const body=`<path d="M24 100 Q26 80 50 78 Q74 80 76 100Z" fill="${tee}"/>`+(s.outfit==="xmas"?AVL("M26 92 L32 88 L38 92 L44 88 L50 92 L56 88 L62 92 L68 88 L74 92","#fff",1.6):"")+(s.outfit==="wedding"?pC(50,87,2.6,"#E86A7A"):"")+(s.outfit==="black"?"":AVL("M43 79 Q50 85 57 79",avMix(tee,"#000",.25),2.4));
+ const longish=["long","bob","ponytail","bun","braids","locs","scarf","pixie"].includes(av.style),curly=["afro","curly"].includes(av.style);
+ let back="",top="";
+ if(tod)top=pP("M40 27 Q45 15 50 24 Q55 13 61 27 Q50 22 40 27Z",hairC);
+ else if(curly){back=pC(50,40,25,hairC);top=[31,39,47,55,63,69].map((x,i)=>pC(x,26+(i%2)*3,7,hairC)).join("")}
+ else if(longish&&sex!=="m"){back=pP("M27 42 Q26 72 34 74 L66 74 Q74 72 73 42Z",hairC)+(["ponytail","braids","bun"].includes(av.style)?pC(23,50,6.5,hairC)+pC(77,50,6.5,hairC):"");top=pP("M28 47 Q26 20 50 20 Q74 20 72 47 Q66 30 50 31 Q34 30 28 47Z",hairC)}
+ else top=pP("M29 43 Q29 20 50 20 Q71 20 71 43 Q64 30 50 30 Q36 30 29 43Z",hairC);
+ const eye=x=>pC(x,48,3.6,"#fff")+pC(x,48.4,2.7,eyeC)+pC(x,48.4,1.3,"#111")+pC(x+1,47.2,.8,"#fff");
+ const happy=s.smile!==false;
+ const face=eye(42)+eye(58)+pC(36.5,55,3.6,"#E86A7A",'opacity=".25"')+pC(63.5,55,3.6,"#E86A7A",'opacity=".25"')+pC(50,53,1.3,avMix(skin,"#5A2E1E",.3))+(happy?AVL("M44 58.5 Q50 64.5 56 58.5","#7A2E1E",2):AVL("M45 61 Q50 59.5 55 61","#7A2E1E",1.8));
+ const brows=AVL("M38 41.5 Q42 40 46 41.5 M54 41.5 Q58 40 62 41.5",avMix(hairC,"#000",.2),1.2);
+ const hat=["party","santa","beanie","sombrero","flowers"].includes(s.hat)?`<g transform="translate(0 4)">${avHat(s.hat)}</g>`:"";
+ return back+body+pR(45,66,10,14,skin)+`<ellipse cx="${tod?27:28.5}" cy="49" rx="3.6" ry="4.6" fill="${skin}"/><ellipse cx="${tod?73:71.5}" cy="49" rx="3.6" ry="4.6" fill="${skin}"/><ellipse cx="50" cy="46" rx="${tod?23:21.5}" ry="22" fill="${skin}"/>`+face+brows+top+hat;
+}
+
+/* ---- A face for anyone: the same face as in your photos ---- */
+const sexN=g=>g==="m"||g==="f"?g:undefined;
+const partnerAge=()=>Math.max(18,Math.floor(age())+(h32(S.rel.name||"")%9)-4);
+function faceSVG(seed,sex,a,size,cls){
+ const av=avDefault(seed,sex);if(a<16){av.face="none";av.bald=false;av.glasses=false;av.lips=false}
+ return `<svg class="${cls||"face"}" viewBox="10 6 80 80" width="${size}" height="${size}" aria-hidden="true"><rect width="100" height="100" fill="var(--accent-soft, #F3E2BD)"/>${avatarInner({av,ageOver:a,photo:1,outfit:"casual",nw:0,smile:true})}</svg>`;
+}
+const partnerFace=size=>faceSVG((S.rel.name||"").split(" ")[0]+"pt",sexN(genderOf(S.rel.name)),partnerAge(),size);
+const kidFace=(k,size)=>faceSVG(k.n+"kid",sexN(genderOf(k.n)),Math.max(1,Math.floor(kidAge(k))),size);
+function kidFaces(){
+ const ks=S.children.filter(k=>kidAge(k)>=0);if(!ks.length)return"";
+ return `<div class="kid-faces">${ks.map(k=>`<span title="${esc(k.n)}">${kidAge(k)<1?`<svg class="face" viewBox="0 0 48 48" width="34" height="34" aria-hidden="true"><rect width="48" height="48" fill="var(--accent-soft, #F3E2BD)"/><ellipse cx="24" cy="30" rx="16" ry="12" fill="#F7F4EC"/>${pC(24,22,9,AV2_SKIN[(avDefault(k.n+"kid").skin)%11])}${pC(21,21,1,"#333")}${pC(27,21,1,"#333")}${AVL("M21.5 25 Q24 27 26.5 25","#7A2E1E",1)}</svg>`:kidFace(k,34)}<small>${esc(k.n)}</small></span>`).join("")}</div>`;
+}
+function personFace(name){
+ const n=String(name||"");
+ if(/\b(cat|kitten|dog|puppy|labrador|spaniel|terrier|poodle|collie|pug|tortoise|rabbit|hamster|parrot|budgie|snake|horse|pony|ferret|guinea pig|goldfish|lizard|iguana)\b/i.test(n)){const cat=/\b(cat|kitten)\b/i.test(n),dog=/\b(dog|puppy|labrador|spaniel|terrier|poodle|collie|pug)\b/i.test(n);return cat||dog?`<svg class="face" viewBox="90 102 64 52" width="36" height="36" aria-hidden="true"><rect x="90" y="102" width="64" height="52" fill="var(--accent-soft, #F3E2BD)"/>${petPic(cat?"cat":"dog",120,n)}</svg>`:`<svg class="face" viewBox="0 0 48 48" width="36" height="36" aria-hidden="true"><rect width="48" height="48" fill="var(--accent-soft, #F3E2BD)"/>${false?"":`<g fill="#8C5A3C">${pC(24,30,8,"#8C5A3C")}${pC(14,20,4,"#8C5A3C")}${pC(21,14,4,"#8C5A3C")}${pC(29,14,4,"#8C5A3C")}${pC(35,20,4,"#8C5A3C")}</g>`}</svg>`}
+ if(inLove()&&esc(S.rel.name)===n)return partnerFace(36);
+ if(S.friend&&esc(S.friend.n)===n)return faceSVG(S.friend.n.split(" ")[0]+"fr",sexN(genderOf(S.friend.n)),Math.max(18,Math.floor(age())+(h32(S.friend.n)%7)-3),36);
+ const p=(S.people||[]).find(x=>esc(x.n)===n),a=p&&p.age?p.age:Math.max(20,Math.floor(age())+(h32(n)%17)-8);
+ return faceSVG(n+"p",sexN(genderOf(n)),/^(a|an|the|two) /i.test(n)?40:a,36);
+}
+{const _ps=peopleSec;peopleSec=function(){return _ps.apply(this,arguments).replace(/<div class="person"><div><b>([^<]*)<\/b>/g,(m0,n)=>`<div class="person"><div>${personFace(n)}<b>${n}</b>`)}}
+
+/* ---- Pets: every pet looks different ---- */
+const DOG_C=["#8C5A3C","#E0B37E","#2B2B2B","#F2F4F5","#B5582A","#9AA0A6","#D9C29A"],CAT_C=["#8E969A","#E07A2E","#2B2B2B","#F2F4F5","#C9A87A","#6E5A4A"];
+function petPic(kind,px,seed,sc){
+ const r=seeded((seed||kind)+kind),c=kind==="cat"?CAT_C[Math.floor(r()*CAT_C.length)]:DOG_C[Math.floor(r()*DOG_C.length)],dk=avMix(c,"#000",.3),patch=r()<.45,floppy=r()<.6,big=.85+r()*.35;sc=(sc||1)*big;
+ if(kind==="cat")return `<g transform="translate(${px} 128) scale(${sc.toFixed(2)})" fill="${c}"><ellipse cx="0" cy="12" rx="12" ry="9"/><circle cx="10" cy="0" r="7"/><path d="M5 -5 L7 -12 L10 -6Z M12 -6 L15 -12 L16 -4Z"/><path d="M-12 12 Q-22 4 -16 -6" stroke="${c}" stroke-width="3" fill="none"/>${patch?`<path d="M-6 6 Q0 2 6 6 M-8 12 Q0 8 8 12" stroke="${dk}" stroke-width="1.6" fill="none"/>`:""}${pC(8,-1,1,"#2B2B2B")}${pC(12.5,-1,1,"#2B2B2B")}${pC(10.5,2,.8,"#E86A7A")}</g>`;
+ return `<g transform="translate(${px} 124) scale(${sc.toFixed(2)})" fill="${c}"><ellipse cx="0" cy="12" rx="15" ry="8"/><circle cx="14" cy="2" r="7.5"/>${floppy?`<path d="M9 -3 Q5 4 8 9 L11 2Z" fill="${dk}"/>`:`<path d="M10 -4 L12 -12 L15 -4Z M15 -4 L18 -11 L20 -2Z" fill="${dk}"/>`}${pR(-11,16,4,10,c)}${pR(7,16,4,10,c)}<path d="M-15 10 Q-24 2 -20 -4" stroke="${c}" stroke-width="3" fill="none"/>${patch?`<ellipse cx="-4" cy="9" rx="6" ry="4" fill="${dk}"/>`:""}${pC(16,0,1,"#1B1B1B")}${pC(21,3,1.4,"#1B1B1B")}</g>`;
+}
+
+/* ---- Things you own ---- */
+const IT=(b)=>`<svg class="item-pic" viewBox="0 0 48 48" aria-hidden="true">${b}</svg>`;
+const ITEM_PICS={
+ watch:pR(19,4,10,40,"#5A3A22",'rx="3"')+pC(24,24,10,"#D7A744")+pC(24,24,7.5,"#F7F4EC")+AVL("M24 24 V18 M24 24 L28 26","#2B2B2B",1.4),
+ art:pR(6,8,36,30,"#B8862B")+pR(9,11,30,24,"#9FD0EE")+pC(32,17,3,"#F6D44A")+pP("M9 35 L18 22 L26 30 L31 25 L39 35Z","#4E8A4A"),
+ guitar:`<ellipse cx="19" cy="33" rx="10" ry="11" fill="#B5582A"/><ellipse cx="25" cy="24" rx="7" ry="8" fill="#B5582A"/>`+pC(21,31,3,"#3A2A1A")+`<rect x="27" y="4" width="4" height="22" fill="#5A3A22" transform="rotate(28 29 15)"/>`,
+ wine:pP("M18 14 H24 V18 Q30 22 30 30 V44 H12 V30 Q12 22 18 18Z","#3E2030")+pR(19,6,4,9,"#3E2030")+pR(14,30,14,8,"#F2EBDD")+pP("M34 20 H44 Q44 30 39 31 V40 H42 V42 H36 V40 H39 V31 Q34 30 34 20Z","#7A1F2B",'opacity=".9"'),
+ shirt:pP("M14 8 L20 6 Q24 10 28 6 L34 8 L44 16 L38 24 L34 20 V44 H14 V20 L10 24 L4 16Z","#B3262E")+`<text x="24" y="34" font-size="12" font-weight="800" fill="#fff" text-anchor="middle" font-family="system-ui">9</text>`+AVL("M18 38 q4 -3 8 0 q3 2 6 -1","#2B2B2B",1),
+ telescope:`<rect x="8" y="14" width="30" height="8" rx="3" fill="#3E4C8A" transform="rotate(-25 23 18)"/>`+AVL("M24 24 L16 44 M24 24 L32 44 M24 24 V44","#555",1.6)+pC(40,8,2,"#F6D44A"),
+ horse:pP("M10 30 Q10 20 20 20 L30 20 L36 10 L42 12 L40 20 L38 22 V30 L36 44 H33 L32 32 H18 L16 44 H13 L12 32Z","#7A4A2A")+pP("M36 10 L32 18 L30 12Z","#3A2A1A"),
+ boat:pP("M6 32 H42 L36 40 H12Z","#C0453A")+pR(23,6,2,26,"#7A5B3A")+pP("M25 8 L40 30 H25Z","#F2F4F5")+pP("M23 12 L12 30 H23Z","#E9ECEE")+AVL("M4 44 q4 -2 8 0 q4 2 8 0 q4 -2 8 0 q4 2 8 0 q4 -2 8 0","#3D8CC8",1.6),
+ motorbike:pC(12,34,8,"#2B2B2B")+pC(36,34,8,"#2B2B2B")+pC(12,34,3,"#ccc")+pC(36,34,3,"#ccc")+pP("M12 34 L20 22 H30 L36 34 M20 22 L18 16 H24","none",'stroke="#C0453A" stroke-width="4" stroke-linejoin="round"')+pR(22,20,10,5,"#C0453A",'rx="2"'),
+ equity:pR(8,6,32,38,"#F7F4EC",'stroke="#B8862B" stroke-width="2"')+[14,20,26].map(y=>pR(13,y,22,2,"#B9A27A")).join("")+pC(30,36,5,"#C0453A")+AVL("M14 38 L20 32 L24 34 L30 26","#4BBA85",1.6),
+ teddy:pC(24,28,12,"#B5823A")+pC(24,16,9,"#B5823A")+pC(16,9,4,"#B5823A")+pC(32,9,4,"#B5823A")+pC(21,15,1.2,"#2B2B2B")+pC(27,15,1.2,"#2B2B2B")+`<ellipse cx="24" cy="19" rx="3.5" ry="2.5" fill="#E9C9A0"/>`+pC(24,30,5,"#E9C9A0"),
+ ring:pC(24,30,11,"none",'stroke="#D7A744" stroke-width="4"')+pP("M18 16 L24 8 L30 16 L24 21Z","#9FD0EE",'stroke="#fff" stroke-width="1"'),
+ book:pR(10,6,26,36,"#7A1F2B",'rx="2"')+pR(13,6,3,36,"#5A1520")+pR(18,14,14,4,"#E9C46A")+pR(36,10,3,30,"#F2EBDD"),
+ teapot:`<ellipse cx="22" cy="30" rx="13" ry="11" fill="#F2F4F5" stroke="#9AA0A6"/>`+pP("M34 26 Q42 22 44 16","none",'stroke="#9AA0A6" stroke-width="3"')+AVL("M9 26 Q2 28 8 36","#9AA0A6",3)+pR(18,16,8,4,"#9AA0A6",'rx="2"')+pC(22,30,4,"#9CC8EE"),
+ tools:pR(6,22,36,18,"#C0453A",'rx="2"')+pR(16,16,16,6,"none",'stroke="#555" stroke-width="2.5"')+pR(6,28,36,2,"#8A2E28")+AVL("M30 10 L38 18","#888",3),
+ records:pC(24,24,18,"#1B1B1B")+pC(24,24,12,"none",'stroke="#333" stroke-width="1"')+pC(24,24,6,"#E86A7A")+pC(24,24,1.4,"#F7F4EC"),
+ camera:pR(6,16,36,24,"#2B3A44",'rx="4"')+pR(16,11,12,6,"#2B3A44",'rx="2"')+pC(24,28,8,"#9CC0D2",'stroke="#E9ECEE" stroke-width="3"')+pC(36,20,1.6,"#F6D44A"),
+ pen:`<rect x="21" y="4" width="6" height="34" rx="2" fill="#1C2329" transform="rotate(30 24 24)"/>`+pP("M12 40 L15 34 L18 37Z","#D7A744"),
+ cufflinks:pR(8,18,12,12,"#D7A744",'rx="2"')+pR(28,18,12,12,"#D7A744",'rx="2"')+pC(14,24,3,"#3E4C8A")+pC(34,24,3,"#3E4C8A"),
+ sombrero:`<ellipse cx="24" cy="32" rx="21" ry="6" fill="#E0B85A"/>`+pP("M15 32 Q16 12 24 12 Q32 12 33 32Z","#E9C46A")+pR(15,26,18,3,"#C0453A"),
+ eiffel:pP("M24 4 L20 24 L13 44 H18 Q24 34 30 44 H35 L28 24Z","#6B5A4A")+pR(19,22,10,2,"#6B5A4A"),
+ giraffe:pP("M14 44 V30 Q14 24 22 24 L28 24 L30 8 L34 6 L36 10 L34 24 V44 H31 V32 H18 V44Z","#E9B44C")+[[20,28],[30,16],[26,34],[32,30]].map(([x,y])=>pC(x,y,2,"#8C5A3C")).join(""),
+ cowbell:pP("M16 10 H32 L38 38 H10Z","#B8862B")+`<ellipse cx="24" cy="38" rx="14" ry="3" fill="#8A6A2E"/>`+pC(24,40,3,"#555")+pR(20,4,8,6,"#7A1F2B"),
+ trousers:pP("M12 6 H36 L40 44 H28 L24 18 L20 44 H8Z","#7A4E8C")+[...Array(5)].map((_,i)=>pC(14+i*5,12+(i%2)*6,1.6,"#F6D44A")).join(""),
+ captain:pP("M8 26 Q8 12 24 12 Q40 12 40 26Z","#F7F7F2",'stroke="#ccc"')+pR(9,22,30,5,"#1C2329")+`<ellipse cx="24" cy="29" rx="15" ry="3" fill="#1C2329"/>`+pC(24,18,2.5,"#D7A744"),
+ wellies:pP("M8 8 H18 V36 H26 V44 H8Z","#2F7A3E")+pP("M24 8 H34 V36 H42 V44 H24Z","#2F7A3E")+AVL("M8 30 H18 M24 30 H34","#6B4A2A",2,.7),
+ jumper:pP("M14 8 L20 6 Q24 10 28 6 L34 8 L44 18 L38 24 L34 20 V44 H14 V20 L10 24 L4 18Z","#3E6FB0")+AVL("M14 28 L18 24 L22 28 L26 24 L30 28 L34 24","#F2F4F5",2),
+ mug:pR(10,12,24,28,"#F2F4F5",'rx="3" stroke="#9AA0A6"')+AVL("M34 18 Q42 18 42 26 Q42 32 34 32","#9AA0A6",3)+`<text x="22" y="30" font-size="10" font-weight="800" fill="#C0453A" text-anchor="middle" font-family="system-ui">♥</text>`,
+ luckycat:pC(24,30,13,"#F7F4EC",'stroke="#ccc"')+pC(24,18,10,"#F7F4EC",'stroke="#ccc"')+pP("M16 12 L17 4 L22 10Z M32 12 L31 4 L26 10Z","#F7F4EC")+pP("M34 16 Q40 10 38 4","none",'stroke="#E86A7A" stroke-width="4" stroke-linecap="round"')+pC(20,18,1.2,"#333")+pC(28,18,1.2,"#333")+pC(24,32,4,"#D7A744"),
+ rucksack:pR(12,10,24,32,"#4E6B45",'rx="6"')+pR(16,26,16,10,"#3E5A38",'rx="2"')+[[16,14,"#E86A7A"],[28,16,"#F6D44A"],[22,20,"#7FB2E5"]].map(([x,y,c])=>pC(x,y,2.6,c)).join(""),
+ card:pR(8,8,32,32,"#F7F4EC",'stroke="#ccc"')+pC(24,22,7,"#E8B999")+pC(21.5,21,1,"#333")+pC(26.5,21,1,"#333")+AVL("M21 25 Q24 27 27 25","#C0453A",1)+AVL("M14 36 L18 32 L22 36 M26 36 L30 32 L34 36","#7FB2E5",1.4),
+ gift:pR(9,18,30,24,"#3E6FB0")+pR(7,13,34,7,"#4A7FD0")+pR(21,13,6,29,"#F6D44A")+pP("M24 13 C16 2 8 8 18 13 M24 13 C32 2 40 8 30 13","none",'stroke="#F6D44A" stroke-width="2.5"')
+};
+const ITEM_RULES=[[/watch/i,"watch"],[/painting|art\b/i,"art"],[/guitar/i,"guitar"],[/wine/i,"wine"],[/shirt/i,"shirt"],[/telescope/i,"telescope"],[/horse/i,"horse"],[/boat/i,"boat"],[/motorbike/i,"motorbike"],[/shares/i,"equity"],[/teddy/i,"teddy"],[/ring/i,"ring"],[/recipe|book|album/i,"book"],[/teapot/i,"teapot"],[/toolbox/i,"tools"],[/record/i,"records"],[/camera/i,"camera"],[/pen\b/i,"pen"],[/cufflinks/i,"cufflinks"],[/sombrero/i,"sombrero"],[/eiffel/i,"eiffel"],[/giraffe/i,"giraffe"],[/cowbell/i,"cowbell"],[/trousers/i,"trousers"],[/captain/i,"captain"],[/wellies/i,"wellies"],[/jumper/i,"jumper"],[/mug/i,"mug"],[/lucky cat/i,"luckycat"],[/rucksack/i,"rucksack"],[/card/i,"card"]];
+function itemPic(it){const n=(it&&it.n)||"",k=(it&&it.k)||"";const r=ITEM_RULES.find(([re])=>re.test(n));return IT(ITEM_PICS[r?r[1]:ITEM_PICS[k]?k:"gift"])}
+
+/* ---- Hobbies ---- */
+const HOBBY_PH={run:{sc:"park",o:"sport",pr:"medal"},band:{sc:"stage",pr:"mic"},chess:{sc:"lounge",pr:"chess"},paint:{sc:"park",pr:"easel"},golf:{sc:"park",o:"smart",pr:"golf"},bake:{sc:"kitchen",pr:"cake",h:"chef"}};
+{const _pf=photoFor;photoFor=function(m){const hb=Object.entries(HOBBIES).find(([k,h])=>h.n===m.k);if(hb){const b=HOBBY_PH[hb[0]]||{};return Object.assign({sc:b.sc||"park",c:["me"]},b,{pr:/trophy|champion|winner/i.test(m.t||"")?"trophy":b.pr})}return _pf(m)}}
+{const _hs=hobbySec;hobbySec=function(){const h=_hs.apply(this,arguments);if(!S.hobby||!HOBBIES[S.hobby.k])return h;const b=HOBBY_PH[S.hobby.k]||{};const ph=Object.assign(phBase(),{sc:b.sc||"park",c:["me"]},b,{av:S.av});return h.replace(/(<div class="sec-head">[\s\S]*?<\/div>)/,`$1<div class="pola hobby-pic" style="--r:-1.5deg"><span class="pola-img">${photoSVG(ph)}</span></div>`)}}
+
+/* ---- More props for photos: chess, an easel, golf ---- */
+{const _pp=phProps;phProps=function(ph,me){const [mx,my,ms]=me||[100,70,80];
+ if(ph.pr==="chess")return `<g transform="translate(${Math.min(170,mx+ms*.5)} 124)">${pR(-18,0,36,6,"#7A5B3A")}${[...Array(4)].map((_,i)=>[...Array(4)].map((_,j)=>pR(-16+i*8,-16+j*4,8,4,(i+j)%2?"#2B2B2B":"#F2F4F5")).join("")).join("")}${pP("M-8 -16 v-6 h3 v6Z","#2B2B2B")}${pC(-6.5,-24,2.4,"#2B2B2B")}${pP("M6 -16 v-8 h3 v8Z","#F2F4F5",'stroke="#999" stroke-width=".5"')}</g>`;
+ if(ph.pr==="easel")return `<g transform="translate(${Math.min(170,mx+ms*.55)} 92)">${AVL("M-12 58 L0 0 L12 58 M0 0 V58","#7A5B3A",2.5)}${pR(-16,6,32,24,"#F7F4EC",'stroke="#B8862B" stroke-width="2"')}${pC(-6,14,4,"#F6D44A")}${pP("M-14 28 L-4 18 L4 24 L14 16 V28Z","#4E8A4A")}</g>`;
+ if(ph.pr==="golf")return AVL(`M${mx+ms*.36} ${my+ms*.62} L${mx+ms*.62} 146`,"#9AA0A6",2)+`<ellipse cx="${mx+ms*.64}" cy="146" rx="5" ry="2.5" fill="#555"/>`+pC(Math.min(190,mx+ms*.8),144,3,"#fff",'stroke="#ccc"');
+ return _pp(ph,me)}}
+
+/* ---- Big moments: the celebration card shows the photo ---- */
+function momentPhoto(ph,icon){return `<div class="moment-photo pola" style="--r:-2deg"><span class="pola-img"${ph.sad?' style="filter:grayscale(.85)"':""}>${photoSVG(Object.assign({},ph,{av:S.av}))}</span><svg class="moment-badge" viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS[icon||"star"]||MOMENT_ICONS.star}</svg></div>`}
+
+/* ---- How a life ends, in a picture ---- */
+function endPhoto(){
+ const o=S.over,fam=castNow({pt:1,kids:"all"}).filter(c=>c!=="me"),base=phBase();
+ let ph;
+ if(o==="died")ph={sc:"funeral",c:fam.length?fam.slice(0,3):[],pr:"stone",x:S.name,o:"black"};
+ else if(o==="retired")ph={sc:"party",c:castNow({pt:1,fr:1}),pr:"gift",h:"party"};
+ else if(o==="won"||o==="exit"||o==="founder")ph={sc:S.path==="foot"?"stadium":"stage",c:castNow({pt:1}),pr:"trophy",o:S.path==="foot"?"kit":"suit"};
+ else if(o==="prison")ph={sc:"court",c:["me"],sad:1};
+ else ph={sc:PH_WORK[S.path]||"office",c:["me"],pr:"boxes",sad:1};
+ return Object.assign(base,ph);
+}
+{const _em=endModal;endModal=function(){_em.apply(this,arguments);try{const sh=document.getElementById("sheet");if(sh&&!sh.querySelector(".end-art")){const ph=endPhoto();sh.insertAdjacentHTML("afterbegin",`<div class="end-art"><div class="pola big" style="--r:-1deg"><span class="pola-img"${ph.sad||S.over==="died"?' style="filter:grayscale(.7)"':""}>${photoSVG(Object.assign({},ph,{av:S.av}))}</span></div></div>`)}}catch(e){}}}
+{const _hm=heirModal;heirModal=function(){_hm.apply(this,arguments);try{const sh=document.getElementById("sheet"),ks=heirs();if(sh&&ks.length){const ph=Object.assign(phBase(),{sc:"house",c:ks.slice(0,4).map(k=>`kid:${k.n}:${genderOf(k.n)}:${Math.floor(kidAge(k))}`)});sh.insertAdjacentHTML("afterbegin",`<div class="end-art"><div class="pola big" style="--r:1deg"><span class="pola-img">${photoSVG(Object.assign({},ph,{av:S.av}))}</span><span class="cap">The next generation</span></div></div>`);sh.querySelectorAll('[data-act="heir"]').forEach(b=>{const k=S.children[+b.dataset.k];if(k)b.insertAdjacentHTML("afterbegin",kidFace(k,44))})}}catch(e){}}}
+
+/* ---- Workplaces of their own: a film set, a TV studio, the dugout and the boardroom ---- */
+function workArt2(id,r){
+ const W=320,G=96;let g="";
+ if(id==="actor"){g=rc(0,0,W,G+24,"#16141F")+rc(0,G,W,24,"#2B2B2B");for(let i=0;i<3;i++)g+=pa(`M${70+i*90} 0 L${40+i*90} ${G} L${100+i*90} ${G}Z`,"#F6E7A8",'opacity=".12"');
+  g+=rc(150,30,90,66,"#3E4C6A")+rc(158,38,74,40,"#7FB2E5",'opacity=".6"')+pa("M150 30 L195 10 L240 30Z","#2B3A50");
+  g+=`<g transform="translate(40 46)">${rc(0,10,30,20,"#2B2B2B",'rx="2"')}${iaCirc(34,20,9,"#555")}${iaCirc(34,20,5,"#7FB2E5")}${rc(12,30,4,20,"#555")}${pa("M0 50 L14 30 L28 50","none",'stroke="#555" stroke-width="2"')}</g>`;
+  g+=`<g transform="translate(262 60)">${rc(0,8,28,18,"#1C1C24")}${pa("M0 8 L28 0 L28 6 L0 14Z","#F2F4F5")}${[0,1,2,3].map(i=>rc(i*7,0,3,8,"#1C1C24",`transform="rotate(-16 ${i*7} 4)"`)).join("")}</g>`;
+  g+=`<g transform="translate(110 70)">${rc(0,0,22,4,"#7A5B3A")}${rc(0,4,3,22,"#7A5B3A")}${rc(19,4,3,22,"#7A5B3A")}${rc(0,-14,22,10,"#B3262E")}</g>`;
+  if(r>=2)g+=rc(240,92,60,8,"#D7A744",'rx="2"')+`<text x="270" y="99" font-size="6" font-weight="800" fill="#1C1C24" text-anchor="middle" font-family="system-ui">SCENE ${12+r*7}</text>`}
+ else if(id==="tvchef"){g=rc(0,0,W,G+24,"#1C2329")+rc(20,6,280,60,"#3E4C8A");for(let i=0;i<7;i++)g+=iaCirc(40+i*40,36,10,["#E86A7A","#F6D44A","#7FB2E5"][i%3],'opacity=".45"');
+  g+=rc(40,64,240,32,"#D9DEE0")+rc(40,62,240,4,"#8E969A")+[80,150,220].map(x=>rc(x,52,24,10,"#2B2B2B")+pa(`M${x+4} 52 Q${x+8} 44 ${x+12} 52 Q${x+16} 42 ${x+20} 52Z`,"#E07A2E")).join("");
+  g+=[10,300].map(x=>rc(x,20,2,76,"#888")+rc(x-8,12,18,10,"#555")).join("")+rc(0,G,W,24,"#2B3A44");
+  g+=`<g transform="translate(270 70)">${rc(0,0,26,16,"#2B2B2B",'rx="2"')}${iaCirc(30,8,7,"#555")}${rc(10,16,4,10,"#555")}</g>`+(r>=2?`<text x="160" y="22" font-size="11" font-weight="800" fill="#F2F4F5" text-anchor="middle" font-family="system-ui">ON AIR</text>`:"")}
+ else if(id==="manager"){for(let i=0;i<8;i++)g+=rc(i*40,40,40,80,i%2?"#3E8E4A":"#4A9A55");
+  g+=rc(0,0,W,40,"#2E3E4C");for(let i=0;i<60;i++)g+=iaCirc((i*37)%316+2,4+(i*13)%30,2.2,["#B3262E","#F2F4F5","#D7A744","#7FB2E5"][i%4]);
+  g+=`<path d="M40 70 Q40 56 60 54 H200 Q220 56 220 70Z" fill="#9FD0EE" opacity=".55"/>`+rc(40,70,180,26,"#2B3A44")+[60,90,120,150,180].map((x,i)=>iaCirc(x,82,6,["#B3262E","#F2F4F5","#B3262E","#F2F4F5","#B3262E"][i])).join("");
+  g+=`<g transform="translate(240 58)">${rc(0,0,40,30,"#F2F4F5",'stroke="#555"')}${[[8,8],[20,6],[32,10],[14,20],[28,22]].map(([x,y])=>iaCirc(x,y,2,"#B3262E")).join("")}${pa("M6 24 Q20 10 34 16","none",'stroke="#1D5FA8" stroke-width="1.5"')}</g>`+rc(0,G,W,24,"#4A9A55")}
+ else if(id==="clubowner"){g=rc(0,0,W,G+24,"#E3E8EC")+rc(10,8,300,60,"#4A9A55",'stroke="#8E969A" stroke-width="4"');for(let i=0;i<40;i++)g+=iaCirc(14+(i*29)%292,12+(i*11)%14,2,["#B3262E","#F2F4F5","#D7A744"][i%3]);
+  g+=rc(150,8,3,60,"#8E969A")+rc(10,64,300,4,"#8E969A");
+  g+=pa("M30 96 L60 74 H260 L290 96Z","#5A3A22")+[70,110,150,190,230].map(x=>rc(x,66,14,12,"#1C1C24",'rx="3"')).join("");
+  g+=`<g transform="translate(144 76)">${pa("M0 0 H14 V5 A7 7 0 0 1 0 5Z","#E9C46A")}${rc(5,10,4,4,"#B8862B")}</g>`+rc(0,G,W,24,"#7A5B3A");
+  if(r>=3)g+=pa("M240 86 h12 l2 6 h-16Z","#F6E7A8")+pa("M246 76 l3 10 h-6Z","#F2F4F5")}
+ return `<svg class="art work-art" viewBox="0 0 ${W} 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}${empFront(r)}${id==="manager"?seasonArt(W,G):""}</svg>`;
+}
+{const _wa=workArt;workArt=function(){if(!S.prison&&!S.front&&!S.sel&&!S.sabb&&["actor","tvchef","manager","clubowner"].includes(S.path)){try{return workArt2(S.path,S.rank)}catch(e){}}return _wa.apply(this,arguments)}}
+
+/* ---- More inbox pictures, so careers don't repeat the same one ---- */
+Object.assign(IA,{
+ cockpit:()=>iaSky("#1C2329")+pa("M20 0 H300 L270 50 H50Z","#8FC7F0")+iaCloud(100,22,1)+iaCloud(220,30,.8)+rc(0,50,IA_W,34,"#2B3A44")+[60,90,120,200,230,260].map((x,i)=>iaCirc(x,64,8,"#0E1418",'stroke="#555"')+`<path d="M${x} 64 l${4-i%3*3} -5" stroke="${i%2?"#4BBA85":"#F6D44A"}" stroke-width="1.5"/>`).join("")+rc(150,56,20,24,"#555",'rx="3"')+rc(144,54,32,6,"#1C1C24",'rx="3"'),
+ classroom:()=>iaSky("#F2E8D5")+rc(60,6,200,40,"#2F5D46",'stroke="#8C6A44" stroke-width="3"')+`<text x="90" y="30" font-size="12" fill="#F2F4F5" font-family="cursive">a² + b² = c²</text>`+rc(0,62,IA_W,22,"#C9A87A")+[30,80,130,180,230,280].map((x,i)=>rc(x-14,58,28,6,"#8C6A44")+iaCirc(x,52,6,["#3A2A1A","#D9B66A","#5A3A22","#1B1B1B","#B5582A","#7A2E1E"][i])).join("")+iaCirc(300,14,7,"#fff",'stroke="#333"'),
+ theatre:()=>iaSky("#CFE8DE")+`<ellipse cx="160" cy="10" rx="40" ry="10" fill="#E9ECEE" stroke="#9AA0A6"/>`+pa("M130 14 L100 60 H220 L190 14Z","#F6F1D0",'opacity=".5"')+rc(90,52,140,8,"#9AA0A6")+rc(110,60,4,24,"#9AA0A6")+rc(206,60,4,24,"#9AA0A6")+iaPerson(70,84,"#3E8E7A")+iaPerson(250,84,"#3E8E7A")+rc(260,30,40,26,"#1C2329",'rx="3"')+`<path d="M264 44 l6 0 l3 -8 l4 14 l3 -6 l14 0" stroke="#4BBA85" stroke-width="1.5" fill="none"/>`,
+ filmset:()=>iaSky("#16141F")+[60,160,260].map(x=>pa(`M${x} 0 L${x-30} 70 L${x+30} 70Z`,"#F6E7A8",'opacity=".12"')).join("")+rc(0,70,IA_W,14,"#2B2B2B")+`<g transform="translate(60 26)">${rc(0,8,34,22,"#2B2B2B",'rx="2"')}${iaCirc(40,19,10,"#555")}${iaCirc(40,19,5,"#7FB2E5")}${rc(14,30,4,16,"#555")}</g>`+`<g transform="translate(200 40)">${rc(0,8,36,22,"#1C1C24")}${pa("M0 8 L36 0 L36 6 L0 14Z","#F2F4F5")}</g>`+iaPerson(150,70,"#B3262E","#E0B37E",.8),
+ boardroom:()=>iaSky("#E3E8EC")+rc(20,4,280,40,"#BFD4E2",'stroke="#8E969A" stroke-width="3"')+[...Array(9)].map((_,i)=>rc(26+i*31,44-(10+(i*13)%26),24,10+(i*13)%26,"#9AAEC0")).join("")+pa("M40 84 L70 56 H250 L280 84Z","#5A3A22")+[90,130,170,210].map(x=>rc(x,48,16,14,"#1C1C24",'rx="3"')).join("")+rc(140,6,40,24,"#1C2329")+`<path d="M144 26 L152 18 L160 22 L172 10" stroke="#4BBA85" stroke-width="2" fill="none"/>`,
+ dugout:()=>iaSky("#2E3E4C")+[...Array(40)].map((_,i)=>iaCirc((i*53)%316+3,6+(i*17)%14,2,["#B3262E","#F2F4F5","#D7A744"][i%3])).join("")+rc(0,26,IA_W,58,"#4A9A55")+`<path d="M60 84 V54 Q60 44 80 42 H240 Q260 44 260 54 V84Z" fill="#9FD0EE" opacity=".5"/>`+rc(60,66,200,18,"#2B3A44")+[90,130,170,210].map((x,i)=>iaCirc(x,64,7,i%2?"#F2F4F5":"#B3262E")).join("")
+});
+const IA_ALT={doc:["hospital","theatre"],nurse:["hospital","theatre"],teach:["school","classroom"],pilot:["plane","cockpit"],actor:["filmset","tv"],tvchef:["tv","kitchen"],manager:["dugout","stadium"],clubowner:["boardroom","stadium"],bank:["trading","boardroom"],law:["court","boardroom"],pol:["court","boardroom"],tech:["office","boardroom"]};
+Object.assign(IA_CAREER,{actor:"filmset",manager:"dugout",clubowner:"boardroom"});
+{const _k=iaKey2;iaKey2=function(m,e){const k=_k(m,e),alt=IA_ALT[S.path];if(alt&&alt.includes(k))return alt[h32(m.id||e.t||"")%alt.length];return k}}
 
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
@@ -8668,7 +8835,7 @@ function renderLife(){
   ${lifeTabsBar()}
   ${lifeTab==="family"?`
   <div class="pane-sec">
-   <div class="rel"><div class="ring">${single?"·":rel.st==="married"?"∞":"♥"}</div><div><div class="label">Relationship</div><div style="font-weight:600">${relLine}</div>${!single&&rel.trait&&PT[rel.trait]?`<div class="hint">${esc(rel.name)}: ${esc(PT[rel.trait].n.toLowerCase())}, ${esc(PT[rel.trait].d)}.${rel.stepkids?` ${rel.stepkids} stepchild${rel.stepkids>1?"ren":""}.`:""}</div>`:""}${S.children.length?`<div class="hint">${S.children.map(k=>`${esc(k.n)} (${Math.max(0,Math.floor(kidAge(k)))}${k.p?`, ${KID_TYPES[k.p]}`:""}${k.job?`, ${k.job}`:""})`).join(", ")}${S.grandkids?` · ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}</div>`:""}${S.care?`<div class="hint">Care home for your mum: ${money(S.care)} a month</div>`:""}${S.pet?`<div class="hint">${esc(S.pet.n)} the ${S.pet.kind}, ${Math.floor((S.day-S.pet.born)/YEAR)} years old</div>`:""}</div></div>
+   <div class="rel">${single?`<div class="ring">·</div>`:`<div class="ring ring-face">${partnerFace(52)}</div>`}<div><div class="label">Relationship</div><div style="font-weight:600">${relLine}</div>${kidFaces()}${!single&&rel.trait&&PT[rel.trait]?`<div class="hint">${esc(rel.name)}: ${esc(PT[rel.trait].n.toLowerCase())}, ${esc(PT[rel.trait].d)}.${rel.stepkids?` ${rel.stepkids} stepchild${rel.stepkids>1?"ren":""}.`:""}</div>`:""}${S.children.length?`<div class="hint">${S.children.map(k=>`${esc(k.n)} (${Math.max(0,Math.floor(kidAge(k)))}${k.p?`, ${KID_TYPES[k.p]}`:""}${k.job?`, ${k.job}`:""})`).join(", ")}${S.grandkids?` · ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}</div>`:""}${S.care?`<div class="hint">Care home for your mum: ${money(S.care)} a month</div>`:""}${S.pet?`<div class="hint">${esc(S.pet.n)} the ${S.pet.kind}, ${Math.floor((S.day-S.pet.born)/YEAR)} years old</div>`:""}</div></div>
    <div class="meters">${meter(single?"Social life":"Home life",S.homeLife,"good")}</div>
    <p class="hint" style="margin:8px 0 0">Long hours and high stress wear this down. ${single?"":"Below 15 and your partner may leave. "}A good home life above 65 eases your stress.</p>
    ${loveSec()}
