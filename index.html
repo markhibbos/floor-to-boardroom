@@ -479,6 +479,11 @@ a.btn.primary{color:var(--on-accent)}
 .wimp-sum{margin-top:6px;font-size:13.5px}.wimp-sum.down b{color:var(--down)}.wimp-sum.up b{color:var(--up)}
 .btn-short{opacity:.5}
 .bond-row{grid-column:1/-1;display:flex;align-items:center;gap:10px}.bond-row .bar{flex:1}.bond-n{font-size:12px;color:var(--muted);white-space:nowrap;min-width:84px;text-align:right}
+.ops{margin:4px 0 18px;padding:14px;border-radius:16px;border:1px solid var(--glass-line,var(--line));background:var(--glass-soft,rgba(127,127,127,.06))}.ops.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.ops .sec-head{margin-top:0}.op-brief{display:grid;grid-template-columns:1fr 1fr;gap:8px}.op-brief>div{display:flex;flex-direction:column;gap:3px;padding:8px 10px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}.op-brief b{font-size:15px}.op-brief .pill{align-self:flex-start}
+.op-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-top:4px}.op-opts button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;padding:8px 10px;border-radius:12px;border:1px solid var(--glass-line,var(--line));background:var(--glass,var(--surface));color:inherit;cursor:pointer}.op-opts button span{font-size:12.5px;color:var(--muted)}.op-opts button.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.op-est{margin-top:10px;font-size:14px}
+@media (max-width:480px){.op-brief{grid-template-columns:1fr}}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -5985,7 +5990,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -7534,14 +7539,14 @@ function xmasMorning(){
   const cap=S.front?"Christmas on the front line":lost?`The first Christmas without ${lost.r==="mum"?"Mum":lost.r==="dad"?"Dad":lost.n}`:n===1?"Christmas for one":n===2?"Christmas for two":n>=5?"The big family Christmas":"Christmas at home";
   snap({i:"tree",k:"Christmas",t:cap,s:S.front?"Tinned turkey and a carol over the radio.":pick(XMAS_LINES[n===1?"alone":n===2?"couple":n>=5?"big":"family"]),ph:{sc:S.front?"war":"xmas",c,o:S.front?"uniform":rnd()<.6?"xmas":undefined,h:S.front?"helmet":"santa",pr:S.front?"":"gift",sad:lost?1:0}});
  }
- if(mo===0&&S.resolY!==yr&&yr-(S.resolY??-9)>=2&&age()>=16&&rnd()<.35&&!S.front){S.resolY=yr;
+ if(mo===0&&S.resolY!==yr&&yr-(S.resolY??-9)>=2&&age()>=16&&rnd()<.35&&!S.front&&!(S.used.se_newyear!=null&&S.day-S.used.se_newyear<6)&&!S.inbox.some(m=>!m.done&&m.id==="se_newyear")){S.resolY=yr;
   pushDyn({id:"resol_"+S.day,life:1,from:"Your conscience",t:"New Year's resolution",b:"It's January. Everyone at work is doing Dry January and talking about it.",c:[
    {t:"Get fit this year",fx:{act:"resol",k:"fit"},o:"New trainers, a gym app and a lot of hope."},
    {t:"Drink less",fx:{act:"resol",k:"dry"},o:"You pour the wine down the sink. Some of it."},
    {t:"Save more money",fx:{act:"resol",k:"save"},o:"A spreadsheet. Colour-coded."},
    {t:"Learn something new",fx:{act:"resol",k:"learn"},o:"You download a language app. The owl is watching."},
    {t:"No resolutions. You're perfect",fx:{stress:-1},o:"Honestly, fair."}]})}
- if(mo===1&&S.valY!==yr&&yr-(S.valY??-9)>=2&&inLove()&&rnd()<.3&&!S.front){S.valY=yr;const p=S.rel.name.split(" ")[0];
+ if(mo===1&&S.valY!==yr&&yr-(S.valY??-9)>=2&&inLove()&&rnd()<.3&&!S.front&&!(S.used.se_val!=null&&S.day-S.used.se_val<6)&&!S.inbox.some(m=>!m.done&&m.id==="se_val")){S.valY=yr;const p=S.rel.name.split(" ")[0];
   pushDyn({id:"val_"+S.day,life:1,from:"Your diary",t:"Valentine's Day",b:`It's the 14th. ${p} has been dropping hints for a week.`,c:[
    {t:"A fancy dinner (£180)",fx:{gbp:-180,home:6,act:"valsnap"},o:"Candles, a set menu and a violinist who won't leave."},
    {t:"A homemade card and breakfast in bed",p:.7,win:{fx:{home:5},o:"Burnt toast, perfect day."},lose:{fx:{home:1},o:"The card looks like a ransom note."}},
@@ -8454,6 +8459,169 @@ function dayJobDay(notes){
 /* Footballers get proper recovery between games: physios, ice baths and days off */
 {const _ad2=albumDay;albumDay=function(n){_ad2(n);try{if(S.path==="foot"&&!S.over&&S.fb&&!S.fb.inj)S.stress=clamp(S.stress-2.5,0,100)}catch(e){}}}
 
+/* ============ The big job of the month: read the briefing, choose a plan and kit, decide how bold to be ============
+   Each career has a briefing of two conditions. Each condition has two possible values; the briefing shows one, with a source
+   that is either confirmed (right about 9 times in 10) or unconfirmed (a coin flip, near enough). Plans and kit suit different
+   values: fit:[if value 0, if value 1]. */
+const OPS={
+ soldier:{kind:"Operation",kitN:"Kit",names:["Kestrel","Granite","Nightjar","Iron Gate","Red Kite","Tempest","Black Heath"],
+  brief:[["enemy","Enemy strength",["light","dug in"],["Drone footage","A local informant"]],["ground","Terrain",["open ground","a town"],["Satellite maps","A patrol's report"]]],
+  plans:[["Night raid","Fast and quiet. Deadly against a light enemy, suicidal against a dug-in one.",{enemy:[.2,-.18]}],["Ambush their supply route","Patient. Works best in open ground.",{ground:[.16,-.1]}],["Clear it street by street","Slow and methodical. Built for towns, wasted in the open.",{ground:[-.12,.18],enemy:[-.04,.08]}]],
+  kits:[["Travel light","Speed over firepower.",{enemy:[.12,-.12]}],["Heavy weapons","Firepower for a dug-in enemy.",{enemy:[-.04,.15]}],["Extra medics","Fewer casualties if it goes wrong.",{},1]],
+  win:["The objective is taken without a single casualty.","Textbook. The CO mentions it at the morning briefing.","You're back before dawn, everyone accounted for."],
+  lose:["The enemy was waiting. You pull back with two wounded.","Comms fail at the worst moment and the operation is aborted.","It takes twice as long and costs far more than it should."]},
+ police:{kind:"Investigation",kitN:"Resources",names:["the Harbour Street robberies","the missing courier","the car-wash fraud","the warehouse fire","the phone-shop gang","the canal-path attacks"],
+  brief:[["suspect","The suspect",["a local","from out of town"],["CCTV","A tip-off"]],["evidence","Evidence so far",["forensic","witnesses"],["The lab","Door-to-door notes"]]],
+  plans:[["Stake out the known haunts","Patient surveillance. Great if they're local.",{suspect:[.18,-.14]}],["Lean on the witnesses","Fast, if the witnesses are solid.",{evidence:[-.12,.18]}],["Follow the forensics","Slow but solid, if there's forensic evidence to follow.",{evidence:[.18,-.12]}]],
+  kits:[["Extra officers","More bodies on the ground.",{suspect:[.1,-.04]}],["Specialist analysts","Phone and money trails.",{suspect:[-.02,.14]}],["Do it by the book","Fewer complaints if it goes wrong.",{},1]],
+  win:["You make the arrest at 6am. The file is watertight.","The CPS says it's the cleanest case they've seen all year.","The victims send a card to the station."],
+  lose:["The suspect walks for lack of evidence.","You arrest the wrong man. The papers love it.","The trail goes cold."]},
+ fire:{kind:"Incident command",kitN:"Resources",names:["the tower-block fire","the chemical works","the motorway pile-up","the warehouse blaze","the flooded estate","the moorland fire"],
+  brief:[["fire","The fire",["contained","spreading"],["The first crew","A caller"]],["people","People inside",["all out","unaccounted for"],["The building manager","A neighbour"]]],
+  plans:[["Defensive: protect the neighbours","Safe, if everyone's out.",{people:[.18,-.2]}],["Offensive: attack the seat of the fire","Bold. Puts it out fast if it's contained.",{fire:[.18,-.1]}],["Search and rescue first","Every crew inside looking for people.",{people:[-.08,.22]}]],
+  kits:[["Aerial ladder","Height and reach.",{people:[-.02,.12]}],["Extra pumps","More water, faster.",{fire:[-.02,.15]}],["Breathing-apparatus reserve","More safety margin for the crews.",{},1]],
+  win:["Everyone is out and the building is saved.","The chief officer shakes your hand on the news.","It's over in an hour. Textbook."],
+  lose:["The roof goes. You pull the crews out just in time.","A firefighter is hurt. You'll be asked hard questions.","It burns for two days."]},
+ doc:{kind:"Theatre list",kitN:"Team",names:["Monday's list","the emergency list","the weekend list","the trauma list"],
+  brief:[["patient","The patient",["fit and young","frail and elderly"],["The notes","A quick look on the ward"]],["scan","The scans",["clear","unclear"],["Radiology","A junior's reading"]]],
+  plans:[["Keyhole surgery","Quick recovery, if the scans are clear.",{scan:[.18,-.15]}],["Open surgery","Slower, but you can see everything.",{scan:[-.05,.15],patient:[.06,-.1]}],["Treat with drugs first","Gentle. Best for a frail patient.",{patient:[-.1,.18]}]],
+  kits:[["Your best anaesthetist","Vital for a frail patient.",{patient:[0,.14]}],["Extra scan in theatre","Fills in the gaps.",{scan:[0,.14]}],["A consultant second opinion","Spreads the blame if it goes wrong.",{},1]],
+  win:["Textbook. The patient is home in three days.","The family send flowers to the ward.","Your registrar asks to watch you next time."],
+  lose:["Complications. A long night in intensive care.","The patient goes back to theatre. It's on your record.","A complaint arrives from the family."]},
+ nurse:{kind:"The ward this month",kitN:"Staffing",names:["Ward 7","the medical admissions unit","the children's ward","the surgical ward"],
+  brief:[["beds","Bed pressure",["manageable","overflowing"],["The bed manager","Rumours in the canteen"]],["staff","Staffing",["full","short"],["The rota","A text from a colleague"]]],
+  plans:[["Discharge early and free up beds","Clears space fast, if the patients are ready.",{beds:[-.08,.18]}],["Focus on the sickest","Safe care, even when you're short.",{staff:[-.04,.16]}],["Keep everything by the book","Fine when it's calm. Slow when it's not.",{beds:[.16,-.12]}]],
+  kits:[["Bank nurses","Extra hands for a short shift.",{staff:[-.02,.15]}],["A discharge co-ordinator","Moves patients home faster.",{beds:[0,.14]}],["Extra handover time","Fewer mistakes if it goes wrong.",{},1]],
+  win:["Not a single incident report all month.","Matron singles you out at the team meeting.","A patient's family writes to the hospital about you."],
+  lose:["A medication error on the night shift.","The ward is closed to admissions twice.","Two of your team go off sick with stress."]},
+ pilot:{kind:"The long-haul trip",kitN:"Fuel",names:["the New York trip","the Singapore trip","the Cape Town trip","the Delhi trip","the Tokyo trip"],
+  brief:[["weather","Weather en route",["calm","storms"],["The Met briefing","The previous crew"]],["plane","The aircraft",["newly serviced","an old one with snags"],["Engineering","A rumour in the crew room"]]],
+  plans:[["Take the shortest route","Saves fuel and time, if the weather holds.",{weather:[.16,-.14]}],["Route around the weather","Longer, but smooth.",{weather:[-.08,.16]}],["Go with the plane's snags in mind","Extra checks at every step.",{plane:[-.06,.16]}]],
+  kits:[["Minimum fuel","Cheaper and the airline loves it.",{weather:[.12,-.14]}],["Extra fuel","Options if something goes wrong.",{weather:[-.02,.12]}],["A third pilot","Fresh eyes on a long trip.",{},1]],
+  win:["Smooth all the way. The passengers clap on landing.","On time, under budget, nobody noticed a thing.","The chief pilot sends you a note."],
+  lose:["A diversion and a night in a hotel for 300 passengers.","An engine warning over the ocean. Everyone is fine. You're not.","Turbulence injures a cabin crew member."]},
+ chef:{kind:"The big service",kitN:"Brigade",names:["the wedding banquet","the critic's visit","the charity gala","Valentine's night","the private party"],
+  brief:[["guests","The guests",["adventurous","traditional"],["The booking notes","Gossip from front of house"]],["produce","This week's produce",["superb","patchy"],["Your supplier","The delivery driver"]]],
+  plans:[["A daring tasting menu","Thrills adventurous diners.",{guests:[.18,-.14],produce:[.06,-.1]}],["Classic dishes done perfectly","Safe for traditional guests.",{guests:[-.06,.16]}],["Build the menu around the produce","Brilliant if the produce is superb.",{produce:[.18,-.16]}]],
+  kits:[["An extra sous chef","More hands on the pass.",{guests:[.06,.04]}],["A new supplier","Fixes patchy produce.",{produce:[-.02,.16]}],["A rehearsal the night before","Fewer disasters if it goes wrong.",{},1]],
+  win:["Every plate comes back clean.","The critic writes the best review of your career.","The guests give the kitchen a standing ovation."],
+  lose:["The fish is off. Half the room waits an hour.","A one-star review goes viral.","The pass collapses at 9pm and never recovers."]},
+ law:{kind:"The big case",kitN:"Team",names:["Hale v Hale","the Brightwater merger","R v Okafor","the Thames Water claim","the pension scandal"],
+  brief:[["judge","The judge",["strict on the law","swayed by people"],["Court records","Chambers gossip"]],["evidence","The evidence",["strong","thin"],["Disclosure","Your client's word"]]],
+  plans:[["Argue the law","A tight legal argument, for a strict judge.",{judge:[.18,-.12]}],["Put your client on the stand","Risky, but moving.",{judge:[-.08,.18],evidence:[.04,-.08]}],["Push for a settlement","Safe if the evidence is thin.",{evidence:[-.08,.18]}]],
+  kits:[["A star barrister","Brilliant in front of a strict judge.",{judge:[.12,0]}],["Expert witnesses","Shores up thin evidence.",{evidence:[0,.14]}],["Extra paralegals","Fewer mistakes in the paperwork.",{},1]],
+  win:["You win on every point.","The other side settles on the steps of the court.","Your name is in the law reports."],
+  lose:["You lose, with costs.","The judge criticises your firm in the judgment.","Your client sacks you on the way out."]},
+ teach:{kind:"The big inspection",kitN:"Support",names:["the Ofsted-ish visit","the mock exams","the parents' evening","the trust review"],
+  brief:[["class","Your hardest class",["chatty but keen","switched off"],["Their reports","The staffroom"]],["focus","What the inspectors want",["exam results","behaviour"],["The letter","A head at another school"]]],
+  plans:[["A showpiece lesson","All singing, all dancing. Great with a keen class.",{class:[.18,-.12]}],["Tight behaviour routines","Calm and orderly. What behaviour inspectors love.",{focus:[-.06,.18],class:[-.02,.08]}],["Exam drills","Grinding the mark scheme. Impressive on results.",{focus:[.18,-.1]}]],
+  kits:[["A teaching assistant","An extra pair of hands.",{class:[0,.14]}],["New resources","Shiny, engaging materials.",{class:[.1,0]}],["A practice run with the head","Fewer surprises if it goes wrong.",{},1]],
+  win:["The inspectors call your lesson outstanding.","Your class gets the best results in the school.","The head asks you to train the other staff."],
+  lose:["A pupil throws a chair in front of the inspector.","Results dip. The head wants a word.","The lesson falls apart in the first five minutes."]},
+ tech:{kind:"The big launch",kitN:"Team",names:["the payments update","the new app","the database migration","the AI feature","the checkout redesign"],
+  brief:[["code","The codebase",["clean","a legacy mess"],["Code review","A contractor"]],["traffic","Launch traffic",["normal","a huge spike"],["Marketing's forecast","A rumour on Slack"]]],
+  plans:[["Ship it all at once","Fast. Fine on clean code and normal traffic.",{code:[.16,-.14],traffic:[.06,-.12]}],["Roll out slowly to a few users","Safe under a big spike.",{traffic:[-.04,.18]}],["Rewrite the risky parts first","Slow, but tames legacy code.",{code:[-.08,.18]}]],
+  kits:[["Extra servers","Ready for a spike.",{traffic:[0,.16]}],["A senior engineer from another team","Knows the old code.",{code:[0,.14]}],["Feature flags and a rollback plan","Damage control if it goes wrong.",{},1]],
+  win:["Zero downtime. The CEO tweets about it.","It just works. Nobody notices, which is the point.","Your team gets a shout-out at the all-hands."],
+  lose:["The site goes down for six hours.","A bug charges 4,000 customers twice.","You roll back at 2am, red-eyed."]},
+ spy:{kind:"Operation",kitN:"Tradecraft",names:["Bluebell","Copper Fox","Silent Harbour","Winter Lamp","Grey Heron"],
+  brief:[["agent","Your agent",["loyal","wavering"],["Their handler's file","Their last meeting"]],["watchers","Hostile surveillance",["light","heavy"],["GCHQ-ish","A feeling in your gut"]]],
+  plans:[["A face-to-face meet","Rich intelligence, if nobody's watching.",{watchers:[.18,-.18]}],["A dead drop","No contact. Safe under heavy surveillance.",{watchers:[-.06,.16]}],["Bring the agent in from the cold","Secures a wavering agent.",{agent:[-.08,.18]}]],
+  kits:[["A counter-surveillance team","Shakes off watchers.",{watchers:[0,.14]}],["A bigger payment","Keeps a wavering agent sweet.",{agent:[0,.14]}],["A clean exit route","Gets you out if it goes wrong.",{},1]],
+  win:["The intelligence goes straight to the Prime Minister's desk.","Your agent delivers, and nobody saw a thing.","C sends you a single word: 'Excellent.'"],
+  lose:["Your agent is arrested. You'll never hear from them again.","You're photographed. It's in a foreign paper by Sunday.","The meet is blown and you abort."]},
+ vet:{kind:"The big case",kitN:"Support",names:["the racehorse","the farm outbreak","the zoo's tiger","the police dog","the prize-winning cow"],
+  brief:[["animal","The animal",["strong","old and weak"],["Its records","The owner's account"]],["cause","The likely cause",["an injury","an infection"],["X-rays","A hunch"]]],
+  plans:[["Operate","Fixes an injury, hard on a weak animal.",{cause:[.18,-.1],animal:[.04,-.12]}],["Medicine and rest","Gentle. Right for an infection.",{cause:[-.08,.18]}],["Refer to a specialist","Safe, slow and expensive.",{animal:[-.04,.14]}]],
+  kits:[["A specialist nurse","Better care after surgery.",{animal:[0,.12]}],["Lab tests first","Confirms the cause.",{cause:[.06,.08]}],["Insurance paperwork done properly","Fewer complaints if it goes wrong.",{},1]],
+  win:["The animal makes a full recovery. The owner cries.","You're in the local paper with a very grateful horse.","The farm is clear within a week."],
+  lose:["The animal doesn't make it.","The owner posts a furious review.","The outbreak spreads to the next farm."]},
+ arch:{kind:"The big pitch",kitN:"Team",names:["the riverside library","the new museum","the tower in Canary Wharf","the school rebuild","the village hall"],
+  brief:[["client","The client",["bold","cautious"],["Their last projects","An estate agent"]],["budget","The budget",["generous","tight"],["The brief","Their finance director"]]],
+  plans:[["A daring landmark","Wins with a bold client and a big budget.",{client:[.18,-.14],budget:[.06,-.12]}],["A practical, elegant design","Safe with a cautious client.",{client:[-.06,.16]}],["Value engineering","Clever on a tight budget.",{budget:[-.08,.18]}]],
+  kits:[["A beautiful model","Clients love something they can touch.",{client:[.1,.04]}],["A cost consultant","Answers the money questions.",{budget:[0,.14]}],["A rehearsed pitch","Fewer stumbles if it goes wrong.",{},1]],
+  win:["You win the commission. The champagne comes out.","The client says it's the best pitch they've seen.","Your design is on the cover of a magazine."],
+  lose:["They go with the other firm.","Your model breaks on the way in.","They love it, but can't afford it."]},
+ elec:{kind:"The big contract",kitN:"Crew",names:["the hotel rewire","the stadium lights","the hospital wing","the new school","the shopping-centre refit"],
+  brief:[["site","The site",["new build","an old building"],["The surveyor","The foreman"]],["deadline","The deadline",["realistic","impossible"],["The contract","The client's project manager"]]],
+  plans:[["Fast and pragmatic","Gets it done on a new build.",{site:[.16,-.12]}],["Strip it back to the bones","Slow, but right for an old building.",{site:[-.08,.18],deadline:[.04,-.08]}],["Bring in a subcontractor","Meets an impossible deadline, at a cost.",{deadline:[-.06,.18]}]],
+  kits:[["Extra apprentices","More hands.",{deadline:[.04,.1]}],["Specialist testing kit","Finds old problems.",{site:[0,.14]}],["A proper safety plan","Protects you if it goes wrong.",{},1]],
+  win:["Signed off first time. The client books you for the next one.","On time and on budget. Unheard of.","The site manager buys the crew lunch."],
+  lose:["It fails inspection. You redo half of it for free.","You overrun by a month and pay the penalty.","A fire alarm goes off at the opening. Awkward."]},
+ hair:{kind:"The big booking",kitN:"Team",names:["the celebrity wedding","the fashion-week show","the TV makeover","the hen party of twelve"],
+  brief:[["client","The client",["knows what they want","has no idea"],["The consultation","Their best friend"]],["time","Time on the day",["plenty","a mad rush"],["The schedule","The wedding planner"]]],
+  plans:[["Exactly what they asked for","Safe with a client who knows their mind.",{client:[.18,-.1]}],["Something bold and new","Wows a client with no idea.",{client:[-.1,.18]}],["Prep everything the night before","Saves you in a rush.",{time:[-.04,.18]}]],
+  kits:[["An extra stylist","More hands for a rush.",{time:[0,.14]}],["A trial run","Settles a nervous client.",{client:[.04,.1]}],["A backup kit","Fewer disasters if it goes wrong.",{},1]],
+  win:["The photos go everywhere. Your phone doesn't stop ringing.","The client cries happy tears.","A magazine asks for your number."],
+  lose:["The colour goes orange. Very orange.","You run out of time and the bride walks down the aisle half-done.","A bad review, in capital letters."]},
+ astronaut:{kind:"The mission",kitN:"Supplies",names:["the spacewalk","the docking","the science module","the satellite repair","the lunar landing rehearsal"],
+  brief:[["sun","Solar activity",["quiet","a storm"],["Mission control","An old hand's hunch"]],["kit","The equipment",["tested","new and untested"],["The manufacturer","The ground crew"]]],
+  plans:[["Go now, by the book","On schedule. Fine if the sun is quiet.",{sun:[.16,-.16]}],["Wait for a better window","Safe in a solar storm.",{sun:[-.06,.16]}],["Test everything twice","Slow, but tames new equipment.",{kit:[-.06,.18]}]],
+  kits:[["Spare parts","For untested kit.",{kit:[0,.14]}],["Extra shielding","Protection from a storm.",{sun:[0,.14]}],["A rehearsal in the pool","Fewer surprises if it goes wrong.",{},1]],
+  win:["Perfect. The pictures are on every front page.","Mission control bursts into applause.","A child writes to you saying they want to be an astronaut."],
+  lose:["An alarm. You abort and come home early.","A tool floats off into space on live TV.","The mission overruns and costs millions."]}
+};
+OPS.plumb=Object.assign({},OPS.elec,{names:["the hotel bathrooms","the hospital boilers","the block of flats","the swimming-pool plant room","the stately home"]});
+const OP_RISK=[["Cautious","Safer, smaller payoff.",.12,.7],["Standard","",0,1],["Bold","Bigger payoff, more can go wrong.",-.14,1.6]];
+function opGen(){
+ const T=OPS[S.path];if(!T||S.prison||S.front||S.sel||S.sabb||S.over||CAR_().mech!=="jobs"){S.op=null;return}
+ if(S.op&&S.op.d===S.day)return;
+ const conds=T.brief.map(()=>{const truth=rnd()<.5?0:1,conf=rnd()<.55,shown=rnd()<(conf?.9:.55)?truth:1-truth;return{truth,shown,conf}});
+ const top=(S.cards||[]).map(c=>c.pay).sort((a,b)=>b-a).slice(0,2).reduce((a,b)=>a+b,0);
+ S.op={d:S.day,name:pick(T.names),conds,plan:null,kit:null,risk:1,on:false,h:Math.round(R().cap*(.35+rnd()*.15)*10)/10,base:Math.max(1,Math.round(top*1.5))};
+}
+function opFit(o,useTruth){
+ const T=OPS[S.path];let f=0;
+ for(const part of [T.plans[o.plan],T.kits[o.kit]]){if(!part)continue;const fit=part[2]||{};
+  T.brief.forEach(([k],i)=>{const v=fit[k];if(!v)return;const c=o.conds[i];
+   if(useTruth)f+=v[c.truth];else{const r=c.conf?.9:.55;f+=v[c.shown]*r+v[1-c.shown]*(1-r)}})}
+ return f;
+}
+const opP=(o,useTruth)=>clamp(.48+(S.skill-40)/300+cx().gear*.015+opFit(o,useTruth)+OP_RISK[o.risk][2],.08,.9);
+{const _ju=jobsUsed;jobsUsed=function(){return _ju.apply(this,arguments)+(S.op&&S.op.on&&S.op.d===S.day?S.op.h:0)}}
+{const _jm=jobsMorning;jobsMorning=function(){_jm.apply(this,arguments);try{opGen()}catch(e){}}}
+function opSet(k,v){
+ const o=S.op;if(!o||o.d!==S.day)return;
+ if(k==="on"){if(o.on){o.on=false}else{if(o.plan==null||o.kit==null){toastMsg("Choose a plan and your "+OPS[S.path].kitN.toLowerCase()+" first.");return}
+   const room=R().cap-jobsUsed();if(o.h>room+.01){toastMsg(`It needs ${o.h}h. Drop some jobs below to make room.`);return}o.on=true}}
+ else{o[k]=+v;if(o.on&&(o.plan==null||o.kit==null))o.on=false}
+ save();render();
+}
+function opsSec(){
+ const o=S.op,T=OPS[S.path];if(!o||!T||o.d!==S.day)return"";
+ const ready=o.plan!=null&&o.kit!=null,p=ready?opP(o,false):null,worth=o.base*OP_RISK[o.risk][3];
+ const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}</button>`).join("")}</div>`;
+ return `<div class="ops ${o.on?"on":""}"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.h}h of your month</span></div>
+  <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}. Confirmed intel is right about 9 times in 10; unconfirmed is barely better than a guess.</p>
+  <div class="op-brief">${T.brief.map(([k,n,vals,srcs],i)=>{const c=o.conds[i];return `<div><span class="label">${esc(n)}</span><b>${esc(vals[c.shown])}</b><span class="pill ${c.conf?"":"rum"}">${esc(srcs[c.conf?0:1])}: ${c.conf?"confirmed":"unconfirmed"}</span></div>`}).join("")}</div>
+  <div class="label" style="margin-top:10px">1. The plan</div>${opt("plan",T.plans)}
+  <div class="label" style="margin-top:10px">2. ${esc(T.kitN)}</div>${opt("kit",T.kits)}
+  <div class="label" style="margin-top:10px">3. How bold?</div>${opt("risk",OP_RISK)}
+  <div class="op-est">${ready?`Your estimate: <b>${Math.round(p*100)}% chance of success</b> · worth about <b>${fmtOut(worth)}</b> if it works`:"Choose a plan and your "+esc(T.kitN.toLowerCase())+" to see your chances."}</div>
+  <div class="btn-row"><button class="btn ${o.on?"":"primary"}" data-act="opset" data-k="on">${o.on?"Drop it this month":`Take it on (${o.h}h)`}</button></div></div>`;
+}
+function opResolve(W){
+ const o=S.op,T=OPS[S.path];if(!o||!T||!o.on||o.d!==S.day)return;
+ const p=opP(o,true),roll=rnd(),ok=roll<p,great=ok&&roll<p*.25,safe=!!(T.kits[o.kit]||[])[3],mult=OP_RISK[o.risk][3];
+ let earn;
+ if(ok){earn=o.base*mult*(great?1.4:1);S.rep=clamp(S.rep+(great?4:2),0,100);S.skill=clamp(S.skill+1,0,100);if(isTeam())S.morale=clamp(S.morale+3,0,100)}
+ else{earn=o.base*mult*.15;S.stress=clamp(S.stress+(safe?3:7),0,100);S.rep=clamp(S.rep-(safe?1:3),0,100);if(o.risk===2)S.heat=clamp(S.heat+4,0,100);if(isTeam())S.morale=clamp(S.morale-5,0,100)}
+ W.tot+=earn;W.lines.push([`${T.kind}: ${o.name} (${ok?(great?"a triumph":"success"):"went wrong"})`,earn]);
+ const wrong=T.brief.filter((b,i)=>o.conds[i].shown!==o.conds[i].truth).map(b=>b[1].toLowerCase());
+ W.notes.push(`${T.kind}, ${o.name}: ${pick(ok?T.win:T.lose)}${wrong.length?` The briefing on ${wrong.join(" and ")} turned out to be wrong.`:""}`);
+ S.opRec=S.opRec||{n:0,ok:0};S.opRec.n++;if(ok)S.opRec.ok++;
+ if(great){S.log.unshift({d:S.day,t:`${T.kind}, ${o.name}: a triumph.`});try{snap({i:"trophy",k:T.kind,t:`${o.name[0].toUpperCase()+o.name.slice(1)}: a triumph`,s:pick(T.win),ph:{sc:PH_WORK[S.path]||"office",c:["me"],pr:"confetti"}})}catch(e){}}
+ o.on=false;
+}
+{const _jc=jobsClose;jobsClose=function(off){const W=_jc.apply(this,arguments);try{if(!off)opResolve(W)}catch(e){}return W}}
+
+/* Never two unread messages about the same thing: same title, or the same occasion */
+const DUP_THEMES=[[/valentine/i,"valentine"],[/new year|resolution/i,"newyear"],[/^christmas$|christmas for|where are you spending christmas/i,"xmasplans"],[/summer holiday/i,"summer"],[/(^your \d+\w* birthday|^happy birthday|birthday party\?)/i,"mybday"],[/halloween/i,"halloween"]];
+function inboxDedupe(){
+ const seen={},fresh=S.inbox.filter(m=>!m.done);
+ for(const m of fresh){const e=m.dyn||EV.find(q=>q.id===m.id);if(!e)continue;const t=String(e.t||"").toLowerCase().replace(/\d+/g,"#");const th=(DUP_THEMES.find(([re])=>re.test(t))||[])[1]||t;
+  if(seen[th]){S.inbox=S.inbox.filter(x=>x!==m)}else seen[th]=1}
+}
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -8467,6 +8635,7 @@ function renderJobs(){
    <div class="seg seg-jobs" role="group" aria-label="${esc(cd.n)}">${segs}</div>
    <div class="book-foot"><span>${est}</span></div></div>`}).join("");
  return {news,body:`
+   ${opsSec()}
    <div class="sec-head" id="workBoard"><h2>This month's work</h2><span class="label">${esc(S.bank)}</span></div>
    <div class="limit"><span>Your working day</span><div class="bar ${u/rk.cap>.9?"hot":""}"><i style="width:${Math.min(100,u/rk.cap*100)}%"></i></div><span class="mono">${u.toFixed(1)}/${rk.cap}h</span></div>
    <div class="hint" style="margin-top:2px">${u?`${u.toFixed(1)}h used, <b>${Math.max(0,rk.cap-u).toFixed(1)}h free</b>.`:`You have <b>${rk.cap} hours</b> in each working day this month.`} Each job below shows how many hours of your day it takes.</div>
@@ -9365,7 +9534,7 @@ function renderNav(){
  {const lab=closeLabel();document.getElementById("navClose").textContent=lab;const dc=document.querySelector(".desk-close [data-act=\"close\"]");if(dc)dc.textContent=lab}
 }
 /* Tells the player exactly what is blocking the end of the month */
-const needWork=()=>!S.prison&&!S.front&&!S.sel&&!S.sabb&&CAR_().mech==="jobs"&&!S.over&&S.cards&&S.cards.length&&!Object.keys(S.pick||{}).length&&!movesPicked();
+const needWork=()=>!S.prison&&!S.front&&!S.sel&&!S.sabb&&CAR_().mech==="jobs"&&!S.over&&S.cards&&S.cards.length&&!Object.keys(S.pick||{}).length&&!movesPicked()&&!(S.op&&S.op.on&&S.op.d===S.day);
 function closeLabel(){
  const n=S.inbox.filter(m=>!m.done).length;
  if(n)return`Clear the inbox · ${n} left`;
@@ -9639,6 +9808,7 @@ document.addEventListener("click",e=>{
  if(a==="addfriendrec"){const p=addFriendLife(window.__hashRec);save();render();toastMsg(p?`${p.n} is now in your game.`:"Start a game first.");t.disabled=true;return}
  if(a==="obit"){obitModal();return}
  if(a==="redsame"){redSame();return}
+ if(a==="opset"){opSet(t.dataset.k,t.dataset.v);return}
  if(a==="redretire"){S.redDone=1;endModal();return}
  if(a==="collection"){collModal();return}
  if(a==="menualbum"){hideModal();lifeTab="album";S.lifeSeen=S.lifeSeen||{};S.lifeSeen.album=S.day;setTab("life");render();return}
