@@ -486,6 +486,7 @@ a.btn.primary{color:var(--on-accent)}
 @media (max-width:480px){.ops{padding:10px}.op-brief b{font-size:13.5px}.op-brief>div{padding:6px 8px}.op-opts{grid-template-columns:1fr 1fr}.op-opts button{padding:7px 9px;font-size:14px}.op-opts button span{font-size:11.5px;line-height:1.3}.op-opts button:only-child,.op-opts button:last-child:nth-child(odd){grid-column:1/-1}}
 .dec-card .target-sum b{white-space:normal;overflow-wrap:anywhere}
 .op-pills{display:flex;flex-wrap:wrap;gap:6px}
+.mv-nudge{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:10px}.mv-nudge b{display:block;font-size:14px}.mv-nudge span{font-size:13px;color:var(--muted)}.mv-nudge .btn{flex:none}
 .fr-hist{list-style:none;margin:4px 0 0;padding:0;font-size:13.5px}.fr-hist li{padding:4px 0;border-bottom:1px solid var(--line)}.fr-hist li span{color:var(--muted);margin-right:8px;font-size:12px}
 .friend-card{display:flex;align-items:center;gap:12px;margin:2px 0 10px}.friend-card .face{flex:none;border-radius:50%}.friend-card b{font-size:16px}
 /* The home menu fits on one phone screen without scrolling */
@@ -6190,7 +6191,7 @@ function jobsMorning(){
   if(real)S.trends[tag]=dir>0?1.5:.65;
   S.news.push({tag,dir,rum,t:pick(dir>0?c.trends[tag].up:c.trends[tag].dn)})}
  S.news.push({t:pick(c.noise)});
- const pool=c.jobs.filter(j=>(j.rmin||0)<=S.rank&&(j.rmax??9)>=S.rank&&(!j.sf||S.sf)&&(!j.spec||S.spec===j.spec)&&!(S.spec&&S.path==="police"&&/Neighbourhood patrol/.test(j.n))&&!(S.sf&&/Guard duty|Ceremonial/.test(j.n))),cards=[];
+ const pool=c.jobs.filter(j=>(j.rmin||0)<=S.rank&&(j.rmax??9)>=S.rank&&(!j.sf||S.sf)&&(!j.spec||S.spec===j.spec)&&!(S.spec&&S.path==="police"&&/Neighbourhood patrol/.test(j.n))&&!(S.sf&&/Guard duty|Ceremonial/.test(j.n))),cards=[];window.__jobPool=pool;
  const want=S.news.filter(x=>x.tag).map(x=>x.tag);
  for(const tg of want){const j=pool.filter(x=>x.tag===tg);if(j.length)cards.push(pick(j))}
  if(S.focus){for(let i=0;i<2;i++){const j=pool.filter(x=>x.tag===S.focus&&!cards.includes(x));if(j.length)cards.push(pick(j))}}
@@ -9451,6 +9452,89 @@ SCENES.firstday.title=()=>FIRSTDAY[S.path]&&selfPaid()?`Day one: ${R().t}`:`Firs
  document.addEventListener("visibilitychange",()=>{if(!document.hidden)nudge()});
  window.addEventListener("pageshow",nudge);fix();
 })();
+/* ============ Monthly work that doesn't feel the same every month ============ */
+/* More DJ work at every level (the DJ career is set up further down, so this runs the first time jobs are dealt) */
+function djExtras(){if(!CAREERS.dj||CAREERS.dj._more)return;CAREERS.dj._more=1;CAREERS.dj.jobs.push(
+ {n:"Kids' birthday party",h:2,pay:80,d:.15,tag:"party",f:8,rmax:1},
+ {n:"Charity fun run warm-up",h:2,pay:40,d:.1,tag:"party",f:10,rmax:1},
+ {n:"Barbershop Saturday playlist",h:3,pay:50,d:.1,tag:"bar",f:6,rmax:1},
+ {n:"Open-deck night",h:2,pay:30,d:.25,tag:"club",f:20,rmax:1},
+ {n:"Gym spin class soundtrack",h:2,pay:70,d:.15,tag:"corporate",f:8,rmax:1},
+ {n:"Hen do on a party bus",h:3,pay:150,d:.3,tag:"party",f:12,rmax:2},
+ {n:"Mixtape for a rapper",h:3,pay:90,d:.25,tag:"studio",f:30,rmax:2},
+ {n:"Christmas office party",h:3,pay:200,d:.2,tag:"corporate",f:10,rmax:2},
+ {n:"Garden party on a narrowboat",h:3,pay:120,d:.2,tag:"party",f:14,rmax:1},
+ {n:"Sunday day party in the park",h:4,pay:300,d:.25,tag:"festival",f:60,rmin:1,rmax:2},
+ {n:"Pride float",h:4,pay:250,d:.25,tag:"festival",f:120,rmin:1,rmax:3},
+ {n:"Car launch at a showroom",h:3,pay:600,d:.2,tag:"corporate",f:40,rmin:1,rmax:3},
+ {n:"Warehouse rave",h:4,pay:500,d:.35,tag:"club",f:150,rmin:1,rmax:3,risk:1},
+ {n:"Podcast theme tune",h:2,pay:300,d:.2,tag:"studio",f:60,rmin:1,rmax:3},
+ {n:"Footballer's birthday party",h:3,pay:2500,d:.3,tag:"party",f:300,rmin:2,rmax:3},
+ {n:"Fashion brand advert soundtrack",h:3,pay:4000,d:.3,tag:"tv",f:500,rmin:2,rmax:4},
+ {n:"Back-to-back with a legend",h:3,pay:3000,d:.45,tag:"club",f:2000,rmin:2,rmax:4},
+ {n:"Tokyo club tour date",h:3,pay:8000,d:.4,tag:"club",f:4000,rmin:3},
+ {n:"Desert festival sunrise set",h:3,pay:12000,d:.45,tag:"festival",f:6000,rmin:3},
+ {n:"Royal wedding afterparty",h:3,pay:25000,d:.5,tag:"weddings",f:40000,rmin:3},
+ {n:"Billionaire's yacht party",h:3,pay:50000,d:.4,tag:"ibiza",f:20000,rmin:4},
+ {n:"Film soundtrack",h:3,pay:45000,d:.5,tag:"studio",f:60000,rmin:4},
+ {n:"Headline the Pyramids show",h:3,pay:80000,d:.55,tag:"festival",f:200000,rmin:4}
+);
+
+/* A DJ's big night of the month: read the room before you get there */
+OPS.dj={kind:"The big night",kitN:"Your set-up",names:["the warehouse party","the rooftop launch","the student union all-nighter","the boat party","the secret gig under the arches","the festival after-party","the end-of-season closing party"],
+ brief:[["crowd","The crowd",["up for anything","there for the hits"],["The promoter","Someone on the guest list"]],["sound","The sound system",["huge","patchy"],["The venue's tech","A DJ who played there last month"]]],
+ plans:[["Go deep and underground","Your own sound. Wins over a crowd up for anything, empties the floor of hit-hunters.",{crowd:[.18,-.16]}],["Bangers from the first track","Every song a singalong. Perfect for hit-lovers, a bit cheesy for the purists.",{crowd:[-.1,.18]}],["Slow build to a big finish","Patient. Needs a big system to land the drop.",{sound:[.16,-.12]}]],
+ kits:[["Your own decks and monitors","More to carry, but you know exactly how it sounds.",{sound:[-.02,.16]}],["Just a USB stick","Travel light and trust the venue.",{sound:[.12,-.14]}],["Bring a backup laptop","If something fails, the music doesn't stop.",{},1]],
+ win:["The floor is packed until the lights come up. The promoter books you again on the spot.","Someone films the drop. It's all over social media by morning.","You play an extra hour because nobody will leave."],
+ lose:["The floor empties to the bar by midnight.","The sound cuts out twice and the crowd boos.","The promoter pays you half and says 'maybe next time'."]};
+}
+
+/* One-off details that make the same job different each time: [label, pay, hours, difficulty] */
+const JOB_TWISTS_ALL=[["rush job",1.3,.8,.1],["VIP client",1.6,1,.08],["repeat customer",1,.9,-.08],["short notice",1.2,1,.06],["a favour for a friend",.6,1,-.05],["quiet one",.85,.8,-.06]];
+const JOB_TWISTS={
+ dj:[["rooftop",1.1,1,.05],["90s night",1,1,-.04],["in Manchester",1.15,1.1,0],["in Leeds",1.1,1.1,0],["Halloween special",1.2,1,.04],["silent disco",.9,1,.06],["vinyl only",1.1,1.1,.1],["back-to-back with a mate",.8,.8,-.06],["dodgy sound system",1,1,.12],["sold out",1.3,1,.05],["half-empty room",.7,1,.08],["live on the radio",1.2,1,.1]],
+ music:[["acoustic",.9,1,-.05],["sold out",1.3,1,.05],["support slot",.8,1,-.04],["in Glasgow",1.1,1.1,0],["broken string",1,1,.1],["live stream",.9,.9,.04]],
+ influencer:[["sponsored",1.5,1,.06],["trending sound",1.2,.9,.05],["collab",1.1,1,-.04],["unboxing",1,.8,-.04],["live",1,1,.08],["brand deal",1.6,1.1,.08]],
+ actor:[["night shoot",1.2,1.1,.06],["on location",1.1,1.2,.04],["improvised",1,1,.1],["one take",1.1,.8,.12],["rain machine",1,1.1,.06]],
+ chef:[["fully booked",1.2,1,.08],["food critic in",1.3,1,.12],["birthday table",1,1,-.04],["power cut",1,1.1,.12],["new menu",1.1,1,.06]],
+ tvchef:[["live TV",1.3,1,.12],["celebrity guest",1.4,1,.08],["outdoor shoot",1.1,1.2,.06],["Christmas special",1.5,1.1,.08]],
+ hair:[["wedding party",1.4,1.2,.06],["nervous first-timer",1,1,.06],["regular",1,.9,-.06],["celebrity client",1.8,1,.1],["prom season",1.2,1,.04]],
+ elec:[["Victorian house",1.1,1.2,.08],["new build",1,.9,-.05],["landlord job",.9,1,.04],["emergency call-out",1.5,1,.08],["listed building",1.3,1.2,.12]],
+ plumb:[["emergency call-out",1.5,1,.08],["Victorian pipes",1.1,1.2,.1],["landlord job",.9,1,.04],["new build",1,.9,-.05],["frozen pipes",1.3,1,.08]],
+ tech:[["legacy code",1,1.2,.12],["investor demo",1.3,.9,.1],["Friday deploy",1.1,1,.14],["pair programming",1,1,-.06],["no tests",1,1,.1]],
+ law:[["hostile judge",1,1.1,.12],["urgent injunction",1.4,.9,.1],["pro bono",.4,1,-.04],["famous client",1.6,1,.08]],
+ doc:[["night shift",1.2,1.1,.08],["winter crisis",1.1,1.2,.1],["teaching students",1,1.1,-.04],["bank holiday",1.3,1,.06]],
+ nurse:[["night shift",1.2,1.1,.08],["winter crisis",1.1,1.2,.1],["short-staffed",1,1.1,.12],["bank holiday",1.3,1,.06]],
+ teach:[["Ofsted week",1,1.2,.12],["last day of term",1,.9,-.06],["supply cover",1.1,1,.08],["school trip",1,1.2,.06]],
+ police:[["night shift",1.2,1.1,.08],["Saturday night",1.1,1.1,.1],["football match",1.2,1.1,.1],["quiet patch",1,.9,-.06]],
+ fire:[["night shift",1.2,1.1,.08],["heatwave",1.1,1.1,.1],["bonfire night",1.3,1.1,.12],["quiet patch",1,.9,-.06]],
+ pilot:[["crosswind",1,1,.12],["delayed",1,1.2,.06],["full flight",1.1,1,.04],["night flight",1.2,1.1,.06],["VIP on board",1.3,1,.08]],
+ vet:[["night call",1.3,1,.08],["nervous owner",1,1,.06],["farm visit",1.1,1.2,.06],["show animal",1.4,1,.08]],
+ arch:[["tight budget",.9,1,.1],["famous client",1.5,1.1,.08],["listed building",1.2,1.2,.12],["planning appeal",1.1,1.1,.1]],
+ soldier:[["night",1,1.1,.1],["foul weather",1,1.1,.1],["with the reservists",1,1,.06],["under inspection",1.1,1,.08]],
+ spy:[["no backup",1.2,1,.12],["deep cover",1.3,1.2,.1],["foreign soil",1.2,1.1,.08]],
+ astronaut:[["press watching",1.1,1,.06],["night run",1,1.1,.08],["with the new crew",1,1,.06]],
+ pol:[["cameras rolling",1.1,1,.1],["marginal seat",1.2,1.1,.08],["hostile crowd",1,1,.12]],
+ manager:[["derby",1.3,1,.12],["cup tie",1.2,1,.08],["injury crisis",1,1.1,.12]],
+ clubowner:[["fans protesting",1,1.1,.12],["TV deal week",1.3,1,.06],["transfer deadline",1.2,1,.1]]
+};
+let lastCardNames=[];
+{const _jm2=jobsMorning;jobsMorning=function(){
+ try{djExtras()}catch(e){}
+ _jm2.apply(this,arguments);
+ try{
+  const c=CAR_(),rk=R(),pool=(window.__jobPool||[]).slice(),prev=new Set((S.lastCards||[]));
+  /* Small job lists: show fewer cards so the selection rotates, dropping last month's first */
+  if(pool.length>=5&&S.cards&&S.cards.length>Math.max(4,pool.length-3)){const keep=Math.max(4,pool.length-3);S.cards.sort((x,y)=>(prev.has(x.n.replace(c.big[S.rank]||"",""))?1:0)-(prev.has(y.n.replace(c.big[S.rank]||"",""))?1:0));S.cards=S.cards.slice(0,keep).sort(()=>rnd()-.5);S.cards.forEach((cd,i)=>cd.id="c"+i)}
+  /* Swap most of last month's jobs for ones you didn't see */
+  if(pool.length&&S.cards){S.cards.forEach((cd,i)=>{const base=cd.n.replace(c.big[S.rank]||"","");if(prev.has(base)&&rnd()<.7){const fresh=pool.filter(j=>!prev.has(j.n)&&!S.cards.some(x=>x.n.startsWith(j.n)));if(fresh.length){const j=pick(fresh);S.cards[i]=Object.assign({},cd,{n:j.n+(c.big[S.rank]||""),h:Math.round(j.h*rk.js*10)/10,pay:Math.round(j.pay*rk.pm*rk.js*(.85+rnd()*.3)),d:clamp(j.d+(rnd()-.5)*.1,0,.9),tag:j.tag,risk:j.risk||0,f:j.f||0})}}})}
+  /* A twist on some of them */
+  const tw=[...(JOB_TWISTS[S.path]||[]),...JOB_TWISTS_ALL];
+  (S.cards||[]).forEach(cd=>{if(rnd()<.45){const [l,pm,hm,dd]=pick(tw);cd.n+=" · "+l;cd.pay=Math.max(1,Math.round(cd.pay*pm));cd.h=Math.max(.5,Math.round(cd.h*hm*10)/10);cd.d=clamp(cd.d+dd,0,.9)}});
+  S.lastCards=(S.cards||[]).map(cd=>cd.n.split(" · ")[0].replace(c.big[S.rank]||"",""));
+ }catch(e){}
+}}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -10278,7 +10362,7 @@ const deskTabNow=()=>deskLocked()?"work":deskTab;
 function deskTodo(){
  const o={work:0,month:0,moves:0};if(deskLocked())return o;
  const D=S.diary;if(D&&D.items){const c=D.items.filter(x=>x.clash);if(c.length&&!c.some(x=>x.go===true||x.go===false))o.month=1}
- try{const L=careerMoves();if(L.some(m=>m.id==="study")&&!mvPicked().includes("study"))o.moves=1}catch(e){}
+ try{const L=careerMoves(),ids=mvPicked();if((L.some(m=>m.id==="study")&&!ids.includes("study"))||(!ids.length&&L.some(m=>!moveAvail(m))))o.moves=1}catch(e){}
  if(CAR_().mech==="jobs"&&S.cards&&!Object.keys(S.pick||{}).length&&!(S.op&&S.op.on))o.work=1;
  return o;
 }
@@ -10291,6 +10375,9 @@ function deskMonthSec(){
  const h=`${mgCard()}${diarySec()}${quarterSec()}${courseCard()}${stage}`;
  return h.trim()?h:`<div class="pane-sec"><p class="hint">Nothing planned for this month. Enjoy the quiet.</p></div>`;
 }
+/* A reminder on the Work tab when you haven't picked any career moves this month */
+{const _dtb=deskTabsBar;deskTabsBar=function(){const h=_dtb.apply(this,arguments);try{if(!h||deskTab!=="work")return h;const L=careerMoves(),ids=mvPicked();if(ids.length)return h;const ok=L.filter(m=>!moveAvail(m));if(!ok.length)return h;const st=ok.find(m=>m.id==="study"),top=(st?[st]:[]).concat(ok.filter(m=>m!==st)).slice(0,2).map(m=>m.n.replace(/^Study for: /,"study for ").replace(/^Buy: /,"buy ")).map(t=>/^[A-Z][a-z]/.test(t)?t[0].toLowerCase()+t.slice(1):t);
+ return h+`<div class="pane-sec mv-nudge"><div><b>Career moves</b><span>None picked this month${top.length?": "+esc(top.join(", "))+(ok.length>2?" and more":""):""}.</span></div><button class="btn sm primary" data-act="desktab" data-v="moves">Choose</button></div>`}catch(e){return h}}}
 function setDeskTab(v){deskTab=v;try{localStorage.setItem("ftb-desktab",v)}catch(e){}render();window.scrollTo(0,0)}
 function renderDesk(){
  const mech=CAR_().mech, cal=calEvent(S.day);
