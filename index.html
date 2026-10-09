@@ -4103,7 +4103,7 @@ const partnerCost=()=>{if(!inLove())return 0;const t=PT[S.rel.trait]||{};return(
 /* Single? Go looking, rather than waiting for luck */
 function loveSec(){
  if(!isSingle()||S.prison||S.front||S.sel||S.over||ageAt(S)<18||ageAt(S)>=75)return"";const wait=3-(S.day-(S.loveTry??-99));
- return `<div class="love-cta"><div class="label">Looking for love?</div><p class="hint" style="margin:4px 0 8px">Try Swipr, speed dating, a blind date or a singles holiday in your free time.</p><button class="btn sm primary" data-act="lifetab" data-v="people">Go to People</button></div>`;
+ return `<div class="love-cta"><div class="label">Looking for love?</div><p class="hint" style="margin:4px 0 8px">Try Swipr, speed dating, a blind date or a singles holiday in your free time.</p><button class="btn sm primary" data-act="godating">See dating options</button></div>`;
  return `<div class="love-cta"><div class="label">Looking for love?</div><div class="btn-row" style="margin-top:6px"><button class="btn sm primary" data-act="lovego" data-k="app" ${wait>0?"disabled":""}>Try the dating app</button><button class="btn sm" data-act="lovego" data-k="out" ${wait>0?"disabled":""}>Go out and meet people</button></div><p class="hint" style="margin:6px 0 0">${wait>0?`${S.loveMsg&&S.loveTry===S.day?esc(S.loveMsg)+" ":""}You can try again in ${wait} month${wait>1?"s":""}.`:"The dating app puts three matches in your inbox. A night out costs a little and you might meet someone. Chance meetings can still pop up too."}</p></div>`;
 }
 function loveGo(k){
@@ -4609,7 +4609,7 @@ const ACTS={
  bond:fx=>{if(S.friend)S.friend.bond=clamp(S.friend.bond+fx.amt,0,100)},
  mood:fx=>{if(S.boss)S.boss.mood=clamp(S.boss.mood+fx.amt,0,100)},
  truce:()=>{const n=S.rival&&S.rival.name;if(!n)return;S.log.unshift({d:S.day,t:`${n} is a friend now, not a rival.`});if(!S.friend)S.friend={n,bond:55,since:S.day};newRival()},
- newfriend:()=>{S.friend={n:pick(FRIEND_NAMES),bond:50,since:S.day};delete S.friendLost;S.log.unshift({d:S.day,t:`Made a new friend: ${S.friend.n}.`})},
+ newfriend:()=>{S.friend={n:(()=>{const tk=takenFirsts(),L=FRIEND_NAMES.filter(n=>!tk.has(n));return pick(L.length?L:FRIEND_NAMES)})(),bond:50,since:S.day};delete S.friendLost;S.log.unshift({d:S.day,t:`Made a new friend: ${S.friend.n}.`})},
  bizmom:fx=>{if(S.biz)S.biz.mom=clamp(S.biz.mom+fx.amt,0,100)},
  bizbuyout:()=>{if(S.biz){const v=Math.round(bizValue()*1.6);S.wealth+=v;S.log.unshift({d:S.day,t:`Sold ${S.biz.name} to a rival for ${money(v)}.`});S.biz=null}},
  bizshare:()=>{if(S.biz){S.biz.invested*=.8;S.biz.avg*=.85;S.biz.mom=clamp(S.biz.mom+15,0,100)}},
@@ -5369,7 +5369,7 @@ let freeGrp="";const FREE_ORDER=["Out and about","At home","Together","Getaways"
 function freeSec(){
  if(S.prison||S.front||S.sel||S.over)return"";const left=freeLeft();const groups=[...new Set(ACTIVITIES.filter(a=>a.ok()).map(a=>a.g))];
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Free time</h2><span class="label">${left} of ${FREE_PER_MONTH} evenings left this month</span></div>
-  ${(()=>{groups.sort((x,y)=>FREE_ORDER.indexOf(x)-FREE_ORDER.indexOf(y));if(!groups.includes(freeGrp))freeGrp=groups[0];return `<div class="chips free-chips" role="tablist">${groups.map(g=>`<button role="tab" class="${g===freeGrp?"on":""}" aria-selected="${g===freeGrp}" data-act="freegrp" data-v="${esc(g)}">${esc(g)}</button>`).join("")}</div>`})()}${groups.filter(g=>g===freeGrp).map(g=>`<div class="label" style="margin-top:8px">${esc(g)}${g==="Dating"&&inLove()?(S.open?" · open relationship":` · behind ${esc(S.rel.name)}'s back`):""}</div><div class="acts">${ACTIVITIES.filter(a=>a.g===g&&a.ok()).map(a=>`<button class="act-card" data-act="doact" data-k="${a.k}" ${left<=0||(a.cost&&S.wealth<a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2)))?"disabled":""}><b>${esc(a.n)}</b><span>${esc(a.d)}</span><em>${a.cost?money(a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2))):"Free"}</em></button>`).join("")}</div>`).join("")}</div>`;
+  ${(()=>{groups.sort((x,y)=>FREE_ORDER.indexOf(x)-FREE_ORDER.indexOf(y));if(!groups.includes(freeGrp))freeGrp=isSingle()&&groups.includes("Dating")?"Dating":groups[0];return `<div class="chips free-chips" role="tablist">${groups.map(g=>`<button role="tab" class="${g===freeGrp?"on":""}" aria-selected="${g===freeGrp}" data-act="freegrp" data-v="${esc(g)}">${esc(g)}</button>`).join("")}</div>`})()}${groups.filter(g=>g===freeGrp).map(g=>`<div class="label" style="margin-top:8px">${esc(g)}${g==="Dating"&&inLove()?(S.open?" · open relationship":` · behind ${esc(S.rel.name)}'s back`):""}</div><div class="acts">${ACTIVITIES.filter(a=>a.g===g&&a.ok()).map(a=>`<button class="act-card" data-act="doact" data-k="${a.k}" ${left<=0||(a.cost&&S.wealth<a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2)))?"disabled":""}><b>${esc(a.n)}</b><span>${esc(a.d)}</span><em>${a.cost?money(a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2))):"Free"}</em></button>`).join("")}</div>`).join("")}</div>`;
 }
 function giveModal(iid){
  const it=(S.items||[]).find(i=>i.id===iid);if(!it)return;
@@ -6365,7 +6365,8 @@ const NAMES_M=["Tom","Marco","Leo","Danny","Raj","Marcus","Ollie","Gav","Kofi","
 const NAMES_F=["Priya","Elena","Aisha","Hannah","Grace","Zara","Becca","Fiona","Leah","Nadia","Steph","Jess","Sophie","Maya","Chloe","Amara"];
 const PREF_N={m:"Men",f:"Women",any:"Anyone"};
 const partnerPool=()=>S.pref==="m"?NAMES_M:S.pref==="f"?NAMES_F:[...NAMES_M,...NAMES_F];
-const partnerFirst=()=>pick(partnerPool());
+const takenFirsts=()=>{const t=new Set();const add=n=>{if(n)t.add(String(n).split(" ")[0])};if(S){add(S.friend&&S.friend.n);add(S.rel&&S.rel.name);(S.exes||[]).forEach(x=>add(x.n));(S.people||[]).filter(p=>p.alive!==false).forEach(p=>add(p.n))}return t};
+const partnerFirst=()=>{const tk=takenFirsts(),L=partnerPool().filter(n=>!tk.has(n));return pick(L.length?L:partnerPool())};
 const partnerFull=()=>`${partnerFirst()} ${pick(SURNAMES)}`;
 const genderOf=n=>{const f=String(n||"").split(" ")[0];return NAMES_F.includes(f)||["Priya","Elena","Aisha","Hannah","Grace","Zara","Becca","Fiona","Leah","Nadia","Steph","Jess","Maya","Isla","Ava","Freya","Rosie","Ivy","Esme","Nia"].includes(f)?"f":NAMES_M.includes(f)||["Oliver","Noah","Arlo","Theo","Jude","Kai","Felix","Rafi"].includes(f)?"m":"x"};
 const fitsPref=n=>!S.pref||S.pref==="any"||genderOf(n)===S.pref||genderOf(n)==="x";
@@ -10160,7 +10161,7 @@ function renderLife(){
   ${lifeTabsBar()}
   ${lifeTab==="family"?`
   <div class="pane-sec">
-   <div class="rel">${single?`<div class="ring">·</div>`:`<div class="ring ring-face">${partnerFace(52)}</div>`}<div><div class="label">Relationship</div><div style="font-weight:600">${relLine}</div>${kidFaces()}${!single&&rel.trait&&PT[rel.trait]?`<div class="hint">${esc(rel.name)}: ${esc(PT[rel.trait].n.toLowerCase())}, ${esc(PT[rel.trait].d)}.${rel.stepkids?` ${rel.stepkids} stepchild${rel.stepkids>1?"ren":""}.`:""}</div>`:""}${S.children.length?`<div class="hint">${S.children.map(k=>`${esc(k.n)} (${Math.max(0,Math.floor(kidAge(k)))}${k.p?`, ${KID_TYPES[k.p]}`:""}${k.job?`, ${k.job}`:""})`).join(", ")}${S.grandkids?` · ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}</div>`:""}${S.care?`<div class="hint">Care home for your mum: ${money(S.care)} a month</div>`:""}${S.pet?`<div class="hint">${esc(S.pet.n)} the ${S.pet.kind}, ${Math.floor((S.day-S.pet.born)/YEAR)} years old</div>`:""}</div></div>
+   <div class="rel">${single?`<div class="ring ring-face">${avatarSVG(52,S)}</div>`:`<div class="ring ring-face">${partnerFace(52)}</div>`}<div><div class="label">Relationship</div><div style="font-weight:600">${relLine}</div>${kidFaces()}${!single&&rel.trait&&PT[rel.trait]?`<div class="hint">${esc(rel.name)}: ${esc(PT[rel.trait].n.toLowerCase())}, ${esc(PT[rel.trait].d)}.${rel.stepkids?` ${rel.stepkids} stepchild${rel.stepkids>1?"ren":""}.`:""}</div>`:""}${S.children.length?`<div class="hint">${S.children.map(k=>`${esc(k.n)} (${Math.max(0,Math.floor(kidAge(k)))}${k.p?`, ${KID_TYPES[k.p]}`:""}${k.job?`, ${k.job}`:""})`).join(", ")}${S.grandkids?` · ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}</div>`:""}${S.care?`<div class="hint">Care home for your mum: ${money(S.care)} a month</div>`:""}${S.pet?`<div class="hint">${esc(S.pet.n)} the ${S.pet.kind}, ${Math.floor((S.day-S.pet.born)/YEAR)} years old</div>`:""}</div></div>
    <div class="meters">${meter(single?"Social life":"Home life",S.homeLife,"good")}</div>
    <p class="hint" style="margin:8px 0 0">Long hours and high stress wear this down. ${single?"":"Below 15 and your partner may leave. "}A good home life above 65 eases your stress.</p>
    ${loveSec()}
@@ -10668,6 +10669,7 @@ document.addEventListener("click",e=>{
  if(a==="albumall"){albumAll=true;render();return}
  if(a==="albummore"){albumN=(albumN||(window.innerWidth<520?12:24))+(window.innerWidth<520?12:24);render();return}
  if(a==="freegrp"){freeGrp=t.dataset.v;render();return}
+ if(a==="godating"){freeGrp="Dating";lifeTab="people";render();setTimeout(()=>{const c=document.querySelector(".free-chips");if(c){const y=c.getBoundingClientRect().top+window.scrollY-140;document.documentElement.scrollTop=y;document.body.scrollTop=y;window.scrollTo(0,y)}},250);return}
  if(a==="peopleall"){peopleAll=true;render();return}
  if(a==="addfriendrec"){const p=addFriendLife(window.__hashRec);save();render();toastMsg(p?`${p.n} is now in your game.`:"Start a game first.");t.disabled=true;return}
  if(a==="obit"){obitModal();return}
