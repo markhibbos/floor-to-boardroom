@@ -5990,7 +5990,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -8622,6 +8622,38 @@ function inboxDedupe(){
  for(const m of fresh){const e=m.dyn||EV.find(q=>q.id===m.id);if(!e)continue;const t=String(e.t||"").toLowerCase().replace(/\d+/g,"#");const th=(DUP_THEMES.find(([re])=>re.test(t))||[])[1]||t;
   if(seen[th]){S.inbox=S.inbox.filter(x=>x!==m)}else seen[th]=1}
 }
+/* ============ Prompts that point you at the desk: market alerts, rush jobs, intel updates and a nudge when you've left it alone ============ */
+ACTS.godesk=()=>{setTimeout(()=>{try{setTab("desk");const el=document.querySelector(".ops")||document.getElementById("workBoard");if(el)el.scrollIntoView({block:"start"});else window.scrollTo(0,0)}catch(e){}},350)};
+ACTS.deskpos=fx=>{const id=fx.id;if(!B[id])return;const cur=S.pos[id]||0,room=R().lim-(used()-Math.abs(cur)),v=fx.dir*Math.max(0,Math.min(2,room));if(!v){S.log.unshift({d:S.day,t:`No room in your risk limit for ${B[id].n}.`});return}S.pos[id]=v;S.log.unshift({d:S.day,t:`Went ${v>0?"long":"short"} ${B[id].n}.`})};
+ACTS.deskauto=()=>{for(const n of S.news){if(!n.id||!B[n.id])continue;ACTS.deskpos({id:n.id,dir:n.dir})}};
+ACTS.deskrush=fx=>{const cd=S.cards&&S.cards.find(c=>c.id===fx.cid);if(!cd)return;const a=CAR_().appr,i=Math.min(1,a.length-1);if(jobsUsed()+cd.h*a[i].h<=R().cap+.01){S.pick[cd.id]=i;S.log.unshift({d:S.day,t:`Took on a rush job: ${cd.n}.`})}else S.log.unshift({d:S.day,t:`No hours left for the rush job: drop something on your desk to fit it in.`})};
+ACTS.opintel=fx=>{const o=S.op;if(!o||o.d!==S.day)return;const c=o.conds[fx.i];if(c){c.conf=true;c.shown=c.truth}};
+function deskPrompts(){
+ if(S.over||S.prison||S.front||S.sel||S.sabb||S.day<3||S.inbox.some(m=>!m.done&&/^dsk_/.test(m.id)))return;
+ const mech=CAR_().mech,id0="dsk_"+S.day,E=e=>{S.deskPAt=S.day;pushDyn(Object.assign({id:id0,life:0,desk:1},e))},go={t:"Take me to the desk",fx:{act:"godesk"},o:"Over to the desk."};
+ /* A nudge if the desk has been left alone */
+ if(mech==="markets"){const flat=!visible().some(id=>S.pos[id]);S.flatN=flat?(S.flatN||0)+1:0;
+  if(S.flatN>=3&&S.day-(S.nudgeAt??-99)>=12){S.nudgeAt=S.day;S.flatN=0;return E({from:S.boss?S.boss.n:"Your boss",t:"Your book is flat",b:"You haven't held a position for three months. The desk is paid to take risk, and people are starting to notice.",c:[{t:"Follow today's news: take positions on the stories",fx:{act:"deskauto"},o:"You put on trades in the direction of the headlines."},go,{t:"I'm waiting for the right moment",fx:{rep:-2},o:"Your boss raises an eyebrow."}]})}}
+ else if(mech==="jobs"&&S.op){const idle=!S.op.on&&S.op.plan==null;S.opIdle=idle?(S.opIdle||0)+1:0;
+  const T=OPS[S.path];if(T&&S.opIdle>=4&&S.day-(S.nudgeAt??-99)>=12){S.nudgeAt=S.day;S.opIdle=0;return E({from:S.boss?S.boss.n:"Your boss",t:`Your ${T.kind.toLowerCase().replace(/^the /,"")} is waiting`,b:`${S.op.name[0].toUpperCase()+S.op.name.slice(1)} is on your desk this month. Read the briefing, choose a plan and take it on: it's where reputations are made.`,c:[go,{t:"Not this month",fx:{},o:"Maybe next time."}]})}}
+ if(S.day-(S.deskPAt??-99)<3||rnd()>.25)return;
+ /* Traders: the market is moving */
+ if(mech==="markets"){const n=pick((S.news||[]).filter(x=>x.id&&B[x.id]&&visible().includes(x.id)));if(!n)return;const b=B[n.id],cur=S.pos[n.id]||0;
+  return E({from:"Your desk",t:`${b.n} is on the move`,b:`${n.t}. ${n.rum?"It's an unconfirmed rumour.":"It's on the newswire."} Your position: ${cur>0?"long":cur<0?"short":"flat"}.`,c:[{t:`Go long ${b.n}`,fx:{act:"deskpos",id:n.id,dir:1},o:"You buy. Now you wait for the close."},{t:`Go short ${b.n}`,fx:{act:"deskpos",id:n.id,dir:-1},o:"You sell. Now you wait for the close."},go,{t:"Stay out of it",fx:{},o:"You watch from the sidelines."}]})}
+ if(mech!=="jobs"||!S.cards||!S.cards.length)return;
+ /* An intel update on this month's big job */
+ const o=S.op,T=OPS[S.path];
+ if(o&&T&&!o.on&&rnd()<.5){const i=o.conds.findIndex(c=>!c.conf);if(i>=0){const [k,nm,vals,srcs]=T.brief[i],c=o.conds[i];
+  return E({from:srcs[0],t:`An update on ${o.name}`,b:`${nm}: it's definitely ${vals[c.truth]}. ${srcs[0]} has confirmed it${c.shown!==c.truth?", and the first report was wrong":""}.`,c:[{t:"Plan around it",fx:{act:"opintel",i},o:"You update the briefing."},{t:"Plan around it, and take me to the desk",fx:{act:"opintelgo",i},o:"Over to the desk."}]})}}
+ /* A rush job worth more than usual */
+ const src=pick(CAR_().jobs.filter(j=>(j.rmin||0)<=S.rank&&(j.rmax??9)>=S.rank&&!j.sf&&!j.spec));if(!src)return;
+ const rk=R(),cid="rush"+S.day,cd={id:cid,n:"Rush: "+src.n,h:Math.round(src.h*rk.js*10)/10,pay:Math.round(src.pay*rk.pm*rk.js*1.6),d:clamp(src.d+.05,0,.9),tag:src.tag,risk:src.risk||0,f:0};
+ S.cards.push(cd);
+ return E({from:CAR_().offerFrom?CAR_().offerFrom.replace(/ for $/,""):"A regular client",t:`Rush job: ${src.n}`,b:`Someone needs this done this month and will pay over the odds: about ${fmtOut(cd.pay)} for ${cd.h}h. It's on your desk now.`,c:[{t:"Add it to this month's work",fx:{act:"deskrush",cid},o:"It's booked in."},go,{t:"Pass",fx:{},o:"Someone else gets it."}]});
+}
+ACTS.opintelgo=fx=>{ACTS.opintel(fx);ACTS.godesk()};
+{const _k=iaKey2;iaKey2=function(m,e){if(/^dsk_/.test(m.id||""))return S.path==="bank"?"trading":(IA_CAREER[S.path]||"office");return _k(m,e)}}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
