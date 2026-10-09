@@ -507,8 +507,14 @@ a.btn.primary{color:var(--on-accent)}
 .home-btns [data-act=collection]{order:1}.home-btns [data-act=hof],.home-btns [data-act=help]{order:2}
 @media (max-width:719px) and (max-height:730px){.home-lede{display:none}}
 @media (max-width:719px) and (max-height:620px){.home-icons{display:none}.home-btns .btn{height:48px;min-height:48px}}
-.modal,.moment,.home,.auth,.admin,.confetti{bottom:calc(0px - var(--vvfix,0px))}.confetti{height:auto}
-@media (max-width:719px){.nav{-webkit-transform:translate3d(0,var(--vvfix,0px),0);transform:translate3d(0,var(--vvfix,0px),0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}}
+/* iPhone Safari can keep a shorter "screen" after the keyboard closes, so anything pinned to the bottom stops halfway.
+   Size full-screen layers from the top with the real screen height instead, and hang the bottom bar off that. */
+@supports (height:100dvh){
+ .modal,.moment,.home,.auth,.admin,.confetti{bottom:auto;height:100dvh}
+ body::before{bottom:auto!important;height:100lvh}
+ @media (max-width:719px){.nav{top:calc(100dvh - 8px - env(safe-area-inset-bottom,0px));bottom:auto!important;-webkit-transform:translate3d(0,-100%,0)!important;transform:translate3d(0,-100%,0)!important}}
+}
+@media (max-width:719px){.nav{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}}
 .free-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:4px 0 2px;padding-bottom:2px}.free-chips button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface2);color:inherit;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;white-space:nowrap;min-height:36px;cursor:pointer}.free-chips button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 @media (max-width:480px){.album{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}.album .pola{padding:4px 4px 5px}.album .pola .cap{font-size:13px;margin-top:3px}.album .pola .ag{display:none}.acts{grid-template-columns:1fr 1fr}.act-card{padding:8px 10px}.act-card span{font-size:12px}}
 .arc-stage{position:relative;height:300px;border-radius:16px;overflow:hidden;margin:8px 0;touch-action:none;user-select:none;-webkit-user-select:none}
@@ -611,7 +617,7 @@ details.tip[open]>summary .tip-l{display:none}details.tip[open]>summary::after{c
   --glass-hi:inset 0 1px 0 rgba(255,255,255,.10);--sel-bg:rgba(215,167,68,.24);--note-bg:rgba(215,167,68,.12);
   --field:radial-gradient(1100px 620px at 8% -8%,#3A2C12 0%,transparent 60%),radial-gradient(900px 560px at 108% 6%,#12324A 0%,transparent 58%),radial-gradient(900px 700px at 50% 115%,#173A2A 0%,transparent 62%),#0B141B;}
 body{background:transparent}
-body::before{content:"";position:fixed;inset:0;bottom:calc(0px - var(--vvfix,0px));z-index:-1;background:var(--field);pointer-events:none}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field);pointer-events:none}
 .glassy,.pane,.top,.sheet,.side-tabs,.home-btn,.wb-cap{-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 .top{background:var(--glass-strong);border-bottom:1px solid var(--glass-line);top:0;padding-top:env(safe-area-inset-top,0px)}
 .tape{background:transparent;border-top:1px solid var(--glass-line)}
