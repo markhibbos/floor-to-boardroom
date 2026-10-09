@@ -486,6 +486,11 @@ a.btn.primary{color:var(--on-accent)}
 @media (max-width:480px){.ops{padding:10px}.op-brief b{font-size:13.5px}.op-brief>div{padding:6px 8px}.op-opts{grid-template-columns:1fr 1fr}.op-opts button{padding:7px 9px;font-size:14px}.op-opts button span{font-size:11.5px;line-height:1.3}.op-opts button:only-child,.op-opts button:last-child:nth-child(odd){grid-column:1/-1}}
 .dec-card .target-sum b{white-space:normal;overflow-wrap:anywhere}
 .op-pills{display:flex;flex-wrap:wrap;gap:6px}
+.pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
+.pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
+@keyframes petwag{0%,100%{transform:translate(0,0)}20%{transform:translate(-2px,-3px) rotate(-3deg)}40%{transform:translate(2px,-5px) rotate(3deg)}60%{transform:translate(-2px,-3px) rotate(-2deg)}80%{transform:translate(1px,-1px)}}
+@keyframes petsay{0%{opacity:0}15%,75%{opacity:1}100%{opacity:0}}
+.pet-body{transform-box:fill-box;transform-origin:50% 100%}
 .hol-pic svg{display:block;width:100%;height:auto;aspect-ratio:4/3;border-radius:14px;margin:8px 0 4px;box-shadow:0 3px 12px rgba(0,0,0,.18)}
 .hol-thumb{flex:none;width:58px;height:44px;border-radius:9px;align-self:center}.shop-row:has(.hol-thumb)>div{flex:1}
 .mv-nudge{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:10px}.mv-nudge b{display:block;font-size:14px}.mv-nudge span{font-size:13px;color:var(--muted)}.mv-nudge .btn{flex:none}
@@ -5033,7 +5038,7 @@ const SPECS={
    {t:"Your first big patient",b:"A lion with toothache.",safe:"Full sedation, lots of help",bold:"Light sedation, quick in and out",win:"The lion wakes up with a lovely smile.",lose:["The sedation wears off early. Everyone runs.","You pull the wrong tooth."]}],
   pass:()=>moment({icon:"heart",kicker:"Qualified",title:"Zoo vet",sub:"Your new patients weigh up to four tonnes.",big:true})},
  star:{career:"chef",again:1,n:"Guide inspection",from:"A rumour in the trade",inviteT:"The inspectors are coming",inviteB:"Word is the Michelan-ish guide is inspecting restaurants like yours this year.",yes:"Go for a star",yesO:"You rewrite the menu and buy new plates.",staff:"An anonymous diner",
-  elig:()=>S.rank>=2&&S.rep>=65&&(S.stars||0)<3&&(S.starAt==null||S.day-S.starAt>=12),odds:()=>specOdds((S.skill-50)/150,(S.rep-65)/200,-(S.stress-40)/250,-(S.stars||0)*.08),retry:12,tries:9,passed:()=>false,
+  elig:()=>S.rank>=2&&S.rep>=65&&(S.stars||0)<3&&(S.starAt==null||S.day-S.starAt>=12),odds:()=>specOdds((S.skill-50)/150,(S.rep-65)/200,-(S.stress-40)/250,-(S.stars||0)*.08),retry:24,tries:4,passed:()=>false,
   stages:[{t:"A table for one",b:"A lone diner orders the tasting menu and takes no photos. It might be the inspector.",safe:"Keep everything consistent",bold:"Send out extra courses",win:"They leave a big tip and no comment.",lose:["A sauce splits on the third course.","The extra courses look desperate."]},
    {t:"The second visit",b:"A couple you don't recognise ask detailed questions about your suppliers.",safe:"Cook the menu perfectly",bold:"Try a daring new dish",win:"They ask to meet the chef.",lose:["The kitchen is in the weeds and it shows.","The new dish doesn't work."]}],
   pass:()=>{S.stars=(S.stars||0)+1;S.starAt=S.day;S.rep=clamp(S.rep+6,0,100);moment({icon:"star",kicker:"The guide is out",title:`${S.stars} Michelan-ish star${S.stars>1?"s":""}`,sub:S.stars===3?"Three stars: the highest honour in cooking. Fully booked for a year.":"Your phone doesn't stop ringing.",big:true})}}
@@ -5429,7 +5434,7 @@ function jobStories(){
  for(const k of tags)S.tagRun[k]=(S.tagRun[k]||0)+1;
  if(!done.length||S.inbox.some(m=>!m.done&&/^js_/.test(m.id)))return;
  const boss=S.boss?S.boss.n:"Your boss",role=roleOf(),opts=[];
- const ev=(id,e)=>()=>pushDyn(Object.assign({id:`js_${id}_${S.day}`},e));
+ const ev=(id,e)=>()=>{if(id==="noticed")S.noticedAt=S.day;pushDyn(Object.assign({id:`js_${id}_${S.day}`},e))};
  const run=Object.entries(S.tagRun).find(([k,v])=>v>=4&&S.focus!==k&&!(S.focusOffered||{})[k]);
  if(run&&rnd()<.6){const[k]=run;S.focusOffered=S.focusOffered||{};S.focusOffered[k]=S.day;
   opts.length=0;ev("focus",{from:role,t:`The go-to person for ${tagName(k).toLowerCase()}`,b:`You've done ${tagName(k).toLowerCase()} work four months running and people have noticed. You could make it your speciality.`,c:[
@@ -5442,7 +5447,7 @@ function jobStories(){
   else if(j.ai===0&&!/Went wrong/.test(j.lab)&&rnd()<.05)opts.push(ev("bite",{from:"A phone call",t:`The ${j.n.toLowerCase()} comes back to haunt you`,b:`Something you rushed on a ${j.n.toLowerCase()} a while ago has gone wrong.`,c:[
    {t:"Go back and fix it for free",fx:{pnl:-1,rep:2,stress:4},o:"An evening lost, a reputation kept."},
    {t:"Say it isn't your problem",p:.5,win:{fx:{},o:"Nobody can prove anything."},lose:{fx:{rep:-6,heat:8},o:"A complaint lands on your boss's desk."}}]}));
-  if(j.ai===2&&!/Went wrong/.test(j.lab)&&rnd()<.07)opts.push(ev("noticed",{from:role,t:"Your work has been noticed",b:`Someone senior saw how thoroughly you handled the ${j.n.toLowerCase()}.`,c:[
+  if(j.ai===2&&!/Went wrong/.test(j.lab)&&S.day-(S.noticedAt??-99)>=24&&rnd()<.07)opts.push(ev("noticed",{from:role,t:"Your work has been noticed",b:`Someone senior saw how thoroughly you handled the ${j.n.toLowerCase()}.`,c:[
    {t:"Ask them to mentor you",p:.6,win:{fx:{act:"mentor",rep:3,skill:2},o:"They agree. Coffee once a month, and doors start opening."},lose:{fx:{rep:2},o:"They're too busy, but they'll remember your name."}},
    {t:"Just say thank you",fx:{act:"mood",amt:6,rep:2},o:`${boss} hears about it too.`}]}));
   if(/Delighted/.test(j.lab)&&rnd()<.04&&S.day-(S.thanksAt??-99)>=12&&(S.thanksAt=S.day))opts.push(ev("thanks",{from:"A card in the post",t:"A thank-you",b:`Someone you helped on a ${j.n.toLowerCase()} has written to say thank you. They'd like to buy you a drink.`,c:[
@@ -6105,7 +6110,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();try{petMorning()}catch(e){}wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -7127,7 +7132,7 @@ function diarySec(){
 function diaryEval(notes){
  const D=S.diary;if(!D||D.d!==S.day)return;
  const clash=D.items.filter(x=>x.clash);if(!clash.some(x=>x.go===true)){const w=clash.find(x=>DIARY_POOL.find(d=>d.k===x.k).kind==="work");for(const x of clash)x.go=x===w}
- for(const x of D.items){const d=DIARY_POOL.find(q=>q.k===x.k);if(!d)continue;const fx=x.go?d.hit:d.miss;if(fx&&Object.keys(fx).length)applyFx(fx,{vars:{}});if(x.clash&&!x.go)notes.push(`You missed ${x.t.charAt(0).toLowerCase()+x.t.slice(1)}.`)}
+ for(const x of D.items){const d=DIARY_POOL.find(q=>q.k===x.k);if(!d)continue;const fx=x.go?d.hit:d.miss;if(fx&&Object.keys(fx).length)applyFx(fx,{vars:{}});if(x.clash&&!x.go)notes.push(`You missed ${/^(A|An|The|Your|Their|Our|One|Some|Dinner|Lunch|Drinks|Training|Teaching|Delivering|Picking|Mixing|Recording|Closing|Signing|Playing|Filming|Editing|Speaking|Visiting|Taking|Helping|Unveiling|Judging|Cooking|Quoting|Being|Planning|Prep|Menu|Gig|Big|Breathing|Live|Month|Morbidity|Mock|Reports|Open|Survival|Centrifuge|Deep|Medical|Firearms|Community|Constituency|Parents|Farm|Out|Double|Crew|Year|Pro|Month-end|Lesson|Filing|Disclosure)\b/.test(x.t)?x.t.charAt(0).toLowerCase()+x.t.slice(1):x.t}.`)}
  S.diary=null;
 }
 
@@ -8764,7 +8769,7 @@ function deskPrompts(){
  if(mech==="markets"){const flat=!visible().some(id=>S.pos[id]);S.flatN=flat?(S.flatN||0)+1:0;
   if(S.flatN>=3&&S.day-(S.nudgeAt??-99)>=12){S.nudgeAt=S.day;S.flatN=0;return E({from:S.boss?S.boss.n:"Your boss",t:"Your book is flat",b:"You haven't held a position for three months. The desk is paid to take risk, and people are starting to notice.",c:[{t:"Follow today's news: take positions on the stories",fx:{act:"deskauto"},o:"You put on trades in the direction of the headlines."},go,{t:"I'm waiting for the right moment",fx:{rep:-2},o:"Your boss raises an eyebrow."}]})}}
  else if(mech==="jobs"&&S.op){const idle=!S.op.on&&S.op.plan==null;S.opIdle=idle?(S.opIdle||0)+1:0;
-  const T=OPS[S.path];if(T&&S.opIdle>=4&&S.day-(S.nudgeAt??-99)>=12){S.nudgeAt=S.day;S.opIdle=0;return E({from:S.boss?S.boss.n:"Your boss",t:`Your ${T.kind.toLowerCase().replace(/^the /,"")} is waiting`,b:`${S.op.name[0].toUpperCase()+S.op.name.slice(1)} is on your desk this month. Read the briefing, choose a plan and take it on: it's where reputations are made.`,c:[go,{t:"Not this month",fx:{},o:"Maybe next time."}]})}}
+  const T=OPS[S.path];if(T&&S.opIdle>=4&&S.day-(S.nudgeAt??-99)>=12&&((S.opNudgeP===S.path?S.opNudgeN:0)||0)<3){S.nudgeAt=S.day;S.opIdle=0;if(S.opNudgeP!==S.path){S.opNudgeP=S.path;S.opNudgeN=0}S.opNudgeN=(S.opNudgeN||0)+1;return E({from:S.boss?S.boss.n:"Your boss",t:`Your ${T.kind.toLowerCase().replace(/^the /,"")} is waiting`,b:`${S.op.name[0].toUpperCase()+S.op.name.slice(1)} is on your desk this month. Read the briefing, choose a plan and take it on: it's where reputations are made.`,c:[go,{t:"Not this month",fx:{},o:"Maybe next time."}]})}}
  if(S.day-(S.deskPAt??-99)<3||rnd()>.25)return;
  /* Traders: the market is moving */
  if(mech==="markets"){const n=pick((S.news||[]).filter(x=>x.id&&B[x.id]&&visible().includes(x.id)));if(!n)return;const b=B[n.id],cur=S.pos[n.id]||0;
@@ -9242,7 +9247,7 @@ let quizSt=null;
 function quizOpen(){
  let mine=[];try{mine=quizMine()}catch(e){}const gen=QUIZ.slice().sort(()=>rnd()-.5).slice(0,5-mine.length),qs=[...gen,...mine].sort(()=>rnd()-.5);
  const nem=S.nem&&!S.nem.done&&rnd()<.5;
- quizSt={qs,i:0,score:0,team:pick(QUIZ_TEAMS),rival:nem?`${S.nem.n.split(" ")[0]}'s team`:pick(["The Retired Teachers","Last Week's Winners","The Know-It-Alls","Four Blokes Called Steve"]),nem};
+ quizSt={qs,i:0,score:0,team:pick(QUIZ_TEAMS),rival:nem?`${S.nem.n.split(" ")[0]}'s team`:pick(["The Retired Teachers","Last Week's Winners","The Know-It-Alls","Four Blokes Called Steve"]),nem,nemN:nem?S.nem.n.split(" ")[0]:""};
  quizQ();
 }
 function quizQ(){
@@ -9261,7 +9266,7 @@ function quizAns(v){
 function quizEnd(){
  const st=quizSt;quizSt=null;const sc=st.score,n=st.qs.length,win=sc>=5||(sc===4&&rnd()<.5),mid=!win&&sc>=3;
  let res;
- if(win){S.wealth+=50;S.homeLife=clamp(S.homeLife+3,0,100);S.stress=clamp(S.stress-3,0,100);if(st.nem&&S.nem)S.nem.you++;res=`${st.team} win the quiz! A £50 bar tab and a bottle of something blue.${st.nem?` ${S.nem.n.split(" ")[0]} storms out.`:""}`;
+ if(win){S.wealth+=50;S.homeLife=clamp(S.homeLife+3,0,100);S.stress=clamp(S.stress-3,0,100);if(st.nem&&S.nem)S.nem.you++;res=`${st.team} win the quiz! A £50 bar tab and a bottle of something blue.${st.nem?` ${st.nemN||"Your nemesis"} storms out.`:""}`;
   try{snap({i:"trophy",k:"The pub quiz",t:`${st.team}: quiz champions`,s:`${sc} out of ${n}.`,ph:{sc:"pub",c:castNow({pt:1,fr:1}),pr:"pint"}})}catch(e){}}
  else if(mid){S.homeLife=clamp(S.homeLife+2,0,100);S.stress=clamp(S.stress-2,0,100);res=`Second place to ${st.rival}. Respectable. You argue about question three all the way home.`}
  else{S.stress=clamp(S.stress-1,0,100);if(st.nem&&S.nem)S.nem.them++;res=`Last place. ${st.rival} win${st.nem?", and wave at you on the way out":""}. You still had a lovely time.`}
@@ -11480,6 +11485,7 @@ function contentExtras(){if(window.__contentDone)return;window.__contentDone=1;t
  for(const [p,T] of Object.entries(OPS_NEW))if(!OPS[p])OPS[p]=T;
 }
 {const _jm3=jobsMorning;jobsMorning=function(){try{contentExtras()}catch(e){}return _jm3.apply(this,arguments)}}
+for(const k of ["opResolve","opsSec","opGen"]){const f0=window[k];if(typeof f0==="function")window[k]=function(){try{contentExtras()}catch(e){}return f0.apply(this,arguments)}}
 
 /* ============ Holidays come with pictures ============ */
 /* The holiday photo appears in the pop-up that tells you how the trip went */
@@ -12966,6 +12972,406 @@ EV.push(
   {t:"Find him a specialist sanctuary",fx:{karma:1},o:"He settles in with other elderly tortoises. You visit at Easter."}]}
 );
 
+/* ============ Career games: four drawn games for every job ============ */
+/* ARC_CAREER[career] = four games. Each uses one of eight game styles (e) with its own look and words. */
+const ARC_CAREER={};
+const ARC_ENGINES={jump:"jump",beat:"on the beat",pipes:"connect it",reps:"reps",targets:"spot it",catch:"catch",steady:"steady hand",zone:"timing"};
+const ARC_TH={jump:[12,6],beat:[26,14],pipes:[3,1],reps:[60,38],targets:[16,9],catch:[14,7],steady:[15,10],zone:[13,8]};
+/* Registered once the game data is loaded: each career game becomes its own kind, only for that career */
+function arcRegister(){if(window.__arcReg)return;window.__arcReg=1;
+ for(const [p,L] of Object.entries(ARC_CAREER))L.forEach((T,i)=>{const k=`c_${p}_${i}`;ARC_KINDS[k]={th:T.th||ARC_TH[T.e],only:[p],theme:T,t:()=>T.t,b:()=>T.b};ARC_NAMES[k]=ARC_ENGINES[T.e]||T.e})}
+const arcOwn=()=>{arcRegister();return Object.keys(ARC_KINDS).filter(k=>ARC_KINDS[k].only&&ARC_KINDS[k].only.includes(S.path)&&ARC_KINDS[k].theme)};
+{const _ag=arcGame;arcGame=function(kind){arcRegister();const g=_ag.apply(this,arguments);const K=ARC_KINDS[kind];if(K&&K.theme){g.t=K.theme.t;g.b=K.theme.b;g.res=K.theme.res;g.th=K.th;g.theme=K.theme}return g}}
+/* Each year: most games are your own job's, never another job's; you don't get the same one two years running */
+{const _apy=arcPlanYear;arcPlanYear=function(yr){arcRegister();const P=_apy.apply(this,arguments);if(!P.kinds||!P.kinds.length)return P;
+ P.kinds=P.kinds.filter(k=>!ARC_KINDS[k].only||ARC_KINDS[k].only.includes(S.path));const own=arcOwn(),prev=S.arcPrevOwn||[];
+ const fresh=own.filter(k=>!prev.includes(k)),pool=(fresh.length?fresh:own).sort(()=>rnd()-.5),want=P.months.length,chosen=[];
+ for(let i=0;i<want;i++){if(pool.length&&(i===0?rnd()<.85:rnd()<.6))chosen.push(pool.shift());else{const gk=P.kinds.find(k=>!chosen.includes(k)&&!ARC_KINDS[k].only);if(gk)chosen.push(gk);else if(pool.length)chosen.push(pool.shift())}}
+ P.kinds=chosen;while(P.months.length>P.kinds.length)P.months.pop();S.arcPrevOwn=chosen.filter(k=>own.includes(k));P.done=P.done||[];P.path=S.path;return P}}
+{const _am=arcadeMorning;arcadeMorning=function(){try{if(S&&S.arcPlan&&S.arcPlan.path&&S.arcPlan.path!==S.path)S.arcPlan=null}catch(e){}return _am.apply(this,arguments)}}
+/* The game opens on your job's first game when there's no plan */
+{const _ao=arcOpen;arcOpen=function(kind,forReal){arcRegister();if(kind&&ARC_KINDS[kind]&&ARC_KINDS[kind].only&&!ARC_KINDS[kind].only.includes(S.path))kind=undefined;if(!kind){const own=arcOwn();if(own.length)kind=pick(own)}return _ao.call(this,kind,forReal)}}
+
+{const _as=arcStart;arcStart=function(){const g=arcCur;if(!g||!g.theme)return _as.apply(this,arguments);
+ const T=g.theme,st=document.getElementById("arcStage");if(!st)return;st.innerHTML="";st.style.touchAction="none";arcRun={stop:false,score:0};const run=arcRun,hudS=document.getElementById("arcScore"),hudT=document.getElementById("arcTime");
+ const setScore=d=>{run.score=Math.max(0,run.score+d);if(hudS)hudS.textContent=`Score ${run.score}`};
+ const alive=()=>arcRun===run&&!run.stop&&!document.getElementById("modal").hidden;
+ const yay=()=>{try{sfx.coin()}catch(e){}},boo=()=>{try{sfx.bad()}catch(e){}};
+ const NS='xmlns="http://www.w3.org/2000/svg"';
+ const clock=(secs,onEnd,each)=>{const t0=performance.now();let last=t0;(function tick(now){if(!alive())return;const el=(now-t0)/1000,dt=Math.min(.05,(now-last)/1000);last=now;if(hudT)hudT.textContent=`${Math.max(0,secs-el).toFixed(1)}s`;if(each&&each(el,dt,now)===false)return;if(el>=secs)return onEnd();requestAnimationFrame(tick)})(performance.now())};
+ const scene=(k,W,H)=>`<svg x="0" y="0" width="${W}" height="${H}" viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">${(PH_BG[k]||PH_BG[PH_WORK[S.path]]||PH_BG.park)()}</svg>`;
+ const em=(t,x,y,s,extra="")=>`<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" dominant-baseline="central" ${extra}>${t}</text>`;
+ const e=T.e;
+
+ if(e==="jump"){
+  const W=360,H=300,GY=236;st.style.background=T.sky;
+  st.innerHTML=`<svg ${NS} viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><rect width="${W}" height="${H}" fill="${T.sky}"/>${T.low?[...Array(30)].map((_,i)=>`<circle cx="${(i*67)%W}" cy="${(i*29)%180}" r="1" fill="#fff"/>`).join(""):`<circle cx="300" cy="50" r="22" fill="#F6D44A" opacity=".8"/>`}<rect y="${GY}" width="${W}" height="${H-GY}" fill="${T.ground}"/><g id="jDash"></g><g id="jObs"></g><g id="jMan"></g><g id="jLives"></g></svg>`;
+  const svg=st.querySelector("svg"),gO=svg.querySelector("#jObs"),gM=svg.querySelector("#jMan"),gD=svg.querySelector("#jDash"),gL=svg.querySelector("#jLives");
+  const man=(y,leg)=>`<g transform="translate(70 ${y})"><circle cx="0" cy="-46" r="9" fill="#E8B999"/><rect x="-8" y="-37" width="16" height="22" rx="5" fill="${T.who||"#3E6FB0"}"/><path d="M-4 -15 L${-8-leg} 0 M4 -15 L${8+leg} 0" stroke="#2B2B2B" stroke-width="5" stroke-linecap="round"/><path d="M-8 -32 L-16 ${-22+leg} M8 -32 L16 ${-24-leg}" stroke="#E8B999" stroke-width="4" stroke-linecap="round"/></g>`;
+  const OB={wall:[18,34,x=>`<rect x="${x}" y="${GY-34}" width="18" height="34" fill="#8A5A3A" stroke="#5A3A22"/>`],log:[40,16,x=>`<rect x="${x}" y="${GY-16}" width="40" height="16" rx="8" fill="#7A5B3A"/>`],
+   tyre:[26,26,x=>`<circle cx="${x+13}" cy="${GY-13}" r="13" fill="#2B2B2B"/><circle cx="${x+13}" cy="${GY-13}" r="6" fill="${T.sky}"/>`],reel:[26,26,x=>`<circle cx="${x+13}" cy="${GY-13}" r="13" fill="#2B2B2B"/><circle cx="${x+13}" cy="${GY-13}" r="6" fill="#B3262E"/>`],
+   bin:[22,33,x=>`<rect x="${x}" y="${GY-30}" width="22" height="30" rx="3" fill="#2E6B3A"/><rect x="${x-2}" y="${GY-33}" width="26" height="5" fill="#245A30"/>`],fence:[20,32,x=>`<g stroke="#A88A5A" stroke-width="4">${[0,9,18].map(d=>`<line x1="${x+d}" y1="${GY}" x2="${x+d}" y2="${GY-32}"/>`).join("")}<line x1="${x-2}" y1="${GY-22}" x2="${x+20}" y2="${GY-22}"/></g>`],
+   cone:[18,24,x=>`<path d="M${x} ${GY} L${x+9} ${GY-24} L${x+18} ${GY}Z" fill="#F07A2E"/><rect x="${x+4}" y="${GY-14}" width="10" height="3" fill="#fff"/>`],hurdle:[24,30,x=>`<g stroke="#fff" stroke-width="4"><line x1="${x}" y1="${GY}" x2="${x}" y2="${GY-28}"/><line x1="${x+24}" y1="${GY}" x2="${x+24}" y2="${GY-28}"/></g><rect x="${x-2}" y="${GY-30}" width="28" height="7" fill="#E86A7A"/>`],
+   ball:[20,20,x=>`<circle cx="${x+10}" cy="${GY-10}" r="10" fill="#fff" stroke="#2B2B2B"/>`],rock:[32,24,x=>`<path d="M${x} ${GY} Q${x+4} ${GY-26} ${x+16} ${GY-24} Q${x+30} ${GY-20} ${x+32} ${GY}Z" fill="#6E6E78"/>`],crater:[36,10,x=>`<ellipse cx="${x+18}" cy="${GY+2}" rx="20" ry="7" fill="#55555E"/><path d="M${x} ${GY} Q${x+18} ${GY-18} ${x+36} ${GY}" fill="none" stroke="#7A7A84" stroke-width="4"/>`],
+   box:[24,24,x=>`<rect x="${x}" y="${GY-24}" width="24" height="24" fill="#C49A6C" stroke="#8A6440"/><path d="M${x} ${GY-12} H${x+24}" stroke="#8A6440"/>`],puddle:[40,6,x=>`<ellipse cx="${x+20}" cy="${GY-1}" rx="20" ry="5" fill="#4FA8D0"/>`],
+   suitcase:[26,22,x=>`<rect x="${x}" y="${GY-22}" width="26" height="20" rx="3" fill="#7A1F2B"/><rect x="${x+9}" y="${GY-27}" width="8" height="5" fill="none" stroke="#2B2B2B" stroke-width="2"/>`],trolley:[30,28,x=>`<rect x="${x}" y="${GY-26}" width="30" height="18" fill="#B0BEC5"/><circle cx="${x+6}" cy="${GY-4}" r="4" fill="#2B2B2B"/><circle cx="${x+24}" cy="${GY-4}" r="4" fill="#2B2B2B"/>`]};
+  const kinds=(T.obs||["box","cone"]).filter(k=>OB[k]);
+  let y=0,vy=0,obs=[],speed=170,nextAt=900,lives=3,hitUntil=0,dist=0;const grav=T.low?900:1700,jumpV=T.low?-470:-560;
+  st.addEventListener("pointerdown",ev=>{if(!alive())return;ev.preventDefault();if(y===0){vy=jumpV;yay()}});
+  clock(30,()=>arcEnd(run.score),(el,dt,now)=>{speed=170+el*7;dist+=speed*dt;vy+=grav*dt;y=Math.min(0,y+vy*dt);if(y===0)vy=0;
+   if(el*1000>nextAt){obs.push({x:W+10,k:pick(kinds),done:false});nextAt=el*1000+Math.max(700,1500-el*35)+rnd()*700}
+   obs.forEach(o=>o.x-=speed*dt);obs=obs.filter(o=>o.x>-50);
+   for(const o of obs){const [w,h]=OB[o.k];if(!o.done&&o.x<78&&o.x+w>62&&-y<h-4&&now>hitUntil){lives--;hitUntil=now+900;boo();o.done=true;if(lives<=0){arcEnd(run.score);return false}}if(!o.done&&o.x+w<62){o.done=true;setScore(1)}}
+   const leg=y<0?6:Math.sin(dist/12)*7;gM.innerHTML=`<g opacity="${now<hitUntil&&Math.floor(now/100)%2?0.3:1}">${man(GY+y,leg)}</g>`;gO.innerHTML=obs.map(o=>OB[o.k][2](o.x)).join("");
+   gD.innerHTML=[...Array(8)].map((_,i)=>`<rect x="${((i*60-dist*.9)%480+480)%480-60}" y="${GY+18}" width="26" height="3" fill="#000" opacity=".15"/>`).join("");
+   gL.innerHTML=[...Array(3)].map((_,i)=>em("❤️",W-20-i*22,22,16,`opacity="${i<lives?1:.2}"`)).join("")});
+ }
+
+ if(e==="beat"){
+  st.style.background=T.bg;
+  st.innerHTML=`<svg ${NS} viewBox="0 0 300 300" width="100%" height="100%" style="display:block"><rect width="300" height="300" fill="${T.bg}"/>${[...Array(14)].map((_,i)=>`<circle cx="${(i*83)%300}" cy="${(i*47)%300}" r="2" fill="${["#E86A7A","#F6D44A","#7FB2E5","#4BBA85"][i%4]}" opacity=".5"/>`).join("")}
+   <g id="bRec"><circle cx="150" cy="160" r="110" fill="${T.disc||"#111"}" stroke="#000" stroke-width="2"/>${[96,82,68,54].map(r=>`<circle cx="150" cy="160" r="${r}" fill="none" stroke="#2A2A2A" stroke-width="1.2"/>`).join("")}<circle cx="150" cy="160" r="34" fill="${T.label||"#E86A7A"}"/>${T.icon?em(T.icon,150,160,30):`<circle cx="150" cy="160" r="4" fill="#111"/>`}<circle cx="150" cy="70" r="11" fill="#fff" stroke="${T.label||"#E86A7A"}" stroke-width="4"/></g>
+   <path d="M150 30 L150 58" stroke="#ddd" stroke-width="6" stroke-linecap="round"/><path id="bZone" d="M126 44 A120 120 0 0 1 174 44" stroke="#4BBA85" stroke-width="10" fill="none" opacity=".55"/><text id="bTxt" x="150" y="292" font-size="18" font-weight="700" fill="#fff" text-anchor="middle"></text></svg>`;
+  const rec=st.querySelector("#bRec"),txt=st.querySelector("#bTxt"),zone=st.querySelector("#bZone");let ang=180,lastHit=-1,streak=0;
+  const say=(t,c)=>{txt.textContent=t;txt.setAttribute("fill",c);zone.setAttribute("stroke",c)};
+  st.addEventListener("pointerdown",ev=>{if(!alive())return;ev.preventDefault();const a=ang%360,d=Math.min(a,360-a),lap=Math.floor((ang+180)/360);
+   if(d<=12&&lap!==lastHit){lastHit=lap;streak++;setScore(streak>=4?3:2);yay();say(streak>=4?"Perfect! On fire":"Perfect!","#4BBA85")}else if(d<=28&&lap!==lastHit){lastHit=lap;streak=0;setScore(1);say("Good","#F6D44A")}else{streak=0;setScore(-1);boo();say("Off the beat","#E86A7A")}});
+  clock(25,()=>arcEnd(run.score),(el,dt)=>{ang+=360*(0.35+el*0.012)*dt;rec.setAttribute("transform",`rotate(${ang%360} 150 160)`)});
+ }
+
+ if(e==="pipes"){
+  st.style.background=T.bg;const N=5,DIRS=[[0,-1],[1,0],[0,1],[-1,0]];let grid,src,dst,solved=false;
+  const openings=c=>(c.t==="s"?[0,2]:[0,1]).map(d=>(d+c.r)%4);
+  function make(){src=Math.floor(rnd()*N);dst=Math.floor(rnd()*N);let path=null;
+   for(let tries=0;tries<200&&!path;tries++){const p=[[0,src]],seen=new Set(["0,"+src]);let ok=false;for(let s=0;s<40;s++){const [x,y]=p[p.length-1];if(x===N-1&&y===dst){ok=true;break}
+     const opts=DIRS.map(([dx,dy])=>[x+dx,y+dy]).filter(([a,b])=>a>=0&&b>=0&&a<N&&b<N&&!seen.has(a+","+b));if(!opts.length)break;opts.sort((A,B)=>(Math.abs(A[0]-(N-1))+Math.abs(A[1]-dst))-(Math.abs(B[0]-(N-1))+Math.abs(B[1]-dst))+(rnd()-.5)*3);p.push(opts[0]);seen.add(opts[0][0]+","+opts[0][1])}if(ok)path=p}
+   if(!path){path=[];for(let x=0;x<N;x++)path.push([x,src]);let y=src;while(y!==dst){y+=dst>y?1:-1;path.push([N-1,y])}}
+   grid=[...Array(N)].map(()=>[...Array(N)].map(()=>({t:rnd()<.5?"s":"c",r:Math.floor(rnd()*4)})));
+   path.forEach(([x,y],i)=>{const prv=i===0?[x-1,y]:path[i-1],nxt=i===path.length-1?[x+1,y]:path[i+1];const din=DIRS.findIndex(([dx,dy])=>prv[0]===x+dx&&prv[1]===y+dy),dout=DIRS.findIndex(([dx,dy])=>nxt[0]===x+dx&&nxt[1]===y+dy);grid[y][x]={t:(din+2)%4===dout?"s":"c",r:Math.floor(rnd()*4)}});solved=false;let g=0;while(flow().reached&&g++<20)path.forEach(([x,y])=>grid[y][x].r=Math.floor(rnd()*4));draw()}
+  function flow(){const on=new Set(),seen=new Set();const q=[[0,src,3]];let reached=false;while(q.length){const [x,y,from]=q.shift();if(x<0||y<0||x>=N||y>=N)continue;const c=grid[y][x],op=openings(c);if(!op.includes(from))continue;const key=x+","+y;if(seen.has(key))continue;seen.add(key);on.add(key);
+    for(const d of op){if(d===from)continue;if(x===N-1&&y===dst&&d===1)reached=true;q.push([x+DIRS[d][0],y+DIRS[d][1],(d+2)%4])}}return{on,reached}}
+  function draw(){const F=flow(),cs=56,ox=10,oy=10,W=N*cs+ox*2+40,H=N*cs+oy*2;
+   const cell=(c,x,y,lit)=>{const cx=ox+20+x*cs+cs/2,cy=oy+y*cs+cs/2;return`<g data-x="${x}" data-y="${y}" class="pp-cell"><rect x="${cx-cs/2+2}" y="${cy-cs/2+2}" width="${cs-4}" height="${cs-4}" rx="8" fill="#000" opacity=".18"/>${openings(c).map(d=>`<line x1="${cx}" y1="${cy}" x2="${cx+DIRS[d][0]*cs/2}" y2="${cy+DIRS[d][1]*cs/2}" stroke="${lit?T.flow:T.pipe}" stroke-width="13"/>`).join("")}<circle cx="${cx}" cy="${cy}" r="8" fill="${lit?T.flow:T.pipe}"/></g>`};
+   st.innerHTML=`<svg ${NS} viewBox="0 0 ${W} ${H}" width="100%" height="100%" style="display:block"><rect width="${W}" height="${H}" fill="${T.bg}"/>${em(T.in||"▶️",ox+12,oy+src*cs+cs/2,22)}${em(T.out||"🏁",ox+20+N*cs+14,oy+dst*cs+cs/2,22)}${grid.map((row,y)=>row.map((c,x)=>cell(c,x,y,F.on.has(x+","+y))).join("")).join("")}</svg>`;
+   if(F.reached&&!solved){solved=true;setScore(1);try{sfx.good()}catch(x){}st.querySelector("svg").insertAdjacentHTML("beforeend",`<text x="${W/2}" y="${H/2}" font-size="28" font-weight="800" fill="#fff" text-anchor="middle" stroke="#000" stroke-width="1">Connected!</text>`);setTimeout(()=>{if(alive())make()},700)}}
+  st.addEventListener("pointerdown",ev=>{if(!alive()||solved)return;const t=ev.target.closest(".pp-cell");if(!t)return;ev.preventDefault();const c=grid[+t.dataset.y][+t.dataset.x];c.r=(c.r+1)%4;yay();draw()});
+  make();clock(45,()=>arcEnd(run.score));
+ }
+
+ if(e==="reps"){
+  /* Tap as fast as you can; the figure (or the object) does a rep each tap */
+  st.style.background=T.bg;const W=300,H=300,sh=T.who||"#3E6FB0",skin="#E8B999";let ph=0,anim=0;
+  const fig=a=>{/* a: 0 = rest, 1 = effort */
+   if(T.pose==="pressup"){const y=200-a*22;return`<rect x="40" y="232" width="220" height="8" rx="4" fill="#000" opacity=".25"/><g><circle cx="${226}" cy="${y-12}" r="12" fill="${skin}"/><path d="M214 ${y-4} L80 ${228-a*6}" stroke="${sh}" stroke-width="16" stroke-linecap="round"/><path d="M80 ${228-a*6} L62 232" stroke="#2B2B2B" stroke-width="10" stroke-linecap="round"/><path d="M206 ${y-2} L206 232" stroke="${skin}" stroke-width="8" stroke-linecap="round"/></g>`}
+   if(T.pose==="lift"){const by=a?78:150;return`<rect x="40" y="252" width="220" height="8" rx="4" fill="#000" opacity=".25"/><circle cx="150" cy="120" r="14" fill="${skin}"/><rect x="134" y="134" width="32" height="56" rx="10" fill="${sh}"/><path d="M140 190 L132 252 M160 190 L168 252" stroke="#2B2B2B" stroke-width="11" stroke-linecap="round"/><path d="M136 144 L110 ${by} M164 144 L190 ${by}" stroke="${skin}" stroke-width="8" stroke-linecap="round"/><line x1="70" y1="${by}" x2="230" y2="${by}" stroke="#555" stroke-width="7"/><rect x="62" y="${by-22}" width="16" height="44" rx="4" fill="#2B2B2B"/><rect x="222" y="${by-22}" width="16" height="44" rx="4" fill="#2B2B2B"/>`}
+   if(T.pose==="squat"){const d=a*34;return`<rect x="40" y="252" width="220" height="8" rx="4" fill="#000" opacity=".25"/><circle cx="150" cy="${96+d}" r="14" fill="${skin}"/><rect x="134" y="${110+d}" width="32" height="54" rx="10" fill="${sh}"/><path d="M140 ${164+d} L${118-a*12} ${210} L132 252 M160 ${164+d} L${182+a*12} 210 L168 252" stroke="#2B2B2B" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M136 ${122+d} L100 ${130+d} M164 ${122+d} L200 ${130+d}" stroke="${skin}" stroke-width="8" stroke-linecap="round"/>`}
+   if(T.pose==="row"){const r=a*30;return`<rect x="30" y="236" width="240" height="10" rx="4" fill="#5A3A22"/><circle cx="${140-r*.3}" cy="150" r="13" fill="${skin}"/><rect x="${126-r*.3}" y="163" width="28" height="44" rx="9" fill="${sh}"/><path d="M${150-r*.3} 176 L${210-r} 186" stroke="${skin}" stroke-width="8" stroke-linecap="round"/><line x1="${210-r}" y1="176" x2="${210-r}" y2="196" stroke="#555" stroke-width="5"/><path d="M${132-r*.3} 207 L${190-r*.5} 228" stroke="#2B2B2B" stroke-width="11" stroke-linecap="round"/>`}
+   if(T.pose==="punch"){const s=a*26;return`<line x1="230" y1="20" x2="230" y2="80" stroke="#555" stroke-width="3"/><rect x="${212+s*.5}" y="80" width="36" height="110" rx="16" fill="#B3262E" transform="rotate(${a*10} 230 80)"/><rect x="40" y="252" width="220" height="8" rx="4" fill="#000" opacity=".25"/><circle cx="110" cy="112" r="14" fill="${skin}"/><rect x="94" y="126" width="32" height="56" rx="10" fill="${sh}"/><path d="M100 182 L92 252 M120 182 L128 252" stroke="#2B2B2B" stroke-width="11" stroke-linecap="round"/><path d="M124 140 L${150+s*1.6} 140" stroke="${skin}" stroke-width="9" stroke-linecap="round"/><circle cx="${156+s*1.6}" cy="140" r="11" fill="#E86A7A"/><path d="M98 140 L84 156" stroke="${skin}" stroke-width="9" stroke-linecap="round"/>`}
+   /* an object that bounces with each tap */
+   return em(T.icon||"💪",150,150-a*18,96,`transform="rotate(${(a?1:-1)*8} 150 150)"`)};
+  st.innerHTML=`<svg ${NS} viewBox="0 0 ${W} ${H}" width="100%" height="100%" style="display:block"><rect width="${W}" height="${H}" fill="${T.bg}"/><g id="rFig"></g><rect x="20" y="276" width="260" height="12" rx="6" fill="#000" opacity=".25"/><rect id="rBar" x="20" y="276" width="0" height="12" rx="6" fill="#4BBA85"/><text id="rCnt" x="150" y="40" font-size="30" font-weight="800" fill="#fff" text-anchor="middle">0</text></svg>`;
+  const gF=st.querySelector("#rFig"),bar=st.querySelector("#rBar"),cnt=st.querySelector("#rCnt");gF.innerHTML=fig(0);
+  st.addEventListener("pointerdown",ev=>{if(!alive())return;ev.preventDefault();setScore(1);anim=1;cnt.textContent=run.score;bar.setAttribute("width",Math.min(260,run.score/(g.th[0]||60)*260));if(run.score%5===0)yay()});
+  clock(10,()=>arcEnd(run.score),(el,dt)=>{anim=Math.max(0,anim-dt*7);gF.innerHTML=fig(anim>.5?1:anim)});
+ }
+
+ if(e==="targets"){
+  /* Things pop up over your workplace: tap the right ones, leave the wrong ones */
+  const W=300,H=300;st.innerHTML=`<svg ${NS} viewBox="0 0 ${W} ${H}" width="100%" height="100%" style="display:block">${scene(T.scene,W,H)}<rect width="${W}" height="${H}" fill="#000" opacity=".12"/><g id="tG"></g></svg>`;
+  const gT=st.querySelector("#tG"),spots=[[60,70],[150,60],[240,75],[55,150],[150,150],[245,150],[60,230],[150,235],[240,228]];let live=[],gap=820,next=0;
+  const drawT=now=>{gT.innerHTML=live.map(t=>{const life=(t.until-now)/t.ttl;return`<g class="tg" data-i="${t.id}"><circle cx="${t.x}" cy="${t.y}" r="30" fill="#fff" opacity="${t.hit?0:.85}"/><circle cx="${t.x}" cy="${t.y}" r="30" fill="none" stroke="${t.good?"#4BBA85":"#E86A7A"}" stroke-width="4" stroke-dasharray="${Math.max(0,life)*188} 188" transform="rotate(-90 ${t.x} ${t.y})"/>${em(t.icon,t.x,t.y,34)}</g>`}).join("")};
+  let id=0;st.addEventListener("pointerdown",ev=>{if(!alive())return;const el=ev.target.closest(".tg");if(!el)return;ev.preventDefault();const t=live.find(x=>x.id===+el.dataset.i);if(!t)return;setScore(t.good?1:-2);t.good?yay():boo();live=live.filter(x=>x!==t)});
+  clock(20,()=>arcEnd(run.score),(el,dt,now)=>{if(now>next){const free=spots.filter(s=>!live.some(t=>t.x===s[0]&&t.y===s[1]));if(free.length){const s=pick(free),good=rnd()<.72,ttl=Math.max(650,1300-el*30);live.push({id:++id,x:s[0],y:s[1],good,icon:pick(good?T.good:T.bad),until:now+ttl,ttl})}gap=Math.max(420,gap*.975);next=now+gap}
+   live=live.filter(t=>t.until>now);drawT(now)});
+ }
+
+ if(e==="catch"){
+  /* Slide to catch the good things falling into your workplace */
+  const W=300,H=300;st.innerHTML=`<svg ${NS} viewBox="0 0 ${W} ${H}" width="100%" height="100%" style="display:block">${scene(T.scene,W,H)}<rect width="${W}" height="${H}" fill="#000" opacity=".15"/><g id="cG"></g><g id="cB"></g></svg>`;
+  const gC=st.querySelector("#cG"),gB=st.querySelector("#cB");let bx=150,items=[],next=0;
+  const move=ev=>{if(!alive())return;const r=st.getBoundingClientRect();bx=clamp((ev.clientX-r.left)/r.width*W,24,W-24)};
+  st.addEventListener("pointerdown",ev=>{ev.preventDefault();move(ev)});st.addEventListener("pointermove",ev=>{if(ev.buttons||ev.pointerType==="touch")move(ev)});
+  clock(20,()=>arcEnd(run.score),(el,dt,now)=>{if(now>next){const good=rnd()<.7;items.push({x:20+rnd()*(W-40),y:-20,v:90+el*6+rnd()*50,good,icon:pick(good?T.good:T.bad)});next=now+Math.max(380,900-el*25)}
+   items.forEach(it=>it.y+=it.v*dt);for(const it of items){if(!it.done&&it.y>H-58&&it.y<H-20&&Math.abs(it.x-bx)<32){it.done=true;setScore(it.good?1:-2);it.good?yay():boo()}}items=items.filter(it=>!it.done&&it.y<H+20);
+   gC.innerHTML=items.map(it=>em(it.icon,it.x,it.y,30)).join("");gB.innerHTML=em(T.basket||"🧺",bx,H-36,46)});
+ }
+
+ if(e==="steady"){
+  /* Hold to rise, let go to fall: stay inside the channel */
+  const W=360,H=300;st.style.background=T.bg;st.innerHTML=`<svg ${NS} viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block"><rect width="${W}" height="${H}" fill="${T.bg}"/><path id="sTop" fill="${T.wall||"#2B3A44"}"/><path id="sBot" fill="${T.wall||"#2B3A44"}"/><g id="sMe"></g><text id="sTxt" x="${W/2}" y="28" font-size="16" font-weight="700" fill="#fff" text-anchor="middle"></text></svg>`;
+  const top=st.querySelector("#sTop"),bot=st.querySelector("#sBot"),me=st.querySelector("#sMe"),txt=st.querySelector("#sTxt");let y=150,vy=0,hold=false,off=0,inside=0;
+  st.addEventListener("pointerdown",ev=>{ev.preventDefault();hold=true});["pointerup","pointerleave","pointercancel"].forEach(k=>st.addEventListener(k,()=>hold=false));
+  const mid=x=>150+Math.sin((x+off)/70)*55+Math.sin((x+off)/31)*20,gapAt=el=>Math.max(70,120-el*2.2);
+  clock(20,()=>arcEnd(run.score),(el,dt)=>{off+=(90+el*4)*dt;vy+=(hold?-520:420)*dt;vy=clamp(vy,-220,220);y=clamp(y+vy*dt,10,H-10);
+   const gp=gapAt(el);let dT="M0 0",dB=`M0 ${H}`;for(let x=0;x<=W;x+=12){dT+=` L${x} ${mid(x)-gp/2}`;dB+=` L${x} ${mid(x)+gp/2}`}top.setAttribute("d",dT+` L${W} 0Z`);bot.setAttribute("d",dB+` L${W} ${H}Z`);
+   const m=mid(80),ok=Math.abs(y-m)<gp/2-10;if(ok){inside+=dt;const s=Math.floor(inside);if(s>run.score)setScore(s-run.score)}txt.textContent=ok?"Steady…":"Off course!";txt.setAttribute("fill",ok?"#4BBA85":"#E86A7A");
+   me.innerHTML=em(T.icon||"✈️",80,y,34,`transform="rotate(${clamp(vy/8,-25,25)} 80 ${y})"`)});
+ }
+
+ if(e==="zone"){
+  /* Stop the marker in the green: six goes, each one harder */
+  const W=320,H=300;st.innerHTML=`<svg ${NS} viewBox="0 0 ${W} ${H}" width="100%" height="100%" style="display:block">${T.scene?scene(T.scene,W,H)+`<rect width="${W}" height="${H}" fill="#000" opacity=".35"/>`:`<rect width="${W}" height="${H}" fill="${T.bg||"#1C2A33"}"/>`}<g id="zIcon"></g><rect x="30" y="200" width="260" height="30" rx="15" fill="#000" opacity=".4"/><rect id="zOk" y="200" height="30" fill="#4BBA85" opacity=".85"/><rect id="zBull" y="200" height="30" fill="#F6D44A"/><rect id="zMark" y="190" width="6" height="50" rx="3" fill="#fff"/><text id="zTxt" x="${W/2}" y="270" font-size="20" font-weight="800" fill="#fff" text-anchor="middle"></text><text id="zRound" x="${W/2}" y="32" font-size="15" fill="#fff" text-anchor="middle" opacity=".85"></text></svg>`;
+  const ok=st.querySelector("#zOk"),bull=st.querySelector("#zBull"),mark=st.querySelector("#zMark"),txt=st.querySelector("#zTxt"),rd=st.querySelector("#zRound"),ic=st.querySelector("#zIcon");
+  let round=0,pos=0,dir=1,zc=0,zw=0,paused=0;const R=6;
+  const setup=()=>{zw=Math.max(26,80-round*10);zc=60+zw/2+rnd()*(200-zw);ok.setAttribute("x",zc-zw/2);ok.setAttribute("width",zw);bull.setAttribute("x",zc-zw/7);bull.setAttribute("width",zw/3.5);rd.textContent=`Go ${round+1} of ${R}`;ic.innerHTML=em(T.icon||"🎯",W/2,110,72)};
+  setup();if(hudT)hudT.textContent="";
+  st.addEventListener("pointerdown",ev=>{if(!alive()||paused)return;ev.preventDefault();const x=30+pos*260,d=Math.abs(x-zc);let pts=0,msg="";
+   if(d<=zw/7){pts=3;msg=T.ok||"Perfect!";yay()}else if(d<=zw/2){pts=2;msg="Good";yay()}else if(d<=zw/2+18){pts=1;msg="Close";}else{msg=x<zc?(T.lo||"Too soon"):(T.hi||"Too late");boo()}
+   setScore(pts);txt.textContent=msg;txt.setAttribute("fill",pts>=2?"#4BBA85":pts?"#F6D44A":"#E86A7A");paused=1;round++;
+   setTimeout(()=>{if(!alive())return;if(round>=R)return arcEnd(run.score);paused=0;txt.textContent="";setup()},650)});
+  (function loop(last){if(!alive())return;requestAnimationFrame(now=>{const dt=Math.min(.05,(now-last)/1000);if(!paused){pos+=dir*dt*(0.75+round*.22);if(pos>1){pos=1;dir=-1}if(pos<0){pos=0;dir=1}mark.setAttribute("x",30+pos*260-3)}loop(now)})})(performance.now());
+ }
+}}
+Object.assign(ARC_CAREER,{
+bank:[
+{e:"targets",t:"Buy Low, Sell High",b:"Tap the rising green charts as they flash up on the screens. Avoid the crashing red ones and the compliance officer!",res:["You made millions before lunch. The bonus pool weeps with joy.","Up a bit, down a bit. Basically a very expensive coin toss.","You bought the top and sold the bottom. Textbook, in the wrong textbook."],scene:"trading",good:["📈","💹","💰"],bad:["📉","👮"]},
+{e:"catch",t:"Bonus Season",b:"Slide the briefcase left and right to catch the falling cash. Dodge the red invoices and the tax bills!",res:["Your briefcase is so full it needs its own briefcase.","A decent bonus. You can afford a slightly smaller yacht.","You caught nothing but bills. Back to the overdraft."],scene:"london",good:["💷","💵","🪙"],bad:["🧾","📉"],basket:"💼"},
+{e:"zone",t:"Close the Deal",b:"Tap to stop the marker in the green zone to sign at the perfect price. Six deals to close!",res:["Six perfect deals. The client signs and asks if you do weddings.","Some deals done, some lawyers still arguing.","You signed so badly the other side sent you a thank-you card."],icon:"✍️",lo:"Too cheap!",hi:"Too greedy!",ok:"Deal done!",scene:"office"},
+{e:"reps",t:"Spreadsheet Sprint",b:"Tap as fast as you can for 10 seconds to bash out the financial model before the 7am meeting.",res:["Forty tabs, zero errors. The analysts bow as you pass.","The model works if nobody looks at row 412.","You typed the whole thing into cell A1. Bold choice."],bg:"#1B2A41",pose:"object",icon:"⌨️",who:"#2C3E50"}
+],
+elec:[
+{e:"pipes",t:"Wire the Circuit",b:"Tap the tiles to rotate them and connect the wire from the plug on the left to the light bulb on the right.",res:["Let there be light! The customer cries tears of joy.","It works, but the fridge now turns on with the doorbell.","You've wired the kettle to the burglar alarm. Again."],bg:"#2B2B2B",pipe:"#7A7A7A",flow:"#FFD23F",in:"🔌",out:"💡"},
+{e:"steady",t:"Thread the Cable",b:"Hold to lift the cable, let go to drop. Feed it through the gap in the wall without touching the sides!",res:["Threaded through first time. You are the cable whisperer.","A few scrapes on the plaster. Nothing a bit of filler won't hide.","The cable is now somewhere in next door's loft."],bg:"#D9C7A7",wall:"#8B6B4A",icon:"🔌"},
+{e:"targets",t:"Fuse Box Fix",b:"Tap the blown fuses to replace them as they pop up. Don't touch the live sparks!",res:["Every fuse fixed. The house hums with gratitude.","Most of the lights work. The upstairs is now a mood.","Your eyebrows have left the building. So has the power."],scene:"house",good:["🔧","🔋","💡"],bad:["⚡","🔥"]},
+{e:"zone",t:"Strip the Wire",b:"Tap to stop the cutter in the green zone to strip just the right amount of insulation. Six wires to do!",res:["Six perfect strips. Your college tutor would weep.","Some neat, some nibbled. It'll pass a quick glance.","You've cut every wire in half. That's a lot of very short wires."],icon:"✂️",lo:"Too short!",hi:"Snipped it!",ok:"Perfect strip!",bg:"#3A3A3A"}
+],
+plumb:[
+{e:"pipes",t:"Connect the Pipes",b:"Tap the tiles to rotate them and connect the pipe from the tap on the left to the sink on the right.",res:["Water flows like a dream. You're a plumbing poet.","It works, with a gentle gurgle you'll call character.","The water now comes out of the light switch."],bg:"#E8EEF2",pipe:"#9AA5AE",flow:"#3BA3E8",in:"🚰",out:"🛁"},
+{e:"reps",t:"Plunge the Loo",b:"Tap as fast as you can for 10 seconds to plunge the blocked toilet before it overflows.",res:["Cleared in seconds. The family name you a hero of the house.","It drains... slowly. Best not mention it to anyone.","It's worse. It's so much worse. Run."],bg:"#CFE3EE",pose:"object",icon:"🪠",who:"#1F5FA8"},
+{e:"catch",t:"Catch the Drips",b:"Slide the bucket left and right to catch the dripping water. Dodge the falling spanners!",res:["Not a drop on the carpet. The customer offers you a biscuit.","The carpet is damp but legally still a carpet.","The kitchen is now an indoor swimming pool."],scene:"house",good:["💧","💦"],bad:["🔧"],basket:"🪣"},
+{e:"zone",t:"Level the Radiator",b:"Tap to stop the bubble in the green zone so the radiator hangs perfectly level. Six brackets to fix!",res:["Spirit-level perfect. The radiator is so straight it's smug.","Slightly wonky. Call it rustic.","It's at such an angle the hot water has given up."],icon:"🫧",lo:"Tilts left!",hi:"Tilts right!",ok:"Dead level!",scene:"house"}
+],
+hair:[
+{e:"reps",t:"Blow-Dry Blitz",b:"Tap as fast as you can for 10 seconds to blast the hair dry before the client's next appointment.",res:["Bouncy, shiny, salon perfect. The client won't stop flicking it.","Mostly dry. The fringe has a mind of its own.","It's still wet and somehow also on fire."],bg:"#F7D6E0",pose:"object",icon:"💨",who:"#C2185B"},
+{e:"zone",t:"The Perfect Trim",b:"Tap to stop the scissors in the green zone to cut exactly a little off the ends. Six snips to make!",res:["Just a trim, as asked. A miracle in this industry.","A bit more than a trim. Nobody will notice. Probably.","You've given them a buzz cut. They asked for 'just the ends'."],icon:"✂️",lo:"Barely touched!",hi:"Way too short!",ok:"Just the ends!",scene:"salon"},
+{e:"targets",t:"Salon Rush",b:"Tap the waiting clients and fresh towels as they pop up. Avoid the hair dye spills!",res:["Everyone in and out looking gorgeous. Five-star reviews galore.","A few people waited. One read the same magazine three times.","Someone has a green streak they definitely didn't ask for."],scene:"salon",good:["💇","💁","🧴"],bad:["🎨","🪳"]},
+{e:"beat",t:"Curl Rhythm",b:"Tap just as the marker reaches the top of the spinning curler to wind each curl perfectly.",res:["Ringlets of pure glory. Hollywood is on the phone.","Some curls, some waves, some straight bits. A medley.","It's a bird's nest. A bird has moved in."],bg:"#FCE4EC",disc:"#AD1457",label:"#FFFFFF",icon:"🌀"}
+],
+chef:[
+{e:"reps",t:"Whisk It Up",b:"Tap as fast as you can for 10 seconds to whisk the egg whites into stiff peaks.",res:["Peaks so stiff you could ski down them.","Soft peaks. More of a gentle hill, really.","It's still just eggs. Sad, runny eggs."],bg:"#FFF3E0",pose:"object",icon:"🥚",who:"#FFFFFF"},
+{e:"catch",t:"Catch the Ingredients",b:"Slide the pan left and right to catch the falling ingredients. Dodge the burnt bits and the flies!",res:["Every ingredient caught. The head chef nods. Once. It means everything.","Dinner's made, minus a carrot or two.","You caught a fly and served it. The critic has left."],scene:"kitchen",good:["🥕","🧅","🍅"],bad:["🪰","🔥"],basket:"🍳"},
+{e:"zone",t:"Sear the Steak",b:"Tap to stop the marker in the green zone to flip the steak at the perfect moment. Six steaks to cook!",res:["Six perfect medium-rares. Table nine wants to marry you.","A mix of rare and well done. Call it a tasting menu.","These are now charcoal briquettes. Lovely for a barbecue."],icon:"🥩",lo:"Still mooing!",hi:"Burnt to a crisp!",ok:"Medium-rare!",scene:"kitchen"},
+{e:"targets",t:"Service! Plates Up",b:"Tap the finished dishes to send them out as they appear on the pass. Don't send the dropped ones!",res:["Every table served hot and on time. A flawless Saturday night.","A few cold plates, but no one's complained to the manager. Yet.","You sent out a plate of floor. Table four is calling the papers."],scene:"restaurant",good:["🍝","🍲","🥗"],bad:["💩","🦴"]}
+],
+tech:[
+{e:"reps",t:"Code Sprint",b:"Tap as fast as you can for 10 seconds to type out the new feature before the deadline.",res:["Feature shipped. Zero bugs. The product manager is suspicious.","It compiles. Nobody ask what it does.","You've deleted the production database. Happy Friday."],bg:"#1E1E2E",pose:"object",icon:"⌨️",who:"#4A4A6A"},
+{e:"targets",t:"Squash the Bugs",b:"Tap the bugs as they pop up across the screens. Don't tap the working features!",res:["Bug-free code. Frame this moment, it'll never happen again.","Most bugs squashed. The rest are now 'features'.","You squashed the login page. Nobody can get in. Ever."],scene:"office",good:["🐛","🪲","🐞"],bad:["✅","☕"]},
+{e:"pipes",t:"Connect the Network",b:"Tap the tiles to rotate them and route the data cable from the server on the left to the laptop on the right.",res:["Gigabit speeds. The office cheers as the video calls stop freezing.","It connects, at the speed of a 1998 dial-up modem.","You've connected the printer to itself. It's printing its feelings."],bg:"#0F1A2B",pipe:"#3D4F66",flow:"#29D3FF",in:"🖥️",out:"💻"},
+{e:"jump",t:"Deadline Dash",b:"Tap to jump over the obstacles as you dash across the office to make the release deadline.",res:["Released on time! Pizza for everyone.","Released a bit late. Nobody noticed. Nobody uses it.","You tripped over a bin and missed the release by a fortnight."],sky:"#DDE6F0",ground:"#8A8F99",who:"#5B6CFF",obs:["box","bin","trolley","cone"]}
+],
+foot:[
+{e:"zone",t:"Penalty Shot",b:"Tap to stop the marker in the green zone to strike the penalty into the top corner. Six penalties to take!",res:["Six top corners. The keeper has retired on the spot.","A few goals, one hit the corner flag somehow.","The ball is now in orbit. NASA would like a word."],icon:"⚽",lo:"Scuffed it!",hi:"Over the bar!",ok:"Top bins!",scene:"stadium"},
+{e:"jump",t:"Dribble Past Defenders",b:"Tap to jump over the sliding tackles and obstacles as you dribble towards goal.",res:["You beat the whole team. The commentator has lost his voice.","Got past a few. Then the left-back happened.","You tripped over the ball. On your own. In front of 40,000 people."],sky:"#87CEEB",ground:"#2E8B3E",who:"#D32F2F",obs:["cone","hurdle","ball"]},
+{e:"reps",t:"Pre-Season Training",b:"Tap as fast as you can for 10 seconds to bang out squats before the manager blows the whistle.",res:["Legs of steel. The physio is genuinely scared of you.","Decent effort. You'll feel it on the coach home.","You did two and asked for a drinks break."],bg:"#3E7B3E",pose:"squat",who:"#D32F2F"},
+{e:"targets",t:"Keeper Saves",b:"Tap the shots as they fly at goal to save them. Don't punch your own defenders!",res:["A clean sheet! Man of the match, easy.","Let in a couple, but you made one save worth a highlight reel.","The ball went in more times than you touched it."],scene:"stadium",good:["⚽","🥅"],bad:["🏃","🧤"]}
+],
+law:[
+{e:"targets",t:"Spot the Evidence",b:"Tap the key evidence as it pops up in the courtroom. Don't tap the irrelevant junk!",res:["Case closed! The jury applaud and the judge almost smiles.","Enough evidence for a strongly worded letter.","You submitted a sandwich as Exhibit A."],scene:"court",good:["📄","🔍","📸"],bad:["🥪","🦆"]},
+{e:"catch",t:"Paperwork Avalanche",b:"Slide the folder left and right to catch the important documents. Dodge the coffee and the junk mail!",res:["Every page filed. The partners whisper your name with respect.","Most of it filed. Page 47 is a mystery for future you.","The case files are now a coffee-soaked papier-mâché."],scene:"office",good:["📄","📑","📜"],bad:["☕","📰"],basket:"📂"},
+{e:"beat",t:"Objection!",b:"Tap just as the marker reaches the top of the spinning gavel disc to object at the perfect moment.",res:["Every objection sustained. Opposing counsel is weeping into their wig.","Some sustained, some overruled. A solid day in court.","Overruled, overruled, and held in contempt. Twice."],bg:"#3E2723",disc:"#8D6E63",label:"#FFF8E1",icon:"⚖️"},
+{e:"reps",t:"Billable Hours",b:"Tap as fast as you can for 10 seconds to rack up billable hours on the contract review.",res:["You billed 26 hours in a day. Physics is filing a complaint.","A respectable number of hours. Your client still winces.","You billed for a nap. The client noticed."],bg:"#2C3E50",pose:"object",icon:"⏱️",who:"#1A1A1A"}
+],
+doc:[
+{e:"beat",t:"Check the Heartbeat",b:"Tap just as the marker reaches the top of the spinning monitor to log each heartbeat in time.",res:["Every beat logged perfectly. The consultant raises one approving eyebrow.","A few missed beats. The patient is fine. You're less sure.","You recorded the vending machine's heartbeat. It's not well."],bg:"#E0F2F1",disc:"#00796B",label:"#FFFFFF",icon:"❤️"},
+{e:"reps",t:"CPR Drill",b:"Tap as fast as you can for 10 seconds to do chest compressions on the training dummy.",res:["Textbook compressions. The dummy has never felt more alive.","Decent rhythm. The dummy gives you a polite seven out of ten.","You've broken the dummy. It's a very expensive dummy."],bg:"#DCEFF5",pose:"pressup",who:"#2E7D9A"},
+{e:"targets",t:"Ward Round",b:"Tap the patients needing help and the medicine as they pop up on the ward. Avoid the germs!",res:["Every patient seen. The nurses buy you a coffee. That never happens.","Most patients seen. Bed 6 has been waiting since Tuesday.","You treated the germs and ignored the patients. Bold strategy."],scene:"ward",good:["🤒","💊","🩹"],bad:["🦠"]},
+{e:"steady",t:"Steady Hands Surgery",b:"Hold to raise the scalpel, let go to lower it. Keep it inside the channel without nicking anything!",res:["A flawless operation. The surgeon's union wants your autograph.","A few wobbles. Nothing the stitches won't cover.","You've taken out the appendix. It was meant to be a splinter."],bg:"#E8F5E9",wall:"#C62828",icon:"🔪"}
+]
+});
+Object.assign(ARC_CAREER,{
+teach:[
+{e:"targets",t:"Marking Homework",b:"Tap the correct answers ✅ to tick them. Don't tap the doodles or the copied ones!",scene:"school",good:["✅","📝","💯"],bad:["✏️","👾"],res:["Every book marked before the bell. Red pen of the year.","Mostly marked. A few smiley faces did the heavy lifting.","You gave a doodle of a dinosaur nine out of ten."]},
+{e:"catch",t:"Catch the Flying Paper",b:"Slide the bin left and right to catch the paper aeroplanes. Dodge the rubbers!",scene:"school",good:["✈️","📄","🗒️"],bad:["🧽"],basket:"🗑️",res:["Classroom spotless. The pilots are under investigation.","Half the air force grounded. The rest made it to the radiator.","Paper everywhere and a rubber in your tea."]},
+{e:"zone",t:"Silence the Class",b:"Tap to stop the marker in the green zone to give the perfect Teacher Look. Six goes.",icon:"👀",lo:"Too soft",hi:"Too scary",ok:"The Look!",scene:"school",res:["Pin drop. Even the hamster stopped running.","Mostly quiet. Someone is still humming.","Riot. Year 9 have formed a government."]},
+{e:"beat",t:"Times Tables Chant",b:"Tap when the marker hits the top of the disc to keep the class chanting in time.",bg:"#1E3A5F",disc:"#F2C14E",label:"#FFFFFF",icon:"✖️",res:["Seven eights are fifty-six, and so is your rhythm. Perfect.","Mostly in time. The back row got lost around the nines.","The class is now chanting a sea shanty instead."]}
+],
+police:[
+{e:"jump",t:"Foot Chase",b:"Tap to jump the bins, fences and cones as you chase the suspect down the street.",sky:"#3B4A6B",ground:"#555555",who:"#0B1F4B",obs:["bin","fence","cone","puddle"],res:["Collared him by the chip shop. Not even out of breath.","Caught him eventually. He stopped to tie his shoe.","He got away. You got a puddle in your boot."]},
+{e:"targets",t:"Spot the Suspect",b:"Tap the shady figures 🕵️ in the crowd. Don't tap the innocent shoppers!",scene:"city",good:["🕵️","🦹","💰"],bad:["👵","🛍️"],res:["Three arrests and a commendation. Sherlock who?","One arrest. One very confused pensioner.","You cuffed a granny with a shopping trolley. Paperwork for weeks."]},
+{e:"zone",t:"Speed Gun Check",b:"Tap to stop the marker in the green zone to clock the speeding car. Six goes.",icon:"🚗",lo:"Too early",hi:"Gone past",ok:"Clocked!",scene:"road",res:["Six tickets issued. The station biscuit fund is saved.","A few clocked. The rest were a blur.","You clocked a pigeon doing 4mph."]},
+{e:"catch",t:"Lost Property Desk",b:"Slide the tray to catch the handed-in wallets, keys and phones. Dodge the mystery sandwiches!",scene:"police",good:["👛","🔑","📱"],bad:["🥪"],basket:"📥",res:["Everything logged and returned. Best desk sergeant in the county.","Most of it caught. A set of keys is under the vending machine.","You logged a three-week-old sandwich as evidence."]}
+],
+pol:[
+{e:"reps",t:"Shake Hands on the Doorstep",b:"Tap as fast as you can to shake hands with every voter on the street.",bg:"#C9D6E3",pose:"object",icon:"🤝",res:["Every hand shaken. Your arm has its own constituency now.","A decent turnout. One dog refused to engage.","You shook one hand and it was your own campaign manager's."]},
+{e:"targets",t:"Prime Minister's Questions",b:"Tap the cheering MPs 👏 to rally your benches. Avoid the hecklers!",scene:"parliament",good:["👏","🙋","📢"],bad:["😡","🍅"],res:["The House roared. Sketch writers called it a triumph.","Some cheers, some groans. A draw on points.","Booed by your own side. Even the Speaker sighed."]},
+{e:"beat",t:"Stump Speech",b:"Tap when the marker reaches the top to land each soundbite on the beat.",bg:"#5A1E2E",disc:"#E8E1D0",label:"#C8102E",icon:"🎤",res:["Every soundbite landed. It's trending already.","Decent speech. One line came out as 'strong and stable sandwiches'.","You read the wrong speech. It was about badgers."]},
+{e:"catch",t:"Count the Votes",b:"Slide the ballot box to catch the falling votes. Dodge the spoiled ballots!",scene:"office",good:["🗳️","✉️","☑️"],bad:["❌"],basket:"📦",res:["Landslide! Your victory speech is longer than the count.","Narrow win. Recount requested by a man dressed as a cheese.","Lost your deposit. And your rosette."]}
+],
+pilot:[
+{e:"steady",t:"Final Approach",b:"Hold to climb, release to descend. Keep the plane inside the glide path to the runway.",bg:"#87CEEB",wall:"#2F4F4F",icon:"✈️",res:["Butter-smooth landing. The passengers clapped.","Bit of a bump. The trolley is now in row 14.","Landed. Technically. Twice."]},
+{e:"zone",t:"Preflight Checks",b:"Tap to stop the needle in the green zone on each gauge before take-off. Six goes.",icon:"⛽",lo:"Too low",hi:"Too high",ok:"Checked",scene:"runway",res:["All gauges perfect. Cleared for take-off.","Mostly in the green. Fuel smells slightly of coffee.","You set the cabin pressure to 'balloon'."]},
+{e:"catch",t:"Dodge the Turbulence",b:"Slide the plane to collect smooth air and stars. Avoid the storm clouds!",scene:"runway",good:["☁️","⭐","🌤️"],bad:["⛈️","🌪️"],basket:"✈️",res:["Smooth as silk. Nobody spilled a drop of tea.","A few wobbles. The seatbelt sign stayed on.","The drinks trolley is now on the ceiling."]},
+{e:"targets",t:"Captain's Announcements",b:"Tap the happy passengers 😊 as you walk the aisle. Don't tap the crying babies!",scene:"runway",good:["😊","🙂","👍"],bad:["😭","🤢"],res:["Everyone loved you. Two people asked for selfies.","A few grumbles about the in-flight lasagne.","You woke the baby. All 180 passengers glare at you."]}
+],
+nurse:[
+{e:"targets",t:"Ward Round Bells",b:"Tap the patients pressing their call bells 🔔. Ignore the ones just asking for biscuits!",scene:"ward",good:["🔔","🤒","🩹"],bad:["🍪"],res:["Every bell answered. The ward sister nodded at you. Once.","Most bells answered. Bed six is still waiting for his pillow.","You spent the shift fetching custard creams."]},
+{e:"zone",t:"Set the Drip",b:"Tap to stop the marker in the green zone to set the drip at the right rate. Six goes.",icon:"💧",lo:"Too slow",hi:"Too fast",ok:"Spot on",scene:"hosp",res:["Perfect flow every time. The doctor asked for your secret.","Mostly right. One patient is very well hydrated.","The drip is now a fountain."]},
+{e:"catch",t:"Medicine Trolley",b:"Slide the pot to catch the right pills. Dodge the dropped thermometers!",scene:"ward",good:["💊","🩹","💉"],bad:["🌡️"],basket:"🥣",res:["All meds sorted and signed for. Textbook.","A few pills under the bed. Found them with a torch.","You've dispensed eleven thermometers and no paracetamol."]},
+{e:"reps",t:"CPR Training",b:"Tap fast and steady to do chest compressions on the training dummy.",bg:"#DDEBF2",pose:"pressup",who:"#2A5DA8",res:["Strong, steady compressions. The dummy feels very much alive.","Good effort. The dummy would give you three stars.","The dummy has filed a complaint."]}
+],
+fire:[
+{e:"reps",t:"Pump the Hose",b:"Tap as fast as you can to pump water through the hose.",bg:"#F2D7C9",pose:"row",who:"#B22222",res:["Flood-level pressure. The fire gave up and went home.","Decent spray. The fire is thinking about it.","A dribble. The fire laughed at you."]},
+{e:"jump",t:"Ladder Drill Dash",b:"Tap to jump the hoses, tyres and walls on the station training yard.",sky:"#F4A460",ground:"#5C4033",who:"#8B0000",obs:["tyre","reel","wall","hurdle"],res:["Station record! The watch manager bought doughnuts.","Respectable time. You only tripped over one hose.","You got tangled in a hose reel. They had to cut you out."]},
+{e:"catch",t:"Catch the Cat",b:"Slide the blanket to catch the cats jumping from the tree. Dodge the falling branches!",scene:"park",good:["🐱","🐈","🐾"],bad:["🪵"],basket:"🧺",res:["All cats safe. Several have adopted you.","Most cats caught. One is still up there, smugly.","You caught a branch. The cat went back up the tree."]},
+{e:"pipes",t:"Connect the Hydrant",b:"Tap tiles to rotate the hoses and connect the hydrant on the left to the nozzle on the right.",bg:"#2B2B2B",pipe:"#888888",flow:"#3399FF",in:"🚒",out:"🔥",res:["Water on target in seconds. Fire out, kettle on.","Connected in the end. The fire was getting bored.","You've watered the neighbour's petunias instead."]}
+],
+vet:[
+{e:"targets",t:"Flea Hunt",b:"Tap the fleas 🦟 hopping on the dog. Don't tap the dog's nose!",scene:"vet",good:["🦟","🐜","🪳"],bad:["🐶"],res:["Flea-free! The dog is doing zoomies of joy.","Most fleas gone. A few are planning a comeback.","You booped the nose eight times. The dog is unimpressed."]},
+{e:"zone",t:"Weigh the Patient",b:"Tap to stop the marker in the green zone when the wriggling pet sits still on the scales. Six goes.",icon:"⚖️",lo:"Still wriggling",hi:"Jumped off",ok:"Weighed!",scene:"vet",res:["Six perfect weigh-ins. Even the rabbit cooperated.","Mostly weighed. The cat is listed as 'roughly a cat'.","According to your notes the hamster weighs 40 kilos."]},
+{e:"catch",t:"Feeding Time",b:"Slide the bowl to catch the treats for the kennels. Dodge the chocolate!",scene:"vet",good:["🦴","🥕","🐟"],bad:["🍫"],basket:"🥣",res:["Every animal fed and happy. Tails wagging all round.","Most bowls filled. The parrot wants to speak to the manager.","Chocolate everywhere. Very naughty and very dangerous."]},
+{e:"steady",t:"Steady Hands Stitches",b:"Hold to raise the needle, release to lower it. Stay inside the line to stitch up the cut.",bg:"#E8F3EC",wall:"#4A7C59",icon:"🪡",res:["Neatest stitches in the practice. The Labrador is proud.","Bit wonky but holding. The cone of shame will hide it.","You've stitched the dog to the table cloth."]}
+],
+arch:[
+{e:"pipes",t:"Plan the Plumbing",b:"Tap tiles to rotate the pipes and connect the water main on the left to the kitchen tap on the right.",bg:"#F5F5F0",pipe:"#9AA5B1",flow:"#1F6FEB",in:"🚰",out:"🏠",res:["Flawless plans. The plumber framed them.","It works, though the toilet is in the lounge.","The shower now feeds the fish tank."]},
+{e:"zone",t:"Level the Foundations",b:"Tap to stop the bubble in the green zone to get the foundations dead level. Six goes.",icon:"📏",lo:"Sloping left",hi:"Sloping right",ok:"Level!",scene:"site",res:["Perfectly level. Marbles refuse to roll.","Close enough. The house has character.","Your building is now a tourist attraction in the Pisa style."]},
+{e:"targets",t:"Site Inspection",b:"Tap the problems you spot on site: cracks ⚠️ and leaks 💧. Don't tap the builders' tea!",scene:"site",good:["⚠️","💧","🧱"],bad:["☕"],res:["Every fault found. Snagging list of champions.","Some faults spotted. The rest are 'features'.","You condemned the foreman's mug of tea."]},
+{e:"catch",t:"Client Feedback",b:"Slide the folder to catch the good ideas. Dodge the client's last-minute changes!",scene:"office",good:["💡","✏️","📐"],bad:["🔄","🦄"],basket:"📁",res:["Design approved first time. That never happens.","Approved with only eleven changes. A good day.","The client now wants a castle with a hot tub on the roof."]}
+],
+soldier:[
+{e:"jump",t:"Assault Course",b:"Tap to jump the walls, logs and tyres on the army assault course.",sky:"#9DB4C0",ground:"#5B4A2F",who:"#4B5320",obs:["wall","log","tyre","crater","fence"],res:["Fastest time in the platoon. The sergeant almost smiled.","Got round. Mostly on your feet.","You're still in the mud pit. Lunch is being brought to you."]},
+{e:"reps",t:"Boxing Training",b:"Tap as fast as you can to throw punches at the bag.",bg:"#3E3E2E",pose:"punch",who:"#556B2F",res:["The bag has asked for a transfer. Brutal.","Solid jabs. The corporal nods.","The bag won on points."]},
+{e:"reps",t:"Gym Weights",b:"Tap as fast as you can to lift the barbell.",bg:"#4A4A3A",pose:"lift",who:"#6B8E23",res:["Personal best! The gym mirror is impressed.","Respectable reps. Your arms will hate you tomorrow.","The bar stayed on the floor. So did you."]},
+{e:"reps",t:"Press-Ups on Parade",b:"Tap as fast as you can to bang out press-ups before the sergeant counts to ten.",bg:"#6B6B4E",pose:"pressup",who:"#4B5320",res:["Sergeant lost count. Legend status unlocked.","Decent effort. Only half the platoon laughed.","'Drop and give me twenty.' You gave him two."]}
+]
+});
+Object.assign(ARC_CAREER,{
+music:[
+{e:"beat",t:"Keep the Drum Beat",b:"Tap exactly as the marker hits the top of the drum to keep the band in time.",bg:"#1A1030",disc:"#C0392B",label:"#F5E6C8",icon:"🥁",res:["Tighter than a metronome. The bassist actually smiled.","Mostly in time. The crowd danced anyway, slightly confused.","You sped up, slowed down and briefly invented jazz."]},
+{e:"pipes",t:"Wire Up the Amps",b:"Tap the cable tiles to rotate them and connect the guitar on the left to the amp on the right.",bg:"#202020",pipe:"#666666",flow:"#F1C40F",in:"🎸",out:"🔊",res:["Plugged in first time. The roadie wept with pride.","Sound check took a while but it hums nicely now.","Somehow you've wired the guitar into the kettle."]},
+{e:"targets",t:"Catch the Crowd's Love",b:"Tap the roses and cheering fans thrown at the stage; avoid the flying plastic pints.",scene:"stage",good:["🌹","🙌","🧸"],bad:["🍺","🥫"],res:["Covered in flowers. Proper rock star behaviour.","A few roses, one teddy. A solid Tuesday gig.","You caught every pint with your face. Encore cancelled."]},
+{e:"zone",t:"Hit the High Note",b:"Tap to stop the marker in the green zone to land the big note, six times.",icon:"🎤",lo:"Flat",hi:"Sharp",ok:"Perfect pitch!",scene:"stage",res:["Glass shattered at the bar. In a good way.","Close enough for a pub on a Friday.","The dogs of the town have answered your call."]}
+],
+dj:[
+{e:"beat",t:"Beatmatch the Vinyl",b:"Tap as the marker reaches the top of the spinning record to nudge the beats into sync.",bg:"#0B0B1A",disc:"#111111",label:"#E91E63",icon:"💿",res:["Seamless mix. The dancefloor didn't notice a thing.","A small trainwreck, but you styled it out.","Two songs fighting to the death. Nobody won."]},
+{e:"targets",t:"Read the Dancefloor",b:"Tap the hands-in-the-air ravers to drop the bass; avoid the people heading to the bar.",scene:"party",good:["🙌","💃","🕺"],bad:["🚶","🥱"],res:["Wall-to-wall hands up. You own this room.","Half the floor bouncing, half queuing for drinks.","You cleared the floor faster than a fire alarm."]},
+{e:"catch",t:"Grab the Song Requests",b:"Slide the headphones to catch good track requests and dodge the people asking for the birthday song.",scene:"night",good:["🎵","🎶","💿"],bad:["🎂","📯"],basket:"🎧",res:["Every request a banger. Pure taste.","Some great tunes, one dodgy 80s ballad slipped in.","You've played the birthday song four times. Help."]},
+{e:"zone",t:"Time the Drop",b:"Tap to stop the build-up marker in the green zone so the drop lands perfectly, six times.",icon:"🎛️",lo:"Too soon",hi:"Too late",ok:"Big drop!",scene:"festival",res:["The crowd lost its collective mind. Legendary.","Decent drop. A few people jumped.","You dropped it during the quiet bit. Awkward."]}
+],
+influencer:[
+{e:"targets",t:"Snap the Perfect Brunch",b:"Tap the photogenic dishes to snap them for your feed; avoid the soggy toast.",scene:"cafe",good:["🥑","🥞","🧁"],bad:["🍞","🥫"],res:["Most-liked post of the year. Avocado royalty.","Decent engagement. Your nan liked it twice.","You posted beans on toast. Followers are leaving."]},
+{e:"catch",t:"Catch the Likes",b:"Slide your phone to catch falling hearts and follows; dodge the angry trolls.",scene:"city",good:["❤️","👍","⭐"],bad:["👹","💩"],basket:"📱",res:["Going viral! Someone's made a meme of you.","Steady trickle of love. The algorithm is mildly pleased.","Comments section is a war zone. Log off immediately."]},
+{e:"reps",t:"Film the Workout Reel",b:"Tap as fast as you can for 10 seconds to bang out squats for your fitness content.",bg:"#FFE4EC",pose:"squat",who:"#FF4FA0",res:["Glutes of steel. Sponsored protein shake incoming.","Decent reel. Lighting did the heavy lifting.","Twelve takes and you're still on the first squat."]},
+{e:"zone",t:"Pick the Filter",b:"Tap to stop the slider in the green zone to get your selfie filter just right, six times.",icon:"🤳",lo:"Washed out",hi:"Orange",ok:"Flawless!",bg:"#FCE4F2",res:["You look like a glowing angel. Unrecognisable, but great.","Nice enough. Only one follower asked if you're ill.","You appear to be a satsuma. Delete delete delete."]}
+],
+actor:[
+{e:"zone",t:"Deliver Your Line",b:"Tap to stop the marker in the green zone for perfect comic timing on each line, six times.",icon:"🎭",lo:"Rushed it",hi:"Dead air",ok:"Nailed it!",scene:"stage",res:["Standing ovation. Even the critic laughed.","A few chuckles and one polite cough.","The silence was so loud the ushers left."]},
+{e:"jump",t:"Stunt Run Through Set",b:"Tap to leap the props and cables while sprinting across the film set for the action scene.",sky:"#87A8C8",ground:"#5A5040",who:"#2C3E50",obs:["reel","box","cone","trolley"],res:["One take! The stunt double is out of a job.","Got there with a small stumble. They'll fix it in the edit.","You tripped over the catering trolley. Again. On camera."]},
+{e:"targets",t:"Sign the Autographs",b:"Tap the fans holding pens and photos at the premiere; avoid the paparazzi flashbulbs.",scene:"london",good:["🖊️","📸","🌟"],bad:["📷","🎤"],res:["Signed everything. Wrist sore, ego enormous.","A respectable signing. Someone asked if you were famous.","Blinded by flashbulbs, you signed a parking ticket."]},
+{e:"reps",t:"Sword Fight Rehearsal",b:"Tap as fast as you can for 10 seconds to parry and thrust in the stage fight.",bg:"#3B2A20",pose:"punch",who:"#8E1F2F",res:["Swashbuckling brilliance. Errol who?","Convincing enough from the back row.","You've knighted the lighting technician by accident."]}
+],
+tvchef:[
+{e:"targets",t:"Chop the Veg",b:"Tap the vegetables to chop them for the live cook-along; avoid your own fingers.",scene:"kitchen",good:["🥕","🧅","🥦"],bad:["☝️","🧦"],res:["Julienned at lightning speed. Viewers swooning.","A rustic chop. Let's call it 'chunky'.","Mostly chopped the chopping board. Cut to an advert."]},
+{e:"catch",t:"Catch the Pancake Flip",b:"Slide the frying pan to catch the flipping pancakes; dodge the falling eggshells.",scene:"studio",good:["🥞","🍳","🧈"],bad:["🥚","🦴"],basket:"🍳",res:["Perfect flips. The audience gasped on cue.","Most landed. One is now on the ceiling.","The studio floor is a pancake carpet."]},
+{e:"zone",t:"Season to Taste",b:"Tap to stop the marker in the green zone to add exactly the right pinch of salt, six times.",icon:"🧂",lo:"Bland",hi:"Too salty",ok:"Delicious!",scene:"kitchen",res:["The judges sighed with joy. Book deal agreed.","Fine. 'Well seasoned', said nobody, quietly.","The guest presenter needs three glasses of water."]},
+{e:"reps",t:"Whisk the Meringue",b:"Tap as fast as you can for 10 seconds to whisk the egg whites into stiff peaks.",bg:"#FFF6E5",pose:"object",icon:"🥣",who:"#FFFFFF",res:["Stiff peaks! Hold it over your head, you've earned it.","Soft-ish peaks. A meringue with self-doubt.","Still liquid. You've made egg soup on national telly."]}
+],
+astronaut:[
+{e:"steady",t:"Dock with the Station",b:"Hold to rise and release to drift down, keeping the capsule inside the docking corridor.",bg:"#05051A",wall:"#5A6B8C",icon:"🚀",res:["Docked smoother than a lift. Mission Control applauds.","A bit of a bump. Someone's tea spilled on the station.","You've parked on the solar panel. Again."]},
+{e:"jump",t:"Moon Hop",b:"Tap to bounce over craters and rocks during your low-gravity moonwalk.",sky:"#000010",ground:"#9E9E9E",who:"#FFFFFF",obs:["crater","rock","box"],low:1,res:["One small hop for you, one giant highlight reel.","Bouncy and mostly upright. Good effort.","You fell in a crater. It's on live television."]},
+{e:"pipes",t:"Fix the Oxygen Line",b:"Tap the pipe tiles to rotate them and connect the oxygen tank on the left to the crew cabin.",bg:"#101828",pipe:"#5C6A80",flow:"#4FC3F7",in:"🧪",out:"🧑‍🚀",res:["Breathing easy. The crew owe you a space biscuit.","Fixed eventually. Everyone a bit lightheaded.","You connected oxygen to the toilet. Smells odd."]},
+{e:"catch",t:"Grab the Floating Food",b:"Slide the bag to catch your floating dinner pouches; dodge the drifting space junk.",scene:"space",good:["🍫","🥤","🍝"],bad:["🔩","🪛"],basket:"🎒",res:["Dinner secured. A zero-g feast.","Got most of it. Some pasta is orbiting forever.","You caught a spanner and a bolt. Bon appétit."]}
+],
+spy:[
+{e:"pipes",t:"Tap the Phone Line",b:"Tap the wire tiles to rotate them and connect the bug on the left to your listening post.",bg:"#101510",pipe:"#4A5A4A",flow:"#39FF14",in:"🐞",out:"🎧",res:["Crystal clear. You heard every secret and a recipe.","Crackly, but you caught the important bits.","You've tapped into a bingo hall's hotline."]},
+{e:"targets",t:"Spot the Enemy Agent",b:"Tap the suspicious figures in the crowd; avoid tapping innocent tourists.",scene:"london",good:["🕵️","🥸","💼"],bad:["📸","🧳"],res:["Every mole unmasked. 'Ere, that's a promotion.","Found a couple. The rest are sipping tea smugly.","You've arrested a family from Swindon."]},
+{e:"zone",t:"Crack the Safe",b:"Tap to stop the dial marker in the green zone to hit each number of the combination, six times.",icon:"🔐",lo:"Too far left",hi:"Too far right",ok:"Click!",bg:"#1B1B1B",res:["Safe open in seconds. The documents are yours.","Got there. The guard's tea break was nearly over.","Alarms everywhere. Pretend you're the cleaner."]},
+{e:"jump",t:"Rooftop Chase",b:"Tap to leap over walls and bins as you chase the double agent across the rooftops.",sky:"#1C2541",ground:"#3A3A3A",who:"#111111",obs:["wall","bin","fence","box"],res:["Caught them with style. Not a hair out of place.","Kept pace, ruined your best suit.","You fell into a skip. They waved goodbye."]}
+],
+manager:[
+{e:"zone",t:"Tactics Board Talk",b:"Tap to stop the marker in the green zone to give a perfectly pitched half-time team talk, six times.",icon:"📋",lo:"Too soft",hi:"Hairdryer",ok:"Inspired!",scene:"stadium",res:["They ran out like lions. 3-0 second half.","They nodded. One was looking at his boots.","You threw a teacup. It hit the chairman."]},
+{e:"targets",t:"Scout the Talent",b:"Tap the promising young players on the training pitch; avoid the ones having a crafty snack.",scene:"park",good:["⚽","🏃","⭐"],bad:["🍔","😴"],res:["You've found the next superstar. Kerching.","A couple of decent prospects. Worth a trial.","You've signed a bloke who was walking his dog."]},
+{e:"jump",t:"Touchline Sprint",b:"Tap to hurdle the kit bags and cones as you sprint down the touchline to celebrate a winner.",sky:"#4A90D9",ground:"#2E8B3E",who:"#1E1E1E",obs:["cone","ball","hurdle","box"],res:["Iconic celebration. It'll be on every highlights show.","Brief jog of joy. Respectable.","You fell into the dugout. The fourth official is laughing."]},
+{e:"catch",t:"Catch the Transfer Targets",b:"Slide the contract to catch star players on deadline day; dodge the overpriced flops.",scene:"office",good:["⭐","⚽","🧤"],bad:["💸","🤡"],basket:"📝",res:["Deadline day masterclass. Fans dancing in the streets.","A couple of solid squad players. Fine.","You spent the whole budget on a striker who can't run."]}
+],
+clubowner:[
+{e:"catch",t:"Rake in Matchday Cash",b:"Slide the money bag to catch falling ticket and pie money; dodge the tax bills.",scene:"stadium",good:["💷","🎟️","🥧"],bad:["🧾","📉"],basket:"💰",res:["Record takings. You've bought a second yacht.","Healthy profit. The pies did well.","Somehow you've lost money on a sell-out crowd."]},
+{e:"targets",t:"Fire the Bad Managers",b:"Tap the losing managers to sack them; avoid sacking the one who's actually winning.",scene:"office",good:["📉","😩","🤦"],bad:["🏆","😎"],res:["Ruthless and correct. Fans chant your name.","Mostly right. One was just having a bad week.","You sacked the title winner. Fans are burning scarves."]},
+{e:"zone",t:"Set the Ticket Price",b:"Tap to stop the marker in the green zone to set a fair season ticket price, six times.",icon:"🎟️",lo:"Giveaway",hi:"Daylight robbery",ok:"Fair deal!",scene:"stadium",res:["Full stadium, happy fans, big profits. Genius.","A few grumbles on the phone-in show.","Protest banners. Someone has a pitchfork."]},
+{e:"pipes",t:"Build the New Stand",b:"Tap the girder tiles to rotate them and connect the crane on the left to the new stand.",bg:"#3A3A3A",pipe:"#7F8C8D",flow:"#F39C12",in:"🏗️",out:"🏟️",res:["Finished on time and under budget. Unheard of.","A bit late, but nobody's sat on a nail yet.","The new stand faces the car park. Oops."]}
+]
+});
+/* ============ Your pet: a picture on the Family tab, pats, barks, stories and old age ============ */
+const petYears=()=>S.pet?Math.max(0,Math.floor((S.pet.age0??2)+(S.day-(S.pet.born||S.day))/12)):0;
+const petLife=()=>S.pet&&S.pet.kind==="cat"?15:12;
+{const _pa=ACTS.pet;ACTS.pet=function(fx,m){_pa.apply(this,arguments);if(S.pet){S.pet.age0=S.pet.age0??Math.floor(rnd()*4);S.pet.love=S.pet.love??60}}}
+function petSec(){
+ const P=S.pet;if(!P)return"";const y=petYears(),dog=P.kind==="dog",love=P.love??60,old=y>=petLife()-2;
+ const pic=`<svg class="pet-pic" viewBox="50 72 110 80" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${(PH_BG[dog?"garden":"lounge"]||PH_BG.park)()}<g class="pet-body">${petPic(P.kind,100,P.n,1.15)}</g><g class="pet-say" opacity="0"><rect x="112" y="78" width="38" height="16" rx="8" fill="#fff"/><path d="M116 92 L112 99 L122 93Z" fill="#fff"/><text x="131" y="89" font-size="8" font-weight="700" text-anchor="middle" fill="#2B2B2B">${dog?"Woof!":"Meow!"}</text></g></svg>`;
+ return `<div class="pane-sec pet-card"><div class="sec-head"><h2 style="font-size:18px">Your ${dog?"dog":"cat"}</h2><span class="label">${esc(P.n)} · ${y} year${y===1?"":"s"} old</span></div>
+  <button class="pet-stage" data-act="petpat" aria-label="Pat ${esc(P.n)}">${pic}</button>
+  <div class="meters">${meter("Loves you",love,"good")}</div>
+  <p class="hint" style="margin:6px 0 0">${old?`${esc(P.n)} is getting on now: greyer round the muzzle and slower on walks.`:dog?`Walks, muddy paws and a tail that never stops. Tap ${esc(P.n)} to give them a pat.`:`Sleeps 16 hours a day, mostly on your things. Tap ${esc(P.n)} for a stroke.`} About ${money(petCost())} a month.</p>
+  <div class="btn-row"><button class="btn sm" data-act="petpat">Pat ${esc(P.n)}</button><button class="btn sm" data-act="pettreat" ${S.wealth<5?"disabled":""}>Give a treat (£5)</button></div></div>`;
+}
+function petPat(treat){
+ const P=S.pet;if(!P)return;const dog=P.kind==="dog";
+ try{if(dog){tone(220,.09,"square",.05);tone(180,.12,"square",.05,.11)}else{tone(700,.08,"sine",.05);tone(950,.18,"sine",.05,.08)}}catch(e){}
+ document.querySelectorAll(".pet-stage").forEach(b=>{b.classList.remove("patted");void b.offsetWidth;b.classList.add("patted")});
+ if(treat){if(S.wealth<5)return;S.wealth-=5;P.love=clamp((P.love??60)+4,0,100);toastMsg(`${P.n} loved that.`)}
+ if(S.petPatAt!==S.day){S.petPatAt=S.day;P.love=clamp((P.love??60)+2,0,100);S.stress=clamp(S.stress-1,0,100);S.homeLife=clamp(S.homeLife+.5,0,100)}
+ save();setTimeout(()=>{try{render()}catch(e){}},1300);
+}
+{const _fs2=folksSec;folksSec=function(){return _fs2.apply(this,arguments)+petSec()}}
+
+/* Pet stories every now and again */
+EV.push(
+ {id:"pet_walker",life:1,again:36,cond:s=>!!s.pet&&s.pet.kind==="dog",from:"A flyer through the door",t:"A dog walker for {pet}?",b:"A local dog walker offers to take {pet} out every lunchtime for £60 a month.",c:[
+  {t:"Sign {pet} up",fx:{gbp:-720,stress:-3,home:2},o:"{pet} comes home tired and happy. So do you."},
+  {t:"Walk {pet} yourself",fx:{health:2,stress:-1},o:"Early mornings in the park. You get to know every other dog by name."}]},
+ {id:"pet_choc",life:1,again:48,cond:s=>!!s.pet&&s.pet.kind==="dog",from:"Your kitchen",t:"{pet} found the chocolate",b:"The Easter eggs are gone and {pet} looks very pleased with themselves.",c:[
+  {t:"Straight to the emergency vet (£450)",fx:{gbp:-450,stress:3},o:"Charcoal, a night in and a big bill. {pet} is fine."},
+  {t:"Ring the vet and keep watch",p:.7,win:{fx:{stress:4},o:"A long night on the kitchen floor together. {pet} pulls through."},lose:{fx:{gbp:-1200,stress:8,home:-2},o:"By 3am you're at the emergency vet anyway. It costs more now."}}]},
+ {id:"pet_escape",life:1,again:36,cond:s=>!!s.pet,from:"Your front door",t:"{pet} has escaped",b:"The gate was left open and {pet} is nowhere to be seen.",c:[
+  {t:"Search the streets all evening",p:.75,win:{fx:{home:3,stress:2},o:"You find {pet} two streets away, being fed ham by a pensioner."},lose:{fx:{stress:8},o:"Three days of posters before a neighbour rings. {pet} is thinner and very sorry."}},
+  {t:"Post on the local group",fx:{stress:3},o:"Forty comments and a photo of {pet} outside the chip shop. Home by midnight."}]},
+ {id:"pet_insure",life:1,again:60,cond:s=>!!s.pet&&!s.flags.petIns,from:"An insurance leaflet",t:"Insure {pet}?",b:"Pet insurance: £30 a month, and big vet bills are covered.",c:[
+  {t:"Take it out",fx:{gbp:-360,flag:"petIns"},o:"Peace of mind, at least on paper."},
+  {t:"Risk it",fx:{},o:"What could possibly go wrong?"}]},
+ {id:"pet_teeth",life:1,again:30,cond:s=>!!s.pet,from:"The vet",t:"{pet} needs dental work",b:"Bad breath turns out to be three rotten teeth. The vet quotes £800.",c:[
+  {t:"Book it in",fx:{gbp:-800,home:1},o:"{pet} comes round from the anaesthetic and immediately eats a sock."},
+  {t:"Try special chews first",p:.4,win:{fx:{gbp:-40},o:"It works, mostly. The breath is still a crime."},lose:{fx:{gbp:-1100,stress:3},o:"An abscess. It costs more in the end."}}]},
+ {id:"pet_show",life:1,again:48,cond:s=>!!s.pet&&s.pet.kind==="dog",from:"The village fete",t:"The fun dog show",b:"There's a 'waggiest tail' class at the village fete. {pet} is a natural.",c:[
+  {t:"Enter {pet}",p:.45,win:{fx:{home:4,stress:-3},o:"A red rosette! {pet} wears it all week."},lose:{fx:{home:2},o:"{pet} eats the judge's sandwich. Disqualified, but famous."}},
+  {t:"Just watch",fx:{stress:-1},o:"A lovely afternoon and a lot of strangers' dogs to stroke."}]},
+ {id:"pet_bbq",life:1,again:36,cond:s=>!!s.pet&&s.pet.kind==="dog",from:"Your garden",t:"{pet} and the barbecue",b:"Your summer barbecue is going well until {pet} spots the sausages.",c:[
+  {t:"Laugh it off and order pizza",fx:{gbp:-60,home:2},o:"Everyone agrees it's the best story of the summer."},
+  {t:"Book obedience classes (£200)",fx:{gbp:-200,stress:1},o:"{pet} learns 'sit'. 'Leave it' remains a mystery."}]},
+ {id:"pet_bark",life:1,again:36,cond:s=>!!s.pet&&s.pet.kind==="dog"&&s.home.value>0,from:"Next door",t:"Complaints about the barking",b:"The neighbours say {pet} barks all day while you're out.",c:[
+  {t:"Get a dog walker for the afternoons",fx:{gbp:-500,home:1},o:"Peace on the street. {pet} has a new best friend."},
+  {t:"Leave the radio on for {pet}",p:.5,win:{fx:{},o:"{pet} loves the classical station. Silence."},lose:{fx:{stress:3,home:-2},o:"Now {pet} howls along to opera. The neighbours write a letter."}}]},
+ {id:"pet_cat_gift",life:1,again:24,cond:s=>!!s.pet&&s.pet.kind==="cat",from:"Your kitchen floor",t:"A present from {pet}",b:"{pet} has brought you a live mouse and released it under the fridge.",c:[
+  {t:"Spend the evening catching it",fx:{stress:2,home:1},o:"You catch it in a mug at 11pm. {pet} watches, unimpressed."},
+  {t:"Let {pet} sort it out",fx:{karma:-1},o:"Problem solved. You don't ask how."}]},
+ {id:"pet_cat_box",life:1,again:30,cond:s=>!!s.pet&&s.pet.kind==="cat",from:"Your laptop",t:"{pet} sat on your keyboard",b:"{pet} walked across your laptop and sent an email to your whole contact list.",c:[
+  {t:"Send an apology",fx:{stress:2},o:"Several people reply asking for more photos of {pet}."},
+  {t:"Pretend it was intentional",fx:{rep:1},o:"'Just checking in!' Somehow it works."}]},
+ {id:"pet_old",life:1,again:24,cond:s=>!!s.pet&&petYears()>=petLife()-3,from:"The vet",t:"{pet} is slowing down",b:"{pet} is stiff in the mornings and sleeps more. The vet suggests joint tablets at £40 a month.",c:[
+  {t:"Start the tablets",fx:{gbp:-480,home:2},o:"A spring back in {pet}'s step. Short walks, long naps."},
+  {t:"Just keep them comfy",fx:{home:1},o:"A new bed by the radiator. {pet} approves."}]}
+);
+/* In old age, a gentle goodbye */
+function petMorning(){
+ const P=S.pet;if(!P||S.over||S.inbox.some(m=>!m.done&&/^pet_end/.test(m.id)))return;const y=petYears(),L=petLife();
+ if(y>=L-1&&rnd()<(y-L+2)*.04){pushDyn({id:"pet_end_"+S.day,life:1,from:"The vet",t:`Time to say goodbye to ${P.n}?`,b:`${P.n} is ${y} now, and tired. The vet says gently that it might be time.`,c:[
+  {t:`Spend one last perfect day with ${P.n}`,fx:{act:"petdies",home:-6},o:`A walk to their favourite spot, a sausage roll and a long cuddle. Then goodbye.`},
+  {t:"Try one more treatment (£2,000)",p:.4,win:{fx:{gbp:-2000,home:2},o:`${P.n} rallies. Another few months together.`},lose:{fx:{gbp:-2000,act:"petdies",home:-10},o:`It isn't enough. ${P.n} goes peacefully, with you there.`}}]})}
+}
+
+/* ============ The TV quiz show asks real questions ============ */
+function quizShowSteps(){
+ if(!S.qShow||S.qShow.d!==S.day){const qs=QUIZ.slice().sort(()=>rnd()-.5).slice(0,3).map(([q,a,w])=>({q,a,opts:[a,...w].sort(()=>rnd()-.5)}));S.qShow={d:S.day,qs}}
+ const [q1,q2,q3]=S.qShow.qs;
+ return[
+  {t:"Round one",b:`'${q1.q}'`,c:q1.opts.map(o=>o===q1.a?{t:o,fx:{},o:"Correct!",s:2}:{t:o,fx:{},o:`Wrong: it was ${q1.a}. Luckily you're still in.`,s:0})},
+  {t:"Round two",b:`You've won £10,000. Answer this for £50,000, or bank what you've got: '${q2.q}'`,c:[...q2.opts.map(o=>o===q2.a?{t:o,fx:{},o:"Right answer! You're on £50,000.",s:3}:{t:o,fx:{},o:`Wrong: it was ${q2.a}. Back to £1,000.`,s:-2}),{t:"Bank the £10,000",fx:{gbp:10000,fixed:1},o:"£10,000 safely in the bank.",s:0}]},
+  {t:"The final question",b:`For £100,000: '${q3.q}'`,c:[...q3.opts.map(o=>o===q3.a?{t:o,fx:{gbp:100000,fixed:1,fame:8,act:"tvwin",show:"the big quiz show"},o:"YES! £100,000!",s:3}:{t:o,fx:{fame:2},o:`Wrong: it was ${q3.a}. The audience groans.`,s:-1}),{t:"Walk away with £25,000",fx:{gbp:25000,fixed:1,fame:2},o:"You leave with £25,000.",s:1}]}];
+}
+Object.defineProperty(SCENES.quiz,"steps",{get:quizShowSteps,configurable:true});
+/* Stories that act on your rival must cope with the rival having already left */
+for(const k of ["rivalout","rivalboost","rivalhit"]){const f=ACTS[k];if(f)ACTS[k]=function(fx,m){if(!S.rival){if(fx&&fx.act2&&ACTS[fx.act2])ACTS[fx.act2](fx,m);return}return f.apply(this,arguments)}}
+/* More football news, so the morning brief does not repeat */
+const FB_OFF_NEWS=["The manager wants more intensity in training","Physio warns about a heavy fixture list","Club confirms a new kit sponsor","Transfer gossip: rivals circling the squad","Groundsman says the pitch is in top shape","Pre-season tour dates announced","New training ground canteen bans chips","Club unveils a statue of a 1970s legend","Squad spotted at a go-karting team-building day","Academy graduate signs first pro contract","Manager bans phones at the dinner table","Club mascot suspended for dancing on the crossbar","Fitness coach introduces 6am beach runs","Season ticket prices frozen, fans relieved","Club launches a podcast nobody asked for","Captain opens a children's hospital ward","Kit man reveals the squad's worst boot habits","Ice baths installed at the training ground","Charity match against local firefighters announced","Club to trial a four-day training week","Rumour: the chairman wants a new stadium","Youth team reaches the cup quarter-finals","Club chef puts the squad on a pasta ban","Pundit questions the team's 'mentality'","Women's team sells out the stadium","Nutritionist bans fizzy drinks from the bus","Goalkeeping coach brings in tennis-ball drills","Dressing room playlist leaks online","New dugout seats 'heated, but only slightly'","Former captain returns as a coach"];
+const FB_MORE_NEWS=["Ticket sales up for the next home game","League table tight at the top","Pundit names you one to watch","Club academy wins a youth cup","Fans' forum calls for more young players","Away end sold out in an hour","Club shop runs out of your shirt","Bookies cut the odds on a top-four finish","Supporters' club votes on a new chant","Local paper runs a player ratings special","Stadium tour numbers hit a record","TV picks the next game for a Sunday slot","Referee for the weekend named; fans groan","Club fined for a late kick-off","Groundhopping fans travel from Norway","Programme cover features the youth team","Fan writes a 900-word letter about the left-back","Survey: fans want the old badge back","Supporters plan a tifo for the next home game","Matchday pie price rises by 20p","Weather warning for the weekend fixtures","VAR controversy dominates the phone-ins","Club launches a walking football team","Stadium solar panels switched on","Rival fans mock the new away kit","Season review DVD 'nearly finished'","Club's oldest fan turns 101","Fantasy football managers rush to pick you","Pundits debate the manager's formation","Training clip of a 40-yard volley goes viral"];
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -13012,8 +13418,8 @@ function fbMorning(){
   f.sel=f.inj>0?"injured":f.ban>0?"banned":f.fit<35?"rested":f.form<34+S.rank*4?"bench":"start";
   S.news.push({t:`${f.opp.home?"Home":"Away"} match against ${f.opp.n} (${"★".repeat(str)}${"☆".repeat(5-str)})`});
   if(rnd()<.35){const scout=rnd()<.5;f.scout=scout;S.news.push({t:scout?"Scouts from a top European club are in the stands":"Pundits expect a tight, scrappy game"})}else f.scout=false;
- }else S.news.push({t:pick(["The manager wants more intensity in training","Physio warns about a heavy fixture list","Club confirms a new kit sponsor","Transfer gossip: rivals circling the squad","Groundsman says the pitch is in top shape"])});
- S.news.push({t:pick(["Ticket sales up for the next home game","League table tight at the top","Pundit names you one to watch","Club academy wins a youth cup","Fans' forum calls for more young players"])});
+ }else S.news.push({t:pick(FB_OFF_NEWS)});
+ S.news.push({t:pick(FB_MORE_NEWS)});
 }
 function fbCloseCore(off){
  const f=S.fb,lines=[],notes=[];let tot=0,heat=0,repD=0,stressD=0;f._lm=null;
@@ -14187,6 +14593,8 @@ document.addEventListener("click",e=>{
  if(a==="albumall"){albumAll=true;render();return}
  if(a==="albummore"){albumN=(albumN||(window.innerWidth<520?12:24))+(window.innerWidth<520?12:24);render();return}
  if(a==="freegrp"){freeGrp=t.dataset.v;render();return}
+ if(a==="petpat"){petPat(false);return}
+ if(a==="pettreat"){petPat(true);return}
  if(a==="godating"){freeGrp="Dating";lifeTab="people";render();setTimeout(()=>{const c=document.querySelector(".free-chips");if(c){const y=c.getBoundingClientRect().top+window.scrollY-140;document.documentElement.scrollTop=y;document.body.scrollTop=y;window.scrollTo(0,y)}},250);return}
  if(a==="peopleall"){peopleAll=true;render();return}
  if(a==="addfriendrec"){const p=addFriendLife(window.__hashRec);save();render();toastMsg(p?`${p.n} is now in your game.`:"Start a game first.");t.disabled=true;return}
