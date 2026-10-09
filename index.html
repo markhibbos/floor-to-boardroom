@@ -494,15 +494,19 @@ a.btn.primary{color:var(--on-accent)}
  .home-kicker{margin-top:2px}
  .home-title{font-size:clamp(38px,12vw,52px)}
  .home-lede{font-size:14.5px;line-height:1.4}
- .home-btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:2px}
- .home-btns>*{grid-column:1/-1}
- .home-btn{min-height:52px;padding:8px 16px}
- .home-btns [data-act=daily],.home-btns [data-act=saves],.home-btns [data-act=collection]{grid-column:auto;min-height:50px;padding:8px 10px;justify-content:center;font-size:15px;line-height:1.05}
- .home-btns [data-act=daily] small,.home-btns [data-act=saves] small,.home-btns [data-act=collection] small{display:none}
- .home-btns [data-act=collection]{order:1}.home-btns .home-row{order:2}
- .home-row .btn{flex:1}
 }
-@media (max-width:719px) and (max-height:620px){.home-lede{display:none}.home-icons{display:none}}
+/* Every button on the main menu is the same size */
+.home-btns{display:flex;flex-direction:column;gap:8px}
+.home-btns .home-row{display:contents}
+.home-btns .btn{width:100%;height:54px;min-height:54px;margin:0;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;
+ font-family:var(--f-display);font-size:19px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;text-align:left;line-height:1;
+ background:var(--glass)!important;border:1px solid var(--glass-edge)!important;border-radius:18px!important;box-shadow:var(--glass-hi),var(--glass-shadow);color:inherit}
+.home-btns .btn.primary{background:linear-gradient(180deg,rgba(185,132,42,.92),rgba(154,106,18,.92))!important;color:var(--on-accent)}
+.home-btns .btn small{display:none}
+.home-btns [data-act=continue] small{display:block;margin:0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px;text-align:right}
+.home-btns [data-act=collection]{order:1}.home-btns [data-act=hof],.home-btns [data-act=help]{order:2}
+@media (max-width:719px) and (max-height:730px){.home-lede{display:none}}
+@media (max-width:719px) and (max-height:620px){.home-icons{display:none}.home-btns .btn{height:48px;min-height:48px}}
 .modal,.moment,.home,.auth,.admin,.confetti{bottom:calc(0px - var(--vvfix,0px))}.confetti{height:auto}
 @media (max-width:719px){.nav{-webkit-transform:translate3d(0,var(--vvfix,0px),0);transform:translate3d(0,var(--vvfix,0px),0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}}
 .free-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:4px 0 2px;padding-bottom:2px}.free-chips button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface2);color:inherit;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;white-space:nowrap;min-height:36px;cursor:pointer}.free-chips button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
