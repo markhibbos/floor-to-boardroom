@@ -678,7 +678,6 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div class="moment" id="moment" hidden></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 /* ============ Data ============ */
 const RANKS=[
@@ -2559,7 +2558,7 @@ function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):nul
 
 /* ============ Saved games: local slots, cloud sync, backup files ============ */
 const CLOUD_KEY="ftb-cloud",SLOTS=["1","2","3"],slotKey=n=>"ftb-slot-"+n;
-const canCloud=/^https?:$/.test(location.protocol)&&!/github.io$/.test(location.hostname);
+const canCloud=/^https?:$/.test(location.protocol)&&!/github.io$/.test(location.hostname)&&!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
 let cloudCode=null;try{cloudCode=localStorage.getItem(CLOUD_KEY)}catch(e){}
 const fmtCode=c=>c?c.replace(/(.{4})(?=.)/g,"$1-"):"";
 const cleanCode=t=>String(t||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
@@ -3508,7 +3507,7 @@ async function shareLife(e){
  const rows=[["Highest role",e.role],["Careers",e.careers],["Net worth",money(e.nw)],["Home",e.home],["Car",e.car],["Family",e.family]];if(e.challenge)rows.push(["Challenge",e.challenge+" ✓"]);
  for(const[k,v]of rows){x.fillStyle="#243644";x.fillRect(80,y,920,2);y+=52;x.fillStyle="#8A99A1";x.font=`500 32px ${body}`;x.fillText(k,80,y);x.fillStyle="#E3E9E7";x.font=`600 32px ${body}`;const t=wrapText(x,v,560)[0]||"";x.textAlign="right";x.fillText(t,1000,y);x.textAlign="left";y+=30}
  x.fillStyle="#8A99A1";x.font=`500 32px ${body}`;x.fillText("Can you live a better life?",80,H-70);
- const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;
+ const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob))return;
  const file=new File([blob],"my-life.png",{type:"image/png"});
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in Floor to Boardroom",text:`${e.name}: ${e.title}, legacy ${e.legacy}. Can you beat it?`});return}}catch(err){if(err&&err.name==="AbortError")return}
  const url=URL.createObjectURL(blob);
@@ -6547,7 +6546,7 @@ async function sharePaper(){
  y=Math.max(y+360,y2+30);x.fillRect(60,y,W-120,2);y+=60;x.font="700 26px system-ui,sans-serif";x.fillStyle="#7A1F2B";x.fillText("ALSO IN TODAY'S PAPER",70,y);x.fillStyle="#1A1A1A";y+=48;x.font="34px Georgia,serif";
  for(const[k,t]of(p.briefs||[]).slice(0,3)){for(const l of wrapText(x,`${k}: ${t}`,W-140).slice(0,2)){x.fillText(l,70,y);y+=44}y+=10}
  x.font="500 30px system-ui,sans-serif";x.fillStyle="#555";x.fillText("Floor to Boardroom · markhibbos.github.io/floor-to-boardroom",70,H-60);
- const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;const file=new File([blob],"front-page.png",{type:"image/png"});
+ const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob))return;const file=new File([blob],"front-page.png",{type:"image/png"});
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"The Daily Grind",text:p.lead[0]});return}}catch(err){if(err&&err.name==="AbortError")return}
  const url=URL.createObjectURL(blob);
  showModal(`<div class="label">Share the front page</div><h2 style="margin-top:4px">Hot off the press</h2><p class="hint">Press and hold the image to save or share it, or download it below.</p><img src="${url}" alt="Your front page" style="width:100%;border-radius:8px;margin:8px 0"><div class="btn-row"><a class="btn primary" href="${url}" download="front-page.png">Download</a><button class="btn" data-act="hide">Close</button></div>`);
@@ -6732,7 +6731,7 @@ function lifeRecord(title){
   ch:typeof chOf==="function"&&chOf()&&S.challenge&&S.challenge.state==="won"?chOf().n:"",when:Date.now()};
 }
 const recAvatar=(rec,size)=>{try{return avatarSVG(size,{av:rec.av||avDefault(),path:rec.p,over:rec.e,day:1,age0:rec.a,stress:40,health:rec.e==="died"?55:70,homeLife:60,prison:null})}catch(e){return""}};
-const recLink=rec=>{const r=Object.assign({},rec);delete r.when;return location.origin+location.pathname+"#life="+b64e(JSON.stringify(r))};
+const recLink=rec=>{const r=Object.assign({},rec);delete r.when;return (window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()?"https://markhibbos.github.io/floor-to-boardroom/":location.origin+location.pathname)+"#life="+b64e(JSON.stringify(r))};
 function recordHTML(rec,viewer){
  const died=rec.e==="died";
  return `<div class="life-rec"><div class="label">${viewer?"A life in Floor to Boardroom":"Your life record"}</div>
@@ -6750,6 +6749,7 @@ function recordModal(rec,back){
 }
 async function shareRecLink(rec){
  const url=recLink(rec),text=`${rec.n}: ${rec.t} at ${rec.a}. Legacy ${(rec.l||0).toLocaleString("en-GB")}. Can you live a better life?`;
+ if(await nativeShareText("My life in Floor to Boardroom",text,url))return;
  try{if(navigator.share){await navigator.share({title:"My life in Floor to Boardroom",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
  try{await navigator.clipboard.writeText(url);toastMsg("Link copied. Paste it to your friends.")}catch(e){prompt("Copy this link:",url)}
 }
@@ -6775,7 +6775,7 @@ async function shareRecImage(rec){
  list("LIFE HIGHLIGHTS",rec.hi);list("TURNING POINTS",(rec.tp||[]).slice(-3));
  if(AH)await drawAlbumRow(x,rec,H-AH-60);
  x.fillStyle="#8A99A1";x.font=`500 28px ${body}`;x.fillText("Can you live a better life? markhibbos.github.io/floor-to-boardroom",80,H-50);
- const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;const file=new File([blob],"my-life.png",{type:"image/png"});
+ const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob))return;const file=new File([blob],"my-life.png",{type:"image/png"});
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in Floor to Boardroom",text:`${rec.n}: ${rec.t}. Can you beat my legacy of ${(rec.l||0).toLocaleString("en-GB")}?`});return}}catch(err){if(err&&err.name==="AbortError")return}
  const url=URL.createObjectURL(blob);
  showModal(`<div class="label">Share my life</div><h2 style="margin-top:4px">Your life card</h2><p class="hint">Press and hold the image to save or share it, or download it below.</p><img src="${url}" alt="A card summarising ${esc(rec.n)}'s life" style="width:100%;border-radius:10px;margin:8px 0"><div class="btn-row"><a class="btn primary" href="${url}" download="my-life.png">Download</a><button class="btn" data-act="reclink">Share a link instead</button><button class="btn" data-act="hide">Close</button></div>`);
@@ -8364,6 +8364,35 @@ function collModal(){
 
 {const _ad=albumDay;albumDay=function(n){_ad(n);try{natDay(n)}catch(e){}}}
 {const _rhm=renderHome;renderHome=function(){_rhm.apply(this,arguments);try{const b=document.getElementById("homeBtns");if(b&&!b.querySelector('[data-act="collection"]')){const c=collGet(),n=Object.values(c).reduce((t,o)=>t+Object.keys(o||{}).length,0);(b.querySelector(".acct-line")||null)?b.querySelector(".acct-line").insertAdjacentHTML("beforebegin",`<button class="btn big home-btn" data-act="collection"><span>Collection book</span><small>${n?`${n} things found across your lives`:"Everything you find across all your lives"}</small></button>`):b.insertAdjacentHTML("beforeend",`<button class="btn big home-btn" data-act="collection"><span>Collection book</span><small>${n?`${n} things found across your lives`:"Everything you find across all your lives"}</small></button>`)}}catch(e){}}}
+
+/* ============ Running as an iPhone or Android app (Capacitor): saves kept in the app's own storage, the phone's share sheet ============ */
+const PUBLIC_URL="https://markhibbos.github.io/floor-to-boardroom/";
+const isNative=()=>{try{return !!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())}catch(e){return false}};
+const capPlugin=n=>isNative()&&window.Capacitor.Plugins?window.Capacitor.Plugins[n]:null;
+/* Browser storage inside an app can be cleared by the phone, so every game key is mirrored into the app's own storage */
+let nbTimer=null;
+function nativeBackup(now){
+ const P=capPlugin("Preferences");if(!P)return;clearTimeout(nbTimer);
+ const go=()=>{try{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^ftb-/.test(k))o[k]=localStorage.getItem(k)}P.set({key:"ftb-backup",value:JSON.stringify(o)}).catch(()=>{})}catch(e){}};
+ if(now)go();else nbTimer=setTimeout(go,1500);
+}
+async function nativeRestore(){
+ const P=capPlugin("Preferences");if(!P)return false;
+ try{if(localStorage.getItem(KEY))return false;const r=await P.get({key:"ftb-backup"});if(!r||!r.value)return false;const o=JSON.parse(r.value);let n=0;for(const k in o)if(/^ftb-/.test(k)&&localStorage.getItem(k)==null){localStorage.setItem(k,o[k]);n++}return n>0}catch(e){return false}
+}
+{const _sv=save;save=function(){_sv.apply(this,arguments);if(isNative())nativeBackup(false)}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"&&isNative())nativeBackup(true)});
+window.addEventListener("pagehide",()=>{if(isNative())nativeBackup(true)});
+{const _st=start;start=function(data){if(!isNative())return _st(data);nativeRestore().then(()=>_st(data),()=>_st(data));try{const SB=capPlugin("StatusBar"),dark=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;if(SB){SB.setOverlaysWebView({overlay:false}).catch(()=>{});SB.setStyle({style:dark?"DARK":"LIGHT"}).catch(()=>{});SB.setBackgroundColor({color:dark?"#0B141B":"#E8EDEB"}).catch(()=>{})}}catch(e){}}}
+/* The phone's own share sheet for pictures and links */
+async function nativeShareBlob(blob,text){
+ const F=capPlugin("Filesystem"),Sh=capPlugin("Share");if(!F||!Sh||!blob)return false;
+ try{const b64=await new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=bad;r.readAsDataURL(blob)});
+  const name="floor-to-boardroom-"+Date.now()+".png",w=await F.writeFile({path:name,data:b64,directory:"CACHE"});
+  await Sh.share({title:"Floor to Boardroom",text:text||"My life in Floor to Boardroom",files:[w.uri]});return true}
+ catch(e){return !!(e&&/cancel/i.test(e.message||""))}
+}
+async function nativeShareText(title,text,url){const Sh=capPlugin("Share");if(!Sh)return false;try{await Sh.share({title,text,url});return true}catch(e){return !!(e&&/cancel/i.test(e.message||""))}}
 
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
