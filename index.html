@@ -488,6 +488,11 @@ a.btn.primary{color:var(--on-accent)}
 .op-pills{display:flex;flex-wrap:wrap;gap:6px}
 .plan-svg{display:block;width:100%;height:auto;border-radius:12px;margin:4px 0}.plan-room.ok{cursor:pointer}.plan-room.ok:hover rect{fill:#FFE7A6}
 .op-opts .pill.fit-good{background:rgba(75,186,133,.18);color:var(--up);border-color:transparent}.op-opts .pill.fit-bad{background:rgba(232,106,122,.15);color:var(--down);border-color:transparent}.op-opts button .pill{display:inline-block;margin-top:3px}
+/* Phones zoom in on text boxes with text under 16px, which leaves the page too wide */
+@media (max-width:719px){input,select,textarea{font-size:16px!important}}
+.menu-grid{grid-auto-rows:1fr}
+html,body{overflow-x:clip}
+.menu-grid .btn{display:flex;align-items:center;justify-content:center;text-align:center;min-height:52px;text-decoration:none;line-height:1.2}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
