@@ -8885,7 +8885,8 @@ function closeLabel(){
 function setTab(t){tab=t;if(t!=="desk")side=t;renderNav();if(window.innerWidth<720)window.scrollTo({top:0})}
 
 /* ============ Modals ============ */
-function showModal(html){document.getElementById("sheet").innerHTML=html;document.getElementById("modal").hidden=false;const f=document.querySelector("#sheet button, #sheet input");if(f)f.focus()}
+let modalHead="";
+function showModal(html){const sh=document.getElementById("sheet"),md=document.getElementById("modal"),head=String(html).replace(/s+/g," ").slice(0,90),same=!md.hidden&&head===modalHead;modalHead=head;const keep=same?sh.scrollTop:0;sh.innerHTML=html;md.hidden=false;sh.scrollTop=keep;md.scrollTop=0;if(!same){const f=document.querySelector("#sheet button, #sheet input");if(f)try{f.focus({preventScroll:true})}catch(e){f.focus()}}}
 function hideModal(){document.getElementById("modal").hidden=true;if(miniRun)miniRun.stop=true;setTimeout(()=>{try{sceneCheck()}catch(e){}},80)}
 function nextModal(){
  const m=modalQueue.shift();
@@ -9103,15 +9104,15 @@ function menuModal(){
   <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
- markets:`<tr><td><b>1. Read the brief</b><br>Each morning's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
- jobs:`<tr><td><b>1. Read the brief</b><br>Headlines tell you which kinds of work are in demand. Confirmed stories are right about 7 times in 10, and those jobs pay half as much again. Rumours are a coin flip.</td></tr><tr><td><b>2. Book your day</b><br>Pick jobs to fit your hours and choose how to do each one. Rushing is quick but goes wrong more, and can raise your risk score. The premium option pays more but takes longer. Your skill grows with every job.</td></tr>`,
+ markets:`<tr><td><b>1. Read the brief</b><br>Each month's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
+ jobs:`<tr><td><b>1. Read the brief</b><br>Headlines tell you which kinds of work are in demand. Confirmed stories are right about 7 times in 10, and those jobs pay half as much again. Rumours are a coin flip.</td></tr><tr><td><b>2. Book your month</b><br>Pick jobs to fit your hours and choose how to do each one. Rushing is quick but goes wrong more, and can raise your risk score. The premium option pays more but takes longer. Your skill grows with every job.</td></tr>`,
  football:`<tr><td><b>1. Train well</b><br>On training days, balance fitness and form. Double sessions build you up but can injure you. Rest when you're tired. Below 35 fitness the manager rests you.</td></tr><tr><td><b>2. Win on match day</b><br>Two matches a week. Choose how to play: safe, team player or go for glory. Your rating, goals and assists earn performance points. Cards raise your discipline score.</td></tr>`};
 function helpModal(){
  showModal(`<div class="label">Guide</div><h2 style="margin-top:4px">How to play</h2>
   <table class="rep-table help">
    ${HELP12[CAR_().mech]}
-   <tr><td><b>3. Clear your inbox</b><br>Every decision moves your stats. Some shortcuts come back to bite you weeks later.</td></tr>
-   <tr><td><b>4. Close the day</b><br>Every 15 days you're reviewed. Hit the target, keep your reputation at 55+ and beat your named rival to be promoted. Five rungs take you from the bottom to the top job.</td></tr>
+   <tr><td><b>3. Clear your inbox</b><br>Every decision moves your stats. Some shortcuts come back to bite you months later.</td></tr>
+   <tr><td><b>4. Close the month</b><br>Every 15 months you're reviewed. Hit the target, keep your reputation at 55+ and beat your named rival to be promoted. Five rungs take you from the bottom to the top job.</td></tr>
    <tr><td><b>5. Live your life</b><br>Buy a home and a car, invest, fall in love, raise a family. Stress and long hours wear down your home life. Overspend and you'll be forced to sell.</td></tr>
    <tr><td><b>6. Build a pension, guard your health</b><br>Pay into your pension to unlock your employer's contribution. Stress drains your health, and poor health invites serious illness. Accidents can strike anyone. Health and life insurance help if the worst happens.</td></tr>
    <tr><td><b>7. Expect the unexpected</b><br>The economy swings between booms, recessions, crashes and crises, changing house prices, bills and your work. The calendar brings Christmas, holidays and birthdays, and life throws in luck, pets and long-term ambitions. Every January you get a year in review.</td></tr>
