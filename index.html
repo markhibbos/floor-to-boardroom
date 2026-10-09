@@ -8541,7 +8541,7 @@ async function nativeRestore(){
 {const _sv=save;save=function(){_sv.apply(this,arguments);if(isNative())nativeBackup(false)}}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"&&isNative())nativeBackup(true)});
 window.addEventListener("pagehide",()=>{if(isNative())nativeBackup(true)});
-{const _st=start;start=function(data){if(!isNative())return _st(data);nativeRestore().then(()=>_st(data),()=>_st(data));try{const SB=capPlugin("StatusBar"),dark=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;if(SB){SB.setOverlaysWebView({overlay:false}).catch(()=>{});SB.setStyle({style:dark?"DARK":"LIGHT"}).catch(()=>{});SB.setBackgroundColor({color:dark?"#0B141B":"#E8EDEB"}).catch(()=>{})}}catch(e){}}}
+{const _st=start;start=function(data){if(!isNative())return _st(data);nativeRestore().then(()=>_st(data),()=>_st(data));try{const SB=capPlugin("StatusBar"),dark=themeIsDark();if(SB){SB.setOverlaysWebView({overlay:false}).catch(()=>{});SB.setStyle({style:dark?"DARK":"LIGHT"}).catch(()=>{});SB.setBackgroundColor({color:dark?"#0B141B":"#E8EDEB"}).catch(()=>{})}}catch(e){}}}
 /* The phone's own share sheet for pictures and links */
 async function nativeShareBlob(blob,text){
  const F=capPlugin("Filesystem"),Sh=capPlugin("Share");if(!F||!Sh||!blob)return false;
@@ -13732,6 +13732,18 @@ function fcMove(pid){const p=(S.people||[]).find(x=>x.id===pid);if(!p)return;con
   else{S.people.splice(S.people.indexOf(p),1);S.rel=Object.assign(S.rel,{st:"dating",name:first,job:p.fcCareer||pick(JOBS),since:S.day,trait:pick(PT_KEYS),stepkids:0});S.homeLife=clamp(Math.max(S.homeLife,60)+8,0,100);S.log.unshift({d:S.day,t:`Started dating ${p.n}, your old school friend.`});save();render();actResult("They kiss you back",esc(`"I had such a crush on you at school," says ${first}. You're together.`))}}
  else{p.bond=clamp((p.bond||50)-35,0,100);S.stress=clamp(S.stress+5,0,100);save();render();actResult("They say no",esc(`${first} laughs, then realises you're serious. "Oh. No. Sorry." Things are very awkward now.`))}}
 
+/* ============ Theme: follow the phone, or always light, or always dark ============ */
+function themePref(){try{const v=localStorage.getItem("ftb-theme");return v==="light"||v==="dark"?v:"auto"}catch(e){return"auto"}}
+function themeLabel(){return{auto:"Auto",light:"Light",dark:"Dark"}[themePref()]}
+function themeIsDark(){const p=themePref();return p==="dark"||(p==="auto"&&!!(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))}
+function applyTheme(){const p=themePref(),r=document.documentElement;if(p==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",p);
+ const dark=themeIsDark(),col=dark?"#0B141B":"#E8EDEB";
+ document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{if(p==="auto"){m.content=/dark/.test(m.media)?"#0B141B":"#E8EDEB"}else m.content=col});
+ try{if(typeof isNative==="function"&&isNative()){const SB=capPlugin("StatusBar");if(SB){SB.setStyle({style:dark?"DARK":"LIGHT"}).catch(()=>{});SB.setBackgroundColor({color:col}).catch(()=>{})}}}catch(e){}}
+function setTheme(p){try{if(p==="auto")localStorage.removeItem("ftb-theme");else localStorage.setItem("ftb-theme",p)}catch(e){}applyTheme();try{toastMsg(p==="auto"?"Theme follows your phone's setting.":p==="light"?"Light mode on.":"Dark mode on.")}catch(e){}}
+applyTheme();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{if(themePref()==="auto")applyTheme()})}catch(e){}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -14909,7 +14921,7 @@ function startModal0(){
 }
 function menuModal(){
  showModal(`<h2>Menu</h2><p>${esc(S.name)}, ${esc(R().t)}, age ${ageInt()}. Your game saves automatically on this device${cloudCode?" and in the cloud":""}.</p>
-  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button>${isNative()&&capPlugin("LocalNotifications")?`<button class="btn" data-act="notiftoggle">Reminders: ${notifOn()?"on":"off"}</button>`:""}<a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
+  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button>${isNative()&&capPlugin("LocalNotifications")?`<button class="btn" data-act="notiftoggle">Reminders: ${notifOn()?"on":"off"}</button>`:""}<a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="themetoggle">Theme: ${themeLabel()}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
  markets:`<tr><td><b>1. Read the brief</b><br>Each month's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
@@ -15026,6 +15038,7 @@ document.addEventListener("click",e=>{
  if(a==="dailygo"){startDaily();return}
  if(a==="dailyboard"){dailyBoardModal(S&&S.daily);return}
  if(a==="catchup"){if(S.friend&&S.friendLast!==S.day){const c=Math.round(80*Math.max(1,priceScale()*2)/10)*10;S.wealth-=c;S.friend.bond=clamp(S.friend.bond+12,0,100);mgCount("catch");S.stress=clamp(S.stress-4,0,100);S.homeLife=clamp(S.homeLife+2,0,100);S.friendLast=S.day;save();render()}return}
+ if(a==="themetoggle"){const order=["auto","light","dark"];setTheme(order[(order.indexOf(themePref())+1)%3]);menuModal();return}
  if(a==="sound"){soundOn=!soundOn;try{localStorage.setItem("ftb-sound",soundOn?"1":"0")}catch(e){}if(soundOn)sfx.good();menuModal();return}
  if(a==="sharelife"){recordModal(lifeRecord(window.__endTitle),"backtoend");return}
  if(a==="recimg"){if(window.__rec)shareRecImage(window.__rec);return}
