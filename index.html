@@ -2819,7 +2819,7 @@ function ageDay(notes){
   {t:"Retire",fx:{act:"retire"},o:"You hand in your notice. No more alarms."},
   {t:"Keep working for now",fx:{rep:2},o:"Plenty left in the tank."}]})}
  /* Old age */
- if(a>72&&!S.over&&rnd()<Math.pow((a-72)/25,2)*.06){const n=Math.floor(a);notes.push(`You died peacefully in your sleep, aged ${n}.`);die(`You died peacefully in your sleep, aged ${n}.`)}
+ if(a>72&&!S.over&&rnd()<Math.pow((a-72)/25,2)*.06){const n=Math.floor(a),t=oldAgeDeath(n);notes.push(t);die(t)}
 }
 const pensionIncome=()=>Math.round(S.pension.pot*.75*.05);
 function retireNow(){
@@ -4419,6 +4419,7 @@ function hazards(notes){
  if(S.over)return;
  const c=carOf(S.car.id),road=(c.lvl>=5?3:c.lvl>=3?1.6:S.car.id==="brompton"?2:1)*(1+.25*((S.car.mods&&S.car.mods.tune)||0)),job=(CAR_().acc||ACC_RISK[S.path]||1)*(hasT("reckless")?1.5:1),tired=S.stress>80||S.health<25?1.5:1;
  if(rnd()<.00004*road*job*tired){const cause=fatalCause();notes.push(cause);die(cause);return}
+ if(absurdDeath(notes))return;
  if(S.sick<=0&&rnd()<.003*job){const pool=ACCIDENTS.filter(a=>(!a.c||a.c===S.path)&&(!a.when||a.when())),a=pick(pool);
   goSick(a.days,-8);S.stress=clamp(S.stress+4,0,100);if(a.gbp)S.wealth+=a.gbp;
   const t=fill(a.t);notes.push(`Accident: ${t} ${a.days>1?a.days+" months":"A month"} to recover.`);S.log.unshift({d:S.day,t:"Accident: "+t})}
@@ -5535,7 +5536,7 @@ const TROPHIES=[
  ["hobbytop","Mastery","Reach the top of a hobby",()=>!!S.hobby&&S.hobby.lvl>=5],["hobby3","Getting good","Reach level 3 in a hobby",()=>!!S.hobby&&S.hobby.lvl>=3],["bestinshow","Best in show","Win a pet show",()=>!!S.flags.petwin],
  ["pethero","Good boy","Be saved by your pet",()=>!!S.flags.pethero],["holidays5","Jet-setter","Take five holidays",()=>(S.items||[]).filter(i=>i.k==="souvenir").length>=5],["business","Boss","Own a business",()=>!!S.biz],
  ["abroad","Expat","Live abroad",()=>!!S.abroad],["survivor","Survivor","Survive a serious illness",()=>!!S.flags.survived||!!S.ach.survivor],["fifty","Half a century","Reach 50",()=>age()>=50],
- ["daily","Daily grinder","Finish a daily challenge",()=>S.over==="dailydone"],["fourcareers","Renaissance","Have four careers in one life",()=>(S.past||[]).length>=3]];
+ ["absurd","Darwin-ish award","Die in a ridiculous way",()=>!!S.flags.absurd],["daily","Daily grinder","Finish a daily challenge",()=>S.over==="dailydone"],["fourcareers","Renaissance","Have four careers in one life",()=>(S.past||[]).length>=3]];
 function trophyCheck(){
  if(!S||S.placeholder)return;S.peakNW=Math.max(S.peakNW||0,netWorth());
  const got=trophiesGot();let ch=false;
@@ -6711,6 +6712,84 @@ function showRecordFromHash(){
  const m=location.hash.match(/^#life=([A-Za-z0-9_-]+)/);if(!m)return;let rec;
  try{rec=JSON.parse(b64d(m[1]))}catch(e){return}if(!rec||!rec.n)return;
  showModal(`${recordHTML(rec,true)}<div class="btn-row"><button class="btn primary" data-act="playown">Live your own life</button></div>`);
+}
+
+/* ============ Deaths worth sharing: rare and ridiculous ends, and old age that fits the life you lived ============ */
+const ABSURD=[
+ ["You were killed by a champagne cork at someone else's retirement party.",()=>true],
+ ["You were attacked by an unusually aggressive swan in Hyde Park.",()=>true],
+ ["You were crushed by a vending machine while trying to free a stuck Twix-ish.",()=>true],
+ ["You choked on a canapé at an awards ceremony, moments before your name was read out.",()=>true],
+ ["You fell into the Thames trying to take the perfect selfie.",()=>true],
+ ["You were hit by a runaway shopping trolley on Black Friday.",()=>true],
+ ["You slipped on a rogue grape in the supermarket.",()=>true],
+ ["You were struck by a falling Christmas tree in a department store window.",()=>monthOf(S.day)===11],
+ ["You were flattened by a giant inflatable at a summer festival.",()=>monthOf(S.day)>=5&&monthOf(S.day)<=7],
+ ["You electrocuted yourself untangling the Christmas lights.",()=>monthOf(S.day)===11],
+ ["You were hit on the head by a coconut on your one beach holiday in years.",()=>(S.items||[]).some(i=>i.k==="souvenir")],
+ ["You laughed so hard at a pub quiz answer that your heart gave out.",()=>true],
+ ["You fell off a ladder hanging bunting for the street party.",()=>alivePeople().some(p=>p.role==="neighbour")],
+ ["You were stung by a wasp inside your own pint, in the beer garden.",()=>monthOf(S.day)>=5&&monthOf(S.day)<=8],
+ ["You were knocked out cold by a falling mobile phone on the Tube.",()=>S.car.id==="none"],
+ ["You were trampled by a herd of escaped cows on a country walk.",()=>S.flags.downshift!=null||rnd()<.3],
+ // Careers
+ ["A wall of trading screens fell on you during a market crash.",()=>S.path==="bank"],
+ ["You were killed by a rogue ice sculpture at a corporate banquet.",()=>["chef","tvchef","bank","law"].includes(S.path)],
+ ["You were felled by a celebratory confetti cannon at the office party.",()=>["bank","tech","law","arch"].includes(S.path)],
+ ["A server rack toppled on you during an all-night outage.",()=>S.path==="tech"],
+ ["You were struck by a wayward corner flag during a goal celebration.",()=>["foot","manager","clubowner"].includes(S.path)],
+ ["You choked on a Haribo-ish sweet during a penalty shoot-out.",()=>["foot","manager","clubowner"].includes(S.path)],
+ ["You fell into the orchestra pit during your curtain call.",()=>["actor","music"].includes(S.path)],
+ ["You were electrocuted by a smoke machine at your own gig.",()=>["music","dj"].includes(S.path)],
+ ["You walked backwards off a stage while filming a reaction video.",()=>S.path==="influencer"],
+ ["You were trampled by over-enthusiastic fans at your own book signing.",()=>(S.fame||0)>=40],
+ ["You were head-butted by a goat during a school farm trip.",()=>S.path==="teach"],
+ ["A hairdryer fell into the sink during a balayage.",()=>S.path==="hair"],
+ ["You were sat on by a sedated shire horse that woke up early.",()=>S.path==="vet"],
+ ["A filing cabinet full of expenses claims fell on you.",()=>S.path==="pol"],
+ ["You were hit by a stray golf ball at a fundraising dinner.",()=>["pol","bank","law","clubowner"].includes(S.path)],
+ ["You were killed by a falling model of your own building at an awards dinner.",()=>S.path==="arch"],
+ ["You fell down a manhole you were inspecting. It wasn't your manhole.",()=>["plumb","elec"].includes(S.path)],
+ ["You slipped on a dropped sausage roll in the crew room.",()=>["fire","police","nurse","doc"].includes(S.path)],
+ ["Your exploding pen went off in the wrong pocket.",()=>S.path==="spy"],
+ // Things you own and do
+ ["You were thrown from your midlife-crisis motorbike on a roundabout in Croydon.",()=>(S.items||[]).some(i=>i.k==="motorbike")],
+ ["You fell asleep in the hot tub and never woke up.",()=>!!(S.home&&S.home.mods&&S.home.mods.hottub)],
+ ["Your racehorse kicked you in the winner's enclosure.",()=>(S.items||[]).some(i=>i.k==="horse")],
+ ["You fell overboard from your sailing boat while opening a bottle of wine.",()=>(S.items||[]).some(i=>i.k==="boat")],
+ ["You were crushed under a three-tier showstopper cake.",()=>!!(S.hobby&&S.hobby.k==="bake")],
+ ["You collapsed at the finish line of a parkrun, having set a personal best.",()=>!!(S.hobby&&S.hobby.k==="run")],
+ ["You were hit by a flying chess board after checkmating a sore loser.",()=>!!(S.hobby&&S.hobby.k==="chess")],
+ ["Your dog tripped you up at the top of the stairs. The dog is fine.",()=>!!(S.pet&&S.pet.kind==="dog")],
+ ["Your cat knocked a vase off a shelf onto your head. It didn't look sorry.",()=>!!(S.pet&&S.pet.kind==="cat")],
+ ["Your lucky scratch card blew into the road and you chased it.",()=>(S.luckWon||0)>0||S.luckD!=null],
+ ["You were crushed by your own enormous designer kitchen island.",()=>!!(S.home&&S.home.mods&&S.home.mods.kitchen)]
+];
+/* About 1 life in 40 ends this way */
+function absurdDeath(notes){
+ if(S.over||S.prison||rnd()>.00006)return false;
+ const ok=ABSURD.filter(([t,w])=>{try{return w()}catch(e){return false}});if(!ok.length)return false;
+ const t=pick(ok)[0];S.flags.absurd=S.day;notes.push(t);die(t);return true;
+}
+/* Old age: the way you go says something about how you lived */
+function oldAgeDeath(n){
+ const o=[];const nw=netWorth(),k=S.karma||0,h=S.hobby&&HOBBIES[S.hobby.k];
+ if(S.children.length&&(S.grandkids||0)>0)o.push(`You died peacefully, aged ${n}, with your grandchildren round the bed arguing over the TV remote.`);
+ if(h)o.push(`You died aged ${n}, still ${({run:"running parkrun every Saturday",band:"playing pub gigs with the old band",chess:"beating everyone at the chess club",paint:"painting the same view of the sea",golf:"claiming your handicap was 'really about 12'",bake:"entering the village show and winning"})[S.hobby.k]}.`);
+ if(nw>=1e7)o.push(`You died aged ${n} on your yacht, still checking the markets on your phone.`);
+ if(nw<5e3)o.push(`You died aged ${n} in your favourite armchair, with the telly still on.`);
+ if(k>=40)o.push(`You died peacefully, aged ${n}. The queue for your funeral went round the block.`);
+ if(k<=-40)o.push(`You died aged ${n}. Your will was contested by eleven people before the funeral.`);
+ if(S.rel.st==="married")o.push(`You died peacefully, aged ${n}, holding ${S.rel.name}'s hand.`);
+ if(S.rel.marriages>=3)o.push(`You died aged ${n}. All three of your exes came to the funeral and sat together.`);
+ if((S.items||[]).some(i=>i.k==="motorbike"))o.push(`You died aged ${n} on your motorbike, still refusing to act your age.`);
+ if(S.pet)o.push(`You died peacefully, aged ${n}, with ${S.pet.n} asleep on your feet.`);
+ if((S.fame||0)>=40)o.push(`You died aged ${n}. You trended worldwide for two days.`);
+ if(alivePeople().some(p=>p.role==="neighbour"))o.push(`You died aged ${n}, mid-argument with your neighbour about the hedge.`);
+ if(S.abroad)o.push(`You died aged ${n} on a sun lounger in ${S.abroad.city}, cocktail in hand.`);
+ if(n>=95)o.push(`You died aged ${n}, after a telegram from the King-ish and a very big cake.`);
+ o.push(`You died peacefully in your sleep, aged ${n}.`);
+ return pick(o);
 }
 
 /* ============ Inbox illustrations: a scene at the top of each message, picked from what it's about ============ */
