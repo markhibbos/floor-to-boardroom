@@ -510,6 +510,11 @@ a.btn.primary{color:var(--on-accent)}
 .arc-hold{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}.arc-gauge{position:relative;width:82%;height:22px;border-radius:11px;background:rgba(255,255,255,.15);overflow:hidden}.arc-gauge i{position:absolute;left:0;top:0;bottom:0;background:#fff;opacity:.8}.arc-zone{position:absolute;top:0;bottom:0;background:#2F9E5E}
 .dec-card .target-sum b{font-size:15px}.dec-card .album-strip{margin-top:10px}
 .desk-tabs{margin:0}
+details.tip{margin:6px 0}details.tip>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:2px 0}
+details.tip>summary::-webkit-details-marker{display:none}
+.tip-i{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font:700 11px/1 Georgia,serif;font-style:italic;color:var(--accent)}
+details.tip[open]>summary .tip-l{display:none}details.tip[open]>summary::after{content:"Hide";font-size:12px}details.tip>.hint{margin-top:4px}
+.fold summary::before{content:"i";display:inline-grid;place-items:center;width:16px;height:16px;margin-right:6px;border-radius:50%;border:1.5px solid currentColor;font:700 10px/1 Georgia,serif;font-style:italic;vertical-align:-2px}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -6144,7 +6149,7 @@ function jobsClose(off){
 /* Review target maths, shared by the jobs board and the career tab */
 function targetInfo(){const t=rankTarget(),left=Math.max(1,REVIEW_DAYS-(S.day-S.reviewStart)),need=Math.max(0,t-S.reviewPnl);return{t,left,need,per:need/left,base:t/REVIEW_DAYS,unit:CAR_().fmt==="pts"?"points":"amounts"}}
 function pointsHelpText(){const x=targetInfo();return `Everything you do at work adds to your ${esc(CAR_().outName.toLowerCase())}. Your review target is <b>${fmtOut(x.t)}</b> and you have ${fmtOut(S.reviewPnl)} so far, with ${x.left} month${x.left>1?"s":""} until your review: ${x.need>0?`aim for about <b>${fmtOut(x.per)} a month</b>.`:"<b>you've already hit it</b>. Anything extra helps you beat your rival and earns a bigger bonus."} Figures are "about" because skill, difficulty, luck and the news change the result.`}
-const foldOpen=id=>{try{const v=localStorage.getItem("ftb-fold-"+id);return v==null?!!(S&&S.day<=3):v==="1"}catch(e){return true}};
+const foldOpen=id=>{try{const v=localStorage.getItem("ftb-fold-"+id);return v==null?!!(S&&S.day<=1):v==="1"}catch(e){return true}};
 const fold=(id,title,html,attr="")=>`<details class="fold" data-fold="${id}" ${attr} ${foldOpen(id)?"open":""}><summary>${title}</summary>${html}</details>`;
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.matches&&d.matches("details[data-fold]"))try{localStorage.setItem("ftb-fold-"+d.dataset.fold,d.open?"1":"0")}catch(x){}},true);
 /* ============ Authentic careers: qualifications, elections, specialties, more events, second acts and a calendar ============ */
@@ -9695,6 +9700,18 @@ function chg(id){const h=S.px[id].h;return(h[h.length-1]/h[h.length-2]-1)*100}
 function render(){
  if(!S)return;
  renderTop();renderDesk();renderInbox();renderCareer();renderLife();renderLog();renderNav();
+ try{["pane-desk","pane-career","pane-life"].forEach(id=>{const e=document.getElementById(id);if(e)tipify(e)})}catch(e){}
+}
+function tipify(root){
+ root.querySelectorAll("p.hint, div.hint").forEach(el=>{
+  if(el.closest("details,.ops,.book,.mail,.kv,.person,.folks,.owned-row,.shop-row,.listing")||el.querySelector("button,input,select,a,svg")||el.classList.contains("keep"))return;
+  const txt=el.textContent.trim();if(txt.length<130)return;
+  const first=(txt.match(/^[^.!?]{0,60}/)||[txt.slice(0,50)])[0].trim();
+  const d=document.createElement("details");d.className="tip";
+  d.innerHTML='<summary><span class="tip-i" aria-hidden="true">i</span><span class="tip-l"></span></summary>';
+  d.querySelector(".tip-l").textContent=first+(first.length<txt.length?"…":"");
+  el.parentNode.insertBefore(d,el);d.appendChild(el);
+ });
 }
 /* Repayment mortgages: a fixed rate and term, the same payment every month, paid off by the end */
 const MORT_RATE=.045;
