@@ -508,6 +508,7 @@ a.btn.primary{color:var(--on-accent)}
 .arc-ans{position:absolute;left:10px;right:10px;bottom:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.arc-a{height:50px;border:none;border-radius:12px;background:rgba(255,255,255,.16);color:#fff;font:800 22px system-ui;cursor:pointer}.arc-a.hit{background:rgba(75,186,133,.7)}.arc-a.oops{background:rgba(234,107,93,.7)}
 .arc-up{position:absolute;transform:translate(-50%,-50%);font-size:40px;cursor:pointer}.arc-up.hit{transform:translate(-50%,-50%) scale(1.5);opacity:0;transition:all .12s}.arc-up.oops{filter:drop-shadow(0 0 8px #EA6B5D)}
 .arc-hold{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}.arc-gauge{position:relative;width:82%;height:22px;border-radius:11px;background:rgba(255,255,255,.15);overflow:hidden}.arc-gauge i{position:absolute;left:0;top:0;bottom:0;background:#fff;opacity:.8}.arc-zone{position:absolute;top:0;bottom:0;background:#2F9E5E}
+.dec-card .target-sum b{font-size:15px}.dec-card .album-strip{margin-top:10px}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -6014,7 +6015,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();wildMorning();takeoverMorning();postingMorning();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -8905,6 +8906,136 @@ function notifOffer(){
  pushDyn({id:"notif_ask",life:0,from:"Floor to Boardroom",t:"Want a nudge now and then?",b:"The game can remind you when a decision is waiting, the markets are moving or a birthday is coming up. The reminders come from your phone itself, nothing is sent anywhere, and you can turn them off in the menu.",c:[{t:"Yes, remind me",fx:{act:"notifyes"},o:"Reminders on."},{t:"No thanks",fx:{},o:"No reminders. You can change your mind in the menu."}]});
 }
 
+/* ============ The shape of a long life: chapters, rare wildcard years, takeovers, postings abroad and decade reviews ============ */
+
+/* ---- Life chapters: every five years, choose what this stretch of life is about ---- */
+const CHAPTERS={
+ career:{n:"Career first",d:"Push for the top. More work events, faster reputation, more stress.",icon:"📈"},
+ family:{n:"Family first",d:"Home and the people you love. More family moments, a calmer head.",icon:"🏡"},
+ adventure:{n:"Adventure",d:"Say yes to everything. Travel, wild offers and the unexpected. Costs a bit more.",icon:"🧭"},
+ easy:{n:"Take it easy",d:"Slow down. Less stress, better health, but your career drifts.",icon:"🌿"}};
+const DECADE_N=a=>a<20?"teens":a<30?"twenties":a<40?"thirties":a<50?"forties":a<60?"fifties":a<70?"sixties":a<80?"seventies":"eighties";
+function chapterOffer(n){
+ if(S.over||S.prison||S.front||![25,30,35,40,45,50,55,60,65].includes(n))return;
+ const cur=S.chapter&&CHAPTERS[S.chapter.k];
+ pushDyn({id:"chap_"+S.day,life:1,from:"A new chapter",t:`Age ${n}: what's this chapter about?`,b:`You're ${n}. ${cur?`The last five years were about "${cur.n.toLowerCase()}". `:""}Pick a focus for the next five years. It changes what life throws at you.`,
+  c:Object.entries(CHAPTERS).map(([k,c])=>({t:`${c.icon} ${c.n}: ${c.d}`,fx:{act:"chapter",k},o:`This chapter: ${c.n.toLowerCase()}.`}))});
+}
+ACTS.chapter=fx=>{S.chapter={k:fx.k,from:S.day};S.log.unshift({d:S.day,t:`A new chapter: ${CHAPTERS[fx.k].n.toLowerCase()}.`});turnPoint&&turnPoint(`A new chapter: ${CHAPTERS[fx.k].n.toLowerCase()}`,`At ${ageInt()} you chose ${CHAPTERS[fx.k].n.toLowerCase()}.`)};
+function chapterDay(){
+ const c=S.chapter;if(!c||S.over||S.prison)return;
+ if(c.k==="career"){S.rep=clamp(S.rep+.25,0,100);S.stress=clamp(S.stress+.5,0,100)}
+ else if(c.k==="family"){S.homeLife=clamp(S.homeLife+.6,0,100);S.stress=clamp(S.stress-.3,0,100);S.rep=clamp(S.rep-.15,0,100)}
+ else if(c.k==="adventure"){S.stress=clamp(S.stress-.4,0,100);S.wealth-=150}
+ else if(c.k==="easy"){S.stress=clamp(S.stress-.8,0,100);S.health=clamp(S.health+.2,0,100);S.rep=clamp(S.rep-.3,0,100)}
+}
+/* The mix of events leans towards the chapter you chose */
+{const _de=drawEvent;drawEvent=function(){let e=_de.apply(this,arguments);const c=S.chapter&&S.chapter.k;if(!e||!c||S.prison)return e;
+ if(c==="career"&&e.life&&rnd()<.3)e=_de.apply(this,arguments)||e;
+ else if((c==="family"||c==="easy")&&!e.life&&rnd()<.3)e=_de.apply(this,arguments)||e;
+ return e}}
+
+/* ---- Wildcard years: rare, big, silly plot twists ---- */
+const SURNAMES2=["Smith","Jones","Taylor","Brown","Wilson","Evans","Thomas","Roberts","Walker","Wright"];
+const WILDS={
+ witness:{t:"You saw everything",b:"You witnessed a gangland shooting outside a kebab shop at 1am. The police want you to testify. It could be dangerous.",c:[{t:"Testify",fx:{act:"wildwit",karma:6,stress:8},o:"You give evidence from behind a screen. Then a man from the Home Office takes you aside."},{t:"Say you saw nothing",fx:{karma:-6,stress:4},o:"You look over your shoulder for years."}]},
+ castle:{t:"You've inherited a castle",b:"A great-great-uncle you never knew about has left you a crumbling castle in the Highlands. It has a moat, a ghost and no central heating.",c:[{t:"Keep it and live the dream",fx:{act:"wildcastle",v:"keep",home:8,fame:4},o:"You're a laird now. The roof leaks in eleven places."},{t:"Turn it into a wedding venue",fx:{act:"wildcastle",v:"venue",stress:6},o:"Your first wedding is next month. The ghost is booked as a feature."},{t:"Sell it to an American billionaire",fx:{gbp:1200000,fixed:1},o:"£1.2 million. He seems delighted with the ghost."}]},
+ meme:{t:"You're a meme",b:"Someone filmed you falling into a fountain while carrying a birthday cake. It has 40 million views and a remix.",c:[{t:"Lean in: merch, a TikTok-ish account, the lot",fx:{fame:15,gbp:25000,fixed:1,stress:4},o:"Fountain Cake Person hoodies sell out in a day."},{t:"Hide until it blows over",fx:{stress:6,fame:4},o:"It takes eight months. Strangers still shout 'cake!' at you."}]},
+ syndicate:{t:"The syndicate's won the lottery",b:"The office lottery syndicate has won £3.6 million between ten of you. But Dave didn't pay his £2 that week.",c:[{t:"Share it with Dave anyway",fx:{gbp:327000,fixed:1,karma:8,home:3},o:"Dave cries. You're all a bit richer and still friends."},{t:"Cut Dave out: rules are rules",fx:{gbp:360000,fixed:1,karma:-10,rep:-4},o:"£360k each. Dave sues. The office is a war zone for a year."}]},
+ lookalike:{t:"Mistaken identity",b:"Everyone thinks you're a famous film star. A hotel has just upgraded you to the penthouse and a fan has fainted.",c:[{t:"Play along for a month",p:.6,win:{fx:{fame:6,gbp:4000,home:3},o:"Free dinners, front-row seats and one very confusing interview."},lose:{fx:{rep:-5,fame:8},o:"You're unmasked on breakfast TV. The real star sends a cease-and-desist."}},{t:"Set the record straight",fx:{karma:3},o:"The hotel moves you back to a room by the lift."}]},
+ ufo:{t:"Lights in the sky",b:"Driving home on a quiet road at 2am, you see three lights hover over a field, then vanish. Your dashcam caught it.",c:[{t:"Tell the world",fx:{fame:10,rep:-5},o:"A documentary crew follows you for a month. Your colleagues hum the X-Files-ish theme."},{t:"Send it to the Ministry of Defence-ish",fx:{stress:3},o:"Two men in grey suits visit. They take the dashcam. They don't give it back."},{t:"Delete it and never speak of it",fx:{stress:2},o:"Some nights you still look up."}]},
+ lift:{t:"Stuck in a lift",b:"You're stuck in a lift for six hours with the Prime Minister-ish, a security guard and a man with a cello.",c:[{t:"Pitch the PM your big idea",p:.5,win:{fx:{rep:10,fame:5},o:"Your idea is in the next budget. You're credited by name."},lose:{fx:{rep:-2},o:"The PM pretends to fall asleep."}},{t:"Organise a sing-along",fx:{karma:4,fame:3,home:2},o:"The cellist is brilliant. The clip goes everywhere."},{t:"Quietly panic",fx:{stress:8},o:"The PM holds your hand. Nobody mentions it again."}]},
+ island:{t:"You've won an island",b:"A raffle ticket you bought at a village fete twenty years ago has finally been drawn. The prize: a tiny Scottish island with forty sheep.",c:[{t:"Keep it as a holiday hideaway",fx:{act:"wildisland",home:6},o:"No signal, forty sheep and the best sleep of your life."},{t:"Sell it",fx:{gbp:340000,fixed:1},o:"A tech billionaire buys it as a 'digital detox retreat'."}]}
+};
+function wildMorning(){
+ if(S.over||S.prison||S.front||S.sel||S.sabb||age()<20||age()>78||S.day-(S.wildAt??-60)<96)return;
+ const ch=S.chapter&&S.chapter.k==="adventure"?2:1;if(rnd()>.0035*ch||S.inbox.some(m=>!m.done&&/^wild_/.test(m.id)))return;
+ S.wildDone=S.wildDone||{};const left=Object.keys(WILDS).filter(k=>!S.wildDone[k]&&!(k==="syndicate"&&selfPaid()));if(!left.length)return;
+ const k=pick(left);S.wildDone[k]=S.day;S.wildAt=S.day;pushDyn(Object.assign({id:"wild_"+k+"_"+S.day,life:1,from:"Out of nowhere"},WILDS[k]));
+}
+ACTS.wildwit=()=>{const first=S.name.split(" ")[0],nu=pick(SURNAMES2.filter(x=>!S.name.endsWith(x)));S.altName=S.name;S.name=`${first} ${nu}`;S.witUntil=S.day+24;S.homeLife=clamp(S.homeLife-6,0,100);
+ moment({icon:"mask",kicker:"Witness protection",title:`You're ${S.name} now`,sub:"A new name, a new postcode and a cover story about selling carpets. Don't tell anyone. Not even your mum."})};
+ACTS.wildcastle=fx=>{S.castle=fx.v;if(fx.v==="keep")addItem("castle","A crumbling Highland castle",900000,"Inherited from a great-great-uncle. Comes with a ghost.");else addItem("castle","A castle wedding venue",1100000,"Inherited, then turned into a wedding venue.")};
+ACTS.wildisland=()=>{addItem("island","A tiny Scottish island",340000,"Won in a raffle twenty years after buying the ticket. Forty sheep.")};
+function wildDay(){
+ if(S.castle==="keep")S.wealth-=2500;else if(S.castle==="venue")S.wealth+=rnd()<.8?3500:-2000;
+ if(S.witUntil&&S.day>=S.witUntil&&!S.over){S.witUntil=null;pushDyn({id:"wit_end_"+S.day,life:1,from:"The Home Office",t:"It's over",b:`The gang has been convicted. You can go back to being ${S.altName} if you want to.`,c:[{t:`Go back to being ${S.altName}`,fx:{act:"witback"},o:"Your mum is very relieved."},{t:`Stay ${S.name}`,fx:{},o:"You've grown quite fond of the carpet story."}]})}
+}
+ACTS.witback=()=>{if(S.altName){S.name=S.altName;S.altName=null}};
+
+/* ---- Your firm is taken over ---- */
+const TAKEOVER_CAREERS=["bank","law","tech","arch","pilot","chef","vet","teach","doc","nurse","police","fire","tvchef","actor","music","influencer","spy"];
+const BUYERS={vet:["PawCare Group-ish","VetsNation"],teach:["the Horizon Academy Trust","the Northstar Learning Trust"],doc:["a merged hospital trust"],nurse:["a merged hospital trust"],police:["a merged regional force"],fire:["a merged regional fire service"],spy:["a new joint intelligence directorate"],default:["Atlas Group","Vantage Capital","Sterling & Hart","Bluewater Partners","Omnia Holdings","Kestrel Industries"]};
+function takeoverMorning(){
+ if(S.over||S.prison||S.front||S.sel||S.sabb||S.abroad||!TAKEOVER_CAREERS.includes(S.path)||S.rank>=4||S.day-(S.toAt??-60)<120||selfPaid()||rnd()>.006||S.inbox.some(m=>!m.done&&/^to_/.test(m.id)))return;
+ const buyer=pick(BUYERS[S.path]||BUYERS.default),pub=["doc","nurse","police","fire","spy","teach"].includes(S.path);S.toAt=S.day;S.toBuyer=buyer;
+ const eq=(S.items||[]).find(i=>i.k==="equity");
+ pushDyn({id:"to_"+S.day,life:1,from:"An all-staff email",t:pub?`${S.bank} is being merged`:`${S.bank} has been taken over`,b:pub?`${S.bank} is being merged into ${buyer}. New bosses, new rules, and talk of cuts.`:`${buyer} has bought ${S.bank}. New owners, new bosses, and everyone's talking about cuts.`,c:[
+  {t:"Impress the new bosses",p:.55,win:{fx:{act:"togo",rep:8},o:"The new boss remembers your name. Then your ideas. You're on the transition team."},lose:{fx:{act:"togo",rep:-4,stress:5},o:"You try too hard. The new boss calls you 'keen' in a way that isn't a compliment."}},
+  {t:"Keep your head down",fx:{act:"togo",stress:3},o:"You survive the first round of cuts. Half your team doesn't."},
+  ...(S.rank>=1?[{t:"Take the voluntary redundancy",fx:{act:"redundancy"},o:"A payout, and a whole new start."}]:[]),
+  ...(eq?[{t:"Cash in your shares",fx:{act:"tocash"},o:"The deal values your shares at a premium."}]:[])]});
+}
+ACTS.togo=()=>{const old=S.bank;if(!["doc","nurse","police","fire","spy","teach"].includes(S.path))S.bank=S.toBuyer||S.bank;S.boss={n:pick(BOSS_NAMES),mood:45};S.toFollow=S.day+3;S.log.unshift({d:S.day,t:`${old} was taken over by ${S.toBuyer}.`})};
+ACTS.tocash=()=>{const eq=(S.items||[]).find(i=>i.k==="equity");if(!eq)return;const v=Math.round(eq.value*1.6);S.wealth+=v;S.items=S.items.filter(i=>i!==eq);S.log.unshift({d:S.day,t:`Cashed in your shares for ${money(v)} in the takeover.`});ACTS.togo()};
+function takeoverDay(){
+ if(!S.toFollow||S.day<S.toFollow||S.over)return;S.toFollow=null;
+ pushDyn({id:"to_f_"+S.day,life:1,from:S.boss.n,t:"The new way of doing things",b:"The new owners have brought in consultants, a new logo and a rule about clearing your desk every night.",c:[{t:"Embrace it",fx:{rep:3,stress:3},o:"You even like the new logo. Almost."},{t:"Push back on the silly bits",p:.5,win:{fx:{rep:4,karma:2},o:"They drop the clear-desk rule. Your colleagues buy you a drink."},lose:{fx:{rep:-4},o:"You're labelled 'resistant to change' in your review."}},{t:"Quietly start looking elsewhere",fx:{stress:-2},o:"You update your CV. It feels good."}]});
+}
+
+/* ---- A posting abroad: offered now and then ---- */
+const POSTINGS=[["New York","nyc"],["Dubai","city"],["Singapore","night"],["Hong Kong","night"],["Sydney","beach"],["Paris","paris"],["Tokyo","japan"],["Toronto","city"]];
+const POSTING_NO=["foot","manager","clubowner","pol","soldier","police","fire","astronaut","elec","plumb","hair"];
+function postingMorning(){
+ if(S.over||S.prison||S.front||S.sel||S.sabb||S.abroad||POSTING_NO.includes(S.path)||S.rank<1||age()>58||S.day-(S.postAt??-60)<96)return;
+ const ch=S.chapter&&S.chapter.k==="adventure"?2:1;if(rnd()>.009*ch||S.inbox.some(m=>!m.done&&/^post_/.test(m.id)))return;
+ const [city]=pick(POSTINGS);S.postAt=S.day;
+ const fam=inLove()||S.children.some(k=>kidAge(k)<18);
+ pushDyn({id:"post_"+S.day,life:1,from:S.boss?S.boss.n:"Head office",t:`A posting in ${city}?`,b:`They want you in ${city} for two years or so: 40% more pay, a flat, and a lot of new faces.${fam?" It's a big ask for the family.":""}`,c:[{t:`Pack your bags for ${city}`,fx:{act:"abroad"},o:`Within a month you're living in ${city}.`},{t:"Thank them, but no",fx:{rep:-1},o:"Someone else goes. You hear it's amazing."}]});
+ const m=S.inbox.find(x=>x.id==="post_"+S.day);if(m)m.vars={city};
+}
+{const _ab=ACTS.abroad;ACTS.abroad=(fx,m)=>{_ab(fx,m);try{const city=S.abroad&&S.abroad.city,sc=(POSTINGS.find(p=>p[0]===city)||[0,"city"])[1];snap({i:"rocket",k:"A new posting",t:`Arriving in ${city}`,s:"A new city, a new job and jet lag for a week.",ph:{sc,c:castNow({pt:1,kids:1}),pr:"case",o:"hols"}})}catch(e){}}}
+
+/* ---- Decade reviews ---- */
+function decSnapNow(){return{day:S.day,nw:Math.round(netWorth()),rank:S.rank,role:R().t,path:S.path,mem:(S.memories||[]).length,kids:S.children.length,careers:(S.past||[]).length,people:(S.people||[]).length}}
+function decadeReview(n){
+ if(S.over||n<30||n%10!==0)return;const a=S.decSnap||{day:1,nw:15000,rank:0,role:CAREERS[S.path].ranks[0].t,path:S.path,mem:0,kids:0,careers:0,people:0};const b=decSnapNow();
+ const ms=(S.memories||[]).filter(m=>m.d>=a.day);
+ S.decLast={n,a,b,big:ms.filter(m=>!m.quiet&&m.ph).slice(-3).map(m=>({t:m.t,ph:m.ph})),photos:ms.length,trips:S.log.filter(l=>l.d>=a.day&&/^Holiday:/.test(l.t)).length};
+ S.decSnap=b;
+ pushDyn({id:"dec_"+S.day,life:1,from:"Floor to Boardroom",t:`Your ${DECADE_N(n-1)} in review`,b:`You're ${n}. Ten years, summed up.`,c:[{t:"Let's see it",fx:{act:"decopen"},o:"Here's your decade."}]});
+}
+ACTS.decopen=()=>{setTimeout(()=>{try{decadeModal()}catch(e){}},350)};
+function decadeQuote(d){
+ const dn=d.b.nw-d.a.nw,f=S.friend?S.friend.n.split(" ")[0]:"Your oldest friend";
+ if(dn>2e6)return[`"Never pays for a round, though."`,f];
+ if(d.b.kids>d.a.kids)return[`"We never see them now. They're always at a soft-play centre."`,f];
+ if(S.stress>65)return[`"Haven't seen them since a birthday three years ago. Work, apparently."`,f];
+ if(S.chapter&&S.chapter.k==="adventure")return[`"Every time I ring, they're in a different country."`,f];
+ return[`"Still the same as ever. In a good way. Mostly."`,f];
+}
+function decadeModal(){
+ const d=S.decLast;if(!d)return;const dn=d.b.nw-d.a.nw,q=decadeQuote(d),dec=DECADE_N(d.n-1);
+ const stat=(l,v)=>`<div><span class="label">${l}</span><b class="mono">${v}</b></div>`;
+ showModal(`<div class="dec-card"><div class="label">Decade review</div><h2 style="margin-top:4px">Your ${dec}</h2>
+  <div class="target-sum adm-kpi">${stat("Net worth",`${money(d.a.nw)} → ${money(d.b.nw)}`)}${stat("Career",d.a.path===d.b.path?`${esc(d.a.role)} → ${esc(d.b.role)}`:`${esc(CAREERS[d.a.path].n)} → ${esc(CAREERS[d.b.path].n)}`)}${stat("Children",d.b.kids-d.a.kids>0?`+${d.b.kids-d.a.kids}`:String(d.b.kids))}${stat("Photos taken",d.photos)}${stat("Holidays",d.trips)}${stat("Money made",`${dn>=0?"+":"−"}${money(Math.abs(dn))}`)}</div>
+  ${d.big.length?`<div class="album-strip">${d.big.map(x=>polaroid(Object.assign({},x.ph,{av:S.av}),x.t,`Age ${x.ph.a}`,"",Math.floor(age()),1)).join("")}</div>`:""}
+  <p class="epitaph" style="margin:10px 0 0">${esc(q[0])}</p><p class="hint" style="margin:2px 0 0;text-align:right">— ${esc(q[1])}</p></div>
+  <div class="btn-row"><button class="btn primary" data-act="decshare">Share my ${dec}</button><button class="btn" data-act="hide">Close</button></div>`);
+}
+async function decShare(){
+ const d=S.decLast;if(!d)return;const dec=DECADE_N(d.n-1),dn=d.b.nw-d.a.nw;
+ const text=`My ${dec} in Floor to Boardroom: ${d.a.path===d.b.path?`${d.a.role} to ${d.b.role}`:`${CAREERS[d.a.path].n} to ${CAREERS[d.b.path].n}`}, ${dn>=0?"made":"lost"} ${money(Math.abs(dn))}, ${d.photos} photos. ${decadeQuote(d)[0]}`;
+ if(await nativeShareText(`My ${dec}`,text,PUBLIC_URL))return;
+ try{if(navigator.share){await navigator.share({title:`My ${dec}`,text,url:PUBLIC_URL});return}}catch(e){if(e&&e.name==="AbortError")return}
+ try{await navigator.clipboard.writeText(text+" "+PUBLIC_URL);toastMsg("Copied. Paste it to your friends.")}catch(e){}
+}
+/* Hooks: birthdays bring chapters and decade reviews; the month ticks the rest */
+{const _ad=ageDay;ageDay=function(notes){const was=Math.floor(ageAt(S,S.day-1)+1e-9),n=Math.floor(age()+1e-9);if(!S.decSnap)S.decSnap=decSnapNow();_ad(notes);try{if(n>was&&!S.over){decadeReview(n);chapterOffer(n)}}catch(e){}}}
+{const _ad=albumDay;albumDay=function(n){_ad(n);try{chapterDay();wildDay();takeoverDay()}catch(e){}}}
+
+Object.assign(ITEM_PICS,{castle:'<text x="24" y="37" font-size="34" text-anchor="middle">🏰</text>',island:'<text x="24" y="37" font-size="34" text-anchor="middle">🏝️</text>'});ITEM_RULES.unshift([/castle/i,"castle"],[/island/i,"island"]);
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -9598,7 +9729,7 @@ function renderLife(){
    <div class="sec-head"><h2>Life</h2><span class="label">Net worth</span></div>
    <div class="nw ${nw<0?"down":""}">${money(nw)}</div>
    ${S.nwh.length>2?`<div style="color:var(--muted)">${spark(S.nwh)}</div><div class="hint">Net worth over the last ${Math.round(S.nwh.length/12)} years</div>`:""}
-   ${lifeTab==="money"?"":`<div class="hint">Cash ${money(S.wealth)} · outgoings ${money(monthly())} a month</div>`}<div class="kv" ${lifeTab==="money"?"":"hidden"}><span>Cash</span><span class="${S.wealth<0?"down":""}">${money(S.wealth)}</span><span>Investments</span><span>${money(invTotal())}</span><span>Pension</span><span>${money(S.pension.pot)}</span><span>Home equity</span><span>${money(equity())}</span><span>Car</span><span>${money(S.car.value)}</span><span>${selfPaid()?"Earnings (12-month average)":"Salary"}</span><span>${money(salary())} a year</span><span>Take-home after tax</span><span>${money((salary()-ukTax(salary()))/YEAR)} a month</span><span>Outgoings</span><span class="down">${money(monthly())} a month</span></div>
+   ${lifeTab==="money"?"":`<div class="hint">Cash ${money(S.wealth)} · outgoings ${money(monthly())} a month${S.chapter&&CHAPTERS[S.chapter.k]?` · This chapter: ${CHAPTERS[S.chapter.k].icon} ${CHAPTERS[S.chapter.k].n}`:""}</div>`}<div class="kv" ${lifeTab==="money"?"":"hidden"}><span>Cash</span><span class="${S.wealth<0?"down":""}">${money(S.wealth)}</span><span>Investments</span><span>${money(invTotal())}</span><span>Pension</span><span>${money(S.pension.pot)}</span><span>Home equity</span><span>${money(equity())}</span><span>Car</span><span>${money(S.car.value)}</span><span>${selfPaid()?"Earnings (12-month average)":"Salary"}</span><span>${money(salary())} a year</span><span>Take-home after tax</span><span>${money((salary()-ukTax(salary()))/YEAR)} a month</span><span>Outgoings</span><span class="down">${money(monthly())} a month</span></div>
   </div>
   ${lifeTabsBar()}
   ${lifeTab==="family"?`
@@ -10093,6 +10224,7 @@ document.addEventListener("click",e=>{
  if(a==="redsame"){redSame();return}
  if(a==="opset"){opSet(t.dataset.k,t.dataset.v);return}
  if(a==="arcgo"){arcStart();return}
+ if(a==="decshare"){decShare();return}
  if(a==="arcquit"){if(arcRun){arcEnd(arcRun.score)}else hideModal();return}
  if(a==="arcagain"){arcOpen(arcCur&&arcCur.kind,false);return}
  if(a==="notiftoggle"){notifEnable(!notifOn()).then(()=>menuModal());return}
