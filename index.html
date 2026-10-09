@@ -487,6 +487,7 @@ a.btn.primary{color:var(--on-accent)}
 .dec-card .target-sum b{white-space:normal;overflow-wrap:anywhere}
 .op-pills{display:flex;flex-wrap:wrap;gap:6px}
 .plan-svg{display:block;width:100%;height:auto;border-radius:12px;margin:4px 0}.plan-room.ok{cursor:pointer}.plan-room.ok:hover rect{fill:#FFE7A6}
+.op-opts .pill.fit-good{background:rgba(75,186,133,.18);color:var(--up);border-color:transparent}.op-opts .pill.fit-bad{background:rgba(232,106,122,.15);color:var(--down);border-color:transparent}.op-opts button .pill{display:inline-block;margin-top:3px}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -8721,9 +8722,9 @@ function opSet(k,v){
 function opsSec(){
  const o=S.op,T=OPS[S.path];if(!o||!T||o.d!==S.day)return"";
  const ready=o.plan!=null&&o.kit!=null,p=ready?opP(o,false):null,worth=o.base*OP_RISK[o.risk][3];
- const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}</button>`).join("")}</div>`;
+ const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}${(()=>{if(k==="risk")return"";let fit=0;for(const [bk,ab] of Object.entries(x[2]||{})){const bi=T.brief.findIndex(b=>b[0]===bk);if(bi>=0&&o.conds[bi])fit+=ab[o.conds[bi].shown]||0}return fit>=.1?`<span class="pill fit-good">Suits the briefing</span>`:fit<=-.08?`<span class="pill fit-bad">Poor fit for the briefing</span>`:""})()}</button>`).join("")}</div>`;
  return `<div class="ops ${o.on?"on":""}"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.h}h of your month</span></div>
-  <p class="hint" style="margin:0 0 8px">Pick a plan and your ${esc(T.kitN.toLowerCase())}. Confirmed intel is right 9 times in 10; unconfirmed is barely better than a guess.</p>
+  <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}: the green tags show what suits it. Confirmed intel is right 9 times in 10; unconfirmed is barely better than a guess.</p>
   <div class="op-brief">${T.brief.map(([k,n,vals,srcs],i)=>{const c=o.conds[i];return `<div><span class="label">${esc(n)}</span><b>${esc(vals[c.shown])}</b><span class="pill ${c.conf?"":"rum"}">${esc(srcs[c.conf?0:1])}: ${c.conf?"confirmed":"unconfirmed"}</span></div>`}).join("")}</div>
   <div class="label" style="margin-top:10px">1. The plan</div>${opt("plan",T.plans)}
   <div class="label" style="margin-top:10px">2. ${esc(T.kitN)}</div>${opt("kit",T.kits)}
@@ -9496,7 +9497,7 @@ function djExtras(){if(!CAREERS.dj||CAREERS.dj._more)return;CAREERS.dj._more=1;C
 );
 
 /* A DJ's big night of the month: read the room before you get there */
-OPS.dj={kind:"The big night",kitN:"Your set-up",names:["the warehouse party","the rooftop launch","the student union all-nighter","the boat party","the secret gig under the arches","the festival after-party","the end-of-season closing party"],
+OPS.dj={kind:"The big night",kitN:"Set-up",names:["the warehouse party","the rooftop launch","the student union all-nighter","the boat party","the secret gig under the arches","the festival after-party","the end-of-season closing party"],
  brief:[["crowd","The crowd",["up for anything","there for the hits"],["The promoter","Someone on the guest list"]],["sound","The sound system",["huge","patchy"],["The venue's tech","A DJ who played there last month"]]],
  plans:[["Go deep and underground","Your own sound. Wins over a crowd up for anything, empties the floor of hit-hunters.",{crowd:[.18,-.16]}],["Bangers from the first track","Every song a singalong. Perfect for hit-lovers, a bit cheesy for the purists.",{crowd:[-.1,.18]}],["Slow build to a big finish","Patient. Needs a big system to land the drop.",{sound:[.16,-.12]}]],
  kits:[["Your own decks and monitors","More to carry, but you know exactly how it sounds.",{sound:[-.02,.16]}],["Just a USB stick","Travel light and trust the venue.",{sound:[.12,-.14]}],["Bring a backup laptop","If something fails, the music doesn't stop.",{},1]],
@@ -11461,7 +11462,7 @@ Object.assign(OPS_NEW,{
   kits:[["Extra video analysis","Spot the gaps in a compact defence.",{opp:[-.02,.14]}],["Rotate and rest the squad","Fresh legs when injuries bite.",{squad:[-.04,.15]}],["A media-savvy press officer","Softens the headlines if it goes wrong.",{},1]],
   win:["A last-minute winner. The away end goes wild.","A comfortable win and a clean sheet.","Your tactics are dissected on the Saturday-night highlights show.","The chairman comes down to the dressing room to shake every hand.","The fans sing your name for ten minutes.","Your star signing scores twice.","The pundits call it a tactical masterclass.","You climb three places in the table.","The opposing manager admits they were outthought.","Season-ticket renewals jump by a thousand."],
   lose:["A red card in the first half and it falls apart.","Thrashed. The fans boo at half-time.","A last-minute equaliser from a set piece you'd warned about.","Your captain is injured and out for the season.","The chairman issues a 'vote of confidence'. Never good.","The away fans sing 'you're getting sacked in the morning'.","A penalty shoot-out defeat after leading for ninety minutes.","Your substitutions are mocked on every phone-in show.","Your striker misses an open goal from three yards.","The board call a meeting for Monday morning."]},
- music:{kind:"The big gig",kitN:"Your set-up",
+ music:{kind:"The big gig",kitN:"Set-up",
   names:["the album launch","the festival main stage","the sold-out homecoming","the support slot on the arena tour","the live radio session","the intimate acoustic night","the battle of the bands final","the late-night TV appearance","the charity concert","the European mini-tour","the record-shop signing","the outdoor summer show","the songwriting showcase","the Christmas gig","the comeback show"],
   brief:[["crowd","The crowd",["your die-hard fans","people who've never heard of you"],["The ticket list","The promoter's guess"]],["venue","The venue",["great acoustics","a boomy shed"],["The sound engineer","A band who played there"]]],
   plans:[["Play the new album start to finish","Fans love it. Strangers drift to the bar.",{crowd:[.18,-.16]}],["Every hit and a cover they'll know","Wins over strangers. Feels safe to the die-hards.",{crowd:[-.08,.18]}],["Strip it back to acoustic","Gorgeous in a great room. Lost in a shed.",{venue:[.18,-.14]}]],
@@ -13509,7 +13510,7 @@ function proposeModal(){
   <div class="btn-row"><button class="btn primary" data-act="propgo">Ask the question</button><button class="btn" data-act="hide">Not yet</button></div>`);
 }
 function proposeGo(){
- const P=window.__prop||{where:0,ring:0},p=S.rel.name,pl=PROPOSE_PLACES[P.where],cost=[8000,45000,0][P.ring];if(S.wealth<cost)return toastMsg("You can't afford that ring right now.");
+ const P=window.__prop||{where:0,ring:0},p=S.rel.name,pl=PROPOSE_PLACES[P.where],cost=[8000,45000,0][P.ring];if(cost>0&&S.wealth<cost)return toastMsg("You can't afford that ring right now.");
  const months=S.day-(S.rel.since||S.day),chance=clamp(.25+(S.homeLife-50)/90+Math.min(.3,months*.015)+pl[2]+(P.ring===1?.05:P.ring===2?.04:0),.08,.95);
  S.propAt=S.day;hideModal();
  if(rnd()<chance){S.wealth-=cost;ACTS.engage({},{vars:{}});S.homeLife=clamp(S.homeLife+(P.ring===1?20:15),0,100);S.log.unshift({d:S.day,t:`Proposed to ${p} ${pl[0].toLowerCase()}. They said yes.`});
@@ -14392,6 +14393,7 @@ function renderTop(){
  document.getElementById("topstats").innerHTML=`
   <div class="ts"><span class="label">Age ${ageInt()}</span><strong>${shortDate(S.day)}</strong></div>
   <div class="ts"><span class="label">This year</span><strong class="${S.ytd>=0?"up":"down"}">${fmtOut(S.ytd,true)}</strong></div>
+  <div class="ts"><span class="label">Cash</span><strong class="${S.wealth<0?"down":""}">${money(S.wealth)}</strong></div>
   <div class="ts"><span class="label">Net worth</span><strong>${money(netWorth())}</strong></div>`;
  document.getElementById("bankName").textContent=S.bank;
  if(CAR_().mech!=="markets"){const items=[...S.news.map(n=>n.t),`Skill ${Math.round(S.skill)}`,`${R().repName} ${Math.round(S.rep)}`,...(S.fb?[`Form ${Math.round(S.fb.form)}`,`Fitness ${Math.round(S.fb.fit)}`,`Goals ${S.fb.goals}`]:[])];
