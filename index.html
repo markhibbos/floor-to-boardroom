@@ -468,6 +468,11 @@ a.btn.primary{color:var(--on-accent)}
 .kid-faces{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}.kid-faces span{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--muted)}.kid-faces .face{border-radius:50%}
 .moment-photo{margin:10px auto 8px;max-width:270px;position:relative;transform:rotate(var(--r,-2deg));animation:mpop .5s cubic-bezier(.2,1.4,.4,1)}.moment-photo .moment-badge{position:absolute;right:-14px;top:-14px;width:48px;height:48px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
 .end-art{margin:0 auto 10px;max-width:360px}.end-art .pola{cursor:default}.hobby-pic{max-width:300px;margin:6px auto 10px;cursor:default}
+.coll-sec{margin:14px 0}.coll-sec h3{margin:0;font-size:16px}.coll-sec .bar{margin:6px 0 8px}
+.coll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}.coll-th{aspect-ratio:4/3;border-radius:6px;overflow:hidden;border:1px solid var(--line)}.coll-th svg{width:100%;height:100%;display:block}
+.coll-th.locked{display:grid;place-items:center;background:var(--glass-soft,rgba(127,127,127,.12));color:var(--muted);font-weight:800}
+.coll-tags{display:flex;flex-wrap:wrap;gap:6px}.coll-tags span{font-size:12.5px;padding:4px 9px;border-radius:999px;border:1px dashed var(--line);color:var(--muted)}.coll-tags span.on{border-style:solid;border-color:var(--accent);color:inherit}
+.epi-box{margin:10px 0}.lr-list.epi li{grid-template-columns:1fr}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -3848,7 +3853,7 @@ function paperHTML(p,btn){
  return `<div class="paper"><div class="paper-mast"><span>Est. 1887 · No. ${p.issue||""}</span><b>The Daily Grind</b><span>${esc(p.date)} · ${p.price}p</span></div>
   <div class="paper-strap">${esc((S.home&&S.home.area)||"Your town")}'s favourite paper · Now with fewer typos</div>
   <h2 class="paper-lead">${esc(p.lead[0])}</h2>
-  <figure class="paper-photo">${workArt()}<div class="paper-av">${avatarSVG(64)}</div><figcaption>Our photographer outside ${esc(S.prison?"HMP Thameside":S.bank)} this week.</figcaption></figure>
+  <figure class="paper-photo">${workArt()}<div class="paper-av">${avatarSVG(64)}</div><figcaption>${p.cap?esc(p.cap):`Our photographer outside ${esc(S.prison?"HMP Thameside":S.bank)} this week.`}</figcaption></figure>
   <p class="paper-stand">${esc(p.lead[1])}</p>
   ${p.bmd&&p.bmd.length?`<div class="paper-box"><div class="paper-kick">Births, marriages &amp; deaths</div>${p.bmd.map(t=>`<p>${esc(t)}</p>`).join("")}</div>`:""}
   <div class="paper-cols">${p.briefs.map(([k,t])=>`<div><div class="paper-kick">${esc(k)}</div><p>${esc(t)}</p></div>`).join("")}
@@ -5595,7 +5600,7 @@ function friendsModal(msg){
  showModal(`<div class="label">Play with friends</div><h2 style="margin-top:4px">Put your friends in your game</h2>
   <p>Send your code to a friend. When they add it, you appear in their game as an old school friend, and they can appear in yours.</p>
   <div class="label">Your code</div><div class="codebox"><code id="myCode">${esc(myCode())}</code><button class="btn sm" data-act="copyfcode">Copy</button></div>
-  <div class="label" style="margin-top:12px">Add a friend's code</div><div class="codebox"><input id="fcIn" type="text" placeholder="FTB-..." autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn sm primary" data-act="addcode">Add</button></div>
+  <div class="label" style="margin-top:12px">Add a friend's code or life link</div><p class="hint" style="margin:0 0 4px">Paste the link to a life they shared and their real life story comes with them: their face, their career, their fame, even how they died.</p><div class="codebox"><input id="fcIn" type="text" placeholder="FTB-... or a life link" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn sm primary" data-act="addcode">Add</button></div>
   ${msg?`<p class="hint" style="margin-top:6px">${esc(msg)}</p>`:""}
   ${mine.length?`<div class="label" style="margin-top:12px">Friends in your game</div><p class="hint" style="margin:2px 0 0">${mine.map(p=>esc(p.n)).join(", ")}</p>`:""}
   <div class="btn-row"><button class="btn" data-act="hide">Close</button></div>`);
@@ -5943,7 +5948,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -6500,7 +6505,7 @@ function storyMorning(){
 
 /* ============ A front page you can share ============ */
 async function sharePaper(){
- const p=paperFor(S.day-1);try{if(document.fonts&&document.fonts.ready)await document.fonts.ready}catch(e){}
+ const p=window.__paperOverride||paperFor(S.day-1);try{if(document.fonts&&document.fonts.ready)await document.fonts.ready}catch(e){}
  const W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
  x.fillStyle="#F6F1E4";x.fillRect(0,0,W,H);x.fillStyle="#1A1A1A";
  x.font="700 96px Georgia,serif";x.textAlign="center";x.fillText("The Daily Grind",W/2,140);
@@ -8136,7 +8141,200 @@ Object.assign(IA,{
 });
 const IA_ALT={doc:["hospital","theatre"],nurse:["hospital","theatre"],teach:["school","classroom"],pilot:["plane","cockpit"],actor:["filmset","tv"],tvchef:["tv","kitchen"],manager:["dugout","stadium"],clubowner:["boardroom","stadium"],bank:["trading","boardroom"],law:["court","boardroom"],pol:["court","boardroom"],tech:["office","boardroom"]};
 Object.assign(IA_CAREER,{actor:"filmset",manager:"dugout",clubowner:"boardroom"});
+{const _k0=iaKey2;iaKey2=function(m,e){const id=m.id||"";if(/^ks_(gcse|grad)/.test(id))return"school";if(/^ks_/.test(id))return"family";if(/^nat_pandemic/.test(id))return"hospital";if(/^nat_(olympics|worldcup)/.test(id))return"stadium";if(/^nat_royal/.test(id))return"party";if(/^nat_heatwave/.test(id))return"beach";if(/^nat_(strike|freeze)/.test(id))return"storm";if(/^frd_/.test(id))return"storm";if(/^frl_/.test(id))return"party";return _k0(m,e)}}
 {const _k=iaKey2;iaKey2=function(m,e){const k=_k(m,e),alt=IA_ALT[S.path];if(alt&&alt.includes(k))return alt[h32(m.id||e.t||"")%alt.length];return k}}
+
+/* ============ Friends' real lives, obituaries, ten years later, children's lives, national moments and a collection book ============ */
+
+/* ---- Friends' lives: a shared life link brings that person into your game ---- */
+const toThey=t=>String(t||"").replace(/\byourself\b/gi,"themselves").replace(/\bYour\b/g,"Their").replace(/\byour\b/g,"their").replace(/\bYou were\b/g,"They were").replace(/\byou were\b/g,"they were").replace(/\bYou\b/g,"They").replace(/\byou\b/g,"them");
+function addFriendLife(rec){
+ if(!rec||!rec.n||!S||S.placeholder)return null;
+ const n=String(rec.n).replace(/ \(generation \d+\)$/,"").replace(/[<>]/g,"").slice(0,30);
+ const ex=(S.people||[]).find(p=>p.fc&&p.n===n);if(ex)return ex;
+ const p=addPerson(n,"friend",`An old school friend, now ${rec.r?String(rec.r).toLowerCase():"doing well"}`,62);
+ p.fc=1;p.fcCareer=(String(rec.c||"").split(",").pop()||"").trim();
+ p.fr={p:rec.p||"",a:+rec.a||0,e:rec.e||"",d:String(rec.d||"").slice(0,160),nw:+rec.nw||0,fame:+rec.fame||0,av:rec.av||null,r:rec.r||"",age0:Math.round(age())};
+ S.log.unshift({d:S.day,t:`${n} came back into your life.`});return p;
+}
+{const _af=addFriendCode;addFriendCode=function(raw){const m=String(raw||"").match(/#life=([A-Za-z0-9_-]+)/);if(m){let rec;try{rec=JSON.parse(b64d(m[1]))}catch(e){return friendsModal("That link doesn't look right. Check it was copied in full.")}const p=addFriendLife(rec);save();render();return friendsModal(p?`${p.n} is now in your game: an old school friend, now ${String(rec.r||"").toLowerCase()||"doing well"}. Their real life will shape what happens.`:"Start a game first, then add your friend.")}return _af(raw)}}
+function friendLifeMorning(){
+ if(S.over||S.prison||S.front)return;
+ const fs=alivePeople().filter(p=>p.fc&&p.fr);if(!fs.length)return;
+ /* They go the same way they went in their own game */
+ for(const p of fs){const f=p.fr;if(f.e==="died"&&f.a&&age()+0>=f.a&&!p.mirrored&&rnd()<.3){p.mirrored=1;const first=p.n.split(" ")[0];
+  pushDyn({id:"frd_"+S.day,life:1,from:"An old school friend",t:`Sad news about ${first}`,b:`${first} has died, aged ${f.a}. ${toThey(f.d)||"It was very sudden."} It's exactly how it happened in their own life.`,c:[{t:"Go to the funeral",fx:{act:"frdie",pid:p.id,home:2,karma:2},o:`Half your school year is there. Someone plays ${first}'s favourite song, badly.`},{t:"Send flowers and a card",fx:{act:"frdie",pid:p.id},o:"You write three drafts. None of them feel right."}]});return}}
+ if(S.day-(S.frLifeAt??-99)<8||rnd()>.06||S.inbox.some(m=>!m.done&&/^frl_/.test(m.id)))return;
+ const live=fs.filter(x=>!x.mirrored);if(!live.length)return;
+ const p=pick(live),f=p.fr,first=p.n.split(" ")[0],opts=[];
+ if(f.fame>=35)opts.push({t:`${first} is famous`,b:`${first} is a household name now and wants you as a guest on their show, to tell embarrassing school stories.`,c:[{t:"Spill everything",p:.6,win:{fx:{fame:5,act:"ppbond",d:6},o:"The clip goes viral. You're 'the friend' now."},lose:{fx:{act:"ppbond",d:-15},o:`You mention the 1998 school trip. ${first}'s publicist is furious.`}},{t:"Keep it kind",fx:{fame:2,act:"ppbond",d:10},o:"A warm, funny segment. Your mum records it."}]});
+ if(f.nw>=2e6)opts.push({t:`${first} has a proposal`,b:`${first}, now worth millions, offers to put £20,000 into anything you fancy. 'For old times' sake.'`,c:[{t:"Accept, gratefully",fx:{gbp:20000,act:"ppbond",d:5,karma:-1},o:"A cheque arrives with a smiley face on it."},{t:"Say no. You're fine",fx:{act:"ppbond",d:8},o:`${first} insists on buying dinner instead. A very expensive dinner.`}]});
+ if(f.p&&f.p===S.path&&!S.over)opts.push({t:`${first} wants your job`,b:`${first} has joined ${S.bank}, in the same line of work as you, and is very, very good.`,c:[{t:"Team up",p:.6,win:{fx:{rep:4,act:"ppbond",d:10},o:"Together you're unbeatable. The boss notices."},lose:{fx:{rep:-3,act:"ppbond",d:-10},o:`${first} takes the credit. School all over again.`}},{t:"Compete",p:.5,win:{fx:{rep:5,act:"ppbond",d:-8},o:"You win. It's sweeter than it should be."},lose:{fx:{rep:-4},o:`${first} wins. Of course they do.`}}]});
+ if(isSingle()&&typeof fitsPref==="function"&&fitsPref(p.n)&&!p.dated)opts.push({t:`${first} asks you out`,b:`After all these years, ${first} admits they had a crush on you at school. Dinner?`,c:[{t:"Yes!",fx:{act:"frdate",pid:p.id},o:"It's like no time has passed. Apart from the hairlines."},{t:"Better as friends",fx:{act:"ppbond",d:-3},o:"It's a bit awkward, then it isn't."}]});
+ if(["won","retired","exit","founder"].includes(f.e))opts.push({t:`${first}'s villa`,b:`${first} has retired to a villa in the Algarve and says you're welcome any time.`,c:[{t:"Book flights (£500)",fx:{gbp:-500,stress:-10,home:4,act:"ppbond",d:10},o:"A week of sunshine, grilled sardines and very long lunches."},{t:"One day",fx:{},o:"You say that every year."}]});
+ if(["fired","banned","bankrupt","burnout","redundant"].includes(f.e))opts.push({t:`${first} needs a hand`,b:`${first} has had a rough few years and asks if you know of any work going.`,c:[{t:"Put in a good word",fx:{rep:-1,karma:4,act:"ppbond",d:15},o:`${first} gets an interview. "I won't forget this."`},{t:"Lend them £1,000",fx:{gbp:-1000,karma:3,act:"ppbond",d:12},o:"They promise to pay it back. They actually do."}]});
+ if(!opts.length)return;S.frLifeAt=S.day;const e=pick(opts);pushDyn(Object.assign({id:"frl_"+S.day,life:1,from:p.n},e));const m=S.inbox.find(q=>q.id==="frl_"+S.day);if(m)m.vars={pid:p.id};
+}
+ACTS.frdie=fx=>{const p=(S.people||[]).find(x=>x.id===fx.pid);if(p){p.alive=false;p.died=S.day;moment({tone:"sad",icon:"candle",kicker:"In memory",title:p.n,sub:"An old school friend. Gone the way they went in their own life."})}};
+ACTS.frdate=fx=>{const p=(S.people||[]).find(x=>x.id===fx.pid);if(!p)return;p.dated=1;ACTS.date({},{vars:{p:p.n.split(" ")[0],job:p.fcCareer||pick(JOBS),full:p.n}})};
+/* Their own face */
+{const _pf=personFace;personFace=function(name){const p=(S.people||[]).find(x=>x.fc&&x.fr&&x.fr.av&&esc(x.n)===name);if(p)return `<svg class="face" viewBox="10 6 80 80" width="36" height="36" aria-hidden="true"><rect width="100" height="100" fill="var(--accent-soft, #F3E2BD)"/>${avatarInner({av:Object.assign({},p.fr.av),ageOver:Math.floor(age()),photo:1,outfit:"casual",nw:0,smile:true})}</svg>`;return _pf(name)}}
+/* A shared life can be added straight into your game */
+{const _sh=showRecordFromHash;showRecordFromHash=function(){_sh.apply(this,arguments);try{const sh=document.getElementById("sheet"),m=location.hash.match(/^#life=([A-Za-z0-9_-]+)/);if(!sh||!m)return;window.__hashRec=JSON.parse(b64d(m[1]));const has=S&&!S.placeholder&&!S.over;const row=sh.querySelector(".btn-row:last-child");if(row)row.insertAdjacentHTML("afterbegin",has?`<button class="btn" data-act="addfriendrec">Add ${esc(String(window.__hashRec.n).split(" ")[0])} to my game</button>`:"")}catch(e){}}}
+
+/* ---- Ten years later ---- */
+function epilogue(){
+ if(S.epi)return S.epi;const L=[],yr=START_YEAR+Math.floor((S.day-1)/12)+10,k=S.karma||0;
+ if(S.rel.st==="married"||inLove()){const p=S.rel.name.split(" ")[0],young=age()<55;
+  L.push(young&&rnd()<.55?`${p} remarried in ${yr-6}, to a ${pick(["dentist","quantity surveyor","retired DJ","widower from the choir","very tall Swede"])}. ${pick(["They still put flowers on your grave every birthday.","They named the dog after you.","They kept your photo on the fridge."])}`:k<-25?`${p} sold your things on eBay within the month and moved to Marbella.`:`${p} never remarried. ${pick(["They still set two cups out in the morning, out of habit.","They took up wild swimming and became a bit of a local legend.","They finally redecorated the spare room you'd argued about for years."])}`)}
+ for(const c of S.children.slice(0,3)){const a=Math.floor(kidAge(c))+10,kb=c.kb||0,j=c.job&&c.job!=="still finding their way"?c.job:pick((KID_JOBS[c.p||"kind"]||KID_JOBS.kind));
+  L.push(`${c.n}, now ${a}, is ${j}. ${kb<-15?pick(["They don't talk about you much.","They still haven't forgiven you for missing the nativity."]):pick(["They tell your terrible jokes at every party.","They have your laugh, apparently.","They visit your grave every Christmas, with a mince pie.","They framed your old work badge."])}`)}
+ if(S.pet)L.push(S.will&&S.will.k==="pet"?`${S.pet.n} the ${S.pet.kind} lived another nine years in great luxury, attended by staff.`:`${S.pet.n} the ${S.pet.kind} went to live with ${S.children[0]?S.children[0].n:"a neighbour"} and got noticeably fatter.`);
+ if(S.friend)L.push(`${S.friend.n.split(" ")[0]}, your best friend, ${pick(["named their first grandchild after you.","still raises a glass to you every New Year's Eve.","wrote a book about your adventures. It's mostly lies."])}`);
+ if(S.rival)L.push(`${S.rival.name.split(" ")[0]}, your old rival, ${pick(["got your old job and was terrible at it.","gave a surprisingly moving speech at your memorial.","still claims they taught you everything."])}`);
+ if(ownsHome())L.push(`Your ${HT[S.home.t].n.toLowerCase()} in ${S.home.area} sold for ${money(S.home.value*1.35)} to a couple who knocked through your favourite wall.`);
+ else L.push("Someone else lives in your old flat. They complain about the same damp patch.");
+ S.epi=L.slice(0,6);return S.epi;
+}
+{const _d=die;die=function(c){_d(c);try{epilogue()}catch(e){}}}
+{const _lr=lifeRecord;lifeRecord=function(t){const r=_lr(t);try{if(S.over==="died")r.wn=epilogue().map(x=>x.slice(0,150))}catch(e){}return r}}
+{const _rh=recordHTML;recordHTML=function(rec,viewer){let h=_rh(rec,viewer);if(rec.wn&&rec.wn.length)h=h.replace(/(<div class="label" style="margin-top:12px">From the photo album<\/div>|<\/div>\s*$)/,m0=>`<div class="label" style="margin-top:12px">Ten years later</div><ul class="lr-list epi">${rec.wn.map(t=>`<li><span>${esc(t)}</span></li>`).join("")}</ul>`+m0);return h}}
+
+/* ---- Your obituary in The Daily Grind ---- */
+function obitPaper(){
+ const first=(S.name||"").split(" ")[0],a=ageInt(),role=bestRole().n,whoU=`${S.name.toUpperCase()}, ${a}`;
+ const head=pick([`${whoU}: THE ${role.toUpperCase()} WHO NEVER SAT STILL`,`${whoU}: A LIFE LESS ORDINARY`,`FAREWELL, ${whoU}`,`${whoU}: GONE BUT NOT FORGOTTEN (YET)`]);
+ const q=[];
+ if(S.rel.st==="married"||inLove())q.push(["From the family",`"${pick(["They made every day an adventure, and every Sunday a lie-in.","I'll miss the snoring. Not much, but a bit.","They never once loaded the dishwasher properly. I'd give anything for one more go."])}" — ${S.rel.name}`]);
+ if(S.boss)q.push(["Their boss",`"${pick(["Never once on time. Brilliant, though.","A true professional, with a terrible taste in ties.","We'll have to hire three people to replace them. Possibly four."])}" — ${S.boss.n}`]);
+ if((S.exes||[]).length){const x=S.exes[S.exes.length-1];q.push(["An ex",`"${pick(["We had our moments. Mostly bad ones. But some good ones.","I'm told I have to say something nice. They had great hair.","No comment. Well, one: they owed me £40."])}" — ${x.n}`])}
+ if(S.rival)q.push(["Their rival",`"${pick(["I always said I'd outlast them. I didn't mean it like this.","A worthy opponent. Slightly less worthy than me.","I'll miss beating them. Well, trying to."])}" — ${S.rival.name}`]);
+ if(S.friend)q.push(["Best friend",`"${pick(["The funniest person I ever knew, and the worst at karaoke.","Forty years of friendship and not one argument we didn't both enjoy.","They'd want us all at the pub. So that's where we'll be."])}" — ${S.friend.n}`]);
+ try{willSettle()}catch(e){}
+ if(S.willText)q.push(["The will",S.willText]);
+ return{big:true,day:S.day,date:fmtDate(S.day),cap:"A recent photo, supplied by the family.",lead:[head,`${toThey(S.deathCause)||"They died peacefully."} ${first} worked as ${CAREERS[S.path].n.toLowerCase()}${S.bank?` at ${S.bank}`:""}, and leaves ${S.children.length?`${S.children.length} child${S.children.length>1?"ren":""}`:"a lot of unfinished crosswords"}.`],briefs:q.slice(0,5),weather:"Overcast, with a chance of tears",ad:pick(SMALL_ADS),ad2:"FOR SALE: one slightly used life. Good condition. Some wear.",price:Math.round(90+S.day/12*4),issue:12000+S.day,bmd:[`${S.name}, aged ${a}. ${epitaph()}`],letter:[pick(alivePeople().filter(p=>p.role==="neighbour").map(p=>p.n).concat(["A neighbour"])),pick(["They always took my bins in. Who will take my bins in now?","They once lent me a ladder and never asked for it back. A saint.","Lovely person. Terrible parking."])],sport:null,star:"All signs",horo:"Today is a good day to have already done everything on your list."};
+}
+function obitModal(){window.__paperOverride=obitPaper();showModal(paperHTML(window.__paperOverride,'<button class="btn primary" data-act="sharepaper">Share your obituary</button><button class="btn" data-act="backtoend">Back</button>'))}
+{const _em=endModal;endModal=function(){window.__paperOverride=null;_em.apply(this,arguments);try{if(S.over!=="died")return;const sh=document.getElementById("sheet");if(!sh||sh.querySelector(".epi-box"))return;const ep=epilogue(),will=sh.querySelector(".note");const html=`<div class="epi-box"><div class="label">Ten years later</div><ul class="lr-list epi">${ep.map(t=>`<li><span>${esc(t)}</span></li>`).join("")}</ul><div class="btn-row"><button class="btn" data-act="obit">Read your obituary</button></div></div>`;const ep0=sh.querySelector(".epitaph");(will&&will.textContent.includes("reading of the will")?will:ep0||sh.firstChild).insertAdjacentHTML("afterend",html)}catch(e){}}}
+
+/* ---- Your children's lives ---- */
+const KID_JOBS2={app:["an electrician","a plumber","a chef","a hairdresser","an engineer","a carpenter"],gap:["a travel writer","a scuba instructor","a yoga teacher","a festival promoter","a ski instructor"],work:["a shop manager","an estate agent","a recruiter","a bus driver","a store detective"]};
+function kidStory(){
+ if(S.over||S.prison||S.front||S.inbox.some(m=>!m.done&&/^ks_/.test(m.id)))return;
+ for(const c of S.children){c.ks=c.ks||{};const a=kidAge(c);
+  if(a>=21.9&&!c.job&&c.route&&c.route!=="uni")c.job=pick(KID_JOBS2[c.route]);
+  if(a>=21.9&&!c.job&&c.route==="uni")c.job=pick(KID_JOBS[c.grades==="top"?"bookish":(c.p||"kind")]);}
+ const due=[];
+ for(const c of S.children){const a=kidAge(c);if(c.fate==null){const r=seeded(c.n+c.born);c.fate={out:r()<.1,abroad:r()<.3,boomer:r()<.3}}
+  if(a>=16&&a<17.5&&!c.ks.gcse)due.push([c,"gcse",3]);
+  if(a>=18&&a<19.5&&!c.ks.next)due.push([c,"next",3]);
+  if(a>=21&&a<22.5&&c.route==="uni"&&!c.ks.grad)due.push([c,"grad",3]);
+  if(a>=13&&a<16&&!c.ks.teen)due.push([c,"teen",1]);
+  if(a>=15&&a<22&&c.p==="rebel"&&!c.ks.trouble)due.push([c,"trouble",1]);
+  if(a>=17&&a<30&&!c.ks.out&&c.fate.out)due.push([c,"out",.5]);
+  if(a>=21&&a<32&&!c.ks.abroad&&c.fate.abroad)due.push([c,"abroad",.5]);
+  if(a>=22&&a<35&&!c.ks.boomer&&c.fate.boomer)due.push([c,"boomer",.5]);}
+ if(!due.length)return;
+ const must=due.filter(d=>d[2]>=3);if(!must.length&&(S.day-(S.kidEvAt??-99)<8||rnd()>.1))return;
+ const pool=must.length?must:due;let tot=pool.reduce((t,d)=>t+d[2],0),r=rnd()*tot,pickD=pool[0];for(const d of pool){r-=d[2];if(r<=0){pickD=d;break}}
+ const [c,k]=pickD,N=c.n,id=`ks_${k}_${N}_${S.day}`;c.ks[k]=S.day;S.kidEvAt=S.day;
+ const E=e=>pushDyn(Object.assign({id,life:1,from:N},e));
+ if(k==="teen"){const v={sporty:[`${N} wants to quit school`,`${N} has been scouted and wants to leave school to train full-time.`],bookish:[`${N} hasn't left their room in a week`,`${N} is ranked 400th in the world at online chess and has stopped eating meals with the family.`],rebel:[`${N} has a tattoo`,`${N} has come home with a tattoo of a dolphin. They're fourteen.`],creative:[`${N} has formed a band`,`${N} has dyed their hair green and formed a band in the garage. They're called Dead Hamster.`],kind:[`${N} gave away their phone`,`${N} gave their new phone to a homeless man outside the station.`]}[c.p||"kind"];
+  E({t:v[0],b:v[1],c:[{t:"Sit down and really listen",fx:{act:"kb",n:N,d:12,home:3,stress:2},o:`It takes three hours and a pizza. ${N} actually talks to you.`},{t:"Lay down the law",p:.5,win:{fx:{act:"kb",n:N,d:-2,home:1},o:"Grumbling, but they come round."},lose:{fx:{act:"kb",n:N,d:-12,home:-4},o:"Slammed doors for a month."}},{t:"Let them work it out",fx:{act:"kb",n:N,d:3},o:"They do, mostly. You worry anyway."}]})}
+ else if(k==="gcse"){const sc=(c.p==="bookish"?.7:.5)+(S.homeLife-50)/200+(S.school?.15:0)+(c.kb||0)/200+rnd()*.3-.15;c.grades=sc>.75?"top":sc>.45?"ok":"poor";
+  const g={top:"straight 9s. The school wants to put their photo on the website",ok:"a solid set of passes, and a surprise 8 in drama",poor:"not what anyone hoped. Two passes and a lot of excuses"}[c.grades];
+  E({from:"Results day",t:`${N}'s exam results`,b:`${N} opens the envelope: ${g}.`,c:[{t:"Big celebration dinner (£200)",fx:{gbp:-200,act:"kb",n:N,d:8,home:4},o:"Pizza, cake and a speech you'll both remember."},{t:c.grades==="poor"?"'We'll work it out together'":"Tell them you're proud",fx:{act:"kb",n:N,d:10,home:3},o:"A hug you didn't see coming."},{t:"'You could have tried harder'",fx:{act:"kb",n:N,d:-12,home:-3},o:"They go very quiet. They remember this."}]});
+  snap({i:"star",k:"Family",t:`${N}'s results day`,s:g,ph:{sc:"school",c:["me",`kid:${N}:${genderOf(N)}:16`],pr:c.grades==="top"?"confetti":""}})}
+ else if(k==="next"){const uniOk=c.grades!=="poor";
+  E({t:`${N} is 18: what next?`,b:`${N} has to decide what to do with their life. They want your advice${uniOk?"":", and their grades rule out the top universities"}.`,c:[
+   {t:`University${uniOk?"":" (a clearing place)"}: help with £15,000`,fx:{gbp:-15000,fixed:1,act:"kroute",n:N,r:"uni",home:2},o:`${N} packs eleven bags and a toaster. The house is very quiet.`},
+   {t:"An apprenticeship",fx:{act:"kroute",n:N,r:"app",home:2},o:`${N} is earning from day one and loves it.`},
+   {t:"A gap year (£3,000)",fx:{gbp:-3000,fixed:1,act:"kroute",n:N,r:"gap",home:1},o:`${N} sends photos from Vietnam. Mostly of food.`},
+   {t:"Straight into a job",fx:{act:"kroute",n:N,r:"work"},o:`${N} gets a job and a car. Your fuel bill halves.`}]})}
+ else if(k==="grad"){snap({i:"medal",k:"Family",t:`${N}'s graduation`,s:"A gown, a scroll and a lot of photos with a stranger's mum.",ph:{sc:"grad",c:castNow({pt:1}).filter(x=>!/^(dog|cat)/.test(x)).slice(0,2).concat([`kid:${N}:${genderOf(N)}:21`]),pr:"confetti"}});
+  moment({icon:"medal",kicker:"A proud day",title:`${N} graduates`,sub:pick(["First in the family to throw a mortarboard.","They thank you in their speech. You cry. Obviously.","A degree in something you still can't explain to your friends."])})}
+ else if(k==="trouble")E({from:"The police",t:`${N} has been arrested`,b:`${N} was caught spraying graffiti on the side of the town hall. It's quite good, actually.`,c:[{t:"Pay for a solicitor (£800)",fx:{gbp:-800,act:"kb",n:N,d:6},o:"A caution and fifty hours of community service. Painting the town hall."},{t:"Let them face the consequences",fx:{act:"kb",n:N,d:-6,karma:2},o:"A court date, a fine and a very sulky summer. They never do it again."}]});
+ else if(k==="out")E({t:`Something to tell you`,b:`${N} sits you down and tells you they're ${pick(["gay","bisexual","in love with their best friend, who is the same sex"])}. They look terrified.`,c:[{t:"Hug them and say you love them",fx:{act:"kb",n:N,d:20,home:5,karma:3},o:"They burst into tears. So do you. Best conversation you've ever had."},{t:"Say you need some time",fx:{act:"kb",n:N,d:-15,home:-4},o:"They nod and leave. You know you got that wrong."}]});
+ else if(k==="abroad"){const city=pick(["Melbourne","Toronto","Berlin","Tokyo","Cape Town","New York"]);
+  E({t:`${N} is moving to ${city}`,b:`${N} has been offered a job in ${city} and leaves in a month.`,c:[{t:"Be happy for them",fx:{act:"kabroad",n:N,city,home:-2},o:"Sunday video calls, at very strange hours."},{t:"Beg them to stay",p:.3,win:{fx:{act:"kb",n:N,d:-4,home:2},o:"They stay. They mention it at every Christmas."},lose:{fx:{act:"kabroad",n:N,city,home:-5},o:"They go anyway, a bit hurt."}}]})}
+ else if(k==="boomer")E({t:`${N} wants to move back home`,b:`${N} has split up with their partner and lost their flat. Can they move back in, 'just for a few weeks'?`,c:[{t:"Of course",fx:{act:"kb",n:N,d:10,home:2,stress:3},o:"It's eighteen months. They eat everything."},{t:"Help with a deposit instead (£2,000)",fx:{gbp:-2000,act:"kb",n:N,d:6},o:"A small flat, ten minutes away. Sunday lunches resume."},{t:"Tough love: no",fx:{act:"kb",n:N,d:-10},o:"They sofa-surf at a friend's. It stings."}]});
+}
+ACTS.kb=fx=>{const c=S.children.find(x=>x.n===fx.n);if(c)c.kb=clamp((c.kb||0)+fx.d,-50,50)};
+ACTS.kroute=fx=>{const c=S.children.find(x=>x.n===fx.n);if(c){c.route=fx.r;c.kb=clamp((c.kb||0)+4,-50,50)}};
+ACTS.kabroad=fx=>{const c=S.children.find(x=>x.n===fx.n);if(c)c.abroad=fx.city};
+
+/* ---- National moments: things the whole country lives through together ---- */
+const NAT={
+ pandemic:{n:"The pandemic",len:12,once:1,news:"A new virus sweeps the country. Lockdown begins tonight.",end:"Lockdown lifts. Pubs reopen to scenes of chaos."},
+ olympics:{n:"The London Olympics",len:2,mo:[6],news:"The Olympic torch arrives in London to huge crowds.",end:"The Olympics end. Team GB finish fourth, which feels like first."},
+ royal:{n:"A royal wedding",len:1,mo:[4,5],news:"A royal wedding is announced: a bank holiday for everyone.",end:"The bunting comes down. Mostly."},
+ worldcup:{n:"The World Cup",len:2,mo:[5],news:"England fly out to the World Cup. The nation dares to dream.",end:""},
+ heatwave:{n:"The heatwave",len:2,mo:[6,7],news:"Hottest summer on record: a hosepipe ban is announced.",end:"The heatwave breaks with a thunderstorm. Everyone stands in it."},
+ strike:{n:"The general strike",len:3,news:"Unions announce the biggest strike in forty years.",end:"The strike ends with a deal nobody likes."},
+ freeze:{n:"The Big Freeze",len:1,mo:[0,1],news:"Arctic air hits: a foot of snow and the country stops.",end:"The thaw. Every road is now a pothole."}};
+const NAT_HEALTH=["doc","nurse"],NAT_SHUT=["chef","hair","actor","music","dj","pilot","tvchef","influencer","clubowner","foot","manager"],NAT_REMOTE=["tech","bank","law","arch","pol"],NAT_STRIKE=["teach","nurse","doc","fire","pilot","police"];
+function natMorning(){
+ if(S.over||S.prison||S.nat||S.day-(S.natAt??-30)<40||rnd()>.05)return;
+ const mo=monthOf(S.day),done=S.natDone||{};
+ const ok=Object.entries(NAT).filter(([k,n])=>(!n.mo||n.mo.includes(mo))&&!(n.once&&done[k]!=null)&&(done[k]==null||S.day-done[k]>=120));
+ if(!ok.length)return;const[k,n]=pick(ok);S.nat={k,from:S.day,until:S.day+n.len,win:rnd()<.3};S.natAt=S.day;S.natDone=Object.assign(done,{[k]:S.day});
+ S.news=S.news||[];S.news.unshift({t:n.news});S.log.unshift({d:S.day,t:`${n.n} begins.`});
+ const E=e=>pushDyn(Object.assign({id:"nat_"+k+"_"+S.day,life:1},e));
+ if(k==="pandemic")E({from:"The Prime Minister",t:"Lockdown",b:`Stay at home. ${NAT_HEALTH.includes(S.path)?"Except you: you're on the front line.":NAT_SHUT.includes(S.path)?"Your work has stopped overnight.":NAT_REMOTE.includes(S.path)?"You'll be working from the kitchen table.":"Nobody knows how long for."}`,c:[{t:"Bake banana bread",fx:{act:"natsnap",k:"bread",home:3,stress:-2},o:"Fourteen loaves. Nobody wants any more."},{t:"Learn something new",fx:{stress:-1,rep:1},o:"Online courses at 2am. You learn Italian, mostly swearing."},{t:"Clap for the NHS every Thursday",fx:{home:2,karma:2},o:"The whole street, banging saucepans. You've never met half of them."}]});
+ else if(k==="olympics")E({from:"The ticket ballot",t:"Olympic tickets",b:"You've got a chance at tickets for the 100m final.",c:[{t:"Buy them (£400)",fx:{gbp:-400,act:"natsnap",k:"olympics",home:4,stress:-4},o:"Nine and a half seconds of absolute screaming."},{t:"Watch it in the pub",fx:{act:"natsnap",k:"pub",home:2},o:"Total strangers hugging each other."}]});
+ else if(k==="royal")E({from:"Your street",t:"The street party",b:"Your road is having a street party for the royal wedding. Someone needs to organise it.",c:[{t:"Organise it",fx:{stress:3,home:4,karma:2,act:"natsnap",k:"street"},o:"Bunting, trestle tables and a trifle the size of a car."},{t:"Just turn up",fx:{home:2,act:"natsnap",k:"street"},o:"You win the egg-and-spoon race. You're very competitive about it."},{t:"Go away for the weekend",fx:{stress:-3},o:"Peace and quiet. You miss the bunting slightly."}]});
+ else if(k==="worldcup")E({from:"The group chat",t:"World Cup fever",b:"England's first game is tonight. Where are you watching?",c:[{t:"The pub, with everyone",fx:{gbp:-60,home:2,stress:-3,act:"natsnap",k:"pub"},o:"Flags, flares and one very loud uncle."},{t:"At home, behind the sofa",fx:{stress:1},o:"You can't look. You look."}]});
+ else if(k==="heatwave")E({from:"The weather",t:"Thirty-eight degrees",b:"It's the hottest day ever recorded. The trains have melted.",c:[{t:"Head for the coast",fx:{gbp:-100,stress:-4,act:"natsnap",k:"beach"},o:"You and three million others. Worth it."},{t:"Buy a paddling pool (£60)",fx:{gbp:-60,home:3},o:"Feet in the water, ice lolly in hand. Perfect."}]});
+ else if(k==="strike")E({from:NAT_STRIKE.includes(S.path)?"Your union":"The news",t:NAT_STRIKE.includes(S.path)?"Will you strike?":"The country grinds to a halt",b:NAT_STRIKE.includes(S.path)?"Your union has voted to strike over pay. Your colleagues are watching what you do.":"No trains, no post, no bins. For three months.",c:NAT_STRIKE.includes(S.path)?[{t:"Join the picket line",fx:{act:"natstrike",rep:2,karma:2},o:"Braziers, placards and a lot of tea."},{t:"Keep working",fx:{rep:-3,gbp:500},o:"You cross the line. Some colleagues stop speaking to you."}]:[{t:"Work from home",fx:{stress:-1},o:"Your commute is now from the bed to the kitchen."},{t:"Cycle in",fx:{health:3,stress:2},o:"Thighs of steel by week three."}]});
+ else if(k==="freeze")E({from:"The weather",t:"Snow day",b:"A foot of snow overnight. Schools are shut and the roads are ice rinks.",c:[{t:"Build a snowman",fx:{home:4,stress:-3,act:"natsnap",k:"snow"},o:"He has a carrot nose and your best scarf."},{t:"Try to get to work",p:.5,win:{fx:{rep:2},o:"You're the only one who made it in. The boss notices."},lose:{fx:{stress:4,health:-2},o:"You slide into a hedge. Twice."}}]});
+}
+ACTS.natstrike=()=>{if(S.nat)S.nat.striking=1};
+ACTS.natsnap=fx=>{const P={bread:["Lockdown banana bread","kitchen","cake"],olympics:["The 100m final","stadium","confetti"],pub:["Watching it down the pub","pub","pint"],street:["The street party","party","cake"],beach:["The great heatwave","beach",""],snow:["Our snowman","ski",""]}[fx.k];if(!P)return;
+ snap({i:"star",k:NAT[S.nat?S.nat.k:"royal"]?NAT[S.nat?S.nat.k:"royal"].n:"",t:P[0],s:"",ph:{sc:P[1],c:castNow({pt:1,kids:1,pet:fx.k==="street"||fx.k==="snow"}),pr:P[2],h:fx.k==="snow"?"beanie":fx.k==="street"?"party":"",o:fx.k==="beach"?"hols":fx.k==="pub"||fx.k==="olympics"?"kit":undefined}})};
+function natDay(notes){
+ const N=S.nat;if(!N)return;const k=N.k,p=S.path,inc=salary()/12;
+ if(k==="pandemic"){if(NAT_HEALTH.includes(p)){S.stress=clamp(S.stress+4,0,100);S.rep=clamp(S.rep+1,0,100)}else if(NAT_SHUT.includes(p)&&!selfPaid())S.wealth-=Math.max(200,inc*.2);else if(NAT_SHUT.includes(p))S.wealth-=Math.max(300,inc*.35);else if(NAT_REMOTE.includes(p)){S.stress=clamp(S.stress-1,0,100)}
+  S.homeLife=clamp(S.homeLife+(inLove()||S.children.length?.6:-1.2),0,100)}
+ else if(k==="olympics"||k==="royal"){S.stress=clamp(S.stress-1,0,100);S.homeLife=clamp(S.homeLife+1,0,100)}
+ else if(k==="heatwave"){if(p==="fire")S.stress=clamp(S.stress+3,0,100);if(age()>70)S.health=clamp(S.health-1,0,100)}
+ else if(k==="strike"){if(N.striking)S.wealth-=inc*.3;else S.stress=clamp(S.stress+1,0,100)}
+ else if(k==="freeze")S.stress=clamp(S.stress+1,0,100);
+ if(S.day+1>=N.until){const n=NAT[k];S.nat=null;
+  if(k==="worldcup"){const win=N.win;notes.push(win?"IT'S COMING HOME. England win the World Cup and the country loses its mind.":"England go out on penalties. Again. The nation sighs.");if(win)S.homeLife=clamp(S.homeLife+5,0,100);S.log.unshift({d:S.day,t:win?"England won the World Cup.":"England went out of the World Cup on penalties."})}
+  else if(n.end){notes.push(n.end);S.log.unshift({d:S.day,t:n.end})}
+  if(k==="pandemic")snap({i:"heart",k:"The pandemic",t:"The first night out after lockdown",s:"Everyone hugging everyone.",ph:{sc:"pub",c:castNow({pt:1,fr:1}),pr:"pint"}})}
+}
+
+/* ---- The collection book: every backdrop, hat, prop, death, ending and career you've found ---- */
+const COLL_KEY="ftb-collect";
+const collGet=()=>{try{return JSON.parse(localStorage.getItem(COLL_KEY))||{}}catch(e){return{}}};
+function collAdd(kind,key){if(!key)return;const c=collGet();c[kind]=c[kind]||{};if(c[kind][key])return;c[kind][key]=Date.now();try{localStorage.setItem(COLL_KEY,JSON.stringify(c))}catch(e){}}
+function collPhoto(ph){if(!ph)return;collAdd("bg",ph.sc);if(ph.h)collAdd("hat",ph.h);if(ph.pr)collAdd("prop",ph.pr)}
+{const _sn=snap;snap=function(o){_sn(o);try{collPhoto(o&&o.ph)}catch(e){}}}
+{const _mo=moment;moment=function(o){_mo(o);try{if(o&&o.ph)collPhoto(o.ph)}catch(e){}}}
+{const _d=die;die=function(c){_d(c);try{collAdd("death",String(c||"").slice(0,90))}catch(e){}}}
+{const _em=endModal;endModal=function(){try{if(S&&S.over)collAdd("ending",S.over)}catch(e){}_em.apply(this,arguments)}}
+{const _ng=newGame;newGame=function(n,c,d,b){_ng.apply(this,arguments);try{collAdd("career",c||"bank")}catch(e){}}}
+function collModal(){
+ (S&&S.memories||[]).forEach(m=>{try{collPhoto(m.ph)}catch(e){}});if(S&&!S.placeholder)collAdd("career",S.path);
+ const c=collGet(),bgs=Object.keys(PH_BG),hats=["party","santa","mortar","sombrero","captain","beanie","hardhat","crown","chef","helmet","flowers","tiara"],props=["cake","nums","confetti","baby","trophy","medal","rosette","keys","champ","case","flowers","gift","cheque","car","stone","boxes","mic","ball","welcome","star","balloons","book","pint","tea","chess","easel","golf"];
+ const deathsTotal=(typeof ABSURD!=="undefined"?ABSURD.length:46)+40,ends=Object.keys(ENDINGS).filter(k=>k!=="dailydone"),cars=Object.keys(CAREERS);
+ const n=o=>Object.keys(o||{}).length,bar=(got,tot)=>`<div class="bar"><i style="width:${Math.min(100,got/tot*100).toFixed(0)}%"></i></div>`;
+ const sec=(t,got,tot,body,lab)=>`<div class="coll-sec"><div class="sec-head"><h3>${t}</h3><span class="label">${got} of ${lab||tot}</span></div>${bar(got,tot)}${body||""}</div>`;
+ const thumbs=bgs.map(k=>(c.bg||{})[k]?`<div class="coll-th" title="${esc(k)}"><svg viewBox="0 0 200 150" aria-hidden="true">${PH_BG[k]()}</svg></div>`:`<div class="coll-th locked" title="Not found yet"><span>?</span></div>`).join("");
+ const deaths=Object.keys(c.death||{});
+ showModal(`<div class="label">Across all your lives</div><h2 style="margin-top:4px">Collection book</h2><p class="hint">Everything you've seen in every life on this device. Play more lives to fill it.</p>
+  ${sec("Photo backdrops",bgs.filter(k=>(c.bg||{})[k]).length,bgs.length,`<div class="coll-grid">${thumbs}</div>`)}
+  ${sec("Hats",hats.filter(k=>(c.hat||{})[k]).length,hats.length,`<div class="coll-tags">${hats.map(h=>`<span class="${(c.hat||{})[h]?"on":""}">${(c.hat||{})[h]?esc(h):"?"}</span>`).join("")}</div>`)}
+  ${sec("Photo props",props.filter(k=>(c.prop||{})[k]).length,props.length,`<div class="coll-tags">${props.map(h=>`<span class="${(c.prop||{})[h]?"on":""}">${(c.prop||{})[h]?esc(h):"?"}</span>`).join("")}</div>`)}
+  ${sec("Careers played",cars.filter(k=>(c.career||{})[k]).length,cars.length,`<div class="coll-tags">${cars.map(k=>`<span class="${(c.career||{})[k]?"on":""}">${(c.career||{})[k]?esc(CAREERS[k].n):"?"}</span>`).join("")}</div>`)}
+  ${sec("Endings",ends.filter(k=>(c.ending||{})[k]).length,ends.length,`<div class="coll-tags">${ends.map(k=>`<span class="${(c.ending||{})[k]?"on":""}">${(c.ending||{})[k]?esc(ENDINGS[k][0]):"?"}</span>`).join("")}</div>`)}
+  ${sec("Ways to die",deaths.length,deathsTotal,deaths.length?`<ul class="lr-list">${deaths.slice(-12).reverse().map(d=>`<li><span>${esc(d)}</span></li>`).join("")}</ul>`:`<p class="hint">None yet. Lucky you.</p>`,deathsTotal+"+")}
+  <div class="btn-row"><button class="btn primary" data-act="hide">Close</button></div>`);
+}
+
+{const _ad=albumDay;albumDay=function(n){_ad(n);try{natDay(n)}catch(e){}}}
+{const _rhm=renderHome;renderHome=function(){_rhm.apply(this,arguments);try{const b=document.getElementById("homeBtns");if(b&&!b.querySelector('[data-act="collection"]')){const c=collGet(),n=Object.values(c).reduce((t,o)=>t+Object.keys(o||{}).length,0);(b.querySelector(".acct-line")||null)?b.querySelector(".acct-line").insertAdjacentHTML("beforebegin",`<button class="btn big home-btn" data-act="collection"><span>Collection book</span><small>${n?`${n} things found across your lives`:"Everything you find across all your lives"}</small></button>`):b.insertAdjacentHTML("beforeend",`<button class="btn big home-btn" data-act="collection"><span>Collection book</span><small>${n?`${n} things found across your lives`:"Everything you find across all your lives"}</small></button>`)}}catch(e){}}}
 
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
@@ -9277,7 +9475,7 @@ function startModal0(){
 }
 function menuModal(){
  showModal(`<h2>Menu</h2><p>${esc(S.name)}, ${esc(R().t)}, age ${ageInt()}. Your game saves automatically on this device${cloudCode?" and in the cloud":""}.</p>
-  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
+  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
  markets:`<tr><td><b>1. Read the brief</b><br>Each month's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
@@ -9320,6 +9518,9 @@ document.addEventListener("click",e=>{
  if(a==="avtab"){avTab=t.dataset.v;avatarModal();return}
  if(a==="photo"){if(t.dataset.i!=="")photoModal(+t.dataset.i);return}
  if(a==="albumall"){albumAll=true;render();return}
+ if(a==="addfriendrec"){const p=addFriendLife(window.__hashRec);save();render();toastMsg(p?`${p.n} is now in your game.`:"Start a game first.");t.disabled=true;return}
+ if(a==="obit"){obitModal();return}
+ if(a==="collection"){collModal();return}
  if(a==="menualbum"){hideModal();lifeTab="album";S.lifeSeen=S.lifeSeen||{};S.lifeSeen.album=S.day;setTab("life");render();return}
  if(a==="recphoto"){recPhotoModal(+t.dataset.i);return}
  if(a==="recback"){if(window.__albumViewer)showRecordFromHash();else recordModal(window.__albumRec);return}
