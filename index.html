@@ -494,6 +494,8 @@ a.btn.primary{color:var(--on-accent)}
 html,body{overflow-x:clip}
 .menu-grid .btn{display:flex;align-items:center;justify-content:center;text-align:center;min-height:52px;text-decoration:none;line-height:1.2}
 .jrisk{display:block;width:56%;height:3px;border-radius:2px;margin:4px auto 0;opacity:.8}.jrisk.hi{background:var(--up)}.jrisk.mid{background:#E9A23B}.jrisk.lo{background:var(--down)}
+.mv-run,.mv-dur{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}.mv-run span:first-child{color:var(--accent);font-weight:600}.mv-bar{display:block;height:4px;border-radius:2px;background:var(--line);margin-top:3px;overflow:hidden}.mv-bar i{display:block;height:100%;background:var(--accent)}.mv-done{color:var(--up)}
+.fc-list{list-style:none;padding:0;margin:4px 0 0}.fc-list li{padding:8px 0;border-bottom:1px solid var(--line)}.fc-list .hint{display:block;margin:0}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -5738,7 +5740,7 @@ function friendsModal(msg){
   <div class="label">Your code</div><div class="codebox"><code id="myCode">${esc(myCode())}</code><button class="btn sm" data-act="copyfcode">Copy</button></div>
   <div class="label" style="margin-top:12px">Add a friend's code or life link</div><p class="hint" style="margin:0 0 4px">Paste the link to a life they shared and their real life story comes with them: their face, their career, their fame, even how they died.</p><div class="codebox"><input id="fcIn" type="text" placeholder="FTB-... or a life link" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn sm primary" data-act="addcode">Add</button></div>
   ${msg?`<p class="hint" style="margin-top:6px">${esc(msg)}</p>`:""}
-  ${mine.length?`<div class="label" style="margin-top:12px">Friends in your game</div><p class="hint" style="margin:2px 0 0">${mine.map(p=>esc(p.n)).join(", ")}</p>`:""}
+  ${mine.length?`<div class="label" style="margin-top:12px">Friends in your game</div><ul class="fc-list">${mine.map(p=>`<li><b>${esc(p.n)}</b><span class="hint">${esc(p.how||"")}</span><span class="btn-row" style="margin:4px 0 0"><button class="btn sm" data-act="fcbest" data-id="${p.id}">Make best friend</button>${p.dated&&!inLove()?"":`<button class="btn sm" data-act="fcmove" data-id="${p.id}">Make a move</button>`}</span></li>`).join("")}</ul>`:""}
   <div class="btn-row"><button class="btn" data-act="hide">Close</button></div>`);
 }
 function addFriendCode(raw){
@@ -6120,7 +6122,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();try{apprenticeMorning()}catch(e){}try{friendMoveMorning()}catch(e){}try{petMorning()}catch(e){}wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();try{partnerFateMorning()}catch(e){}try{apprenticeMorning()}catch(e){}try{friendMoveMorning()}catch(e){}try{petMorning()}catch(e){}wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -13656,6 +13658,80 @@ function apprenticeMorning(){const b=S.biz;if(!b||!b.partner||S.over||S.day-(b.p
   {t:"Keep them on board",fx:{rep:2},o:"Their name still opens doors. And their voice still opens windows."}]})}
 ACTS.appBuyout=fx=>{const b=S.biz;if(!b||!b.partner)return;if(S.wealth<fx.price){toastMsg("You can't afford it yet.");return}S.wealth-=fx.price;S.log.unshift({d:S.day,t:`Bought ${b.partner} out of ${b.name} for ${money(fx.price)}.`});b.partner=null};
 
+/* ============ Career moves that run for months, and a nudge to pick one ============ */
+/* How many months each learning move runs for. Study runs until the exam. */
+const MOVE_DUR={dj_practice:3,dj_course:3,mu_lessons:6,mu_vocal:3,mu_dance:3,mu_choreo:3,mentor:3,fb_pt:3,fb_nut:3,fb_fin:3,fb_psy:3};
+const moveDur=mv=>{if(!mv)return 0;if(mv.id==="study"){const c=cx(),r=S.rank,need=r===0?2:3,done=(c.study&&c.study[r])||0;return Math.max(1,need-done)}return MOVE_DUR[mv.id]||0};
+const running=()=>S.mvRun=S.mvRun||{};
+/* Choosing a course enrols you: it carries on by itself each month until it's finished */
+{const _rm=runMoves;runMoves=function(W){const R0=running(),list=careerMoves(),ids=mvPicked();
+ for(const id of ids){const mv=list.find(m=>m.id===id);const d=moveDur(mv);if(d>1&&!R0[id])R0[id]={left:d,total:d,start:S.day}}
+ _rm.apply(this,arguments);
+ const fresh=careerMoves();
+ for(const [id,r] of Object.entries(R0)){if(!ids.includes(id)&&r.start!==S.day)continue;r.left--;const mv=fresh.find(m=>m.id===id)||list.find(m=>m.id===id);
+  if(r.left<=0||!fresh.some(m=>m.id===id)){delete R0[id];const c=cx();c.coursesDone=c.coursesDone||{};c.coursesDone[id]=(c.coursesDone[id]||0)+1;
+   W.notes.unshift(`Course complete ✓ ${mv?mv.n:"Your course"}: ${r.total} month${r.total>1?"s":""} done.`);S.log.unshift({d:S.day,t:`Finished: ${mv?mv.n:"a course"}.`})}}
+ /* Next month, the courses still running are already chosen */
+ S.mv={d:S.day+1,ids:Object.keys(R0).filter(id=>careerMoves().some(m=>m.id===id))};
+}}
+/* Turning a running course off stops it */
+{const _tm=toggleMove;toggleMove=function(id){const R0=running();if(R0[id]&&mvPicked().includes(id)){delete R0[id];if(S.mv)S.mv.ids=S.mv.ids.filter(x=>x!==id);toastMsg("Course stopped.");save();render();return}return _tm.apply(this,arguments)}}
+/* The moves board shows durations, progress and finished courses */
+{const _ms=movesSec;movesSec=function(){let h=_ms.apply(this,arguments);if(!h)return h;const R0=running(),c=cx(),list=careerMoves();
+ for(const mv of list){const d=moveDur(mv),r=R0[mv.id],done=c.coursesDone&&c.coursesDone[mv.id];if(d<=1&&!done)continue;
+  const add=r?`<span class="mv-run"><span>Month ${r.total-r.left+1} of ${r.total} · tap to stop</span><span class="mv-bar"><i style="width:${Math.round((r.total-r.left)/r.total*100)}%"></i></span></span>`:`<span class="mv-dur">${d>1?`Takes ${d} months${mvCost(mv)?`, ${money(mvCost(mv))} a month`:""}`:""}${done?` <b class="mv-done">✓ Done${done>1?` ×${done}`:""}</b>`:""}</span>`;
+  h=h.replace(new RegExp(`(<button class="move[^"]*" data-act="move" data-id="${mv.id}"[^>]*>)`),`$1${add}`)}
+ if(!mvPicked().length&&S.mvRest!==S.day&&list.some(m=>!moveAvail(m)))h=h.replace(/(<\/h2><span class="label">[^<]*<\/span><\/div>)/,`$1<div class="btn-row" style="margin:0 0 8px"><button class="btn sm" data-act="mvrest">Rest this month: no career move</button></div>`);
+ if(S.mvRest===S.day)h=h.replace(/(<\/h2><span class="label">[^<]*<\/span><\/div>)/,`$1<p class="hint" style="margin:0 0 8px">You're resting this month. Pick a move any time if you change your mind.</p>`);
+ return h}}
+/* The big button reminds you to pick a career move (or rest) before closing the month */
+function needMove(){try{if(S.over||S.prison||S.front||S.sel||S.sabb||S.day<3)return false;if(mvPicked().length||S.mvRest===S.day)return false;return careerMoves().some(m=>!moveAvail(m))}catch(e){return false}}
+{const _cl=closeLabel;closeLabel=function(){const l=_cl.apply(this,arguments);if(/^Close the month|^Next month|^Play the match/.test(l)&&needMove())return"Pick a career move";return l}}
+
+/* ============ Your partner can die too ============ */
+/* A small risk every month that grows with age: accidents and sudden illness at any age, and old age later on */
+function partnerFateMorning(){
+ if(!inLove()||S.over||S.prison||S.inbox.some(m=>!m.done&&/^pf_/.test(m.id)))return;
+ const a=partnerAge(),p=S.rel.name;
+ /* Old age: a warning first, then a goodbye */
+ if(S.rel.ill!=null){if(S.day-S.rel.ill>=2&&rnd()<.35){S.rel.ill=null;pushDyn({id:"pf_end_"+S.day,life:1,from:"The hospital",t:`Saying goodbye to ${p}`,b:`${p} is fading. The nurses say it won't be long now.`,c:[{t:`Stay by ${p}'s side`,fx:{act:"widow",karma:3},o:`You hold ${p}'s hand all night. They go peacefully, just after dawn.`}]})}return}
+ const hz=a>=70?Math.pow((a-65)/30,2)*.012:0;
+ if(a>=70&&rnd()<hz){S.rel.ill=S.day;pushDyn({id:"pf_ill_"+S.day,life:1,from:"The doctor",t:`${p} is very unwell`,b:`${p} has been taken into hospital. At ${a}, the doctors say to prepare yourself.`,c:[
+  {t:"Stop everything and be with them",fx:{home:6,stress:8,pnl:-1},o:"You sleep in the chair by the bed. They squeeze your hand when they wake."},
+  {t:"Pay for private care (£20,000)",p:.4,win:{fx:{gbp:-20000,fixed:1,home:4,act:"pfrecover"},o:`Against the odds, ${p} rallies and comes home.`},lose:{fx:{gbp:-20000,fixed:1,stress:6},o:"The best care money can buy. It buys a little time."}}]});return}
+ /* Sudden causes, rare when young */
+ const sudden=.00012+(a>=50?(a-50)*.00003:0);
+ if(rnd()<sudden){const cause=pick(a<45?["a car crash on the motorway","a cycling accident","a sudden brain haemorrhage","a heart condition nobody knew about"]:["a heart attack","a stroke","a car crash on the motorway","a sudden illness","a fall at home"]);
+  S.rel.deathCause=cause;pushDyn({id:"pf_sud_"+S.day,life:1,from:"A phone call",t:"The worst phone call",b:`A police officer is at the door. ${p} has died: ${cause}. It's so sudden that it doesn't feel real.`,c:[{t:"…",fx:{act:"widow",stress:20},o:"The days that follow are a blur of people, casseroles and silence."}]})}
+}
+ACTS.pfrecover=()=>{if(S.rel)S.rel.ill=null};
+
+/* ============ Friends from other players' games play a bigger part ============ */
+/* Their family comes with them */
+{const _afl=addFriendLife;addFriendLife=function(rec){const p=_afl.apply(this,arguments);try{if(p&&p.fr&&rec&&rec.f)p.fr.fam=String(rec.f).slice(0,80)}catch(e){}return p}}
+/* More stories from their lives: weddings, babies, divorces, kids growing up, and romance */
+{const _flm=friendLifeMorning;friendLifeMorning=function(){
+ _flm.apply(this,arguments);try{
+ if(S.over||S.prison||S.front||S.day-(S.frLifeAt??-99)<8||rnd()>.05||S.inbox.some(m=>!m.done&&/^frl_/.test(m.id)))return;
+ const fs=alivePeople().filter(p=>p.fc&&p.fr&&!p.mirrored);if(!fs.length)return;const p=pick(fs),f=p.fr,first=p.n.split(" ")[0],fam=String(f.fam||""),opts=[];
+ const kids=/child|son|daughter/i.test(fam),married=/married|widowed|divorced/i.test(fam);
+ if(married&&!p.wedSeen)opts.push({k:"wed",t:`${first}'s wedding`,b:`${first} is getting married and wants you there. Possibly as best man or maid of honour.`,c:[{t:"Give a speech",p:.65,win:{fx:{act:"ppbond",d:12,home:3},o:"Tears, laughter and one story you probably shouldn't have told."},lose:{fx:{act:"ppbond",d:4,stress:3},o:"You lose your notes halfway. Everyone is kind about it."}},{t:"Just go and dance",fx:{act:"ppbond",d:6,stress:-3},o:"You're the last on the dance floor."}]});
+ if(kids&&!p.babySeen)opts.push({k:"baby",t:`${first} has a baby`,b:`${first} has sent a photo of a very small, very cross baby. They'd love you to be a godparent.`,c:[{t:"Say yes",fx:{act:"ppbond",d:12,karma:2},o:"A christening, a silver spoon and a lifetime of birthday cards to remember."},{t:"Send a gift instead (£100)",fx:{gbp:-100,act:"ppbond",d:4},o:"A cuddly giraffe arrives by post."}]});
+ if(kids&&p.babySeen&&age()>=40)opts.push({k:"kid",t:`${first}'s kid needs work experience`,b:`${first}'s teenager wants a week's work experience with you.`,c:[{t:"Take them on",p:.7,win:{fx:{act:"ppbond",d:10,rep:1},o:"They're brilliant. You'd hire them tomorrow."},lose:{fx:{act:"ppbond",d:3,stress:3},o:"They spend the week on their phone. It's fine."}},{t:"Say you're too busy",fx:{act:"ppbond",d:-6},o:`${first} says they understand.`}]});
+ if(/divorced/i.test(fam)&&!p.divSeen)opts.push({k:"div",t:`${first} is getting divorced`,b:`${first} calls late at night. Their marriage is over and they need a friend.`,c:[{t:"Go round with wine and tissues",fx:{act:"ppbond",d:14,stress:2,karma:2},o:"You talk until 3am. They say you saved them."},{t:"Send a kind message",fx:{act:"ppbond",d:4},o:"They reply with a heart."}]});
+ if(inLove()&&!p.dated&&fitsPref(p.n)&&p.bond>=55&&rnd()<.4)opts.push({k:"tempt",t:`${first} still has feelings`,b:`Over a long lunch, ${first} admits they've never stopped thinking about you. "I know you're with ${S.rel.name}. I'm just saying."`,c:[{t:"Start an affair",fx:{act:"fcaffair",pid:p.id,karma:-4,stress:4},o:"You both know it's wrong. You do it anyway."},{t:"Leave it there",fx:{act:"ppbond",d:-4,karma:2},o:"You change the subject. It's awkward, but you're glad you did."}]});
+ if(!opts.length)return;S.frLifeAt=S.day;const e=pick(opts);if(e.k==="wed")p.wedSeen=1;if(e.k==="baby")p.babySeen=1;if(e.k==="div")p.divSeen=1;delete e.k;
+ pushDyn(Object.assign({id:"frl_"+S.day,life:1,from:p.n},e));const m=S.inbox.find(q=>q.id==="frl_"+S.day);if(m)m.vars={pid:p.id}}catch(e){}}}
+ACTS.fcaffair=fx=>{const p=(S.people||[]).find(x=>x.id===fx.pid);if(p&&inLove()){p.dated=1;startSecret(p)}};
+/* From the Friends screen: make them your best friend, or make a move */
+function fcBest(pid){const p=(S.people||[]).find(x=>x.id===pid);if(!p)return;if(S.friend){S.oldFriends=(S.oldFriends||[]).concat({n:S.friend.n,hist:S.friend.hist||[],d:S.day}).slice(-4);addPerson(S.friend.n,"friend","Your old best friend",Math.max(40,S.friend.bond-10))}
+ S.friend={n:p.n,bond:Math.max(60,p.bond||60),since:S.day,hist:[{d:S.day,t:"Became your best friend",c:"An old school friend"}]};S.people.splice(S.people.indexOf(p),1);S.log.unshift({d:S.day,t:`${p.n} became your best friend.`});save();render();friendsModal(`${p.n} is now your best friend.`)}
+function fcMove(pid){const p=(S.people||[]).find(x=>x.id===pid);if(!p)return;const first=p.n.split(" ")[0];hideModal();
+ const chance=fitsPref(p.n)?clamp(.15+((p.bond||50)-50)/120,.05,.6):.04;
+ if(rnd()<chance){p.dated=1;if(inLove()){startSecret(p);save();render();actResult("They kiss you back",esc(`${first} has wondered about this since school. Now it's a secret from ${S.rel.name}.`))}
+  else{S.people.splice(S.people.indexOf(p),1);S.rel=Object.assign(S.rel,{st:"dating",name:first,job:p.fcCareer||pick(JOBS),since:S.day,trait:pick(PT_KEYS),stepkids:0});S.homeLife=clamp(Math.max(S.homeLife,60)+8,0,100);S.log.unshift({d:S.day,t:`Started dating ${p.n}, your old school friend.`});save();render();actResult("They kiss you back",esc(`"I had such a crush on you at school," says ${first}. You're together.`))}}
+ else{p.bond=clamp((p.bond||50)-35,0,100);S.stress=clamp(S.stress+5,0,100);save();render();actResult("They say no",esc(`${first} laughs, then realises you're serious. "Oh. No. Sorry." Things are very awkward now.`))}}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -14878,6 +14954,9 @@ document.addEventListener("click",e=>{
  if(a==="albumall"){albumAll=true;render();return}
  if(a==="albummore"){albumN=(albumN||(window.innerWidth<520?12:24))+(window.innerWidth<520?12:24);render();return}
  if(a==="freegrp"){freeGrp=t.dataset.v;render();return}
+ if(a==="fcbest"){fcBest(t.dataset.id);return}
+ if(a==="fcmove"){fcMove(t.dataset.id);return}
+ if(a==="mvrest"){S.mvRest=S.day;save();render();return}
  if(a==="frmove"){makeMoveModal();return}
  if(a==="frmovego"){makeMoveGo();return}
  if(a==="proposenow"){proposeModal();return}
@@ -14960,7 +15039,7 @@ document.addEventListener("click",e=>{
  if(a==="chal"){pickChallenge=t.dataset.k;document.querySelectorAll('[data-act="chal"]').forEach(b=>{const on=b.dataset.k===pickChallenge;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});return}
  if(a==="pos")setPos(t.dataset.id,+t.dataset.v);
  else if(a==="choose")choose(+t.dataset.i,+t.dataset.c);
- else if(a==="close")closeDay(false);
+ else if(a==="close"){if(needMove()&&closeLabel()==="Pick a career move"){deskTab="moves";try{localStorage.setItem("ftb-desktab","moves")}catch(e){}setTab("desk");render();window.scrollTo(0,0);toastLimit("Pick a career move for this month, or choose to rest.")}else closeDay(false)}
  else if(a==="dayoff")closeDay(true);
  else if(a==="next")nextModal();
  else if(a==="hide")hideModal();
