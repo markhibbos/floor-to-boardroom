@@ -484,6 +484,30 @@ a.btn.primary{color:var(--on-accent)}
 .op-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-top:4px}.op-opts button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;padding:8px 10px;border-radius:12px;border:1px solid var(--glass-line,var(--line));background:var(--glass,var(--surface));color:inherit;cursor:pointer}.op-opts button span{font-size:12.5px;color:var(--muted)}.op-opts button.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .op-est{margin-top:10px;font-size:14px}
 @media (max-width:480px){.op-brief{grid-template-columns:1fr}}
+.arc-stage{position:relative;height:300px;border-radius:16px;overflow:hidden;margin:8px 0;touch-action:none;user-select:none;-webkit-user-select:none}
+.arc-go{position:absolute;inset:0;margin:auto;width:70%;height:64px;border-radius:999px;border:none;background:var(--accent);color:#fff;font:700 20px var(--f-display,system-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.arc-hud{display:flex;justify-content:space-between;font:600 14px var(--f-mono,monospace);color:var(--muted)}
+.arc-grid{position:absolute;inset:10px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:8px}
+.arc-cell{border-radius:14px;background:rgba(255,255,255,.08);display:grid;place-items:center;transition:background .15s}.arc-cell.hit{background:rgba(75,186,133,.55)}.arc-cell.oops{background:rgba(234,107,93,.6)}
+.arc-t{font-size:46px;line-height:1;cursor:pointer;animation:arcpop .18s ease-out}
+@keyframes arcpop{from{transform:scale(.3)}to{transform:scale(1)}}
+.arc-catcher{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:52px;transition:left .06s linear}.arc-catcher.hit{filter:drop-shadow(0 0 10px #4BBA85)}.arc-catcher.oops{filter:drop-shadow(0 0 10px #EA6B5D)}
+.arc-fall{position:absolute;transform:translate(-50%,-50%);font-size:34px;pointer-events:none}
+.arc-mash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}.arc-goal{font-size:40px}
+.arc-meter{width:80%;height:14px;border-radius:7px;background:rgba(255,255,255,.15);overflow:hidden}.arc-meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .08s}
+.arc-btn{width:130px;height:130px;border-radius:50%;border:none;font-size:62px;background:rgba(255,255,255,.12);cursor:pointer;touch-action:manipulation}.arc-btn.hit{transform:scale(.92);background:rgba(255,255,255,.25)}
+.arc-mem{position:absolute;inset:16px 16px 50px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.arc-pad{border:none;border-radius:18px;font-size:46px;background:rgba(255,255,255,.1);cursor:pointer;transition:transform .1s,background .1s}.arc-pad.lit{background:rgba(246,212,74,.75);transform:scale(1.05)}.arc-pad.oops{background:rgba(234,107,93,.7)}
+.arc-msg{position:absolute;left:0;right:0;bottom:14px;text-align:center;color:#fff;font:700 16px system-ui}
+.arc-score{font:800 64px var(--f-display,system-ui);color:var(--accent);text-align:center;line-height:1;margin:6px 0}
+.arc-stack{position:absolute;left:8px;right:8px;bottom:8px;top:8px;transition:transform .3s}.arc-blk{position:absolute;height:20px;border-radius:5px;background:rgba(255,255,255,.85);display:grid;place-items:center;font-size:14px;overflow:hidden}.arc-blk.mv{background:var(--accent)}.arc-blk.oops{background:#EA6B5D}
+.arc-react{position:absolute;inset:16px;border:none;border-radius:16px;background:#7A1F2B;color:#fff;font:800 26px var(--f-display,system-ui);cursor:pointer}.arc-react.go{background:#2F9E5E}.arc-react.early{background:#B8862B}
+.arc-sort{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20px 12px 14px}.arc-item{font-size:84px}.arc-item.pop{animation:arcpop .18s ease-out}
+.arc-bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}.arc-bin{height:64px;border:none;border-radius:14px;background:rgba(255,255,255,.14);color:#fff;font:700 18px system-ui;cursor:pointer}.arc-bin.hit{background:rgba(75,186,133,.6)}.arc-bin.oops{background:rgba(234,107,93,.7)}
+.arc-odd{position:absolute;inset:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.arc-o{border:none;border-radius:12px;background:rgba(255,255,255,.08);font-size:30px;cursor:pointer}.arc-o.hit{background:rgba(75,186,133,.6)}.arc-o.oops{background:rgba(234,107,93,.7)}
+.arc-count{position:absolute;inset:0 0 70px 0}.arc-count span{position:absolute;font-size:30px}.arc-q{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:700 24px system-ui;text-align:center}
+.arc-ans{position:absolute;left:10px;right:10px;bottom:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.arc-a{height:50px;border:none;border-radius:12px;background:rgba(255,255,255,.16);color:#fff;font:800 22px system-ui;cursor:pointer}.arc-a.hit{background:rgba(75,186,133,.7)}.arc-a.oops{background:rgba(234,107,93,.7)}
+.arc-up{position:absolute;transform:translate(-50%,-50%);font-size:40px;cursor:pointer}.arc-up.hit{transform:translate(-50%,-50%) scale(1.5);opacity:0;transition:all .12s}.arc-up.oops{filter:drop-shadow(0 0 8px #EA6B5D)}
+.arc-hold{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}.arc-gauge{position:relative;width:82%;height:22px;border-radius:11px;background:rgba(255,255,255,.15);overflow:hidden}.arc-gauge i{position:absolute;left:0;top:0;bottom:0;background:#fff;opacity:.8}.arc-zone{position:absolute;top:0;bottom:0;background:#2F9E5E}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -5990,7 +6014,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -8654,6 +8678,233 @@ function deskPrompts(){
 ACTS.opintelgo=fx=>{ACTS.opintel(fx);ACTS.godesk()};
 {const _k=iaKey2;iaKey2=function(m,e){if(/^dsk_/.test(m.id||""))return S.path==="bank"?"trading":(IA_CAREER[S.path]||"office");return _k(m,e)}}
 
+/* ============ Challenges: quick, silly tap games themed to your career. Each year has 0 to 4 of them, rotating through 12 kinds ============ */
+/* Per career: where it happens, what's good and bad (emoji and words), colours, and a signature game with its own jokes */
+const ARC={
+ bank:{place:"the trading floor",good:["📈","💷","💰"],gn:"rising tickers",bad:["📉","🧾"],bn:"crashing tickers",bg:"#0E1418",sig:{g:"whack",t:"The trading-floor frenzy",b:"Buy the rising tickers, dodge the crashing ones.",res:["You make £40 million in 20 seconds. The desk carries you round on their shoulders.","A respectable afternoon. Nobody gets fired.","You buy everything that's falling. The risk manager faints."]}},
+ elec:{place:"the building site",good:["⚡","💡","🔌"],gn:"sparking sockets",bad:["🐭","💦"],bn:"mice and puddles",bg:"#2B3A44",sig:{g:"whack",t:"The sparking sockets",b:"Fix the sparking sockets, leave the mouse alone.",res:["Every socket safe. The mouse gives you a little nod.","Mostly fixed. The kettle still makes a funny noise.","You electrocute the mouse. It's fine. It's angrier, but fine."]}},
+ plumb:{place:"the bathroom",good:["💧","🔧","🚿"],gn:"leaks",bad:["🦆","🧸"],bn:"bath toys",bg:"#1C4A6E",sig:{g:"whack",t:"Plug the leaks",b:"Plug every leak, but don't plug the rubber duck.",res:["Bone dry. The customer offers you a biscuit. A good one.","Damp, but not a flood.","The bathroom is now a swimming pool. The duck is thriving."]}},
+ hair:{place:"the salon",good:["✂️","💇","🎀"],gn:"happy customers",bad:["🧴","🪮"],bn:"dropped combs",bg:"#5A3A60",sig:{g:"mash",t:"The fastest blow-dry in town",b:"Tap like mad. The bride walks down the aisle in 6 seconds.",icon:"💨",goal:"👰",res:["Glossy, bouncy, perfect. The bride cries. The groom cries. You cry.","Mostly dry. The veil hides the damp bit.","She walks down the aisle with a wet fringe and a face like thunder."]}},
+ chef:{place:"the kitchen",good:["🥕","🍅","🧅","🥚","🧀"],gn:"ingredients",bad:["🐔","🧦"],bn:"rubber chickens",bg:"#3A2A2A",sig:{g:"catch",t:"Catch the ingredients",b:"Catch the veg, dodge the rubber chicken.",res:["A perfect mise en place. Gordon Ramsay-ish would weep.","Enough for a decent soup.","You catch the rubber chicken. Tonight's special is... interesting."]}},
+ tech:{place:"the office",good:["🐛","🐞"],gn:"bugs",bad:["☕","🍩"],bn:"coffees",bg:"#1C2329",sig:{g:"whack",t:"Squash the bugs",b:"Squash the bugs before launch. Don't squash the coffee.",res:["Zero bugs. You ship at 4.59pm on a Friday and nothing breaks. A miracle.","A few bugs left. They're 'features' now.","You squashed the coffee. The whole team stops working."]}},
+ foot:{place:"the training ground",good:["⚽","🥅"],gn:"balls",bad:["🥾","🟨"],bn:"flying boots",bg:"#3E8E4A",sig:{g:"catch",t:"Penalty shoot-out: you're in goal",b:"The keeper's injured and you're in goal. Save the shots!",res:["You save everything. The goalkeeper has never looked so worried.","A couple of saves. Respectable for an outfield player.","You dive the wrong way every time. Someone makes it a gif."]}},
+ law:{place:"court",good:["📜","⚖️","🔍"],gn:"pieces of evidence",bad:["🍩","🥪"],bn:"lunch crumbs",bg:"#3A2E24",sig:{g:"memory",t:"Remember the evidence",b:"Watch the order the evidence was found, then repeat it to the jury.",icons:["🔪","🧤","🕰️","📜"],res:["The jury gasps. The judge nods. The defendant's lawyer faints.","You get most of it. The jury looks a bit confused.","You present the candlestick as the murder weapon. There was no candlestick."]}},
+ doc:{place:"the hospital",good:["🦠","🧫"],gn:"germs",bad:["❤️","🫁"],bn:"vital organs",bg:"#123A3A",sig:{g:"whack",t:"Zap the germs",b:"Zap the germs, don't zap the patient's heart.",res:["Germ-free. The patient leaves hospital doing cartwheels.","Most germs gone. The patient sneezes a bit.","You zapped the heart. Twice. It's fine, there's a crash team."]}},
+ nurse:{place:"the ward",good:["🩹","💊","🧴"],gn:"supplies",bad:["🚽"],bn:"flying bedpans",bg:"#1C4A6E",sig:{g:"catch",t:"The great bedpan rush",b:"Catch the falling supplies, dodge the flying bedpans.",res:["Every patient sorted. Matron does a little dance.","Busy, but nobody noticed.","A bedpan to the head. The patients applaud anyway."]}},
+ teach:{place:"the classroom",good:["📱","🎮"],gn:"phones",bad:["📚","✏️"],bn:"textbooks",bg:"#2F5D46",sig:{g:"whack",t:"Confiscate the phones",b:"Grab the phones. Leave the textbooks: they're actually reading!",res:["A drawer full of phones. Peace at last. Someone does their homework.","Half the class is still on their phones, but it's a start.","You confiscated the only textbook in the room. A child weeps."]}},
+ police:{place:"the high street",good:["🦹","💰"],gn:"pickpockets",bad:["📸","🧳"],bn:"tourists",bg:"#1D2B4F",sig:{g:"whack",t:"Nab the pickpockets",b:"Collar the pickpockets, leave the tourists alone.",res:["Ten arrests in an afternoon. The tourists give you a round of applause.","A couple of collars. Not bad.","You arrested a family from Ohio. It's on the news in Ohio."]}},
+ pol:{place:"the campaign trail",good:["👶","🗳️"],gn:"babies to kiss",bad:["🥚","🍅"],bn:"eggs",bg:"#5A6B8A",sig:{g:"whack",t:"Kiss the babies, dodge the eggs",b:"Campaign trail! Kiss every baby, dodge every egg.",res:["Not a single egg lands. You go up four points in the polls.","A bit of egg on the suit. Your team call it 'relatable'.","Egg everywhere. The photo is on every front page."]}},
+ pilot:{place:"the cockpit",good:["⭐","☁️"],gn:"smooth skies",bad:["🪿","⚡"],bn:"geese",bg:"#3E78B2",sig:{g:"dodge",t:"Dodge the geese",b:"Steer left and right. Three geese and you're going round again.",res:["Smooth as silk. The passengers don't spill a drop.","A little bumpy, but no geese were harmed.","You hit a goose. It's fine. The goose is furious."]}},
+ fire:{place:"the fire station",good:["🔥"],gn:"fires",bad:["🐈","🧸"],bn:"cats",bg:"#3A2430",sig:{g:"whack",t:"Put out the fires",b:"Hose the fires, but don't hose the cat.",res:["Every fire out. The cat purrs approvingly.","Mostly out. One shed is a bit crispy.","The cat is soaked and will never forgive you."]}},
+ vet:{place:"the surgery",good:["🐹","🐰"],gn:"escaped hamsters",bad:["🐈","🐍"],bn:"cats",bg:"#3E6B4A",sig:{g:"whack",t:"Catch the escaped hamsters",b:"Grab the hamsters. Leave the cat: it's helping. Or is it?",res:["All twelve hamsters home safe. The cat looks disappointed.","Most of them. One is living in the photocopier now.","The cat has had a lovely afternoon. The hamsters have not."]}},
+ arch:{place:"the building site",good:["🧱","🪟"],gn:"bricks",bad:["🚽","🛁"],bn:"falling toilets",bg:"#7A8A9A",sig:{g:"stack",t:"Build the tower",b:"Tap to drop each floor. Keep it straight or building control will have words.",res:["A perfect tower. Building control signs it off on the spot.","A tower, of sorts. It's 'expressive'.","It leans. It's in the Leaning Tower brochure now."]}},
+ music:{place:"the stadium",good:["🎵","🎸","🥁"],gn:"notes",bad:["🍅","🥫"],bn:"flying tomatoes",bg:"#16141F",sig:{g:"mash",t:"Get the crowd clapping",b:"Clap like mad and get the whole stadium going.",icon:"👏",goal:"🎤",res:["Sixty thousand people clap in time. You'll remember this forever.","A decent clap. The front row's into it.","One man in the back claps. It's your dad."]}},
+ influencer:{place:"the internet",good:["💬","❤️"],gn:"nice comments",bad:["👹","🤖"],bn:"trolls",bg:"#2B2440",sig:{g:"whack",t:"Like the fans, block the trolls",b:"Heart the nice comments, block the trolls. Fast!",res:["Your comments are a wholesome paradise. A brand sends you a free sofa.","A mixed bag. Mostly hearts.","You hearted a troll. Now he thinks you're friends."]}},
+ soldier:{place:"the barracks",good:["🎯","🎖️"],gn:"targets",bad:["🐑","🥾"],bn:"sheep",bg:"#4E5B3A",sig:{g:"mash",t:"Press-ups for the sergeant",b:"The sergeant wants press-ups. As many as you can in 6 seconds. GO!",icon:"💪",goal:"🎖️",res:["The sergeant almost smiles. Almost.","'Adequate,' says the sergeant, which is basically a hug.","The sergeant asks if you'd like a little lie-down."]}},
+ astronaut:{place:"the space station",good:["🍫","🍕","🥨"],gn:"floating snacks",bad:["🔧","🛰️"],bn:"spanners",bg:"#0E1726",sig:{g:"float",t:"Catch the floating snacks",b:"Zero gravity! Grab the snacks before they drift away. Not the spanners.",res:["Snack heaven. Mission control is jealous.","A decent haul. One crisp is still out there, orbiting.","A spanner to the visor. Houston, we have a headache."]}},
+ spy:{place:"the embassy party",good:["🕵️","💼"],gn:"enemy agents",bad:["🍸","🎩"],bn:"diplomats",bg:"#1A2533",sig:{g:"memory",t:"Crack the safe",b:"Watch the code light up, then tap it back. Quickly, the guards are coming.",icons:["🔴","🟢","🔵","🟡"],res:["Click. The safe swings open. You're out before the tea's gone cold.","Open, eventually. A guard was very nearly suspicious.","You set off every alarm in Berlin. Very discreetly."]}},
+ tvchef:{place:"the TV studio",good:["🥕","🍋","🧄","🥚"],gn:"ingredients",bad:["🍳","🧯"],bn:"flying frying pans",bg:"#3A2A2A",sig:{g:"catch",t:"The live-TV catch",b:"The sous chef is throwing ingredients across the studio. Catch them on camera!",res:["A flawless segment. The clip gets six million views.","Mostly caught. One lemon is still rolling around the studio.","A frying pan to the face, live at 7pm. You're trending."]}},
+ clubowner:{place:"the boardroom",good:["⚽","🏆","👟"],gn:"star signings",bad:["🧾","💸"],bn:"unpaid bills",bg:"#2B3A50",sig:{g:"memory",t:"Remember the transfer targets",b:"Your scout reads out the shortlist once. Remember it.",icons:["⚽","🧤","👟","🏆"],res:["You sign all of them before the deadline. The fans chant your name.","Two out of four. Not bad for a busy owner.","You sign the kit man's cousin. He's very nice."]}},
+ manager:{place:"the touchline",good:["⚽","📋"],gn:"tactics",bad:["🟥","🥤"],bn:"red cards",bg:"#3E8E4A",sig:{g:"mash",t:"Touchline fury",b:"Wave your arms, shout and point. The players need to hear you!",icon:"📣",goal:"🏃",res:["The winger hears you, cuts inside and scores. You do a knee slide.","Some of them heard you. Mostly the subs.","You're sent to the stands for excessive arm waving."]}},
+ actor:{place:"the film set",good:["🎬","🌟"],gn:"perfect takes",bad:["🎤","🐕"],bn:"boom mics",bg:"#16141F",sig:{g:"memory",t:"Remember your lines",b:"The director gives you the scene once. Repeat it on cue.",icons:["😢","😡","😂","😱"],res:["One take. The crew applauds. Someone mentions an award.","Take three. Good enough.","You cry when you should laugh and scream when you should wink. The director lies down."]}},
+ dj:{place:"the club",good:["🎧","💿"],gn:"beats",bad:["🧯","🥤"],bn:"fire extinguishers",bg:"#16141F",sig:{g:"reaction",t:"Drop the beat",b:"Wait for the build-up... then drop it the instant the lights go green.",res:["The drop is perfect. Someone in the crowd proposes.","A solid set. A few people dance.","You dropped it early. The crowd stares at you in silence."]}}
+};
+/* Twelve kinds of game: how they're scored (great, okay) and how they're described when not a career's signature */
+const ARC_KINDS={
+ whack:{th:[15,8],t:A=>`Pop-up panic at ${A.place}`,b:A=>`Tap the ${A.gn} as they pop up. Leave the ${A.bn} alone.`},
+ catch:{th:[12,6],t:A=>`Catch the ${A.gn}`,b:A=>`Slide to catch the ${A.gn}. Dodge the ${A.bn}.`},
+ mash:{th:[45,25],t:()=>"The big push",b:A=>`Tap as fast as you can for six seconds. All of ${A.place} is cheering.`},
+ memory:{th:[6,4],t:()=>"Remember the order",b:()=>"Watch them light up, then tap them back in the same order."},
+ dodge:{th:[25,12],t:A=>`Dodge the ${A.bn}`,b:A=>`Slide left and right to dodge the ${A.bn}. Three hits and you're out.`},
+ stack:{th:[8,5],t:()=>"Stack them high",b:()=>"Tap to drop each block onto the tower. Miss and it's over."},
+ reaction:{th:[4,2],t:()=>"Quick draw",b:()=>"Wait for green, then tap as fast as you can. Five rounds. Don't jump the gun."},
+ sort:{th:[18,10],t:()=>"Sort it out",b:A=>`Keep the ${A.gn}, bin the ${A.bn}. As fast as you can.`},
+ odd:{th:[7,4],t:()=>"Spot the odd one out",b:()=>"One of these is not like the others. Find it, fast."},
+ count:{th:[4,2],t:()=>"Count them",b:A=>`A quick flash of ${A.place}. How many ${A.gn} did you see?`},
+ float:{th:[14,7],t:A=>`Grab the ${A.gn}`,b:A=>`Tap the ${A.gn} before they float off the top. Not the ${A.bn}.`},
+ hold:{th:[4,2],t:()=>"Hold steady",b:()=>"Hold the button down and let go when the gauge is in the green. Five goes."}
+};
+const ARC_NAMES={whack:"whack-it",catch:"catch",mash:"tap frenzy",memory:"memory",dodge:"dodge",stack:"stacker",reaction:"quick draw",sort:"sort it",odd:"odd one out",count:"count them",float:"float away",hold:"hold steady"};
+/* The arcade replaces the old monthly timing-bar bonus round */
+{const _mc=miniCard;miniCard=function(){return ""}}
+const ARC_GEN_RES=A=>[`Champion! All of ${A.place} is talking about it.`,"Not bad at all. Respectable.","A disaster. A very funny one, though."];
+const ARC_INVITES=[["The social committee","Team-building day"],["Your boss","The away day"],["The charity committee","The charity challenge"],["The office party planner","Christmas party games"],["Your team","Friday afternoon fun"],["The summer fete","The summer fete"]];
+const arcBestKey="ftb-arcade-best";
+const arcBest=k=>{try{return(JSON.parse(localStorage.getItem(arcBestKey))||{})[k]||0}catch(e){return 0}};
+function arcSaveBest(k,v){try{const o=JSON.parse(localStorage.getItem(arcBestKey))||{};if(v>(o[k]||0)){o[k]=v;localStorage.setItem(arcBestKey,JSON.stringify(o));return true}}catch(e){}return false}
+let arcRun=null,arcCur=null;
+function arcGame(kind){const A=ARC[S.path],K=ARC_KINDS[kind],sig=A.sig&&A.sig.g===kind?A.sig:null;return{kind,A,t:sig?sig.t:K.t(A),b:sig?sig.b:K.b(A),res:sig?sig.res:ARC_GEN_RES(A),icon:sig&&sig.icon||"👊",goal:sig&&sig.goal||"🏁",icons:sig&&sig.icons||[...A.good,...A.bad,"⭐","🎯"].slice(0,4),th:K.th}}
+/* Each year: maybe none, otherwise 2 to 4 challenges in different months, avoiding last year's kinds */
+function arcPlanYear(yr){
+ const prev=(S.arcPlan&&S.arcPlan.kinds)||[];
+ if(rnd()<.2)return{yr,kinds:[],months:[]};
+ const n=2+Math.floor(rnd()*3),pool=Object.keys(ARC_KINDS).filter(k=>!prev.includes(k)).sort(()=>rnd()-.5);
+ const sig=ARC[S.path].sig&&ARC[S.path].sig.g,kinds=[];if(sig&&!prev.includes(sig)&&rnd()<.6)kinds.push(sig);
+ for(const k of pool){if(kinds.length>=n)break;if(!kinds.includes(k))kinds.push(k)}
+ const months=[...Array(12).keys()].sort(()=>rnd()-.5).slice(0,kinds.length).sort((a,b)=>a-b);
+ return{yr,kinds,months,done:[]};
+}
+function arcadeMorning(){
+ if(S.over||S.prison||S.front||S.sel||S.sabb||!ARC[S.path]||S.day<4)return;
+ const yr=Math.floor((S.day-1)/12),mo=monthOf(S.day);
+ if(!S.arcPlan||S.arcPlan.yr!==yr)S.arcPlan=arcPlanYear(yr);
+ const P=S.arcPlan,i=P.months.indexOf(mo);if(i<0||P.done.includes(i)||S.inbox.some(m=>!m.done&&/^arc_/.test(m.id)))return;
+ P.done.push(i);const g=arcGame(P.kinds[i]),[from,occ]=pick(ARC_INVITES);
+ pushDyn({id:"arc_"+S.day,life:0,from,t:`${occ}: ${g.t}`,b:`${g.b} Everyone's watching, and there's a prize.`,c:[{t:"Play now",fx:{act:"arcplay",k:g.kind},o:"You roll up your sleeves."},{t:"Sit this one out",fx:{},o:"You hold everyone's coats."}]});
+}
+ACTS.arcplay=fx=>{setTimeout(()=>{try{arcOpen(fx.k,true)}catch(e){}},400)};
+function arcOpen(kind,forReal){
+ if(!ARC[S.path])return;arcCur=arcGame(kind||ARC[S.path].sig.g);window.__arcReal=!!forReal;const g=arcCur,best=arcBest(S.path+":"+g.kind);
+ showModal(`<div class="label">The challenge · ${esc(ARC_NAMES[g.kind]||g.kind)}</div><h2 style="margin-top:4px">${esc(g.t)}</h2><p>${esc(g.b)}</p>
+  <div class="arc-stage" id="arcStage" style="background:${g.A.bg||"#13212A"}"><button class="arc-go" data-act="arcgo">Tap to start</button></div>
+  <div class="arc-hud"><span id="arcScore">Score 0</span><span id="arcTime"></span><span>${best?`Best ${best}`:""}</span></div>
+  <div class="btn-row"><button class="btn" data-act="arcquit">${forReal?"Give up":"Close"}</button></div>`);
+}
+function arcEnd(score){
+ if(!arcRun||!arcCur)return;arcRun.stop=true;const g=arcCur,[gT,oT]=g.th,tier=score>=gT?0:score>=oT?1:2,real=window.__arcReal,pb=arcSaveBest(S.path+":"+g.kind,score);arcRun=null;
+ let reward="";
+ if(real){window.__arcReal=false;
+  if(tier===0){S.rep=clamp(S.rep+4,0,100);S.stress=clamp(S.stress-5,0,100);S.homeLife=clamp(S.homeLife+2,0,100);const bonus=Math.round(Math.max(200,salary()/12*.1)/10)*10;S.wealth+=bonus;reward=`Reputation up, stress down and a ${money(bonus)} prize.`;
+   try{snap({i:"trophy",k:"The challenge",t:`Champion: ${g.t}`,s:g.res[0],ph:{sc:PH_WORK[S.path]||"office",c:["me"],pr:"trophy",h:"party"}})}catch(e){}}
+  else if(tier===1){S.rep=clamp(S.rep+1,0,100);S.stress=clamp(S.stress-2,0,100);reward="A respectable effort. A little less stressed."}
+  else{S.stress=clamp(S.stress-1,0,100);reward="It was fun, though. Everyone will be talking about it for weeks."}
+  S.log.unshift({d:S.day,t:`The challenge (${g.t}): scored ${score}.`});save()}
+ try{tier===0?sfx.fanfare():tier===1?sfx.good():sfx.bad()}catch(e){}
+ showModal(`<div class="label">The challenge</div><h2 style="margin-top:4px">${["Champion!","Not bad!","Oh dear."][tier]}</h2>
+  <div class="arc-score">${score}</div><p>${esc(g.res[tier])}</p>${reward?`<p class="hint">${esc(reward)}</p>`:""}${pb?`<p class="hint"><b>New personal best!</b></p>`:""}
+  <div class="btn-row"><button class="btn" data-act="arcagain">Play again just for fun</button><button class="btn primary" data-act="hide">Done</button></div>`);
+ render();
+}
+function arcStart(){
+ const g=arcCur,st=document.getElementById("arcStage");if(!g||!st)return;const A=g.A;
+ st.innerHTML="";arcRun={stop:false,score:0};const run=arcRun,hudS=document.getElementById("arcScore"),hudT=document.getElementById("arcTime");
+ const setScore=d=>{run.score=Math.max(0,run.score+d);if(hudS)hudS.textContent=`Score ${run.score}`};
+ const flash=(el,cls)=>{if(!el)return;el.classList.add(cls);setTimeout(()=>el.classList.remove(cls),220)};
+ const alive=()=>arcRun===run&&!run.stop&&!document.getElementById("modal").hidden;
+ const timer=(secs,onEnd)=>{const t0=performance.now();(function tick(){if(!alive())return;const left=Math.max(0,secs-(performance.now()-t0)/1000);if(hudT)hudT.textContent=`${left.toFixed(1)}s`;if(left<=0)return onEnd();requestAnimationFrame(tick)})()};
+ const yay=()=>{try{sfx.coin()}catch(e){}},boo=()=>{try{sfx.bad()}catch(e){}};
+ const tapOn=(sel,fn)=>st.addEventListener("pointerdown",e=>{const t=e.target.closest(sel);if(!t||!alive())return;e.preventDefault();fn(t,e)});
+ const slider=(icon)=>{st.insertAdjacentHTML("beforeend",`<div class="arc-catcher" id="arcCatch">${icon}</div>`);const C=document.getElementById("arcCatch");let x=.5;
+  const move=e=>{if(!alive())return;const r=st.getBoundingClientRect();x=clamp((e.clientX-r.left)/r.width,.06,.94);C.style.left=(x*100)+"%"};
+  st.addEventListener("pointerdown",e=>{e.preventDefault();move(e)});st.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")move(e)});return{C,get x(){return x}}};
+ const k=g.kind;
+ if(k==="whack"){
+  st.innerHTML=`<div class="arc-grid">${[...Array(9)].map(()=>`<div class="arc-cell"></div>`).join("")}</div>`;const cells=[...st.querySelectorAll(".arc-cell")];let gap=750;
+  tapOn(".arc-t",t=>{const good=t.dataset.g==="1";setScore(good?1:-2);good?yay():boo();flash(t.parentElement,good?"hit":"oops");t.remove()});
+  (function spawn(){if(!alive())return;const free=cells.filter(c=>!c.firstChild);if(free.length){const c=pick(free),good=rnd()<.72,el=document.createElement("div");el.className="arc-t";el.dataset.g=good?"1":"0";el.textContent=pick(good?A.good:A.bad);c.appendChild(el);setTimeout(()=>{if(el.parentElement)el.remove()},Math.max(520,gap+250))}gap=Math.max(380,gap*.97);setTimeout(spawn,gap)})();
+  timer(20,()=>arcEnd(run.score))}
+ else if(k==="catch"||k==="dodge"){
+  const P=slider(k==="dodge"?(S.path==="pilot"?"✈️":"🏃"):"🧺"),items=[];let last=0,gap=k==="dodge"?650:900,lives=3;
+  (function frame(t){if(!alive())return;if(t-last>gap){last=t;gap=Math.max(k==="dodge"?300:450,gap*.97);const good=k==="dodge"?false:rnd()<.75,el=document.createElement("div");el.className="arc-fall";el.textContent=pick(good?A.good:A.bad);st.appendChild(el);items.push({el,x:.06+rnd()*.88,y:-.05,v:.006+rnd()*.005+(k==="dodge"?.003:0),good})}
+   for(let i=items.length-1;i>=0;i--){const it=items[i];it.y+=it.v;it.el.style.left=(it.x*100)+"%";it.el.style.top=(it.y*100)+"%";
+    if(it.y>.84&&it.y<.95&&Math.abs(it.x-P.x)<.1){it.el.remove();items.splice(i,1);
+     if(k==="dodge"){lives--;boo();flash(P.C,"oops");if(hudT)hudT.textContent="❤️".repeat(Math.max(0,lives));if(lives<=0)return arcEnd(run.score)}else{setScore(it.good?1:-2);it.good?yay():boo();flash(P.C,it.good?"hit":"oops")}}
+    else if(it.y>1.05){it.el.remove();items.splice(i,1);if(k==="dodge")setScore(1)}}
+   requestAnimationFrame(frame)})(0);
+  if(k==="dodge"){if(hudT)hudT.textContent="❤️❤️❤️";setTimeout(()=>{if(alive())arcEnd(run.score)},30000)}else timer(20,()=>arcEnd(run.score))}
+ else if(k==="mash"){
+  st.innerHTML=`<div class="arc-mash"><div class="arc-goal">${g.goal}</div><div class="arc-meter"><i id="arcFill"></i></div><button class="arc-btn" id="arcBtn">${g.icon}</button></div>`;
+  const B=document.getElementById("arcBtn"),F=document.getElementById("arcFill");
+  B.addEventListener("pointerdown",e=>{e.preventDefault();if(!alive())return;setScore(1);F.style.width=Math.min(100,run.score/g.th[0]*100)+"%";flash(B,"hit");if(run.score%5===0)yay()});
+  timer(6,()=>arcEnd(run.score))}
+ else if(k==="memory"){
+  st.innerHTML=`<div class="arc-mem">${g.icons.map((ic,i)=>`<button class="arc-pad" data-i="${i}">${ic}</button>`).join("")}</div><div class="arc-msg" id="arcMsg">Watch…</div>`;
+  const pads=[...st.querySelectorAll(".arc-pad")],msg=document.getElementById("arcMsg");let seq=[],pos=0,input=false;
+  const light=(i,ms)=>new Promise(r=>{pads[i].classList.add("lit");setTimeout(()=>{pads[i].classList.remove("lit");setTimeout(r,140)},ms)});
+  const round=async()=>{if(!alive())return;seq.push(Math.floor(rnd()*pads.length));input=false;msg.textContent="Watch…";await new Promise(r=>setTimeout(r,500));for(const i of seq){if(!alive())return;await light(i,Math.max(260,520-seq.length*30))}pos=0;input=true;msg.textContent="Your turn!"};
+  tapOn(".arc-pad",p=>{if(!input)return;const i=+p.dataset.i;flash(p,"lit");
+   if(i===seq[pos]){pos++;yay();if(pos===seq.length){setScore(1);input=false;if(seq.length>=9)return arcEnd(run.score);msg.textContent="Correct!";setTimeout(round,600)}}
+   else{input=false;flash(p,"oops");boo();msg.textContent="Wrong!";setTimeout(()=>arcEnd(run.score),700)}});
+  round()}
+ else if(k==="stack"){
+  st.innerHTML=`<div class="arc-stack" id="arcStack"></div><div class="arc-msg">Tap anywhere to drop</div>`;const box=document.getElementById("arcStack");
+  let w=.5,x0=.25,level=0,dir=1,x=0,speed=.012;const H=22;
+  const base=document.createElement("div");base.className="arc-blk";Object.assign(base.style,{left:x0*100+"%",width:w*100+"%",bottom:"0px"});base.textContent=pick(A.good);box.appendChild(base);
+  const mover=document.createElement("div");mover.className="arc-blk mv";box.appendChild(mover);
+  (function frame(){if(!alive())return;x+=dir*speed;if(x<0){x=0;dir=1}if(x+w>1){x=1-w;dir=-1}Object.assign(mover.style,{left:x*100+"%",width:w*100+"%",bottom:((level+1)*H)+"px"});requestAnimationFrame(frame)})();
+  mover.textContent=pick(A.good);
+  st.addEventListener("pointerdown",e=>{if(!alive())return;e.preventDefault();const l=Math.max(x,x0),r=Math.min(x+w,x0+w);if(r-l<=.01){boo();flash(mover,"oops");return arcEnd(run.score)}
+   const b=document.createElement("div");b.className="arc-blk";Object.assign(b.style,{left:l*100+"%",width:(r-l)*100+"%",bottom:((level+1)*H)+"px"});b.textContent=mover.textContent;box.appendChild(b);
+   w=r-l;x0=l;level++;setScore(1);yay();speed*=1.08;mover.textContent=pick(A.good);if(level>=10)return arcEnd(run.score);if(level>=8)box.style.transform=`translateY(${(level-7)*H}px)`});
+ }
+ else if(k==="reaction"){
+  st.innerHTML=`<button class="arc-react" id="arcR">Wait for green…</button>`;const B=document.getElementById("arcR");let rnd5=0,goAt=0,state="wait",tm=null;
+  const next=()=>{if(!alive())return;if(rnd5>=5)return arcEnd(run.score);state="wait";B.className="arc-react";B.textContent="Wait for green…";tm=setTimeout(()=>{state="go";goAt=performance.now();B.className="arc-react go";B.textContent=pick(A.good)+" NOW!"},900+rnd()*2200)};
+  B.addEventListener("pointerdown",e=>{e.preventDefault();if(!alive())return;
+   if(state==="wait"){clearTimeout(tm);boo();B.className="arc-react early";B.textContent="Too soon!";rnd5++;state="pause";setTimeout(next,900)}
+   else if(state==="go"){const ms=Math.round(performance.now()-goAt);rnd5++;state="pause";if(ms<450){setScore(1);yay()}else boo();B.className="arc-react";B.textContent=`${ms} ms${ms<300?" ⚡":""}`;if(hudT)hudT.textContent=`Round ${rnd5}/5`;setTimeout(next,900)}});
+  next()}
+ else if(k==="sort"){
+  st.innerHTML=`<div class="arc-sort"><div class="arc-item" id="arcItem"></div><div class="arc-bins"><button class="arc-bin" data-v="1">✅ Keep</button><button class="arc-bin" data-v="0">🗑️ Bin</button></div></div>`;const I=document.getElementById("arcItem");let cur=1;
+  const nextItem=()=>{cur=rnd()<.55?1:0;I.textContent=pick(cur?A.good:A.bad);I.classList.remove("pop");void I.offsetWidth;I.classList.add("pop")};
+  tapOn(".arc-bin",b=>{const ok=+b.dataset.v===cur;setScore(ok?1:-1);ok?yay():boo();flash(b,ok?"hit":"oops");nextItem()});nextItem();timer(20,()=>arcEnd(run.score))}
+ else if(k==="odd"){
+  st.innerHTML=`<div class="arc-odd" id="arcOdd"></div>`;const G=document.getElementById("arcOdd");let r5=0,tm=null;
+  const nextRound=()=>{if(!alive())return;if(r5>=8)return arcEnd(run.score);r5++;if(hudT)hudT.textContent=`Round ${r5}/8`;const base=pick([...A.good,...A.bad]);let odd=pick([...A.good,...A.bad,"🍌","🦄"].filter(e=>e!==base));const n=16,at=Math.floor(rnd()*n);
+   G.innerHTML=[...Array(n)].map((_,i)=>`<button class="arc-o" data-o="${i===at?1:0}">${i===at?odd:base}</button>`).join("");clearTimeout(tm);tm=setTimeout(()=>{boo();nextRound()},Math.max(1600,3200-r5*200))};
+  tapOn(".arc-o",b=>{clearTimeout(tm);if(b.dataset.o==="1"){setScore(1);yay();flash(b,"hit")}else{boo();flash(b,"oops")}setTimeout(nextRound,250)});nextRound()}
+ else if(k==="count"){
+  st.innerHTML=`<div class="arc-count" id="arcCnt"></div><div class="arc-ans" id="arcAns"></div>`;const Cn=document.getElementById("arcCnt"),An=document.getElementById("arcAns");let r5=0,right=0;
+  const nextRound=()=>{if(!alive())return;if(r5>=5)return arcEnd(run.score);r5++;if(hudT)hudT.textContent=`Round ${r5}/5`;An.innerHTML="";const target=pick(A.good);right=3+Math.floor(rnd()*6);const others=4+Math.floor(rnd()*6);
+   const all=[...Array(right).fill(target),...[...Array(others)].map(()=>pick([...A.bad,...A.good.filter(e=>e!==target),"🍌"]))].sort(()=>rnd()-.5);
+   Cn.innerHTML=all.map(e=>`<span style="left:${5+rnd()*82}%;top:${5+rnd()*72}%">${e}</span>`).join("");
+   setTimeout(()=>{if(!alive())return;Cn.innerHTML=`<div class="arc-q">How many ${target}?</div>`;const opts=[right,right+1,right-1,right+2].filter(n=>n>0).sort(()=>rnd()-.5);An.innerHTML=opts.map(n=>`<button class="arc-a" data-n="${n}">${n}</button>`).join("")},1300+right*40)};
+  tapOn(".arc-a",b=>{const ok=+b.dataset.n===right;if(ok){setScore(1);yay()}else boo();flash(b,ok?"hit":"oops");An.innerHTML="";setTimeout(nextRound,500)});nextRound()}
+ else if(k==="float"){
+  const items=[];let last=0,gap=700;
+  tapOn(".arc-up",el=>{const it=items.find(i=>i.el===el);if(!it)return;setScore(it.good?1:-2);it.good?yay():boo();el.classList.add(it.good?"hit":"oops");setTimeout(()=>el.remove(),120);items.splice(items.indexOf(it),1)});
+  (function frame(t){if(!alive())return;if(t-last>gap){last=t;gap=Math.max(380,gap*.97);const good=rnd()<.72,el=document.createElement("div");el.className="arc-up";el.textContent=pick(good?A.good:A.bad);st.appendChild(el);items.push({el,x:.08+rnd()*.84,y:1.05,v:.005+rnd()*.004,good,w:rnd()*6})}
+   for(let i=items.length-1;i>=0;i--){const it=items[i];it.y-=it.v;it.el.style.left=`calc(${it.x*100}% + ${Math.sin(t/300+it.w)*10}px)`;it.el.style.top=(it.y*100)+"%";if(it.y<-.1){it.el.remove();items.splice(i,1)}}
+   requestAnimationFrame(frame)})(0);
+  timer(20,()=>arcEnd(run.score))}
+ else if(k==="hold"){
+  st.innerHTML=`<div class="arc-hold"><div class="arc-gauge"><div class="arc-zone" id="arcZone"></div><i id="arcG"></i></div><button class="arc-btn" id="arcH">${pick(A.good)}</button><div class="arc-msg" id="arcHm">Hold, then let go in the green</div></div>`;
+  const Z=document.getElementById("arcZone"),Gf=document.getElementById("arcG"),B=document.getElementById("arcH"),M=document.getElementById("arcHm");let r5=0,v=0,holding=false,zl=0,zw=0;
+  const newZone=()=>{zw=.12+rnd()*.08;zl=.35+rnd()*(.55-zw);Z.style.left=zl*100+"%";Z.style.width=zw*100+"%";v=0;Gf.style.width="0%"};newZone();
+  (function frame(){if(!alive())return;if(holding){v=Math.min(1,v+.012+r5*.002);Gf.style.width=v*100+"%";if(v>=1){holding=false;release()}}requestAnimationFrame(frame)})();
+  const release=()=>{r5++;const ok=v>=zl&&v<=zl+zw;if(ok){setScore(1);yay();M.textContent="Perfect!"}else{boo();M.textContent=v<zl?"Too soon!":"Too far!"}if(hudT)hudT.textContent=`Go ${r5}/5`;if(r5>=5)return setTimeout(()=>arcEnd(run.score),600);setTimeout(newZone,500)};
+  B.addEventListener("pointerdown",e=>{e.preventDefault();if(alive()&&v===0)holding=true});
+  const up=e=>{if(holding){holding=false;release()}};B.addEventListener("pointerup",up);B.addEventListener("pointerleave",up);B.addEventListener("pointercancel",up)}
+}
+
+/* ============ Phone reminders (apps only): scheduled on the phone itself when you leave the game, cleared when you come back ============ */
+const NOTIF_KEY="ftb-notif",NOTIF_IDS=[101,102,103];
+const notifOn=()=>{try{return localStorage.getItem(NOTIF_KEY)==="1"}catch(e){return false}};
+function notifIdeas(){
+ if(!S||S.placeholder||S.over)return[];const f=(S.name||"").split(" ")[0]||"You",a=ageInt(),L=[];
+ const open=S.inbox.filter(m=>!m.done);
+ if(open.length){const e=open[0].dyn||EV.find(q=>q.id===open[0].id);L.push([open.length>1?`${open.length} decisions are waiting`:"A decision is waiting",e&&e.t?`${e.t}. ${f} needs you.`:`${f} needs you.`])}
+ if(S.op&&S.op.d===S.day&&!S.op.on&&OPS[S.path])L.push([`${OPS[S.path].kind}: ${S.op.name}`,"The briefing's on your desk. Will you take it on?"]);
+ if(CAR_().mech==="markets"){const n=(S.news||[]).find(x=>x.id);if(n)L.push(["The markets are moving",n.t+"."])}
+ if(ageAt(S,S.day+1)>=Math.floor(age())+1)L.push(["A birthday is coming",`${f} turns ${Math.floor(age())+1} next month. Party or a quiet night in?`]);
+ const kid=S.children.find(k=>kidAge(k)>=15&&kidAge(k)<17.5);if(kid)L.push([`${kid.n} is growing up fast`,"Exam results day is coming. Fingers crossed."]);
+ if(inLove()&&S.homeLife<40)L.push([`${S.rel.name.split(" ")[0]} misses you`,"Things are tense at home. Maybe come back and fix it?"]);
+ if(S.boss&&S.rank<4)L.push([`${S.boss.n} is asking for you`,`${f}, ${a}, ${R().t}. Your next review is coming up.`]);
+ L.push(["Your life is on pause",`${f}, ${a}, ${R().t}. What happens next?`]);
+ return L;
+}
+async function notifSchedule(){
+ const LN=capPlugin("LocalNotifications");if(!LN||!notifOn())return;
+ try{const p=await LN.checkPermissions();if(p.display!=="granted")return;await LN.cancel({notifications:NOTIF_IDS.map(id=>({id}))}).catch(()=>{});
+  const ideas=notifIdeas();if(!ideas.length)return;const now=Date.now(),when=[22*3600e3,3*86400e3,7*86400e3];
+  const pickN=[ideas[0],ideas[1]||ideas[ideas.length-1],ideas[ideas.length-1]];
+  await LN.schedule({notifications:pickN.map((m,i)=>({id:NOTIF_IDS[i],title:m[0],body:m[1],schedule:{at:new Date(now+when[i])}}))})}catch(e){}
+}
+async function notifCancel(){const LN=capPlugin("LocalNotifications");if(!LN)return;try{await LN.cancel({notifications:NOTIF_IDS.map(id=>({id}))})}catch(e){}}
+async function notifEnable(on){
+ const LN=capPlugin("LocalNotifications");if(!LN)return false;
+ if(on){try{const r=await LN.requestPermissions();if(r.display!=="granted"){toastMsg("Notifications are turned off for this app in your phone's settings.");return false}}catch(e){return false}}
+ try{localStorage.setItem(NOTIF_KEY,on?"1":"0")}catch(e){}if(!on)notifCancel();nativeBackup(true);return true;
+}
+document.addEventListener("visibilitychange",()=>{if(!isNative())return;if(document.visibilityState==="hidden")notifSchedule();else notifCancel()});
+ACTS.notifyes=()=>{notifEnable(true).then(ok=>{if(ok)toastMsg("Reminders on. You can turn them off in the menu.")})};
+/* Offer reminders once, a few months into the first game on the phone */
+function notifOffer(){
+ if(!isNative()||!capPlugin("LocalNotifications")||S.over||S.day<4)return;
+ try{if(localStorage.getItem(NOTIF_KEY)!=null||localStorage.getItem("ftb-notif-asked"))return;localStorage.setItem("ftb-notif-asked","1")}catch(e){return}
+ pushDyn({id:"notif_ask",life:0,from:"Floor to Boardroom",t:"Want a nudge now and then?",b:"The game can remind you when a decision is waiting, the markets are moving or a birthday is coming up. The reminders come from your phone itself, nothing is sent anywhere, and you can turn them off in the menu.",c:[{t:"Yes, remind me",fx:{act:"notifyes"},o:"Reminders on."},{t:"No thanks",fx:{},o:"No reminders. You can change your mind in the menu."}]});
+}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -9794,7 +10045,7 @@ function startModal0(){
 }
 function menuModal(){
  showModal(`<h2>Menu</h2><p>${esc(S.name)}, ${esc(R().t)}, age ${ageInt()}. Your game saves automatically on this device${cloudCode?" and in the cloud":""}.</p>
-  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button><a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
+  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button>${isNative()&&capPlugin("LocalNotifications")?`<button class="btn" data-act="notiftoggle">Reminders: ${notifOn()?"on":"off"}</button>`:""}<a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
  markets:`<tr><td><b>1. Read the brief</b><br>Each month's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
@@ -9841,6 +10092,10 @@ document.addEventListener("click",e=>{
  if(a==="obit"){obitModal();return}
  if(a==="redsame"){redSame();return}
  if(a==="opset"){opSet(t.dataset.k,t.dataset.v);return}
+ if(a==="arcgo"){arcStart();return}
+ if(a==="arcquit"){if(arcRun){arcEnd(arcRun.score)}else hideModal();return}
+ if(a==="arcagain"){arcOpen(arcCur&&arcCur.kind,false);return}
+ if(a==="notiftoggle"){notifEnable(!notifOn()).then(()=>menuModal());return}
  if(a==="redretire"){S.redDone=1;endModal();return}
  if(a==="collection"){collModal();return}
  if(a==="menualbum"){hideModal();lifeTab="album";S.lifeSeen=S.lifeSeen||{};S.lifeSeen.album=S.day;setTab("life");render();return}
