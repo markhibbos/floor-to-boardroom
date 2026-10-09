@@ -486,7 +486,8 @@ a.btn.primary{color:var(--on-accent)}
 @media (max-width:480px){.ops{padding:10px}.op-brief b{font-size:13.5px}.op-brief>div{padding:6px 8px}.op-opts{grid-template-columns:1fr 1fr}.op-opts button{padding:7px 9px;font-size:14px}.op-opts button span{font-size:11.5px;line-height:1.3}.op-opts button:only-child,.op-opts button:last-child:nth-child(odd){grid-column:1/-1}}
 .dec-card .target-sum b{white-space:normal;overflow-wrap:anywhere}
 .op-pills{display:flex;flex-wrap:wrap;gap:6px}
-@media (max-width:719px){.nav{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}}
+.modal,.moment,.home,.auth,.admin,.confetti{bottom:calc(0px - var(--vvfix,0px))}.confetti{height:auto}
+@media (max-width:719px){.nav{-webkit-transform:translate3d(0,var(--vvfix,0px),0);transform:translate3d(0,var(--vvfix,0px),0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}}
 .free-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:4px 0 2px;padding-bottom:2px}.free-chips button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface2);color:inherit;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;white-space:nowrap;min-height:36px;cursor:pointer}.free-chips button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 @media (max-width:480px){.album{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}.album .pola{padding:4px 4px 5px}.album .pola .cap{font-size:13px;margin-top:3px}.album .pola .ag{display:none}.acts{grid-template-columns:1fr 1fr}.act-card{padding:8px 10px}.act-card span{font-size:12px}}
 .arc-stage{position:relative;height:300px;border-radius:16px;overflow:hidden;margin:8px 0;touch-action:none;user-select:none;-webkit-user-select:none}
@@ -589,7 +590,7 @@ details.tip[open]>summary .tip-l{display:none}details.tip[open]>summary::after{c
   --glass-hi:inset 0 1px 0 rgba(255,255,255,.10);--sel-bg:rgba(215,167,68,.24);--note-bg:rgba(215,167,68,.12);
   --field:radial-gradient(1100px 620px at 8% -8%,#3A2C12 0%,transparent 60%),radial-gradient(900px 560px at 108% 6%,#12324A 0%,transparent 58%),radial-gradient(900px 700px at 50% 115%,#173A2A 0%,transparent 62%),#0B141B;}
 body{background:transparent}
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field);pointer-events:none}
+body::before{content:"";position:fixed;inset:0;bottom:calc(0px - var(--vvfix,0px));z-index:-1;background:var(--field);pointer-events:none}
 .glassy,.pane,.top,.sheet,.side-tabs,.home-btn,.wb-cap{-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 .top{background:var(--glass-strong);border-bottom:1px solid var(--glass-line);top:0;padding-top:env(safe-area-inset-top,0px)}
 .tape{background:transparent;border-top:1px solid var(--glass-line)}
@@ -9368,6 +9369,18 @@ SCENES.firstday._steps=SCENES.firstday.steps;
 Object.defineProperty(SCENES.firstday,"steps",{get:firstDaySteps,configurable:true});
 SCENES.firstday.title=()=>FIRSTDAY[S.path]&&selfPaid()?`Day one: ${R().t}`:`First day at ${S.bank}`;
 
+/* iPhone Safari can keep the screen height it had while the keyboard was open, leaving the bottom bar and the
+   background stuck halfway up the screen. Nudge it to re-measure, and if it's still wrong, move them back down. */
+(function(){
+ const vv=window.visualViewport;if(!vv)return;const root=document.documentElement;
+ const fix=()=>{const gap=(vv.height+vv.offsetTop)-window.innerHeight;const kb=document.activeElement&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  root.style.setProperty("--vvfix",!kb&&gap>40?Math.round(gap)+"px":"0px")};
+ const nudge=()=>{[60,300,700].forEach(t=>setTimeout(()=>{try{window.scrollTo(window.scrollX,window.scrollY);fix()}catch(e){}},t))};
+ vv.addEventListener("resize",fix);vv.addEventListener("scroll",fix);window.addEventListener("resize",fix);window.addEventListener("orientationchange",nudge);
+ document.addEventListener("focusout",e=>{if(e.target&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))nudge()});
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)nudge()});
+ window.addEventListener("pageshow",nudge);fix();
+})();
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
