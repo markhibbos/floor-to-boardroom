@@ -3648,7 +3648,7 @@ function friendSec(){
   ${f.with?`<p class="hint" style="margin:6px 0 0">Going out with <b>${esc(f.with)}</b>, your ex.</p>`:""}
   ${(f.hist||[]).length?`<div class="label" style="margin-top:10px">Your story together</div><ul class="fr-hist">${f.hist.slice().reverse().slice(0,5).map(h=>`<li><span>${shortDate(h.d)}</span><b>${esc(h.t)}</b> · ${esc(h.c)}</li>`).join("")}</ul>`:""}
   <p class="hint" style="margin:8px 0 0">Friendships fade if you never make time. A strong one gets you through hard times.</p>
-  <div class="btn-row" style="margin-top:8px"><button class="btn sm ${done?"":"primary"}" data-act="catchup" ${done?"disabled":""}>${done?"Caught up this month":`Catch up (${money(cost)})`}</button></div></div>`;
+  <div class="btn-row" style="margin-top:8px"><button class="btn sm ${done?"":"primary"}" data-act="catchup" ${done?"disabled":""}>${done?"Caught up this month":`Catch up (${money(cost)})`}</button>${f.bond>=40?`<button class="btn sm" data-act="frmove">Make a move</button>`:""}</div></div>`;
 }
 /* Events: your friend */
 const kidWith=(s,p,a,b)=>(s.children||[]).some(k=>k.p===p&&(s.day-k.born)/YEAR>=a&&(s.day-k.born)/YEAR<b);
@@ -6114,7 +6114,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();try{petMorning()}catch(e){}wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();try{friendMoveMorning()}catch(e){}try{petMorning()}catch(e){}wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -13582,6 +13582,47 @@ function pickRoomModal(id){const m=HOME_MODS.find(x=>x.id===id);if(!m)return;con
 /* The make-it-yours screen shows the plan at the top */
 {const _hcm=homeCustomModal;homeCustomModal=function(msg){_hcm.apply(this,arguments);try{const sh=document.getElementById("sheet"),h2=sh&&sh.querySelector("h2");if(h2&&FLOOR_PLANS[S.home.t]&&!sh.querySelector(".plan-svg"))h2.insertAdjacentHTML("afterend",`<div class="plan-wrap">${floorPlanSVG()}</div>`)}catch(e){}}}
 
+/* ============ More than friends? ============ */
+const frFirst=()=>S.friend?S.friend.n.split(" ")[0]:"";
+/* Your best friend becomes your partner */
+function friendToPartner(){const f=S.friend;if(!f)return;const n=f.n.includes(" ")?f.n:`${f.n} ${pick(SURNAMES)}`;
+ S.rel=Object.assign(S.rel,{st:"dating",name:n.split(" ")[0],job:pick(JOBS),since:S.day,trait:pick(PT_KEYS),stepkids:0,wasFriend:1});S.homeLife=clamp(Math.max(S.homeLife,60)+8,0,100);
+ S.oldFriends=(S.oldFriends||[]).concat({n:f.n,hist:(f.hist||[]).concat({d:S.day,t:"Became more than friends",c:"Now your partner"}),d:S.day}).slice(-4);S.friend=null;
+ S.log.unshift({d:S.day,t:`Your best friend ${n.split(" ")[0]} is now your partner.`});
+ try{moment({icon:"heart",kicker:"More than friends",title:`You and ${n.split(" ")[0]}`,sub:"Years of friendship, and then, suddenly, everything changed.",big:true})}catch(e){}}
+/* ...or the start of an affair, if you're with someone */
+function friendAffair(){const f=S.friend;if(!f||!inLove())return;const p=addPerson(f.n.includes(" ")?f.n:`${f.n} ${pick(SURNAMES)}`,"friend","Your best friend",Math.max(60,f.bond));startSecret(p);
+ f.hist=(f.hist||[]).concat({d:S.day,t:"Crossed the line",c:`Behind ${S.rel.name}'s back`}).slice(-8)}
+Object.assign(ACTS,{
+ frpartner:()=>friendToPartner(),
+ fraffair:()=>friendAffair(),
+ frgentle:fx=>{if(S.friend){S.friend.bond=clamp(S.friend.bond-(fx.d||8),0,100);S.friend.hist=(S.friend.hist||[]).concat({d:S.day,t:"They made a move",c:fx.c||"You let them down gently"}).slice(-8)}}
+});
+/* Every now and again, your best friend makes a move on you */
+function friendMoveMorning(){
+ const f=S.friend;if(!f||S.over||S.prison||S.front||S.day<24||f.bond<55||!fitsPref(f.n)||S.day-(S.frMoveAt??-99)<48||rnd()>.012||S.inbox.some(m=>!m.done&&/^frmove_/.test(m.id)))return;
+ S.frMoveAt=S.day;const n=frFirst(),love=inLove(),who=love?S.rel.name:"";
+ pushDyn({id:"frmove_"+S.day,life:1,from:n,t:`${n} makes a move`,b:love?`A late night, a long talk, and ${n} suddenly kisses you. "I've wanted to do that for years. I know you're with ${who}. I just had to."`:`Walking home after a night out, ${n} stops, takes your hand and kisses you. "Sorry. I've wanted to do that for years."`,c:love?[
+  {t:"Kiss them back",fx:{act:"fraffair",stress:6,karma:-4},o:`You know you shouldn't. You do anyway. Nobody can find out about you and ${n}.`},
+  {t:"Stop it there, gently",fx:{act:"frgentle",d:10,c:"You stopped it there",karma:2},o:`"I can't. I'm with ${who}." It's awkward for a few weeks, but you're still friends.`},
+  {t:`Tell ${who} about it`,p:.6,win:{fx:{act:"frgentle",d:25,c:"You told your partner",home:2,karma:3},o:`${who} is shaken but grateful you were honest. Things with ${n} are frosty for a long time.`},lose:{fx:{act:"frgentle",d:30,c:"You told your partner",home:-8,stress:5},o:`${who} doesn't believe nothing happened. A rough few weeks at home.`}}]:[
+  {t:"Kiss them back",fx:{act:"frpartner"},o:`It feels like the most natural thing in the world. You and ${n} are together.`},
+  {t:"Let them down gently",fx:{act:"frgentle",d:12,c:"You let them down gently"},o:`"I love you, just not like that." ${n} nods, a bit red. It takes a while to feel normal again.`},
+  {t:"Pretend it didn't happen",fx:{act:"frgentle",d:6,c:"You both pretended it didn't happen"},o:"You both laugh it off. Neither of you mentions it again. Mostly."}]});
+}
+/* Or you make the move */
+function makeMoveModal(){const f=S.friend;if(!f)return;const n=frFirst(),love=inLove();
+ if(S.frAskAt!=null&&S.day-S.frAskAt<12)return actResult("Not now",esc(`You've only just tried that with ${n}. Give it time.`));
+ showModal(`<div class="label">Best friend</div><h2 style="margin-top:4px">Make a move on ${esc(n)}?</h2><p>${love?`You're with ${esc(S.rel.name)}. If ${esc(n)} says yes, it's an affair. If they say no, your friendship may never recover.`:`Years of friendship. Is there something more? If ${esc(n)} says no, things may never be the same between you.`}</p>
+  <div class="btn-row"><button class="btn primary" data-act="frmovego">Go for it</button><button class="btn" data-act="hide">Think better of it</button></div>`)}
+function makeMoveGo(){const f=S.friend;if(!f)return;hideModal();const n=frFirst(),love=inLove();S.frAskAt=S.day;
+ const chance=fitsPref(f.n)?clamp(.12+(f.bond-50)/150+(love?-.05:0),.05,.6):.04;
+ if(rnd()<chance){if(love){friendAffair();S.stress=clamp(S.stress+5,0,100);S.karma=clamp((S.karma||0)-4,-100,100);save();render();actResult("They kiss you back",esc(`${n} has been waiting years for this. Now you have a secret to keep from ${S.rel.name}.`))}
+  else{friendToPartner();save();render();actResult("They kiss you back",esc(`"What took you so long?" says ${n}. You're together.`))}}
+ else{f.bond=clamp(f.bond-40,0,100);S.stress=clamp(S.stress+6,0,100);f.hist=(f.hist||[]).concat({d:S.day,t:"You made a move",c:"They said no"}).slice(-8);
+  if(f.bond<15){S.log.unshift({d:S.day,t:`Made a move on ${n}. It ended the friendship.`});ACTS.friendcut();save();render();actResult("It's over",esc(`${n} pulls away. "I can't do this." They stop answering your messages. You've lost your best friend.`))}
+  else{S.log.unshift({d:S.day,t:`Made a move on ${n}. They said no.`});save();render();actResult("They say no",esc(`${n} steps back. "I don't feel that way. I'm sorry." It's horribly awkward, and things between you are badly damaged.`))}}}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -14804,6 +14845,8 @@ document.addEventListener("click",e=>{
  if(a==="albumall"){albumAll=true;render();return}
  if(a==="albummore"){albumN=(albumN||(window.innerWidth<520?12:24))+(window.innerWidth<520?12:24);render();return}
  if(a==="freegrp"){freeGrp=t.dataset.v;render();return}
+ if(a==="frmove"){makeMoveModal();return}
+ if(a==="frmovego"){makeMoveGo();return}
  if(a==="proposenow"){proposeModal();return}
  if(a==="propset"){const P=window.__prop=window.__prop||{where:0,ring:0};P[t.dataset.k]=+t.dataset.v;t.parentElement.querySelectorAll("button").forEach(b=>b.classList.toggle("primary",b===t));return}
  if(a==="propgo"){proposeGo();return}
