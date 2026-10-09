@@ -9535,6 +9535,53 @@ let lastCardNames=[];
  }catch(e){}
 }}
 
+/* ============ Affairs come to a head: what now? ============ */
+const loverFirst=p=>p.n.split(" ")[0];
+function pushVarsDyn(id,pid,ev){pushDyn(Object.assign({id},ev));const m=S.inbox.find(x=>x.id===id);if(m)m.vars={pid}}
+/* Every few months of an affair, you have to decide what you're doing */
+function affairCrossroads(){
+ const ls=secretLovers();if(!ls.length||!inLove()||S.open||S.over||S.prison)return;
+ const p=ls.slice().sort((a,b)=>(a.affairSince||S.day)-(b.affairSince||S.day))[0],months=S.day-(p.affairSince||S.day);
+ if(months<3||S.day-(S.crossAt??-99)<6||rnd()>.22||S.inbox.some(m=>!m.done&&/^pp_(cross|caught|ulti)/.test(m.id)))return;
+ S.crossAt=S.day;const who=S.rel.name,lf=loverFirst(p),yes=clamp(.12+(S.homeLife-50)/250+(S.rel.trait==="free"?.15:0),.05,.4);
+ /* Sometimes it's your lover who forces the issue */
+ if(months>=8&&rnd()<.4){pushVarsDyn("pp_ulti_"+S.day,p.id,{from:p.n,t:`${lf} gives you an ultimatum`,b:`"I'm tired of being a secret. Leave ${who}, or I'm done."`,c:[
+  {t:`Leave ${who} for ${lf}`,fx:{act:"leavefor",stress:10},o:`You tell ${who} that night. It's the hardest conversation of your life.`},
+  {t:`End it with ${lf}`,p:.7,win:{fx:{act:"affairend",stress:4,home:2},o:`${lf} cries, then blocks your number.`},lose:{fx:{act:"loverreveals"},o:`${lf} doesn't go quietly. They message ${who}.`}},
+  {t:"Ask for more time",p:.5,win:{fx:{stress:5},o:`${lf} agrees to wait. Not for ever.`},lose:{fx:{act:"affairend",stress:6},o:`"Time's up." ${lf} walks away.`}}]});return}
+ pushVarsDyn("pp_cross_"+S.day,p.id,{from:"Your conscience",t:`You, ${who} and ${lf}`,b:`${months} months of secret texts and stolen evenings with ${lf}. You can't live two lives for ever. What now?`,c:[
+  {t:`Tell ${who} and ask for an open relationship`,p:yes,win:{fx:{act:"goopen",home:-8,stress:6},o:`${who} is quiet for a long time. Then: "OK. Honestly, I've thought about it too. Let's try."`},lose:{fx:{act:"dumpedaffair"},o:`${who} hears "open relationship" and understands everything. They pack a bag. It's over.`}},
+  {t:`Leave ${who} for ${lf}`,fx:{act:"leavefor",stress:10},o:"Your bags are packed by midnight. A new chapter, and a lot of guilt."},
+  {t:"End both: a clean break",fx:{act:"cleanbreak",stress:8,karma:3},o:`You end things with ${who} and with ${lf}. For the first time in months you can breathe.`},
+  {t:`End it with ${lf} and recommit to ${who}`,p:.75,win:{fx:{act:"affairend",home:4,stress:-4,karma:2},o:`${lf} takes it well. You book a weekend away with ${who}.`},lose:{fx:{act:"loverreveals"},o:`${lf} doesn't take it well. Your phone buzzes: ${lf} has messaged ${who}.`}},
+  {t:"Keep things as they are",fx:{stress:4,karma:-2},o:"Another month of double lives. The guilt sits in your stomach."}]});
+}
+/* Your partner finds out because your lover tells them */
+function loverReveals(p){
+ const who=S.rel.name;pushVarsDyn("pp_caught_"+S.day,p.id,{from:who,t:`${who} knows`,b:`${loverFirst(p)} has told ${who} everything. Screenshots and all.`,c:[
+  {t:"Beg for forgiveness",p:.25,win:{fx:{act:"affairend",home:-30,stress:15},o:"Months of counselling. Slowly, painfully, you rebuild."},lose:{fx:{act:"dumpedaffair"},o:`${who} has already called a lawyer.`}},
+  {t:`Leave with ${loverFirst(p)}`,fx:{act:"leavefor",stress:12},o:"Your bags are packed by midnight."},
+  {t:"Admit it and walk away alone",fx:{act:"cleanbreak",stress:10,karma:2},o:"No excuses. You leave with a suitcase and your dignity, mostly."}]});S.flags.caught=S.day;
+}
+Object.assign(ACTS,{
+ loverreveals:(fx,m)=>{const p=personBy(m&&m.vars&&m.vars.pid);if(p)setTimeout(()=>{try{loverReveals(p);save();render()}catch(e){}},0)},
+ /* Your partner leaves you; your lover gets in touch */
+ dumpedaffair:(fx,m)=>{const p=personBy(m&&m.vars&&m.vars.pid),who=S.rel.name;S.flags.caught=S.day;for(const q of secretLovers())if(q!==p)endSecret(q);S.secret=[];ACTS.divorce();S.open=0;S.homeLife=clamp(S.homeLife-15,0,100);S.stress=clamp(S.stress+12,0,100);
+  S.log.unshift({d:S.day,t:`${who} found out about the affair and left.`});
+  if(p&&p.alive){p.role="friend";p.how="Your affair";setTimeout(()=>{try{pushVarsDyn("pp_after_"+S.day,p.id,{from:p.n,t:`${loverFirst(p)} has heard`,b:`"I heard about ${who}. I'm sorry... sort of. So what are we now?"`,c:[
+   {t:"Make it official",fx:{act:"loverup"},o:`No more sneaking around. ${loverFirst(p)} meets your friends for the first time.`},
+   {t:"You need some time alone",fx:{act:"loverfriend",stress:-2},o:`${loverFirst(p)} says they understand. You're not sure they do.`}]});save();render()}catch(e){}},0)}},
+ cleanbreak:(fx,m)=>{const who=S.rel.name;for(const q of secretLovers())endSecret(q);for(const q of (typeof openLovers==="function"?openLovers():[]))q.role="exlover";S.secret=[];ACTS.divorce();S.open=0;S.log.unshift({d:S.day,t:`Ended things with ${who}, and the affair too.`})},
+ loverup:(fx,m)=>{const p=personBy(m&&m.vars&&m.vars.pid);if(!p)return;S.people.splice(S.people.indexOf(p),1);S.rel=Object.assign(S.rel,{st:"dating",name:p.n.split(" ")[0],job:pick(JOBS),since:S.day,trait:pick(PT_KEYS),stepkids:0});S.homeLife=clamp(S.homeLife+8,0,100);S.log.unshift({d:S.day,t:`Started going out with ${p.n}, properly this time.`})},
+ loverfriend:(fx,m)=>{const p=personBy(m&&m.vars&&m.vars.pid);if(p){p.role="exlover";p.bond=clamp(p.bond-10,0,100)}}
+});
+/* When you're caught, you can also ask to make it open, or walk away alone */
+{const _pc=pushCaught;pushCaught=function(lv){_pc.apply(this,arguments);try{const m=S.inbox.find(x=>x.id==="pp_caught_"+S.day&&x.dyn);if(!m)return;const who=S.rel.name;
+ m.dyn.c.push({t:"Ask whether it could be an open relationship",p:.1,win:{fx:{act:"goopen",home:-20,stress:10},o:`${who} stares at you for a long time. "Fine. But I'm seeing people too."`},lose:{fx:{act:"dumpedaffair"},o:`${who} laughs, then throws your phone in the sink. It's over.`}},
+  {t:"Admit it and walk away alone",fx:{act:"cleanbreak",stress:10,karma:2},o:"No excuses. You leave with a suitcase and your dignity, mostly."});
+ m.dyn.c[0].lose={fx:{act:"dumpedaffair"},o:`${who} has already called a lawyer.`}}catch(e){}}}
+{const _at=affairTick;affairTick=function(){const r=_at.apply(this,arguments);if(!r)try{affairCrossroads()}catch(e){}return r}}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
