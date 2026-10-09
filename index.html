@@ -477,6 +477,8 @@ a.btn.primary{color:var(--on-accent)}
 .sheet-x{pointer-events:auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;margin:-6px -6px 0 0;border:1px solid var(--glass-line,var(--line));background:var(--glass-strong,var(--surface));color:var(--ink,inherit);cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.15);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .sheet-x:hover{background:var(--accent);color:#fff}
 #sheet>.label:first-of-type,#sheet>h2:first-of-type{padding-right:40px}
+.wimp{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:13.5px}.wimp .label{flex-basis:100%;margin:0}.wimp span.down b,.wimp span.up b{font-weight:600}.wimp span.down{color:var(--down)}.wimp span.up{color:var(--up)}
+.wimp-sum{margin-top:6px;font-size:13.5px}.wimp-sum.down b{color:var(--down)}.wimp-sum.up b{color:var(--up)}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -3084,7 +3086,19 @@ const WORLD={
  election:{n:"General election",d:"The country is going to the polls. Uncertainty everywhere.",len:[2,4],inv:-.2,payFor:{pol:1.5},news:["Polls neck and neck","Party leaders clash in TV debate"]},
  war:{n:"War",d:"The country is at war. Prices are up, people are anxious and some jobs matter more than ever.",len:[12,26],costs:1.08,inv:-.5,house:-.3,stress:.3,pay:.95,payFor:{soldier:1.4,spy:1.5,doc:1.2,nurse:1.25,pol:1.3,fire:1.15,police:1.1,tech:1.1,astronaut:1.1,bank:1.05,pilot:.7,foot:.85,clubowner:.85,influencer:.85,music:.9,tvchef:.9,arch:.85,actor:.9},news:["Troops push forward on the eastern front","Air raid warnings in three cities","Petrol rationing begins at midnight","Peace talks collapse again","Recruiting offices report record queues"]}
 };
-const WORLD_NEXT=["boom","recession","inflation","crash","pandemic","ai","election","boom","recession","inflation","war","war"];
+Object.assign(WORLD,{
+ housing:{n:"Housing boom",d:"House prices are rocketing. Great if you own, painful if you're trying to buy.",len:[12,24],house:1.2,stress:.05,news:["House prices up 12% in a year","Bidding wars break out across the country"]},
+ rally:{n:"Stock market rally",d:"Shares are soaring and investors feel rich.",len:[10,20],inv:1.2,stress:-.1,payFor:{bank:1.2},news:["Stock market hits an all-time high","Everyone's uncle is now a day trader"]},
+ cheapenergy:{n:"Cheap energy",d:"Energy prices have collapsed. Bills are down for everyone.",len:[10,20],costs:.92,stress:-.1,news:["Energy bills fall for a third time","Petrol drops below £1 a litre"]},
+ tourism:{n:"Tourism boom",d:"Visitors are pouring in. Hotels, restaurants and airlines can't keep up.",len:[8,16],payFor:{pilot:1.25,chef:1.2,tvchef:1.1,hair:1.1,music:1.15,dj:1.2,actor:1.1},news:["Record tourist numbers this summer","Restaurants fully booked for months"]},
+ green:{n:"Green energy boom",d:"Solar panels, heat pumps and wind farms everywhere. The trades are in huge demand.",len:[14,28],inv:.3,payFor:{elec:1.3,plumb:1.25,arch:1.15,tech:1.05},news:["Heat pump grants doubled","Solar panels on every new home"]},
+ lowrates:{n:"Low interest rates",d:"Borrowing is cheap. Mortgages cost less and house prices drift up.",len:[14,30],costs:.96,house:.5,inv:.3,stress:-.1,news:["Interest rates cut to a record low","Cheapest mortgage deals in a decade"]},
+ energy:{n:"Energy crisis",d:"Gas and electricity prices have doubled. Heating the house is a luxury.",len:[8,18],costs:1.12,stress:.25,payFor:{elec:1.15},news:["Energy price cap soars","Households told to turn the heating down"]},
+ banking:{n:"Banking crisis",d:"A big bank has collapsed. Markets are in freefall and lending has dried up.",len:[8,16],inv:-1.6,house:-.4,stress:.3,payFor:{bank:.75,law:1.1},news:["Queues outside the banks","Government bails out the big lenders"]},
+ techbust:{n:"Tech bust",d:"The tech bubble has burst. Start-ups are folding and tech shares are crashing.",len:[10,18],inv:-.7,payFor:{tech:.8,influencer:.85},news:["Start-up worth billions goes bust overnight","Tech giants announce mass layoffs"]},
+ rateshock:{n:"Interest rate shock",d:"Interest rates have jumped. Mortgages and loans cost far more.",len:[10,20],costs:1.07,house:-.6,stress:.2,news:["Interest rates hit 6%","Mortgage payments up hundreds a month"]}
+});
+const WORLD_NEXT=["boom","recession","inflation","crash","pandemic","ai","election","boom","recession","inflation","war","war","housing","rally","cheapenergy","tourism","green","lowrates","energy","banking","techbust","rateshock"];
 const wld=()=>WORLD[(S.world&&S.world.id)||"calm"];
 const inWorld=(s,id)=>!!(s.world&&s.world.id===id);
 function worldDay(notes){
@@ -3102,7 +3116,18 @@ function worldDay(notes){
 const worldPay=()=>{const w=wld();return(w.payFor&&w.payFor[S.path])||w.pay||1};
 function worldBanner(){
  const w=wld();if(!S.world||S.world.id==="calm")return"";const left=Math.max(1,S.world.until-S.day),pay=worldPay();
- return `<div class="note world-note"><b>${esc(w.n)}</b> · about ${left} month${left>1?"s":""} to go. ${esc(w.d)}${pay!==1?` Your work counts ${pay>1?"+":"−"}${Math.round(Math.abs(pay-1)*100)}% right now.`:""}</div>`;
+ const im=worldImpact(),sgn=x=>(x<0?"−":"+")+money(Math.abs(Math.round(x)));
+ const rows=im.r.map(([k,x,p])=>x==null?`<span><b>${esc(k)}</b> counts ${p>1?"+":"−"}${Math.round(Math.abs(p-1)*100)}%</span>`:`<span class="${x<0?"down":"up"}"><b>${esc(k)}</b> ${sgn(x)} a month</span>`).join("");
+ const tot=im.cash+im.paper;
+ return `<div class="note world-note"><b>${esc(w.n)}</b> · about ${left} month${left>1?"s":""} to go. ${esc(w.d)}${rows?`<div class="wimp"><div class="label">What it means for you</div>${rows}</div>${Math.abs(tot)>=1?`<div class="wimp-sum ${tot<0?"down":"up"}">Overall: about <b>${sgn(tot)} a month</b>${im.paper&&im.cash?` (${sgn(im.cash)} in cash, ${sgn(im.paper)} on paper)`:im.paper?" on paper":""}${Math.abs(tot)*left>=1000?`, roughly ${sgn(tot*left)} before it ends.`:"."}</div>`:""}`:`<div class="wimp"><span>This one barely touches you${w.house||w.inv?": you'd feel it more if you owned a home or shares":""}.</span></div>`}</div>`;
+}
+function worldImpact(){
+ const w=wld(),r=[];let cash=0,paper=0;
+ if(w.costs&&w.costs!==1){const m=monthly(),x=-(m-m/w.costs);cash+=x;r.push(["Bills and living costs",x])}
+ if(w.house&&S.home&&S.home.value>0){const x=S.home.value*w.house/100;paper+=x;r.push(["Your home's value",x])}
+ const iv=typeof invTotal==="function"?invTotal():0;if(w.inv&&iv>0){const x=iv*w.inv/100;paper+=x;r.push(["Your investments",x])}
+ const pay=worldPay();if(pay!==1){if(selfPaid()){const e=salary()/12,x=e-e/pay;cash+=x;r.push(["Your earnings",x])}else r.push(["Your work",null,pay])}
+ return{r,cash,paper};
 }
 
 /* Pets */
