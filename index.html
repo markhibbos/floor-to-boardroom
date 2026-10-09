@@ -6837,7 +6837,7 @@ function caseMorning(){
   const p=personBy(c.pid);if(p){p.caseOutcome=good?"good":"bad";p.bond=clamp(p.bond+(good?20:-20),0,100)}
   pushDyn({id:"case_r_"+S.day,from:p?p.n:"The outcome",t:good?`Good news about ${c.who}`:`Bad news about ${c.who}`,b:(good?tpl.win:tpl.lose).replace(/\{who\}/g,c.who),c:[{t:good?"Brilliant":"Learn from it",fx:good?{rep:5,pnl:2,home:2}:{rep:-4,stress:6},o:good?"A good month's work.":"It happens to everyone. It still hurts."}]});
   S.case=null;S.caseAt=S.day;return}
- if(c||S.day-(S.caseAt??-99)<2||rnd()>.42)return;
+ if(c||S.day-(S.caseAt??-99)<5||rnd()>.3)return;
  const g=CASE_GROUP[S.path];if(!g)return;const list=CASES[g],ti=Math.floor(rnd()*list.length),tpl=list[ti],who=tpl.who();
  const p=addPerson(who.startsWith("a ")||who.startsWith("an ")||who.startsWith("the ")||who.startsWith("two ")?`${who[0].toUpperCase()}${who.slice(1)}`:who,"client",`Your ${tpl.role}: ${tpl.t.replace(/\{who\}/g,who).toLowerCase()}`,45);
  p.caseDay=S.day;
