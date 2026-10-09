@@ -486,6 +486,8 @@ a.btn.primary{color:var(--on-accent)}
 @media (max-width:480px){.ops{padding:10px}.op-brief b{font-size:13.5px}.op-brief>div{padding:6px 8px}.op-opts{grid-template-columns:1fr 1fr}.op-opts button{padding:7px 9px;font-size:14px}.op-opts button span{font-size:11.5px;line-height:1.3}.op-opts button:only-child,.op-opts button:last-child:nth-child(odd){grid-column:1/-1}}
 .dec-card .target-sum b{white-space:normal;overflow-wrap:anywhere}
 .op-pills{display:flex;flex-wrap:wrap;gap:6px}
+.fr-hist{list-style:none;margin:4px 0 0;padding:0;font-size:13.5px}.fr-hist li{padding:4px 0;border-bottom:1px solid var(--line)}.fr-hist li span{color:var(--muted);margin-right:8px;font-size:12px}
+.friend-card{display:flex;align-items:center;gap:12px;margin:2px 0 10px}.friend-card .face{flex:none;border-radius:50%}.friend-card b{font-size:16px}
 /* The home menu fits on one phone screen without scrolling */
 @media (max-width:719px){
  .home-in{gap:10px;padding-block:14px}
@@ -3626,10 +3628,13 @@ function epitaph(){
 }
 function friendSec(){
  const f=S.friend;
- if(!f)return `<div class="pane-sec"><div class="label">Best friend</div><p class="hint" style="margin:4px 0 0">You don't have a best friend right now. Someone new may come along.</p></div>`;
+ if(!f){const o=(S.oldFriends||[]).slice(-1)[0];return `<div class="pane-sec"><div class="label">Best friend</div><p class="hint" style="margin:4px 0 0">${o?`You fell out with ${esc(o.n)} in ${shortDate(o.d)}${o.hist.length?` (${esc(o.hist[o.hist.length-1].t)})`:""}. `:""}You don't have a best friend right now. Someone new may come along.</p></div>`}
  const done=S.friendLast===S.day,cost=Math.round(80*Math.max(1,priceScale()*2)/10)*10;
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Best friend</h2><span class="label">${esc(f.n)}</span></div>
+  <div class="friend-card">${faceSVG(f.n.split(" ")[0]+"fr",sexN(genderOf(f.n)),Math.max(18,Math.floor(age())+(h32(f.n)%7)-3),64)}<div><b>${esc(f.n)}</b><span class="hint" style="display:block;margin:0">${f.bond>=75?"Like family":f.bond>=50?"Close":f.bond>=30?"Drifting a bit":"Hardly see each other"}</span></div></div>
   <div class="meters">${meter("Friendship",f.bond,"good")}</div>
+  ${f.with?`<p class="hint" style="margin:6px 0 0">Going out with <b>${esc(f.with)}</b>, your ex.</p>`:""}
+  ${(f.hist||[]).length?`<div class="label" style="margin-top:10px">Your story together</div><ul class="fr-hist">${f.hist.slice().reverse().slice(0,5).map(h=>`<li><span>${shortDate(h.d)}</span><b>${esc(h.t)}</b> · ${esc(h.c)}</li>`).join("")}</ul>`:""}
   <p class="hint" style="margin:8px 0 0">Friendships fade if you never make time. A strong one gets you through hard times.</p>
   <div class="btn-row" style="margin-top:8px"><button class="btn sm ${done?"":"primary"}" data-act="catchup" ${done?"disabled":""}>${done?"Caught up this month":`Catch up (${money(cost)})`}</button></div></div>`;
 }
@@ -5349,8 +5354,8 @@ function peopleSec(){
  const core=[];
  if(inLove())core.push(`<div class="person"><div><b>${esc(S.rel.name)}</b><span class="role">${LIFE_STATUS[S.rel.st]||"Partner"}</span></div>${meterMini(S.homeLife)}</div>`);
  if(S.friend)core.push(`<div class="person"><div><b>${esc(S.friend.n)}</b><span class="role">Best friend</span></div>${meterMini(S.friend.bond)}</div>`);
- if(S.boss&&S.rank<4)core.push(`<div class="person"><div><b>${esc(S.boss.n)}</b><span class="role">Your boss · ${moodWord(S.boss.mood)}</span></div>${meterMini(S.boss.mood)}</div>`);
- if(S.rival)core.push(`<div class="person"><div><b>${esc(S.rival.name)}</b><span class="role">Rival at work</span></div>${meterMini(S.rival.bond||20)}</div>`);
+ if(S.boss&&S.rank<4&&!soloJob())core.push(`<div class="person"><div><b>${esc(S.boss.n)}</b><span class="role">Your boss · ${moodWord(S.boss.mood)}</span></div>${meterMini(S.boss.mood)}</div>`);
+ if(S.rival)core.push(`<div class="person"><div><b>${esc(S.rival.name)}</b><span class="role">${soloJob()?(S.path==="dj"?"Rival DJ":S.path==="music"?"Rival act":"Rival creator"):"Rival at work"}</span></div>${meterMini(S.rival.bond||20)}</div>`);
  for(const x of (S.exes||[]).slice(-2))core.push(`<div class="person"><div><b>${esc(x.n)}</b><span class="role">Ex</span></div></div>`);
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">People in your life</h2><span class="label">${ps.length+core.length}</span></div>
   <div class="people">${core.join("")}${(peopleAll?ps:ps.slice(0,6)).map(p=>`<div class="person"><div><b>${esc(p.n)}</b><span class="role">${esc(ROLE_N[p.role]||"Friend")} · ${esc(p.how)}${p.owed?` · owes you ${money(p.owed)}`:""}</span></div>${meterMini(p.bond)}${p.role==="lover"||p.role==="openlover"?`<button class="btn sm" data-act="endlover" data-p="${p.id}">End it</button>`:""}${p.role!=="lover"&&p.role!=="openlover"?`<button class="btn sm" data-act="catchup2" data-p="${p.id}" ${freeLeft()<=0?"disabled":""}>Catch up</button>`:""}</div>`).join("")}</div>
@@ -5739,12 +5744,12 @@ function returnWeave(){
  const olds=alivePeople().filter(p=>["exrival","exboss","exlover"].includes(p.role));const id="rt_"+S.day,r=rnd();
  const ev=(p,e)=>{S.rtAt=S.day;pushDyn(Object.assign({id,from:p.n},e));const m=S.inbox.find(q=>q.id===id);if(m)m.vars={pid:p.id}};
  const school=S.children.find(k=>kidAge(k)>=5&&kidAge(k)<16);
- if(olds.length&&r<.3&&S.rank<4&&S.boss){const p=pick(olds.filter(x=>x.role!=="exlover"))||pick(olds);if(p.role==="exlover")return;
+ if(olds.length&&r<.3&&S.rank<4&&S.boss&&!soloJob()){const p=pick(olds.filter(x=>x.role!=="exlover"))||pick(olds);if(p.role==="exlover")return;
   ev(p,{from:"An email from HR",t:`Your new boss is... ${p.n}`,b:`Your boss has left. Their replacement is someone you know very well: ${p.n}, your ${ROLE_N[p.role].toLowerCase()}.`,c:[{t:"Bury the hatchet over coffee",p:clamp(p.bond/100+.3,.2,.9),win:{fx:{act:"rtboss",d:15},o:"It's awkward, then it's fine. Maybe even good."},lose:{fx:{act:"rtboss",d:-10,stress:6},o:"They haven't forgotten. Neither have you."}},{t:"Keep your head down",fx:{act:"rtboss",d:0,stress:3},o:"Professional. Frosty. Professional."}]})}
  else if(olds.length&&r<.5){const p=pick(olds);ev(p,{from:"A removal van",t:`${p.n} has moved in next door`,b:`Of all the houses in all the towns... ${p.n} is your new neighbour.`,c:[{t:"Take round a bottle of wine",fx:{act:"rtneighbour",d:15},o:"You end up laughing about the old days."},{t:"Put up a taller fence",fx:{act:"rtneighbour",d:-10},o:"Good fences make good neighbours."}]})}
  else if(olds.length&&school&&r<.7){const p=pick(olds);ev(p,{from:"Parents' evening",t:`${school.n}'s new teacher`,b:`${school.n}'s new form tutor is ${p.n}. Yes, that ${p.n}.`,c:[{t:"Be gracious",fx:{act:"ppbond",d:10},o:`They say ${school.n} is a credit to you.`},{t:"Ask for a different class",fx:{act:"ppbond",d:-15,home:-2},o:`${school.n} is mortified.`}]})}
  else if(olds.length&&r<.85){const p=pick(olds);ev(p,{from:"A solicitor's letter",t:`${p.n} is suing you`,b:`${p.n} claims you owe them from something years ago. It could get expensive.`,c:[{t:"Fight it in court",p:.55,win:{fx:{act:"ppbond",d:-20,stress:6},o:"Case dismissed. They pay your costs."},lose:{fx:{act:"ppbond",d:-20,gbp:-15000,fixed:1,stress:10},o:"You lose, and pay £15,000."}},{t:"Settle quietly for £5,000",fx:{gbp:-5000,fixed:1,act:"ppbond",d:5},o:"Expensive, but over."}]})}
- else if((S.exes||[]).length&&S.friend&&r<1){const x=pick(S.exes);pushDyn({id,from:S.friend.n,t:`${x.n} and ${S.friend.n}?`,b:`${S.friend.n} has something to tell you. They've been seeing ${x.n}, your ex. It's serious.`,c:[{t:"Give them your blessing",fx:{karma:4,home:-2},o:"It's weird. But you're happy for them. Mostly."},{t:"You can't accept it",fx:{act:"friendcut"},o:`You and ${S.friend.n} stop speaking.`}]})}
+ else if((S.exes||[]).length&&S.friend&&r<1){const x=pick(S.exes);pushDyn({id,from:S.friend.n,t:`${x.n} and ${S.friend.n}?`,b:`${S.friend.n} has something to tell you. They've been seeing ${x.n}, your ex. It's serious.`,c:[{t:"Give them your blessing",fx:{karma:4,home:-2,act:"frex",ex:x.n},o:"It's weird. But you're happy for them. Mostly."},{t:"You can't accept it",fx:{act:"friendcut"},o:`You and ${S.friend.n} stop speaking.`}]})}
 }
 
 EV.push(
@@ -5793,7 +5798,8 @@ Object.assign(ACTS,{
  fcall:fx=>{for(const p of alivePeople().filter(p=>p.fc))p.bond=clamp(p.bond+(fx.d||0),0,100)},
  rtboss:(fx,m)=>{const p=personBy(m.vars.pid);if(!p)return;S.boss={n:p.n,mood:clamp(p.bond+(fx.d||0),5,95)};S.people.splice(S.people.indexOf(p),1);S._bossN=S.boss.n},
  rtneighbour:(fx,m)=>{const p=personBy(m.vars.pid);if(p){p.role="neighbour";p.how=`Next door: your ${ROLE_N[p.role]?"":""}old acquaintance`;p.bond=clamp(p.bond+(fx.d||0),0,100)}},
- friendcut:()=>{if(S.friend){S.log.unshift({d:S.day,t:`Fell out with ${S.friend.n}.`});S.friendLost=S.day;S.friend=null}}
+ friendcut:()=>{if(S.friend){S.log.unshift({d:S.day,t:`Fell out with ${S.friend.n}.`});S.friendLost=S.day;S.oldFriends=(S.oldFriends||[]).concat({n:S.friend.n,hist:S.friend.hist||[],d:S.day}).slice(-4);S.friend=null}},
+ frex:fx=>{if(S.friend){S.friend.with=fx.ex}}
 });
 
 /* ---- Love, complicated: several lovers at once, secret or open ---- */
@@ -5912,9 +5918,37 @@ function varsFor(e){
  if(e.kid){const ks=S.children.filter(k=>{const a=kidAge(k);return a>=e.kid[0]&&a<e.kid[1]&&(!e.kidP||k.p===e.kidP)});if(ks.length)return{k:pick(ks).n}}
  return{};
 }
+/* Words for each kind of job, so shared life events don't all sound like a bank */
+const WORK_WORDS={
+ bank:["the trading floor","half the trading floor","markets"],law:["chambers","half of chambers","cases"],pol:["Westminster","half the party","votes"],
+ doc:["the ward","half the hospital","shifts"],nurse:["the ward","half the ward","shifts"],police:["the station","half the station","shifts"],fire:["the station","the whole watch","shifts"],
+ pilot:["the crew room","half the crew room","flights"],foot:["the training ground","the whole squad","training"],manager:["the club","the whole squad","training"],clubowner:["the club","half the club","matches"],
+ teach:["the staffroom","the whole staffroom","lessons"],soldier:["the barracks","half the regiment","exercises"],spy:["the office","people whose names you can't say","missions"],
+ astronaut:["the space centre","half of mission control","training"],chef:["the kitchen","the whole kitchen","service"],tvchef:["the studio","the whole crew","filming"],
+ music:["the studio","half the band scene","gigs"],dj:["the club","half the DJs in town","gigs"],influencer:["your bedroom studio","half your followers","posting"],actor:["the set","half the cast","filming"],
+ vet:["the practice","the whole practice","surgery"],arch:["the studio","the whole studio","drawing"],elec:["the yard","the lads from work","jobs"],plumb:["the yard","the lads from work","jobs"],
+ hair:["the salon","the whole salon","appointments"],tech:["the office","half the engineering team","work"]};
+const cap1=t=>t.charAt(0).toUpperCase()+t.slice(1);
+function fitWork(t){
+ if(!S||typeof t!=="string"||S.path==="bank")return t;const W=WORK_WORDS[S.path]||WORK_WORDS.tech,solo=soloJob();
+ t=t.replace(/Half the trading floor dances badly./g,()=>cap1(W[1])+" hit the dance floor.").replace(/(H|h)alf the trading floor/g,(m,h)=>h==="H"?cap1(W[1]):W[1]).replace(/a week of markets/g,"a week of "+W[2]).replace(/The office is (very quiet|lovely and quiet)/g,(m,q)=>cap1(W[0])+" is "+q)
+  .replace(/walk into the office/g,"walk into "+W[0]).replace(/Back on the desk tomorrow/g,"Back to work tomorrow").replace(/The desk sponsors you generously/g,cap1(W[1])+" sponsor you generously")
+  .replace(/ in Canary Wharf/g," on the route");
+ if(solo)t=t.replace(/Your boss nods approvingly\./g,S.path==="influencer"?"Your followers barely notice you were gone.":"The promoters are pleased.")
+  .replace(/Your boss notices\. So does everyone at home\./g,"Your diary stays full. Everyone at home notices.").replace(/30 unread messages from work/g,"30 unread messages about bookings");
+ return t;
+}
+{const _fl=fill;fill=function(){return fitWork(_fl.apply(this,arguments))}}
 function fill(t,m){const v=Object.assign({city:S.abroad?S.abroad.city:"abroad",f:S.friend?S.friend.n:"your friend",boss:S.boss?S.boss.n:"your boss",pet:S.pet?S.pet.n:"your pet",biz:S.biz?S.biz.name:"your business",age:ageInt(),k:"Your child",r:S.rival?S.rival.name:"Your rival",p:S.rel.name||"Your partner",job:S.rel.job||"",car:carOf(S.car.id).n,bank:S.bank,foe:(S.world&&S.world.foe)||"the enemy"},m&&m.vars||{});return String(t).replace(/\{(\w+)\}/g,(_,k)=>v[k]??"")}
 const getEv=m=>m.dyn||EV.find(x=>x.id===m.id);
+const soloJob=()=>!!S&&(["dj","music","influencer"].includes(S.path)||selfPaid());
+/* Events that need an employer, a boss or colleagues */
+const EMPLOYED_ONLY=["se_party","w_drinks","wr_redund","wr_freeze","wr_hot","wr_ai","fr_job","bs_favour","bs_blame","bs_human","carpress","datenight","rvg_credit","rvg_slip","w_overtime","w_payrise","marathon"];
+/* Being sued for bad advice only happens in jobs where you advise or build things for clients */
+const SUED_FOR=["bank","law","arch","doc","vet","tech","elec","plumb","hair","nurse","pilot"];
 function eligible(e){
+ if(EMPLOYED_ONLY.includes(e.id)&&soloJob())return false;
+ if(e.id==="st_sued"&&!SUED_FOR.includes(S.path))return false;
  const r=e.r||[0,4];
  if(S.rank<r[0]||S.rank>r[1])return false;
  if(e.career){if(e.career!==S.path)return false}else if(e.mech){if(e.mech!==CAR_().mech)return false}else if(!e.life&&!e.any&&S.path!=="bank")return false;
@@ -5986,6 +6020,12 @@ function chips(fx,now){
  if(fx.gbp)out.push(`<span class="chip ${fx.gbp>0?"g":"b"}">${money(gbpOf(fx),true)} cash</span>`);
  return out.join("");
 }
+function friendNote(fr,m,ci){
+ try{const e=getEv(m),c=choicesOf(e)[ci];if(!fr||!e||!c)return;const first=fr.n.split(" ")[0],t=fill(e.t||"",m),b=fill(e.b||"",m),from=fill(e.from||"",m);
+  if(![t,b,from].some(x=>x.includes(first)))return;
+  fr.hist=(fr.hist||[]).concat({d:S.day,t:t.replace(/{[a-z]+}/g,""),c:fill(c.t||"",m)}).slice(-8)}catch(e){}
+}
+{const _ch=choose;choose=function(i,ci){const m=S.inbox[i],fr=S.friend,was=m&&m.done;const r=_ch.apply(this,arguments);if(m&&!was&&m.done&&fr)friendNote(fr,m,ci);return r}}
 function choose(i,ci){
  const m=S.inbox[i];if(!m||m.done)return;
  const e=getEv(m),c=choicesOf(e)[ci];if(!c)return;
@@ -6359,7 +6399,7 @@ ACTS.setpref=fx=>{S.pref=fx.v};
 const AV_SKIN=["#F6D7C3","#E8B999","#C68A5A","#8D5A3B","#5C3A26"],AV_HAIR=["#1B1B1B","#5A3A22","#D9B66A","#B5582A","#7A2E1E"];
 const AV_STYLES=["short","long","curly","bun","buzz"],AV_FACE=["none","stubble","beard"];
 function avDefault0(){return{skin:Math.floor(rnd()*5),hair:Math.floor(rnd()*5),style:pick(AV_STYLES),face:rnd()<.3?pick(["stubble","beard"]):"none",glasses:rnd()<.15,bald:rnd()<.35}}
-const avMix=(a,b,t)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=p(a),B=p(b);return"#"+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,"0")).join("")};
+const avMix=(a,b,t)=>{const x=h=>(h=String(h||"#000000"),h.length===4?"#"+h[1]+h[1]+h[2]+h[2]+h[3]+h[3]:h);a=x(a);b=x(b);const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=p(a),B=p(b);return"#"+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,"0")).join("")};
 const AV_UNIFORM={police:["#1D2B4F","#C9CED1"],fire:["#2B2B2B","#E8B73A"],doc:["#F5F5F5","#1D5FA8"],nurse:["#2F6FB5","#2F6FB5"],chef:["#F5F5F5","#F5F5F5"],soldier:["#5E6B45","#4E5B3A"],pilot:["#1D2B4F","#D7A744"],astronaut:["#E9ECEE","#1D5FA8"],foot:["#B3262E","#F2F4F5"]};
 function avatarSVG0(size,s){
  s=s||S;const av=s.av||(s.av=avDefault()),a=ageAt(s),nw=typeof netWorth==="function"&&s===S?netWorth():0;
@@ -6678,6 +6718,7 @@ const FAR=["Cobham","Esher","Sevenoaks","Weybridge","Beaconsfield","Romford"];
 const GOOD_SCHOOLS=["Dulwich","Highbury","Islington","Wandsworth","Chiswick","Cobham","Esher","Sevenoaks","Beaconsfield","Weybridge","Canonbury","Notting Hill","Marylebone"];
 const RIVERSIDE=["Wapping","Bermondsey","Greenwich","Greenwich Peninsula","Nine Elms","Deptford"];
 function commute(){
+ if(S&&S.path==="influencer")return 0;
  if(!S.home)return 1;if(S.abroad)return 1;if(S.flags.downshift!=null)return 2;
  const a=S.home.area||"";if(NEAR.includes(a))return 0;if(FAR.includes(a))return 2;return 1;
 }
@@ -6749,8 +6790,8 @@ function remortgageAmt(){if(!ownsHome())return 0;return Math.max(0,Math.round((S
 function homeLifeSec(){
  if(!S.home)return"";const c=commute(),own=ownsHome(),rm=remortgageAmt(),canLet=own&&(S.home.tier||0)>=2&&!S.roomLet;
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Living here</h2><span class="label">${esc(S.home.area||"")}</span></div>
-  <div class="kv"><span>Commute</span><span>${COMMUTE_N[c]}${c>=1&&carOf(S.car.id).lvl>=1?" by car":""}</span><span>Schools</span><span>${goodSchool()?"Good catchment area":"Average"}</span><span>Hosting</span><span>${["Cramped","Cosy","Comfortable","Great","Spectacular"][clamp(Math.floor(hostScore()/2),0,4)]}</span><span>Car</span><span>${S.car.id==="none"?"Public transport":carOld()?"Getting unreliable":carFlash()?"Turns heads":"Reliable"}</span></div>
-  <p class="hint" style="margin:8px 0 0">${c===2?"A long commute adds stress every month. A home office or a car helps.":c===1?"Your commute adds a little stress. A car or a home office helps.":"A short commute keeps stress down."} ${goodSchool()?"Children here do better at school.":""} A nicer home makes parties and dinners go better.</p>
+  <div class="kv"><span>${S.path==="dj"||S.path==="music"?"Getting to gigs":"Commute"}</span><span>${S.path==="influencer"?"None: you work from home":COMMUTE_N[c]+(c>=1&&carOf(S.car.id).lvl>=1?" by car":"")}</span><span>Schools</span><span>${goodSchool()?"Good catchment area":"Average"}</span><span>Hosting</span><span>${["Cramped","Cosy","Comfortable","Great","Spectacular"][clamp(Math.floor(hostScore()/2),0,4)]}</span><span>Car</span><span>${S.car.id==="none"?"Public transport":carOld()?"Getting unreliable":carFlash()?"Turns heads":"Reliable"}</span></div>
+  <p class="hint" style="margin:8px 0 0">${S.path==="influencer"?"No commute: your work is wherever your phone is.":S.path==="dj"||S.path==="music"?(c===2?"Living out here means long late drives home from gigs. A car helps.":c===1?"Late-night journeys home from gigs add a little stress. A car helps.":"Most venues are close by. Easy nights home."):c===2?"A long commute adds stress every month. A home office or a car helps.":c===1?"Your commute adds a little stress. A car or a home office helps.":"A short commute keeps stress down."} ${goodSchool()?"Children here do better at school.":""} A nicer home makes parties and dinners go better.</p>
   ${own?`<div class="btn-row" style="margin-top:10px">${rm>=10000?`<button class="btn sm" data-act="remortgage">Remortgage: release ${money(rm)}</button>`:""}${canLet?`<button class="btn sm" data-act="letroom">Rent out a room (${money(roomRent())}/month)</button>`:""}${S.roomLet?`<button class="btn sm" data-act="unletroom">Stop renting out the room</button>`:""}</div>`:""}</div>`;
 }
 const roomRent=()=>Math.round((700+(S.home.tier||0)*250)/50)*50;
@@ -8400,8 +8441,8 @@ function natMorning(){
  else if(k==="royal")E({from:"Your street",t:"The street party",b:"Your road is having a street party for the royal wedding. Someone needs to organise it.",c:[{t:"Organise it",fx:{stress:3,home:4,karma:2,act:"natsnap",k:"street"},o:"Bunting, trestle tables and a trifle the size of a car."},{t:"Just turn up",fx:{home:2,act:"natsnap",k:"street"},o:"You win the egg-and-spoon race. You're very competitive about it."},{t:"Go away for the weekend",fx:{stress:-3},o:"Peace and quiet. You miss the bunting slightly."}]});
  else if(k==="worldcup")E({from:"The group chat",t:"World Cup fever",b:"England's first game is tonight. Where are you watching?",c:[{t:"The pub, with everyone",fx:{gbp:-60,home:2,stress:-3,act:"natsnap",k:"pub"},o:"Flags, flares and one very loud uncle."},{t:"At home, behind the sofa",fx:{stress:1},o:"You can't look. You look."}]});
  else if(k==="heatwave")E({from:"The weather",t:"Thirty-eight degrees",b:"It's the hottest day ever recorded. The trains have melted.",c:[{t:"Head for the coast",fx:{gbp:-100,stress:-4,act:"natsnap",k:"beach"},o:"You and three million others. Worth it."},{t:"Buy a paddling pool (£60)",fx:{gbp:-60,home:3},o:"Feet in the water, ice lolly in hand. Perfect."}]});
- else if(k==="strike")E({from:NAT_STRIKE.includes(S.path)?"Your union":"The news",t:NAT_STRIKE.includes(S.path)?"Will you strike?":"The country grinds to a halt",b:NAT_STRIKE.includes(S.path)?"Your union has voted to strike over pay. Your colleagues are watching what you do.":"No trains, no post, no bins. For three months.",c:NAT_STRIKE.includes(S.path)?[{t:"Join the picket line",fx:{act:"natstrike",rep:2,karma:2},o:"Braziers, placards and a lot of tea."},{t:"Keep working",fx:{rep:-3,gbp:500},o:"You cross the line. Some colleagues stop speaking to you."}]:[{t:"Work from home",fx:{stress:-1},o:"Your commute is now from the bed to the kitchen."},{t:"Cycle in",fx:{health:3,stress:2},o:"Thighs of steel by week three."}]});
- else if(k==="freeze")E({from:"The weather",t:"Snow day",b:"A foot of snow overnight. Schools are shut and the roads are ice rinks.",c:[{t:"Build a snowman",fx:{home:4,stress:-3,act:"natsnap",k:"snow"},o:"He has a carrot nose and your best scarf."},{t:"Try to get to work",p:.5,win:{fx:{rep:2},o:"You're the only one who made it in. The boss notices."},lose:{fx:{stress:4,health:-2},o:"You slide into a hedge. Twice."}}]});
+ else if(k==="strike")E({from:NAT_STRIKE.includes(S.path)?"Your union":"The news",t:NAT_STRIKE.includes(S.path)?"Will you strike?":"The country grinds to a halt",b:NAT_STRIKE.includes(S.path)?"Your union has voted to strike over pay. Your colleagues are watching what you do.":"No trains, no post, no bins. For three months.",c:NAT_STRIKE.includes(S.path)?[{t:"Join the picket line",fx:{act:"natstrike",rep:2,karma:2},o:"Braziers, placards and a lot of tea."},{t:"Keep working",fx:{rep:-3,gbp:500},o:"You cross the line. Some colleagues stop speaking to you."}]:(soloJob()?[{t:S.path==="influencer"?"Stream from your bedroom":"Livestream a set from home",fx:{stress:-1,rep:1},o:"Stuck-at-home audiences love it."},{t:"Drive to the gigs that are still on",fx:{stress:2,gbp:200},o:"Half-empty venues, but the people who made it go wild."}]:[{t:"Work from home",fx:{stress:-1},o:"Your commute is now from the bed to the kitchen."},{t:"Cycle in",fx:{health:3,stress:2},o:"Thighs of steel by week three."}])});
+ else if(k==="freeze")E({from:"The weather",t:"Snow day",b:"A foot of snow overnight. Schools are shut and the roads are ice rinks.",c:[{t:"Build a snowman",fx:{home:4,stress:-3,act:"natsnap",k:"snow"},o:"He has a carrot nose and your best scarf."},{t:soloJob()?"Try to get to tonight's gig":"Try to get to work",p:.5,win:{fx:{rep:2},o:soloJob()?"You're the only act who made it. The promoter books you again.":"You're the only one who made it in. The boss notices."},lose:{fx:{stress:4,health:-2},o:"You slide into a hedge. Twice."}}]});
 }
 ACTS.natstrike=()=>{if(S.nat)S.nat.striking=1};
 ACTS.natsnap=fx=>{const P={bread:["Lockdown banana bread","kitchen","cake"],olympics:["The 100m final","stadium","confetti"],pub:["Watching it down the pub","pub","pint"],street:["The street party","party","cake"],beach:["The great heatwave","beach",""],snow:["Our snowman","ski",""]}[fx.k];if(!P)return;
