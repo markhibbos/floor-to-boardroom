@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Caveat:wght@600&display=swap">
 <style>
 /* Layout: lift-directory career column | trading desk | inbox + log. Tablet: desk + side stack. Phone: one pane at a time with a bottom tab bar. */
 :root{
@@ -437,6 +437,14 @@ a.btn.primary{color:var(--on-accent)}
 .chat{display:grid;gap:6px;margin:4px 0}.chat .bubble{max-width:85%;padding:6px 10px;border-radius:14px 14px 14px 4px;background:var(--glass-strong,var(--surface));border:1px solid var(--glass-line,var(--line));font-size:14px}.chat .bubble b{display:block;font-size:11.5px;color:var(--accent)}
 .diary{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:6px}.diary li{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line));font-size:14px}
 .diary .dd{font-weight:700;font-size:12px;color:var(--muted)}.diary li.clash{border-color:#E5484D}.diary li.go{border-color:var(--up)}.diary li.skip{opacity:.55;text-decoration:line-through}.diary em{font-style:normal;font-size:12px;color:var(--muted)}
+.av-pics button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;border-radius:12px}.av-pics small{font-size:11px}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:16px 14px;margin:6px 0 14px}.album-dec{margin-top:10px}
+.pola{display:flex;flex-direction:column;background:#FBFAF6;padding:7px 7px 8px;border-radius:3px;box-shadow:0 3px 10px rgba(0,0,0,.28);transform:rotate(var(--r,0deg));color:#2B2B2B;border:none;cursor:pointer;text-align:left;font:inherit;transition:transform .15s}
+.pola:hover,.pola:focus-visible{transform:rotate(0) scale(1.03)}.pola-img{display:block;border-radius:1px;overflow:hidden}.pola svg{display:block;width:100%;height:auto;aspect-ratio:4/3}
+.pola .cap{font-family:Caveat,"Comic Sans MS",cursive;font-weight:600;font-size:18px;line-height:1.05;margin-top:6px}.pola .ag{font-size:10.5px;color:#777;margin-top:2px}
+.pola.big{max-width:420px;margin:8px auto 0;padding:12px 12px 14px}.pola.big .cap{font-size:26px}.photo-big{text-align:center}
+.album-strip{display:flex;gap:12px;overflow-x:auto;padding:8px 4px 12px;scroll-snap-type:x mandatory}.album-strip .pola{flex:0 0 120px;scroll-snap-align:start}.pola.tiny .cap{font-size:15px}
+.folks{list-style:none;padding:0;margin:4px 0 8px;display:grid;gap:6px}.folks li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line));font-size:14px}.folks li small{display:block;color:var(--muted);font-size:12px}.folks li.gone{opacity:.7}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -3355,7 +3363,7 @@ function heirModal(){
  const hs=heirs(),es=estate();
  showModal(`<div class="label">The next generation</div><h2 style="margin-top:4px">Carry on as your child</h2>
   <p>Your estate is worth ${money(es.gross)}.${es.spouse?` ${esc(S.rel.name)} keeps half.`:""}${es.tax?` Inheritance tax takes ${money(es.tax)}.`:""} Each child inherits about <b>${money(es.each)}</b>, plus the family name.</p>
-  <div class="desk-pick switch-pick">${hs.map((k,i)=>`<button data-act="heir" data-k="${S.children.indexOf(k)}"><span><b style="font-size:16px">${esc(k.n)} ${esc(surnameOf(S.name))}</b><span>Age ${Math.floor(kidAge(k))}</span></span></button>`).join("")}</div>
+  <div class="desk-pick switch-pick">${hs.map((k,i)=>`<button data-act="heir" data-k="${S.children.indexOf(k)}"><span><b style="font-size:16px">${esc(k.n)} ${esc(surnameOf(S.name))}</b><span>Age ${Math.floor(kidAge(k))} · inherits ${money(es.forKid?es.forKid(k):es.each)}</span></span></button>`).join("")}</div>
   <div class="btn-row"><button class="btn" data-act="backtoend">Back</button></div>`);
 }
 function heirCareerModal(ix){
@@ -3376,7 +3384,8 @@ function startHeir(id){
  newGame(`${k.n}${sur?" "+sur:""}`,id,"fx",prev.bg);
  S.age0=a;S.yo=(prev.yo||0)+Math.floor((prev.day-1)/12)+1;
  S.dynasty=dyn;S.gen=(prev.gen||1)+1;
- const inh=Math.max(0,Math.round(es.each)),cost=RETRAIN[id]||0;
+ {const pa=Math.floor(ageAt(prev)),ps=prev.av&&prev.av.sex,fs=[{r:ps==="f"?"mum":ps==="m"?"dad":"par",n:prev.name.split(" ")[0],a0:pa,alive:false,died:0,da:pa,lw:prev.folkLw||""}];if(prev.rel.st==="married"&&prev.rel.name){const g=genderOf(prev.rel.name);fs.push({r:g==="f"&&fs[0].r!=="mum"?"mum":g==="m"&&fs[0].r!=="dad"?"dad":fs[0].r==="mum"?"dad":"mum",n:prev.rel.name.split(" ")[0],a0:pa,alive:true})}S.folks=fs;S.parentsAlive=fs.filter(x=>x.alive).length;S.folkSeen=1}
+ const inh=Math.max(0,Math.round(es.forKid?es.forKid(k):es.each)),cost=RETRAIN[id]||0;
  S.wealth=Math.max(3000,S.wealth+inh-cost);
  S.rep=clamp(S.rep+Math.min(15,Math.round(dyn.lives.reduce((x,l)=>x+l.legacy,0)/400)),0,100);
  S.traits=[...new Set([pick(pt),pick(Object.keys(TRAITS))])].slice(0,2);
@@ -4227,7 +4236,7 @@ let momentQ=[],momentOn=false;
 /* tone: "joy" (confetti and a fanfare) or "sad" (a candle and quiet music) */
 function moment(o){
  if(S&&!S.placeholder&&o&&o.big)S.fame=clamp((S.fame||0)+3,0,100);
- if(S&&!S.placeholder&&o&&o.title){S.memories=S.memories||[];S.memories.push({d:S.day,i:o.icon,k:o.kicker,t:o.title,s:o.sub,tone:o.tone});if(S.memories.length>80)S.memories.shift()}
+ if(S&&!S.placeholder&&o&&o.title){S.memories=S.memories||[];S.memories.push({d:S.day,i:o.icon,k:o.kicker,t:o.title,s:o.sub,tone:o.tone});while(S.memories.length>160){const j=S.memories.findIndex(x=>x.quiet);S.memories.splice(j>=0?j:0,1)}}
  if(typeof document==="undefined"||!S||S.placeholder||window.__noMoments)return;
  momentQ.push(o);if(!momentOn)nextMoment();
 }
@@ -5312,7 +5321,7 @@ Object.assign(ACTS,{
 
 /* ---- This is your life: every big moment is remembered ---- */
 function tiylModal(i){
- const ms=S.memories||[];const n=ms.length;i=clamp(i||0,0,n);window.__tiyl=i;
+ const ms=(S.memories||[]).filter(m=>!m.quiet);const n=ms.length;i=clamp(i||0,0,n);window.__tiyl=i;
  if(i>=n){const people=alivePeople().length+(S.friend?1:0),gone=(S.people||[]).filter(p=>!p.alive).length;
   showModal(`<div class="tiyl"><div class="label">This is your life</div><div style="display:flex;justify-content:center;margin:8px 0">${avatarSVG(96)}</div><h2 style="margin-top:6px">${esc(S.name)}</h2>
    <p class="epitaph">“${esc(epitaph())}”</p>
@@ -5884,7 +5893,7 @@ function closeDay(off){
  if(off){S.lastOff=S.day;S.homeLife=clamp(S.homeLife+8,0,100);notes.push(CAR_().mech==="markets"?"A proper break. A colleague minded half your risk.":"A proper break. Colleagues covered half your work.")}
  if(selfPaid()&&!S.prison&&!S.sabb&&!S.front){let g=Math.max(0,tot);const bm=isMusic()&&mu().mode==="band"?mu().band.length:0;if(bm&&g>0){const cut=Math.round(g*(1-1/(1+bm*.5)));g-=cut;lines.push([`Your band's share (${bm} member${bm>1?"s":""})`,0]);notes.push(`You paid your band ${money(cut)} from this month's earnings.`)}S._selfGross=g;S.selfHist=(S.selfHist||[]).concat(g).slice(-12)}
  const pd=S.prison||S.sabb?{net:0,pen:0}:S.front?frontPay():payDay(),pay=pd.net;
- lifeDay(notes);worldDay(notes);warDay(notes);petDay(notes);goalDay(notes);peopleDay(notes);neighboursDay();peopleWeave(notes);itemsWeave(notes);sabbDay(notes);homeDay(notes);diaryEval(notes);quarterTick(tot,notes);paydayDay(notes);fameDay();mgEval(notes);trophyCheck();if(S.abroad&&!S.abroad.forever&&!isSingle())S.homeLife=clamp(S.homeLife-.15,0,100);bizDay(notes);healthDay(notes);hazards(notes);ageDay(notes);
+ lifeDay(notes);worldDay(notes);warDay(notes);petDay(notes);goalDay(notes);peopleDay(notes);neighboursDay();peopleWeave(notes);itemsWeave(notes);sabbDay(notes);homeDay(notes);diaryEval(notes);quarterTick(tot,notes);paydayDay(notes);albumDay(notes);fameDay();mgEval(notes);trophyCheck();if(S.abroad&&!S.abroad.forever&&!isSingle())S.homeLife=clamp(S.homeLife-.15,0,100);bizDay(notes);healthDay(notes);hazards(notes);ageDay(notes);
  S.maxHeat=Math.max(S.maxHeat||0,S.heat);challengeCheck(notes);checkUnlocks(notes);
  if(ill)S.sick--;
  if(S.rival)S.rival.pnl+=rankTarget()/REVIEW_DAYS*(S.rival.form+.9*gauss());
@@ -5910,7 +5919,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -6206,10 +6215,10 @@ ACTS.setpref=fx=>{S.pref=fx.v};
 /* ---- Your face: it ages, gets tired, gets richer ---- */
 const AV_SKIN=["#F6D7C3","#E8B999","#C68A5A","#8D5A3B","#5C3A26"],AV_HAIR=["#1B1B1B","#5A3A22","#D9B66A","#B5582A","#7A2E1E"];
 const AV_STYLES=["short","long","curly","bun","buzz"],AV_FACE=["none","stubble","beard"];
-function avDefault(){return{skin:Math.floor(rnd()*5),hair:Math.floor(rnd()*5),style:pick(AV_STYLES),face:rnd()<.3?pick(["stubble","beard"]):"none",glasses:rnd()<.15,bald:rnd()<.35}}
+function avDefault0(){return{skin:Math.floor(rnd()*5),hair:Math.floor(rnd()*5),style:pick(AV_STYLES),face:rnd()<.3?pick(["stubble","beard"]):"none",glasses:rnd()<.15,bald:rnd()<.35}}
 const avMix=(a,b,t)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=p(a),B=p(b);return"#"+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,"0")).join("")};
 const AV_UNIFORM={police:["#1D2B4F","#C9CED1"],fire:["#2B2B2B","#E8B73A"],doc:["#F5F5F5","#1D5FA8"],nurse:["#2F6FB5","#2F6FB5"],chef:["#F5F5F5","#F5F5F5"],soldier:["#5E6B45","#4E5B3A"],pilot:["#1D2B4F","#D7A744"],astronaut:["#E9ECEE","#1D5FA8"],foot:["#B3262E","#F2F4F5"]};
-function avatarSVG(size,s){
+function avatarSVG0(size,s){
  s=s||S;const av=s.av||(s.av=avDefault()),a=ageAt(s),nw=typeof netWorth==="function"&&s===S?netWorth():0;
  const skin=AV_SKIN[av.skin%5],grey=clamp((a-42)/28,0,1),hairC=avMix(AV_HAIR[av.hair%5],"#C9C9C9",grey),bald=av.bald&&a>=55&&["short","buzz"].includes(av.style);
  const tired=s.stress>70,happy=(s.homeLife||50)>=55,glasses=av.glasses||a>=52,pale=s.health<35;
@@ -6238,7 +6247,7 @@ function avatarSVG(size,s){
  const bg=s.over==="died"?"#C9CED1":"var(--accent-soft, #F3E2BD)";
  return `<svg class="avatar" viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true"><defs><clipPath id="avc${size}"><circle cx="50" cy="50" r="50"/></clipPath></defs><g clip-path="url(#avc${size})"><rect width="100" height="100" fill="${bg}"/>${back}${body}<rect x="44" y="64" width="12" height="12" fill="${face}"/><ellipse cx="50" cy="44" rx="20" ry="23" fill="${face}"/>${fh}${lines}${bags}<circle cx="42" cy="44" r="2.4" fill="#2B2B2B"/><circle cx="58" cy="44" r="2.4" fill="#2B2B2B"/>${mouth}${specs}${top}</g></svg>`;
 }
-function avatarModal(){
+function avatarModal0(){
  const av=S.av||(S.av=avDefault());
  const row=(lab,k,opts,render)=>`<div class="label" style="margin-top:10px">${lab}</div><div class="av-opts">${opts.map((o,i)=>`<button class="${(av[k]===o||av[k]===i)?"on":""}" data-act="avset" data-k="${k}" data-v="${typeof o==="number"?i:o}">${render(o,i)}</button>`).join("")}</div>`;
  showModal(`<div class="label">Your look</div><h2 style="margin-top:4px">How you look</h2><div style="display:flex;justify-content:center;margin:8px 0">${avatarSVG(110)}</div>
@@ -6653,7 +6662,7 @@ ACTIVITIES.push(
 const HL_RANK={trophy:6,medal:5,star:4,rings:4,baby:3,rocket:3,heart:2,home:2,key:2,shield:2,candle:1,dove:1,dagger:5,mask:3};
 function lifeRecord(title){
  const ms=(S.memories||[]),role=bestRole(),careers=[...(S.past||[]).map(p=>CAREERS[p.path].n),CAR_().n].filter((x,i,a)=>a.indexOf(x)===i);
- const hi=ms.filter(m=>!m.turn&&m.t&&!/^(New trophy|Goal streak)$/.test(m.k||"")).map((m,i)=>({m,i,r:(HL_RANK[m.i]||1)+(m.tone==="sad"?0:.5)})).sort((a,b)=>b.r-a.r||a.i-b.i).slice(0,6).sort((a,b)=>a.m.d-b.m.d)
+ const hi=ms.filter(m=>!m.turn&&!m.quiet&&m.t&&!/^(New trophy|Goal streak)$/.test(m.k||"")).map((m,i)=>({m,i,r:(HL_RANK[m.i]||1)+(m.tone==="sad"?0:.5)})).sort((a,b)=>b.r-a.r||a.i-b.i).slice(0,6).sort((a,b)=>a.m.d-b.m.d)
   .map(({m})=>({t:`${m.t}${m.k?` · ${m.k.toLowerCase()}`:""}`,a:Math.floor(ageAt(S,m.d)),i:m.i||"star",sad:m.tone==="sad"||m.tone==="solemn"?1:0}));
  const tp=ms.filter(m=>m.turn).slice(-5).map(m=>({t:m.s||m.t,a:Math.floor(ageAt(S,m.d))}));
  const ending=title||(ENDINGS[S.over]||["Life story"])[0];
@@ -6688,7 +6697,7 @@ async function shareRecLink(rec){
 function toastMsg(t){const el=document.createElement("div");el.className="toast-msg";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
 async function shareRecImage(rec){
  try{if(document.fonts&&document.fonts.ready)await document.fonts.ready}catch(err){}
- const W=1080,H=1500,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+ const W=1080,AH=rec.al&&rec.al.filter(p=>!p.sad).length?330:0,H=1500+AH,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
  const disp='"Big Shoulders Display","Arial Narrow",Impact,sans-serif',body='"IBM Plex Sans",system-ui,sans-serif',died=rec.e==="died";
  x.fillStyle="#13212A";x.fillRect(0,0,W,H);x.fillStyle="#D7A744";x.fillRect(0,0,W,14);x.fillRect(0,H-14,W,14);
  x.fillStyle="#D7A744";x.font=`700 30px ${body}`;x.fillText("FLOOR TO BOARDROOM",80,90);
@@ -6702,9 +6711,10 @@ async function shareRecImage(rec){
  y=y2+40;x.fillStyle="#8A99A1";x.font=`600 28px ${body}`;x.fillText("LEGACY",80,y);x.fillText("NET WORTH",440,y);x.fillText("FAME",800,y);
  x.fillStyle="#D7A744";x.font=`800 84px ${disp}`;x.fillText((rec.l||0).toLocaleString("en-GB"),76,y+84);x.fillStyle="#E3E9E7";x.font=`800 60px ${disp}`;x.fillText(money(rec.nw),440,y+78);x.fillText(String(rec.fame||0),800,y+78);
  y+=130;x.fillStyle="#8A99A1";x.font=`500 30px ${body}`;for(const l of wrapText(x,`${rec.c} · ${rec.f}`,920).slice(0,2)){x.fillText(l,80,y);y+=40}
- const list=(lab,items)=>{if(!items||!items.length||y>H-200)return;y+=56;x.fillStyle="#D7A744";x.font=`700 28px ${body}`;x.fillText(lab,80,y);y+=14;
-  for(const h of items){if(y>H-150)break;y+=48;x.fillStyle=h.sad?"#8A99A1":"#D7A744";x.beginPath();x.arc(92,y-11,7,0,7);x.fill();x.fillStyle="#E3E9E7";x.font=`500 32px ${body}`;const t=wrapText(x,h.t,760)[0]||"";x.fillText(t,116,y);x.fillStyle="#8A99A1";x.textAlign="right";x.fillText(`age ${h.a}`,1000,y);x.textAlign="left"}};
+ const list=(lab,items)=>{if(!items||!items.length||y>H-AH-200)return;y+=56;x.fillStyle="#D7A744";x.font=`700 28px ${body}`;x.fillText(lab,80,y);y+=14;
+  for(const h of items){if(y>H-AH-150)break;y+=48;x.fillStyle=h.sad?"#8A99A1":"#D7A744";x.beginPath();x.arc(92,y-11,7,0,7);x.fill();x.fillStyle="#E3E9E7";x.font=`500 32px ${body}`;const t=wrapText(x,h.t,760)[0]||"";x.fillText(t,116,y);x.fillStyle="#8A99A1";x.textAlign="right";x.fillText(`age ${h.a}`,1000,y);x.textAlign="left"}};
  list("LIFE HIGHLIGHTS",rec.hi);list("TURNING POINTS",(rec.tp||[]).slice(-3));
+ if(AH)await drawAlbumRow(x,rec,H-AH-60);
  x.fillStyle="#8A99A1";x.font=`500 28px ${body}`;x.fillText("Can you live a better life? markhibbos.github.io/floor-to-boardroom",80,H-50);
  const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;const file=new File([blob],"my-life.png",{type:"image/png"});
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in Floor to Boardroom",text:`${rec.n}: ${rec.t}. Can you beat my legacy of ${(rec.l||0).toLocaleString("en-GB")}?`});return}}catch(err){if(err&&err.name==="AbortError")return}
@@ -7004,6 +7014,641 @@ Object.assign(ACTS,{
 });
 /* Payday loans come back for their money */
 function paydayDay(notes){if(!S.paydayDebt)return;const pay=Math.min(S.paydayDebt,400);S.paydayDebt-=pay;S.wealth-=pay;if(!S.paydayDebt)notes.push("Your payday loan is finally paid off.")}
+
+/* ============ Your look, your photo album, birthdays, Christmas, your parents and your will ============ */
+
+/* ---- Your look: lots more choice, and a face that ages with the life you live ---- */
+const AV2_SKIN=["#FBE3D3","#F6D7C3","#EFC8AC","#E8B999","#D9A37E","#C68A5A","#AD7148","#8D5A3B","#6E4530","#5C3A26","#45291B"];
+const AV2_HAIR=["#1B1B1B","#3B2618","#5A3A22","#8A5A32","#D9B66A","#EEDFB0","#B5582A","#7A2E1E","#A9AFB4","#E86A9A","#4A7FD0"];
+const AV2_HAIR_N=["Black","Dark brown","Brown","Light brown","Blonde","Platinum","Ginger","Auburn","Silver","Pink","Blue"];
+const AV2_EYES=["#4A2E1A","#3E78B2","#3E8E5E","#8A6A2E","#6F7B85"],AV2_EYES_N=["Brown","Blue","Green","Hazel","Grey"];
+const AV2_STYLES={short:"Short",sidepart:"Side parting",quiff:"Quiff",buzz:"Buzz cut",shaved:"Shaved",mohawk:"Mohawk",mullet:"Mullet",curly:"Curly",afro:"Afro",locs:"Locs",braids:"Braids",long:"Long",bob:"Bob",pixie:"Pixie",ponytail:"Ponytail",bun:"Bun",scarf:"Headscarf"};
+const AV2_FACE={none:"None",stubble:"Stubble",tache:"Moustache",goatee:"Goatee",beard:"Beard",bigbeard:"Big beard"};
+const AV2_SEX={m:"Man",f:"Woman",x:"Non-binary"};
+const AV_STYLE_BY_SEX={m:["short","sidepart","quiff","buzz","curly","afro","locs","mullet","shaved","short","sidepart","buzz"],f:["long","bob","pixie","ponytail","bun","curly","afro","braids","locs","long","scarf","long"]};
+const SCARF_C=["#2F6E6A","#7A1F2B","#3E4C8A","#C27A2C","#5A3A60","#1C2329","#B85C7A","#4E6B45","#8A2E4A","#2F4F6F","#6E5A3A"];
+const TEE_C=["#5F6B75","#3E6FB0","#B3262E","#4BBA85","#E9C46A","#7A4E8C","#E07A2E","#2B3A44","#D96A8A","#6B8E23"];
+const BALDING=["short","sidepart","quiff","buzz","mohawk","mullet","curly","afro","pixie"];
+const h32=s=>{let h=2166136261;for(const ch of String(s))h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0};
+const seeded=seed=>{let h=h32(seed)||1;return()=>{h^=h<<13;h>>>=0;h^=h>>>17;h^=h<<5;h>>>=0;return h/4294967296}};
+function avDefault(seed,sex){
+ const r=seed!=null?seeded(seed):rnd,pk=a=>a[Math.floor(r()*a.length)];
+ const sx=sex==="m"||sex==="f"||sex==="x"?sex:r()<.5?"m":"f",look=sx==="x"?(r()<.5?"m":"f"):sx;
+ return{v:2,sex:sx,skin:Math.floor(r()*11),hair:pk([0,0,1,1,2,2,3,4,4,6,7]),style:pk(AV_STYLE_BY_SEX[look]),face:look==="m"&&r()<.4?pk(["stubble","tache","goatee","beard","bigbeard","stubble"]):"none",
+  eyes:Math.floor(r()*5),glasses:r()<.15,bald:look==="m"&&r()<.45,ear:look==="f"?r()<.55:r()<.12,freck:r()<.12,lips:look==="f"&&r()<.3,w:+(r()*.25).toFixed(2),tee:Math.floor(r()*TEE_C.length)};
+}
+/* Saves from before this update had five skin tones and five hairstyles */
+function avUp(av){
+ if(!av||av.v===2)return av;
+ av.v=2;av.skin=[1,3,5,7,9][(av.skin||0)%5];av.hair=[0,2,4,6,7][(av.hair||0)%5];
+ av.sex=av.face&&av.face!=="none"?"m":["long","bun"].includes(av.style)?"f":av.bald?"m":"x";
+ av.eyes=0;av.w=av.w??.15;av.tee=av.tee??0;return av;
+}
+const AVL=(d,c,w,o)=>`<path d="${d}" stroke="${c}" stroke-width="${w||1}" fill="none" stroke-linecap="round"${o?` stroke-opacity="${o}"`:""}/>`;
+/* The drawing itself, in a 100 x 100 box. s can be the live game or a snapshot from a photo. */
+function avatarInner(s){
+ const av=avUp(s.av||(s.av=avDefault())),a=s.ageOver??ageAt(s),w=clamp(av.w||0,0,1),sex=av.sex||"x",fem=sex==="f"||(sex==="x"&&!["short","sidepart","quiff","buzz","shaved","mohawk","mullet"].includes(av.style)&&av.face==="none");
+ const nw=s.nw!=null?s.nw:typeof netWorth==="function"&&s===S?netWorth():0;
+ const skin=AV2_SKIN[(av.skin||0)%11],base=AV2_HAIR[(av.hair||0)%11],grey=a<18?0:clamp((a-40)/28,0,1);
+ const hairC=av.hair>=8?base:avMix(base,"#C9C9C9",grey),browC=avMix(avMix(base,"#000",.25),"#BDBDBD",grey*.8);
+ const balding=av.bald&&sex!=="f"&&BALDING.includes(av.style),bald=balding&&a>=55,recede=balding&&a>=44&&!bald;
+ const tired=s.stress>70,happy=s.smile!=null?s.smile:(s.homeLife??60)>=55,pale=s.health<35,glasses=av.glasses||a>=52;
+ const face=pale?avMix(skin,"#D9DEE0",.35):skin,shade=avMix(skin,"#5A2E1E",.28),k=1+w*.22-(fem?.04:0),sh=w*6;
+ const style=av.style||"short",scarf=style==="scarf",scC=SCARF_C[(av.hair||0)%11];
+ const wedF=s.outfit==="wedding"&&fem,veil=s.hat==="veil"||(wedF&&!scarf);
+ const torso=c=>`<path d="M${16-sh} 100 Q${18-sh} 76 50 74 Q${82+sh} 76 ${84+sh} 100Z" fill="${c}"/>`,vee=c=>`<path d="M42 75 L50 89 L58 75Z" fill="${c||"#F2F4F5"}"/>`;
+ const tie=c=>`<path d="M48 78 L52 78 L53 92 L50 95 L47 92Z" fill="${c}"/>`,neck=c=>`<path d="M43 77 Q50 86 57 77" stroke="${c}" stroke-width="1.6" fill="none"/>${pC(50,85,1.8,c)}`;
+ const pearls=[0,1,2,3,4,5,6].map(i=>pC(42+i*2.7,77+Math.sin(i/6*Math.PI)*7,1.3,"#F4F1E8")).join("");
+ const uni=!s.over&&!s.prison&&AV_UNIFORM[s.path];
+ const out=s.outfit||(s.prison?"prison":uni?"uniform":nw>=5e6?"rich":nw>=500e3?"suit":nw>=40e3?"smart":"casual");
+ let body;
+ switch(out){
+  case"prison":body=torso("#E07A2E");break;
+  case"uniform":body=torso(uni?uni[0]:"#2B3A50")+`<path d="M44 75 L50 86 L56 75" fill="none" stroke="${uni?uni[1]:"#fff"}" stroke-width="3"/>`+(s.path==="doc"?AVL("M38 80 Q38 92 46 92","#333",2):"")+(s.path==="pilot"?pR(24,84,10,3,"#D7A744")+pR(66,84,10,3,"#D7A744"):"");break;
+  case"rich":body=torso("#1C1C24")+vee("#fff")+(fem?pearls:tie("#D7A744"))+pC(34,84,2.5,"#E86A7A");break;
+  case"suit":body=torso("#2B3A50")+vee()+(fem?neck("#D7A744"):tie("#7A1F2B"));break;
+  case"smart":body=torso("#7FB2E5")+`<path d="M42 75 L50 84 L58 75" fill="none" stroke="#F2F4F5" stroke-width="3"/>`;break;
+  case"wedding":body=wedF?torso(face)+`<path d="M${18-sh} 100 Q${22-sh} 82 38 80 Q44 76 50 81 Q56 76 62 80 Q${78+sh} 82 ${82+sh} 100Z" fill="#FBF8F2"/>`+pearls:torso("#1C1C24")+vee("#fff")+`<path d="M45 77 L50 80 L45 83Z M55 77 L50 80 L55 83Z" fill="#1C1C24"/>`+pC(34,84,3,"#F2F4F5")+pC(34,84,1.3,"#E86A7A");break;
+  case"black":body=torso("#16161A")+vee("#E9ECEE")+tie("#16161A");break;
+  case"gown":body=torso("#1C1C24")+vee("#F2F4F5")+AVL("M28 80 Q34 94 40 100","#B3262E",4)+AVL("M72 80 Q66 94 60 100","#B3262E",4);break;
+  case"xmas":body=torso("#B3262E")+AVL(`M${20-sh} 90 L26 86 L32 90 L38 86 L44 90 L50 86 L56 90 L62 86 L68 90 L74 86 L${80+sh} 90`,"#F2F4F5",2)+[30,50,70].map(x=>pC(x,95,1.6,"#F2F4F5")).join("")+AVL("M42 75 Q50 82 58 75","#7A1F2B",3);break;
+  case"hols":{const c=TEE_C[((av.tee||0)+3)%TEE_C.length];body=torso(c)+[[28,86],[40,94],[62,88],[72,96],[50,82],[34,98]].map(([x,y])=>pC(x,y,2.2,"#F6E7A8")+pC(x,y,.9,"#E07A2E")).join("")+`<path d="M42 75 L50 84 L58 75" fill="none" stroke="#fff" stroke-width="2"/>`;break}
+  case"hosp":body=torso("#A9C8DA")+[[30,88],[46,94],[62,86],[70,96],[38,98]].map(([x,y])=>pC(x,y,1.2,"#6E8FA5")).join("");break;
+  case"kit":body=torso("#B3262E")+AVL("M42 75 Q50 82 58 75","#F2F4F5",3)+`<text x="50" y="96" font-size="11" font-weight="800" fill="#F2F4F5" text-anchor="middle" font-family="system-ui">${(h32(s.seed||"me")%11)+1}</text>`;break;
+  default:body=torso(TEE_C[(av.tee||0)%TEE_C.length])+AVL("M42 75 Q50 82 58 75",avMix(TEE_C[(av.tee||0)%TEE_C.length],"#000",.25),3);
+ }
+ const H=t=>`<g transform="translate(50 0) scale(${k.toFixed(3)} 1) translate(-50 0)">${t}</g>`;
+ let back="";
+ if(veil)back+=`<path d="M24 30 Q18 80 14 100 L86 100 Q82 80 76 30 Q50 12 24 30Z" fill="#fff" opacity=".55"/>`;
+ if(scarf)back+=pP("M24 46 Q22 12 50 12 Q78 12 76 46 Q78 74 64 82 L36 82 Q22 74 24 46Z",scC);
+ else if(!bald){
+  if(style==="long")back+=pP("M28 40 Q26 74 34 78 L66 78 Q74 74 72 40Z",hairC);
+  else if(style==="curly")back+=pC(50,38,26,hairC);
+  else if(style==="afro")back+=pC(50,33,31,hairC);
+  else if(style==="bob")back+=pP("M28 38 Q26 64 32 66 L68 66 Q74 64 72 38Z",hairC);
+  else if(style==="mullet")back+=pP("M30 46 Q29 72 38 74 L62 74 Q71 72 70 46Z",hairC);
+  else if(style==="ponytail")back+=pP("M64 26 Q90 30 82 66 Q78 52 66 40Z",hairC);
+  else if(style==="locs")back+=pP("M29 38 Q28 60 32 62 L68 62 Q72 60 71 38Z",hairC)+[29,35,41,59,65,71].map(x=>`<rect x="${x-3}" y="34" width="6" height="${44-Math.abs(x-50)/4}" rx="3" fill="${hairC}"/>`).join("");
+  else if(style==="braids")back+=[30,70].map(x=>[0,1,2,3,4,5].map(i=>`<ellipse cx="${x}" cy="${50+i*7}" rx="4" ry="4.6" fill="${hairC}" stroke="${avMix(hairC,"#000",.3)}" stroke-width=".6"/>`).join("")).join("");
+ }
+ let top="";
+ if(scarf)top=pP("M27 40 Q27 19 50 18 Q73 19 73 40 Q66 26 50 25 Q34 26 27 40Z",scC)+AVL("M30 34 Q50 22 70 34",avMix(scC,"#fff",.25),1.2);
+ else if(bald)top=AVL("M31 40 Q30 32 34 29 M69 40 Q70 32 66 29",hairC,4)+`<ellipse cx="44" cy="25" rx="6" ry="2.5" fill="#fff" opacity=".2"/>`;
+ else if(recede&&style!=="mohawk")top=pP("M30 38 Q30 18 50 18 Q70 18 70 38 Q66 24 58 23 Q50 27 42 23 Q34 24 30 38Z",hairC);
+ else switch(style){
+  case"short":case"mullet":top=pP("M30 40 Q30 18 50 18 Q70 18 70 40 Q64 28 50 28 Q36 28 30 40Z",hairC);break;
+  case"sidepart":top=pP("M30 42 Q28 17 50 17 Q71 17 70 40 Q66 27 44 27 Q36 30 30 42Z",hairC)+AVL("M42 18 Q40 23 41 27",avMix(hairC,"#000",.35),1);break;
+  case"quiff":top=pP("M30 40 Q30 18 50 18 Q70 18 70 40 Q64 28 50 28 Q36 28 30 40Z",hairC)+pP("M36 28 Q35 5 60 9 Q71 13 66 26 Q56 19 44 23Z",hairC);break;
+  case"buzz":top=pP("M31 36 Q32 22 50 22 Q68 22 69 36 Q60 28 50 28 Q40 28 31 36Z",hairC,'opacity=".85"');break;
+  case"shaved":top=`<ellipse cx="44" cy="26" rx="6" ry="2.5" fill="#fff" opacity=".18"/>`;break;
+  case"mohawk":top=pP("M31 36 Q32 22 50 22 Q68 22 69 36 Q60 28 50 28 Q40 28 31 36Z",hairC,'opacity=".3"')+pP("M45 32 Q43 3 50 0 Q57 3 55 32Z",hairC);break;
+  case"curly":top=[30,38,46,54,62,70].map((x,i)=>pC(x,24+(i%2)*4,7,hairC)).join("");break;
+  case"afro":top=[28,36,44,52,60,68,74].map((x,i)=>pC(x,18+(i%2)*5,8,hairC)).join("");break;
+  case"locs":case"braids":top=pP("M30 40 Q30 18 50 18 Q70 18 70 40 Q64 30 50 29 Q36 30 30 40Z",hairC)+AVL("M50 18 L50 28",avMix(hairC,"#000",.35),1);break;
+  case"long":top=pP("M29 44 Q28 16 50 16 Q72 16 71 44 Q66 26 50 26 Q34 26 29 44Z",hairC);break;
+  case"bob":top=pP("M28 46 Q27 16 50 16 Q73 16 72 46 Q68 28 56 26 Q40 26 32 34 Q30 40 28 46Z",hairC);break;
+  case"pixie":top=pP("M30 42 Q28 16 52 17 Q72 18 70 36 Q62 26 48 30 Q38 33 30 42Z",hairC);break;
+  case"ponytail":top=pP("M30 40 Q30 17 50 17 Q70 17 70 40 Q64 27 50 26 Q36 27 30 40Z",hairC)+pC(66,28,3,avMix(hairC,"#000",.3));break;
+  case"bun":top=pC(50,13,8,hairC)+pP("M30 40 Q30 20 50 20 Q70 20 70 40 Q64 28 50 28 Q36 28 30 40Z",hairC);break;
+ }
+ const fh=av.face==="beard"?pP("M34 50 Q36 70 50 72 Q64 70 66 50 Q60 60 50 60 Q40 60 34 50Z",hairC):av.face==="bigbeard"?pP("M31 46 Q30 80 50 84 Q70 80 69 46 Q62 60 50 60 Q38 60 31 46Z",hairC):av.face==="stubble"?pP("M36 54 Q40 66 50 67 Q60 66 64 54",hairC,'opacity=".25"'):"";
+ const tache=["tache","goatee","bigbeard"].includes(av.face)?pP("M41 56 Q50 51 59 56 Q55 58.5 50 57 Q45 58.5 41 56Z",hairC):"",goatee=av.face==="goatee"?pP("M45 61 Q50 70 55 61 Q50 64 45 61Z",hairC):"";
+ const L=a>=65?.24:.15;let lines="";
+ if(a>=35)lines+=AVL("M42 32 Q50 30 58 32","#000",.9,L*.8);
+ if(a>=45)lines+=AVL("M31 43 l3 1 M31 46 l3 0 M69 43 l-3 1 M69 46 l-3 0","#000",.8,L);
+ if(a>=55)lines+=AVL("M43 29 Q50 27.5 57 29","#000",.8,L)+AVL("M43 51 Q41 56 43 59 M57 51 Q59 56 57 59","#000",.9,L);
+ if(a>=65)lines+=AVL("M39 49.5 Q42 51.5 45 49.5 M55 49.5 Q58 51.5 61 49.5","#000",.8,L)+AVL("M35 58 Q37 64 41 66 M65 58 Q63 64 59 66","#000",.9,L);
+ if(a>=72)lines+=pC(36,36,1.1,shade,'opacity=".45"')+pC(63,33,.9,shade,'opacity=".4"')+pC(60,58,.8,shade,'opacity=".35"');
+ const chin=w>.55?AVL(`M40 ${66+w*2} Q50 ${71+w*4} 60 ${66+w*2}`,shade,1.2,.6):"";
+ const bags=tired?AVL("M39 49 Q42 51 45 49 M55 49 Q58 51 61 49","#6B4A6B",1.5,.5):"";
+ const lipC=av.lips?"#B8325A":"#7A2E1E";
+ const mouth=happy?`<path d="M43 58 Q50 64 57 58" stroke="${lipC}" stroke-width="${av.lips?2.6:2}" fill="none" stroke-linecap="round"/>`:`<path d="M44 60 Q50 58 56 60" stroke="${lipC}" stroke-width="${av.lips?2.6:2}" fill="none" stroke-linecap="round"/>`;
+ const eyeC=AV2_EYES[(av.eyes||0)%5],eye=x=>pC(x,44,2.6,eyeC)+pC(x,44,1.25,"#111")+pC(x+.8,43.2,.6,"#fff");
+ const lash=fem?AVL("M39.6 42.4 l-1.8 -1.3 M60.4 42.4 l1.8 -1.3","#222",.9):"";
+ const brows=AVL("M38 38.5 Q42 36.3 46 38 M54 38 Q58 36.3 62 38.5",browC,fem?1.3:2.1);
+ const nose=AVL("M50 45 Q47.6 51 50 52.6",shade,1.2,.7);
+ const freck=av.freck?[[40,50],[43,52],[38,53],[60,50],[57,52],[62,53]].map(([x,y])=>pC(x,y,.7,shade,'opacity=".55"')).join(""):"";
+ const blush=fem&&happy?pC(39,53,3.4,"#E86A7A",'opacity=".14"')+pC(61,53,3.4,"#E86A7A",'opacity=".14"'):"";
+ const ears=scarf?"":`<ellipse cx="${50-20*k}" cy="46" rx="3.4" ry="5" fill="${face}"/><ellipse cx="${50+20*k}" cy="46" rx="3.4" ry="5" fill="${face}"/>`+(av.ear?pC(50-20*k,52.5,1.6,"#D7A744")+pC(50+20*k,52.5,1.6,"#D7A744"):"");
+ const specs=glasses?`<g fill="none" stroke="#2B2B2B" stroke-width="1.6"><rect x="35" y="40" width="12" height="9" rx="3"/><rect x="53" y="40" width="12" height="9" rx="3"/><path d="M47 44 H53"/></g>`:"";
+ const jaw=fem?"":`<ellipse cx="50" cy="54" rx="${(17*k).toFixed(1)}" ry="13" fill="${face}"/>`;
+ return `${back}${body}<rect x="${44-w*2}" y="62" width="${12+w*4}" height="14" fill="${face}"/>${ears}<ellipse cx="50" cy="44" rx="${(20*k).toFixed(1)}" ry="${23+w*1.5}" fill="${face}"/>${jaw}${chin}${blush}${freck}${lines}${fh}${goatee}${bags}${eye(42)}${eye(58)}${lash}${brows}${nose}${tache}${mouth}${specs}${H(top)}${avHat(s.hat||(veil&&!scarf?"tiara":""))}`;
+}
+function avHat(h){
+ switch(h){
+  case"party":return pP("M40 22 L50 -8 L60 22Z","#E86A7A")+AVL("M43 14 L57 14 M46 4 L54 4","#F6E7A8",2.5)+pC(50,-8,3.5,"#F6D44A");
+  case"santa":return pP("M28 26 Q30 4 54 3 Q72 6 80 24 L74 30 Q60 22 50 22 Q38 22 28 26Z","#C8302F")+pP("M26 24 Q50 12 74 22 L74 30 Q50 20 26 32Z","#F2F4F5")+pC(80,26,4.5,"#F2F4F5");
+  case"mortar":return pP("M36 20 V29 Q50 35 64 29 V20Z","#1C1C24")+pP("M22 18 L50 7 L78 18 L50 29Z","#24242E")+AVL("M50 18 L72 22 L72 33","#D7A744",1.5)+pC(72,34,2,"#D7A744");
+  case"sombrero":return`<ellipse cx="50" cy="25" rx="42" ry="7" fill="#E0B85A" stroke="#B8862B"/>`+pP("M35 25 Q37 3 50 3 Q63 3 65 25Z","#E9C46A")+pR(36,19,28,4,"#C0453A");
+  case"captain":return pP("M29 27 Q29 11 50 11 Q71 11 71 27Z","#F7F7F2")+pR(30,22,40,6,"#1C1C24")+`<ellipse cx="50" cy="29" rx="18" ry="3" fill="#1C1C24"/>`+pC(50,18,3,"#D7A744");
+  case"beanie":return pP("M28 33 Q27 9 50 9 Q73 9 72 33Z","#3E6FB0")+pR(27,27,46,8,"#2F558A",'rx="3"')+pC(50,7,5,"#F2F4F5");
+  case"hardhat":return pP("M30 28 Q30 9 50 9 Q70 9 70 28Z","#F2C230")+`<ellipse cx="50" cy="28" rx="25" ry="3.5" fill="#E0AE1E"/>`+pR(48,9,4,18,"#E0AE1E");
+  case"crown":return pP("M33 25 L33 9 L41 17 L50 4 L59 17 L67 9 L67 25Z","#E9C46A",'stroke="#B8862B"')+pC(50,19,2,"#C0453A")+pC(40,21,1.6,"#3E78B2")+pC(60,21,1.6,"#3E8E5E");
+  case"tiara":return pP("M38 21 L42 15 L46 19 L50 12 L54 19 L58 15 L62 21Z","#E9ECEE",'stroke="#B9C2C8" stroke-width=".6"');
+  case"chef":return pP("M36 26 V14 Q29 4 40 3 Q44 -3 50 1 Q56 -3 60 3 Q71 4 64 14 V26Z","#FBFBF8",'stroke="#D9DEE0"');
+  case"helmet":return pP("M27 31 Q27 7 50 7 Q73 7 73 31Z","#5E6B45")+`<ellipse cx="50" cy="31" rx="25" ry="3.5" fill="#4E5B3A"/>`;
+  case"flowers":return[34,42,50,58,66].map((x,i)=>pC(x,19+Math.abs(x-50)/5,3.6,["#E86A7A","#F6D44A","#F2F4F5","#E86A7A","#9CC8EE"][i])).join("");
+ }
+ return"";
+}
+function avatarSVG(size,s){
+ s=s||S;const bg=s.over==="died"?"#C9CED1":"var(--accent-soft, #F3E2BD)";
+ return `<svg class="avatar" viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true"><defs><clipPath id="avc${size}"><circle cx="50" cy="50" r="50"/></clipPath></defs><g clip-path="url(#avc${size})"><rect width="100" height="100" fill="${bg}"/>${avatarInner(s)}</g></svg>`;
+}
+let avTab="face";
+function avatarModal(){
+ const av=avUp(S.av||(S.av=avDefault()));
+ const prev=(patch)=>`<svg viewBox="12 4 76 76" width="56" height="56" aria-hidden="true"><defs><clipPath id="avp"><circle cx="50" cy="42" r="38"/></clipPath></defs><g clip-path="url(#avp)"><rect width="100" height="100" fill="var(--accent-soft, #F3E2BD)"/>${avatarInner(Object.assign({},S,{av:Object.assign({},av,patch),ageOver:Math.min(ageAt(S),40),photo:1}))}</g></svg>`;
+ const sw=(k,arr,names)=>`<div class="av-opts">${arr.map((c,i)=>`<button class="${av[k]===i?"on":""}" data-act="avset2" data-k="${k}" data-v="${i}" aria-label="${esc(names?names[i]:"Option "+(i+1))}"><span class="sw" style="background:${c}"></span></button>`).join("")}</div>`;
+ const pics=(k,obj)=>`<div class="av-opts av-pics">${Object.keys(obj).map(o=>`<button class="${av[k]===o?"on":""}" data-act="avset2" data-k="${k}" data-v="${o}">${prev({[k]:o})}<small>${esc(obj[o])}</small></button>`).join("")}</div>`;
+ const tog=(k,lab)=>`<button class="btn sm ${av[k]?"primary":""}" data-act="avset2" data-k="${k}" data-v="${av[k]?0:1}">${lab}: ${av[k]?"on":"off"}</button>`;
+ const tabs=[["face","Face"],["hair","Hair"],["extras","Extras"]];
+ showModal(`<div class="label">Your look</div><h2 style="margin-top:4px">How you look</h2><div style="display:flex;justify-content:center;margin:8px 0">${avatarSVG(110)}</div>
+  <p class="hint" style="text-align:center;margin:0">You age as the game goes on: grey hair, laughter lines and maybe a belly, depending on how you live. You'll see it in your photo album.</p>
+  <div class="label" style="margin-top:10px">You are</div><div class="av-opts">${Object.keys(AV2_SEX).map(k=>`<button class="${av.sex===k?"on":""}" data-act="avset2" data-k="sex" data-v="${k}">${AV2_SEX[k]}</button>`).join("")}</div>
+  <div class="subtabs" style="margin-top:12px">${tabs.map(([k,n])=>`<button data-act="avtab" data-v="${k}" class="${avTab===k?"on":""}">${n}</button>`).join("")}</div>
+  ${avTab==="face"?`<div class="label" style="margin-top:10px">Skin</div>${sw("skin",AV2_SKIN)}<div class="label" style="margin-top:10px">Eyes</div>${sw("eyes",AV2_EYES,AV2_EYES_N)}<div class="label" style="margin-top:10px">Facial hair</div>${pics("face",AV2_FACE)}`:""}
+  ${avTab==="hair"?`<div class="label" style="margin-top:10px">Hair colour</div>${sw("hair",AV2_HAIR,AV2_HAIR_N)}<div class="label" style="margin-top:10px">Hairstyle</div>${pics("style",AV2_STYLES)}`:""}
+  ${avTab==="extras"?`<div class="btn-row" style="margin-top:10px;flex-wrap:wrap">${tog("glasses","Glasses")}${tog("ear","Earrings")}${tog("freck","Freckles")}${tog("lips","Lipstick")}${av.sex!=="f"?tog("bald","Go bald with age"):""}</div>`:""}
+  <div class="btn-row" style="margin-top:12px"><button class="btn sm" data-act="avset2" data-k="random" data-v="1">Surprise me</button><button class="btn primary" data-act="hide">Done</button></div>`);
+}
+function avSet(k,v){
+ S.av=avUp(S.av||avDefault());const av=S.av;
+ if(k==="random"){const w=av.w;S.av=avDefault();S.av.w=w;return}
+ if(k==="sex"){av.sex=v;if(v==="f"){av.bald=false;if(["stubble","beard","bigbeard","goatee","tache"].includes(av.face))av.face="none"}return}
+ if(["glasses","ear","freck","lips","bald"].includes(k)){av[k]=v==="1";return}
+ av[k]=/^\d+$/.test(v)?+v:v;
+}
+/* Your weight drifts with how you live: stress and takeaways up, the gym and running down */
+function bodyDay(){
+ const av=S.av&&avUp(S.av);if(!av||S.over)return;const a=age();
+ let t=.12+(S.stress>65?.22:0)+(S.life&&S.life.gym?-.2:0)+(S.hobby&&S.hobby.k==="run"?-.15:0)+(a>40?(a-40)*.006:0)+(["chef","tvchef"].includes(S.path)?.15:0)+(S.health<40?.08:0)+(S.homeLife>70?.04:0);
+ av.w=+clamp((av.w??.15)+(clamp(t,0,1)-(av.w??.15))*.025,0,1).toFixed(3);
+}
+
+/* ---- Your photo album: every big moment, birthday, holiday and Christmas, with you in it at the age you were ---- */
+const pR=(x,y,w,h,f,e="")=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${e}/>`;
+const pC=(x,y,r,f,e="")=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${e}/>`;
+const pP=(d,f,e="")=>`<path d="${d}" fill="${f}" ${e}/>`;
+const pCloud=(x,y,s)=>`<g fill="#fff" opacity=".9">${pC(x,y,8*s,"#fff")}${pC(x+9*s,y-4*s,10*s,"#fff")}${pC(x+19*s,y,8*s,"#fff")}</g>`;
+const pTree=(x,y,s,c)=>pR(x-2*s,y,4*s,16*s,"#7A5B3A")+pC(x,y-3*s,11*s,c||"#4E8A4A")+pC(x-7*s,y+2*s,8*s,c||"#5A9A55")+pC(x+7*s,y+2*s,8*s,c||"#5A9A55");
+const pWins=(x,y,cols,rows,w,h,gx,gy,f)=>{let o="";for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)o+=pR(x+i*gx,y+j*gy,w,h,typeof f==="function"?f(i,j):f);return o};
+const pGround=(y,c)=>pR(0,y,200,150-y,c);
+const pSkyline=(c,lit)=>[[0,60,28],[26,40,22],[46,72,30],[74,30,24],[96,52,20],[114,20,26],[138,46,22],[158,64,24],[180,38,22]].map(([x,y,w],i)=>pR(x,y,w,120-y,c)+(lit?pWins(x+4,y+6,Math.floor((w-6)/7),Math.floor((112-y)/10),3,4,7,10,(a,b)=>(a*7+b*3+i)%4?"#2B3A50":lit):"")).join("");
+const PH_BG={
+ park:()=>pR(0,0,200,150,"#BFE0F2")+pC(165,25,12,"#F6D44A")+pCloud(30,28,1)+pCloud(110,18,.8)+pGround(100,"#8CC46E")+pP("M0 100 Q60 90 120 100 T200 98 V106 H0Z","#7AB85E")+pTree(22,70,1.3)+pTree(182,74,1.1),
+ beach:()=>pR(0,0,200,150,"#9FD6F0")+pC(160,26,13,"#F6D44A")+pR(0,80,200,24,"#3D9CC8")+AVL("M10 88 q6 -3 12 0 M60 94 q6 -3 12 0 M130 90 q6 -3 12 0","#fff",1.2)+pGround(104,"#F0D49A")+pP("M176 104 Q172 70 180 44 L184 44 Q178 70 182 104Z","#7A5B3A")+AVL("M182 46 C166 38 156 44 150 52 M182 46 C196 38 204 44 206 50 M182 46 C176 30 164 28 158 30 M182 46 C190 30 200 28 204 32","#3E8E5E",5)+AVL("M26 104 L26 70","#888",2)+pP("M6 72 Q26 52 46 72Z","#E86A7A")+pP("M16 72 Q26 52 36 72Z","#F2F4F5"),
+ city:()=>pR(0,0,200,150,"#F2C9A0")+pR(0,0,200,40,"#E8A98A")+pSkyline("#3A4A66","#F6D98A")+pGround(118,"#5A6470")+AVL("M0 134 H200","#E9C46A",2,.6),
+ paris:()=>pR(0,0,200,150,"#F6D5DA")+pCloud(20,30,.8)+pP("M150 14 L146 54 L136 112 H144 Q150 98 156 112 H164 L154 54Z","#6B5A4A")+pR(143,52,14,3,"#6B5A4A")+pR(140,80,20,3,"#6B5A4A")+pTree(30,84,1)+pTree(70,88,.8)+pGround(112,"#D9CBB5")+AVL("M0 120 H200","#BFAF94",1),
+ nyc:()=>pR(0,0,200,150,"#CFE3F2")+pSkyline("#7F8C99")+pR(98,6,6,20,"#7F8C99")+pR(100,0,2,8,"#7F8C99")+pGround(118,"#4A4F55")+`<g transform="translate(140 116)">${pR(0,0,48,14,"#F2C230",'rx="3"')}${pR(8,-8,30,9,"#F2C230",'rx="2"')}${pR(11,-6,11,6,"#9CC0D2")}${pR(25,-6,11,6,"#9CC0D2")}${pC(10,14,4,"#1B1B1B")}${pC(38,14,4,"#1B1B1B")}</g>`,
+ ski:()=>pR(0,0,200,150,"#8FC7F0")+pP("M0 100 L48 28 L82 70 L128 16 L200 92 V150 H0Z","#E8F0F6")+pP("M48 28 L60 46 L52 44 L46 52 L38 44Z M128 16 L142 36 L132 32 L126 40 L118 32Z","#fff")+[16,36,170,188].map(x=>pP(`M${x} 96 L${x-8} 112 H${x+8}Z`,"#2E5E3E")).join("")+pGround(110,"#F7FAFC")+AVL("M0 30 L200 10","#555",1)+pR(120,10,10,8,"#C0453A"),
+ safari:()=>pR(0,0,200,150,"#F9D58A")+pR(0,0,200,50,"#F6B26B")+pC(140,70,30,"#FBE7A8",'opacity=".9"')+pGround(100,"#D9B26A")+pR(160,64,4,40,"#3E3A2A")+`<ellipse cx="162" cy="62" rx="30" ry="7" fill="#3E3A2A"/>`+pP("M40 100 L42 74 L40 52 L46 40 L52 42 L48 54 L52 74 L60 74 L62 100 L58 100 L56 82 L46 82 L44 100Z","#3E3A2A"),
+ thai:()=>pR(0,0,200,150,"#A9E2F0")+pR(0,70,200,44,"#2FB5C8")+pP("M20 72 Q18 20 40 22 Q60 26 56 72Z","#5E8A5A")+pP("M150 72 Q148 34 168 30 Q190 34 186 72Z","#6E9A62")+`<g transform="translate(78 84)">${pP("M0 6 L60 6 L54 14 L8 14Z","#8C5A3C")}${pR(30,-12,1.5,18,"#555")}${pP("M31 -12 L42 -8 L31 -4Z","#E86A7A")}</g>`+pGround(114,"#F0D49A"),
+ cruise:()=>pR(0,0,200,150,"#BFE3F2")+pR(0,60,200,40,"#3D8CC8")+pCloud(140,22,1)+pC(30,24,10,"#F6D44A")+pGround(100,"#E9E4D8")+pR(0,96,200,3,"#F2F4F5")+[0,25,50,75,100,125,150,175,200].map(x=>pR(x,96,2,20,"#F2F4F5")).join("")+pR(0,112,200,3,"#F2F4F5")+`<g transform="translate(176 96)">${pC(0,0,9,"#E86A7A")}${pC(0,0,5,"#E9E4D8")}</g>`,
+ wales:()=>pR(0,0,200,150,"#9AA6AE")+pP("M0 90 Q50 50 100 80 T200 70 V150 H0Z","#6E9A62")+pP("M0 110 Q60 86 120 104 T200 96 V150 H0Z","#5E8A52")+pP("M150 112 L170 82 L190 112Z","#E07A2E")+pP("M170 82 L176 112 H164Z","#B85C1E")+[...Array(16)].map((_,i)=>AVL(`M${i*13+4} ${(i*17)%40+6} l-4 9`,"#DDE6EC",1)).join(""),
+ iceland:()=>pR(0,0,200,150,"#0E1B33")+[...Array(18)].map((_,i)=>pC((i*47)%200,(i*13)%60,.8,"#fff")).join("")+AVL("M0 50 Q40 20 80 46 T160 30 T220 40","#4BE3A0",10,.35)+AVL("M0 64 Q50 36 100 58 T200 44","#7FE3C8",6,.3)+pP("M0 104 L40 76 L70 96 L110 70 L150 98 L200 80 V150 H0Z","#2B3A50")+pGround(110,"#DDE8F0"),
+ japan:()=>pR(0,0,200,150,"#F8E1E7")+pP("M60 100 L100 40 L140 100Z","#8A93A6")+pP("M88 58 L100 40 L112 58 L106 56 L100 60 L94 56Z","#fff")+pR(150,50,4,60,"#C0453A")+pR(182,50,4,60,"#C0453A")+pR(142,46,52,6,"#C0453A")+pR(146,58,44,3,"#C0453A")+pGround(108,"#CFE0C6")+pR(14,60,5,50,"#6B4A3A")+[...Array(12)].map((_,i)=>pC(8+(i*11)%40,40+(i*7)%26,7,i%2?"#F4B6C6":"#F9CCD8")).join(""),
+ church:()=>pR(0,0,200,150,"#F3EDE2")+`<path d="M86 104 V40 A14 14 0 0 1 114 40 V104Z" fill="#9CC8EE" stroke="#C9B48A" stroke-width="3"/>`+pR(99,26,2,78,"#C9B48A")+pR(86,62,28,2,"#C9B48A")+[...Array(15)].map((_,i)=>{const t=Math.PI*i/14;return pC(100-Math.cos(t)*78,128-Math.sin(t)*96,6,i%3===0?"#F2B8C6":i%3===1?"#fff":"#F6D44A")+pC(100-Math.cos(t)*78,128-Math.sin(t)*96,2,"#E9C46A")}).join("")+pGround(126,"#D9C7A8"),
+ ward:()=>pR(0,0,200,150,"#E6F0F2")+pR(126,14,56,46,"#9FD0EE",'stroke="#fff" stroke-width="4"')+pC(166,30,7,"#F6D44A")+pR(110,8,90,4,"#B9C2C8")+pP("M112 12 Q118 40 112 70 L124 70 Q128 40 124 12Z","#7FB2E5")+pR(0,96,200,4,"#7FB2E5",'opacity=".5"')+[["#9CC8EE",20,22],["#F2B8C6",34,16],["#F6E7A8",46,26]].map(([c,x,y])=>`<ellipse cx="${x}" cy="${y}" rx="8" ry="10" fill="${c}"/>`+AVL(`M${x} ${y+10} Q${x+3} ${y+30} ${x} ${y+50}`,"#999",.8)).join(""),
+ house:()=>pR(0,0,200,150,"#BFE0F2")+pCloud(150,20,.9)+pGround(112,"#8CC46E")+pP("M40 50 L100 14 L160 50Z","#7A1F2B")+pR(46,50,108,62,"#E9DCC6")+pR(88,74,24,38,"#2B3A50")+pR(54,60,22,18,"#9CC0D2",'stroke="#fff" stroke-width="2"')+pR(124,60,22,18,"#9CC0D2",'stroke="#fff" stroke-width="2"')+pR(170,70,3,42,"#7A5B3A")+pR(160,64,36,18,"#C0453A")+`<text x="178" y="77" font-size="9" font-weight="800" fill="#fff" text-anchor="middle" font-family="system-ui">SOLD</text>`,
+ lounge:()=>pR(0,0,200,150,"#E9DCC6")+[...Array(10)].map((_,i)=>pR(i*20+8,0,4,96,"#DFCFB4")).join("")+pR(22,22,30,24,"#B8862B")+pR(25,25,24,18,"#9FD0EE")+pR(150,16,26,32,"#B8862B")+pR(153,19,20,26,"#E8B999")+AVL("M14 60 V100","#555",2)+pP("M6 60 L14 46 L22 60Z","#E9C46A")+pR(0,96,200,54,"#B9A27A")+`<path d="M20 120 Q20 92 40 92 H160 Q180 92 180 120Z" fill="#7A8C6E"/>`,
+ xmas:()=>pR(0,0,200,150,"#3A2A2A")+pR(14,16,40,34,"#1C2A44",'stroke="#E9DCC6" stroke-width="3"')+[...Array(8)].map((_,i)=>pC(18+(i*9)%34,20+(i*7)%28,1.2,"#fff")).join("")+AVL("M0 8 Q25 18 50 8 T100 8 T150 8 T200 8","#555",1)+[...Array(14)].map((_,i)=>pC(i*15+6,10+Math.abs(Math.sin(i))*7,2.2,["#E86A7A","#F6D44A","#7FB2E5","#4BBA85"][i%4])).join("")+pP("M172 10 L198 104 H146Z","#2F7A3E")+[[166,40,"#E86A7A"],[178,60,"#F6D44A"],[160,76,"#7FB2E5"],[184,88,"#E86A7A"],[170,96,"#F6D44A"]].map(([x,y,c])=>pC(x,y,3,c)).join("")+pP("M172 2 l2 6 6 0 -5 4 2 6 -5 -4 -5 4 2 -6 -5 -4 6 0Z","#F6D44A")+pR(0,112,200,38,"#5A3A2A")+pR(10,98,18,16,"#C0453A")+pR(18,98,2,16,"#F6D44A")+pR(30,104,14,10,"#3E6FB0"),
+ party:()=>pR(0,0,200,150,"#2A1F3A")+[...Array(9)].map((_,i)=>pP(`M${i*24} 6 L${i*24+12} 22 L${i*24+24} 6Z`,["#E86A7A","#F6D44A","#7FB2E5","#4BBA85"][i%4])).join("")+AVL("M0 6 H200","#fff",1,.6)+[[18,40,"#E86A7A"],[34,52,"#F6D44A"],[170,44,"#7FB2E5"],[186,56,"#4BBA85"]].map(([x,y,c])=>`<ellipse cx="${x}" cy="${y}" rx="9" ry="11" fill="${c}"/>`+AVL(`M${x} ${y+11} Q${x+4} ${y+30} ${x} ${y+56}`,"#bbb",.8)).join("")+[...Array(16)].map((_,i)=>pC((i*53)%200,30+(i*29)%70,1,"#fff",'opacity=".6"')).join("")+pGround(124,"#3A2E4A"),
+ office:()=>pR(0,0,200,150,"#E3E8EC")+pR(10,10,180,86,"#BFD4E2",'stroke="#8E969A" stroke-width="3"')+pSkyline("#9AAEC0").replace(/<rect/g,'<rect opacity=".6"')+pR(10,96,180,4,"#8E969A")+[70,130].map(x=>pR(x,10,3,86,"#8E969A")).join("")+pGround(110,"#B9A27A")+pR(170,92,14,20,"#7A5B3A")+pC(177,84,10,"#4E8A4A"),
+ trading:()=>pR(0,0,200,150,"#1C2329")+[0,1,2].map(i=>`<g transform="translate(${8+i*64} 14)">${pR(0,0,56,38,"#0E1418",'rx="2"')}${AVL(`M4 ${30-i*3} L14 ${22+i*2} L24 ${26-i*4} L34 ${14+i*3} L44 ${18-i*2} L52 ${8+i}`,i===1?"#EA6B5D":"#4BBA85",2)}</g>`).join("")+pR(0,58,200,4,"#3A4650")+pGround(112,"#2B3A44"),
+ stage:()=>pR(0,0,200,150,"#16141F")+[["#D7A744",40],["#7FB2E5",100],["#EA6B5D",160]].map(([c,x])=>pP(`M${x} 0 L${x-34} 118 L${x+34} 118Z`,c,'opacity=".2"')).join("")+pGround(118,"#3A4650")+[...Array(12)].map((_,i)=>pC(8+i*17,148,8,"#0C0B12")).join(""),
+ stadium:()=>pR(0,0,200,150,"#2E3E4C")+[...Array(60)].map((_,i)=>pC((i*37)%200+2,6+(i*13)%46,2.4,["#B3262E","#F2F4F5","#D7A744","#7FB2E5"][i%4])).join("")+pR(0,56,200,10,"#1D5FA8")+pR(0,66,200,84,"#4A9A55")+[...Array(5)].map((_,i)=>pR(i*40,66,20,84,"#3E8E4A")).join(""),
+ court:()=>pR(0,0,200,150,"#E9E4DA")+pP("M20 34 L100 6 L180 34Z","#D9D3C7")+pR(24,34,152,6,"#CFC6B4")+[0,1,2,3,4,5].map(i=>pR(34+i*24,40,12,64,"#F2EEE6")).join("")+pR(16,104,168,6,"#CFC6B4")+pGround(110,"#C9C2B2"),
+ school:()=>pR(0,0,200,150,"#F2E8D5")+pR(30,14,140,60,"#2F5D46",'stroke="#8C6A44" stroke-width="4"')+`<text x="60" y="44" font-size="14" fill="#F2F4F5" font-family="cursive">2 + 2 = 4</text>`+AVL("M120 30 l20 20 M140 30 l-20 20","#F2F4F5",1.5,.6)+pC(184,20,8,"#fff",'stroke="#333"')+pGround(110,"#C9A87A"),
+ grad:()=>pR(0,0,200,150,"#7A5236")+[...Array(8)].map((_,i)=>pR(i*26,0,2,110,"#5E3E28")).join("")+[[24,"#3E4C8A"],[84,"#B3262E"],[150,"#3E4C8A"]].map(([x,c])=>pP(`M${x} 0 H${x+26} V44 L${x+13} 36 L${x} 44Z`,c)+pC(x+13,18,5,"#D7A744")).join("")+pGround(110,"#4A3424"),
+ war:()=>pR(0,0,200,150,"#E9D9B5")+pGround(96,"#C9A86A")+pP("M120 58 Q150 40 196 54 L200 96 H110Z","#6B7048")+[...Array(6)].map((_,i)=>pC(124+i*14,62+(i%2)*8,5,"#7E8456")).join("")+[...Array(9)].map((_,i)=>`<ellipse cx="${i*22+10}" cy="114" rx="12" ry="6" fill="${i%2?"#A8946A":"#B5A378"}"/>`).join("")+`<g transform="translate(20 70)">${pR(0,8,56,16,"#4E5B3A",'rx="3"')}${pR(12,0,28,10,"#5E6B45",'rx="3"')}${pR(36,3,30,3,"#4E5B3A")}${[0,1,2,3].map(i=>pC(8+i*13,24,5,"#2B2B2B")).join("")}</g>`,
+ space:()=>pR(0,0,200,150,"#0E1726")+[...Array(30)].map((_,i)=>pC((i*61)%200,(i*23)%110,.8,"#fff")).join("")+`<ellipse cx="100" cy="190" rx="170" ry="80" fill="#3E6FB0"/>`+`<ellipse cx="70" cy="140" rx="40" ry="12" fill="#4BBA85" opacity=".7"/>`+pR(140,20,40,14,"#C9CDD1")+pR(124,24,16,6,"#3E6FB0")+pR(180,24,16,6,"#3E6FB0"),
+ kitchen:()=>pR(0,0,200,150,"#D9DEE0")+pWins(0,0,10,5,19,19,20,20,"#E3E7E9")+pR(40,6,120,22,"#B5BBC1")+[30,60,150,176].map(x=>AVL(`M${x} 30 V44`,"#666",1)+`<ellipse cx="${x}" cy="48" rx="8" ry="4" fill="#8E969A"/>`).join("")+pGround(110,"#B5BBC1")+[50,100,150].map(x=>pP(`M${x} 108 Q${x+5} 96 ${x+10} 108 Q${x+15} 94 ${x+20} 108Z`,"#E07A2E",'opacity=".85"')).join(""),
+ studio:()=>pR(0,0,200,150,"#1C2329")+pR(20,10,160,70,"#3E4C8A")+[...Array(6)].map((_,i)=>pC(40+i*24,46,10,["#E86A7A","#F6D44A","#7FB2E5"][i%3],'opacity=".5"')).join("")+[16,184].map(x=>AVL(`M${x} 30 V112`,"#888",2)+pR(x-8,22,16,10,"#555")).join("")+pGround(112,"#2B3A44"),
+ funeral:()=>pR(0,0,200,150,"#B9C0C6")+pP("M150 60 L156 20 L162 60Z","#8E969A")+pR(146,60,20,40,"#9AA0A6")+pC(30,70,26,"#3E5A3E")+pR(28,80,4,30,"#4A3A2A")+pGround(100,"#6E8A62")+[[20,104],[56,100],[150,104],[184,100]].map(([x,y])=>`<path d="M${x-8} ${y+18} V${y+4} Q${x} ${y-6} ${x+8} ${y+4} V${y+18}Z" fill="#9AA0A6"/>`).join(""),
+ road:()=>pR(0,0,200,150,"#BFE0F2")+pCloud(30,24,.8)+pP("M0 96 Q60 70 120 90 T200 80 V112 H0Z","#8CC46E")+pGround(108,"#55606A")+[0,40,80,120,160].map(x=>pR(x+6,128,22,3,"#F2F4F5")).join(""),
+ night:()=>pR(0,0,200,150,"#1F2A44")+pC(170,22,10,"#F6E7A8")+[...Array(18)].map((_,i)=>pC((i*53)%200,(i*19)%46,1,"#fff")).join("")+pSkyline("#2B3A50","#E9C46A")+pGround(118,"#1A2232"),
+ hosp:()=>pR(0,0,200,150,"#EAF2F4")+pR(0,64,200,6,"#1D5FA8")+pR(140,20,40,90,"#C9DCE3",'stroke="#9AA0A6" stroke-width="2"')+pR(150,30,20,14,"#9FD0EE")+pR(20,16,26,26,"#fff",'stroke="#1D5FA8" stroke-width="2"')+pR(30,20,6,18,"#C0453A")+pR(24,26,18,6,"#C0453A")+pGround(110,"#C9D3D8"),
+ police:()=>pR(0,0,200,150,"#8E5A44")+pWins(0,0,12,10,15,6,17,9,"#7E4E3A")+pR(80,20,40,16,"#1D3A6E")+`<text x="100" y="32" font-size="9" font-weight="800" fill="#fff" text-anchor="middle" font-family="system-ui">POLICE</text>`+pC(100,12,6,"#9FD0EE")+pR(84,44,32,66,"#1D3A6E")+pGround(110,"#6A6E72"),
+ firestn:()=>pR(0,0,200,150,"#A9553E")+pWins(0,0,12,10,15,6,17,9,"#98483A")+[14,104].map(x=>pR(x,26,82,84,"#C8302F",'stroke="#7A1F1F" stroke-width="3"')+pWins(x+6,32,4,1,16,10,19,0,"#9FD0EE")).join("")+pGround(110,"#6A6E72"),
+ runway:()=>pR(0,0,200,150,"#BFDDF0")+pCloud(140,20,1)+pGround(104,"#55606A")+[0,50,100,150].map(x=>pR(x+10,124,26,3,"#F2F4F5")).join("")+`<g transform="translate(-20 50)"><path d="M0 30 Q6 18 30 18 H130 Q146 18 150 30 Q146 38 130 38 H30 Q6 38 0 30Z" fill="#F2F4F5" stroke="#9AA0A6"/><path d="M60 26 L96 -6 H110 L86 26Z" fill="#C9CDD1"/>${[...Array(7)].map((_,i)=>pC(40+i*13,26,2.6,"#7FB2E5")).join("")}</g>`,
+ vet:()=>pR(0,0,200,150,"#E6F2E8")+pC(40,34,14,"#4BBA85")+[[-6,-8],[6,-8],[-10,2],[10,2]].map(([x,y])=>pC(40+x,34+y,3.2,"#E6F2E8")).join("")+`<ellipse cx="40" cy="40" rx="6" ry="5" fill="#E6F2E8"/>`+pR(140,14,40,52,"#fff",'stroke="#9AA0A6"')+pC(160,36,10,"#E9B999")+pGround(110,"#C9D8CC"),
+ site:()=>pR(0,0,200,150,"#BFE0F2")+pR(150,6,5,104,"#E8B73A")+pR(60,6,140,5,"#E8B73A")+AVL("M90 11 V40","#555",1)+pR(84,40,12,8,"#6F7579")+pWins(10,40,4,5,26,2,30,14,"#9AA0A6")+[10,40,70,100].map(x=>pR(x,40,2,70,"#9AA0A6")).join("")+pGround(110,"#B5A378")+[30,170].map(x=>pP(`M${x} 112 L${x+6} 96 L${x+12} 112Z`,"#E07A2E")).join(""),
+ salon:()=>pR(0,0,200,150,"#EADFD6")+[30,100,170].map(x=>`<ellipse cx="${x}" cy="44" rx="22" ry="30" fill="#C9DCE3" stroke="#B8862B" stroke-width="3"/>`+[...Array(6)].map((_,i)=>pC(x+Math.cos(i)*24,44+Math.sin(i)*32,2,"#F6E7A8")).join("")).join("")+pGround(110,"#CFC4B8"),
+ parliament:()=>pR(0,0,200,150,"#C9DCE8")+pR(150,6,24,104,"#D8C9A3")+pC(162,30,9,"#F2EEE6",'stroke="#8A7A5A" stroke-width="2"')+pP("M150 6 L162 -10 L174 6Z","#8A7A5A")+pR(0,56,150,54,"#D8C9A3")+pWins(8,62,9,3,6,10,16,15,"#8A7A5A")+pGround(110,"#7A8A6E"),
+ pub:()=>pR(0,0,200,150,"#5A3A22")+pR(0,0,200,50,"#3E2816")+[...Array(9)].map((_,i)=>pR(10+i*21,14,8,22,["#4E8A4A","#B8862B","#7A1F2B"][i%3],'rx="2"')).join("")+pR(0,92,200,58,"#7A4E2E")+pR(0,92,200,5,"#9A6A3E")+[60,90,120].map(x=>pR(x,72,6,22,"#D7A744")+pR(x-2,66,10,8,"#1C1C24")).join(""),
+ palace:()=>pR(0,0,200,150,"#C9DCE8")+pR(20,30,160,70,"#E6DCC6")+pWins(30,40,8,2,10,14,19,26,"#8A93A6")+pR(20,24,160,6,"#D8C9A3")+[...Array(20)].map((_,i)=>pR(i*10+2,80,2,30,"#1C1C24")).join("")+pR(0,80,200,3,"#D7A744")+pGround(110,"#C9C2B2"),
+ seaside:()=>pR(0,0,200,150,"#AFDDF2")+pR(0,70,200,32,"#4FA8D0")+pR(110,56,90,6,"#7A5B3A")+[120,140,160,180].map(x=>pR(x,62,3,30,"#7A5B3A")).join("")+AVL("M30 30 q4 -4 8 0 q4 -4 8 0 M70 20 q3 -3 6 0 q3 -3 6 0","#555",1.2)+pGround(102,"#F0D49A")+[10,34,58].map((x,i)=>pR(x,84,20,20,["#E86A7A","#7FB2E5","#F6D44A"][i])+pP(`M${x-2} 84 L${x+10} 76 L${x+22} 84Z`,"#F2F4F5")).join("")
+};
+const PH_WORK={bank:"trading",law:"court",pol:"parliament",doc:"hosp",nurse:"hosp",police:"police",fire:"firestn",pilot:"runway",foot:"stadium",manager:"stadium",clubowner:"stadium",teach:"school",soldier:"war",spy:"night",astronaut:"space",chef:"kitchen",tvchef:"studio",music:"stage",dj:"stage",influencer:"studio",actor:"stage",vet:"vet",arch:"site",elec:"site",plumb:"house",hair:"salon",tech:"office"};
+const PH_HOME=["lounge","party","pub","park","house","xmas","beach","road","seaside","church","ward","funeral","paris","nyc","ski","safari","thai","cruise","wales","iceland","japan","city"];
+const TRIP_PH={beach:["beach","sombrero"],paris:["paris",""],safari:["safari",""],ski:["ski","beanie"],thai:["thai",""],cruise:["cruise","captain"],wales:["wales",""],iceland:["iceland","beanie"],nyc:["nyc",""],japan:["japan",""]};
+/* Props in front of the people. me = where you stand: [centre x, top y, size] */
+function phProps(ph,me){
+ const [mx,my,ms]=me||[100,70,80],x=ph.x,out=[];
+ const conf=()=>[...Array(26)].map((_,i)=>pR((i*37+11)%196,(i*23+5)%120,3,5,["#E86A7A","#F6D44A","#7FB2E5","#4BBA85","#fff"][i%5],`transform="rotate(${(i*47)%90} ${(i*37+11)%196} ${(i*23+5)%120})"`)).join("");
+ switch(ph.pr){
+  case"cake":{const n=+x||0,c=Math.min(n,9),cx=Math.min(176,Math.max(24,mx+ms*.46));out.push(`<g transform="translate(${cx.toFixed(0)} 128)">${pR(-26,10,52,6,"#F2F4F5",'rx="3"')}${pR(-20,-6,40,18,"#F2B8C6",'rx="3"')}${pR(-20,-6,40,5,"#fff",'rx="2"')}${[...Array(c)].map((_,i)=>{const cx=-16+i*(32/Math.max(1,c-1||1));return pR(cx-1,-14,2,8,["#7FB2E5","#F6D44A","#E86A7A"][i%3])+`<ellipse cx="${cx}" cy="-16" rx="1.6" ry="2.6" fill="#F6A33D"/>`}).join("")}${n?`<text x="0" y="8" font-size="9" font-weight="800" fill="#B3262E" text-anchor="middle" font-family="system-ui">${n}</text>`:""}</g>`);break}
+  case"nums":out.push(`<g transform="translate(160 8)"><text x="0" y="34" font-size="38" font-weight="900" fill="#E9C46A" stroke="#B8862B" stroke-width="1.5" font-family="system-ui" text-anchor="middle">${esc(String(x||""))}</text>${AVL("M-6 36 Q-4 60 -8 90 M8 36 Q10 60 6 90","#bbb",.8)}</g>`);out.push(conf());break;
+  case"confetti":out.push(conf());break;
+  case"baby":out.push(`<g transform="translate(${mx} ${my+ms*.78})"><ellipse cx="0" cy="0" rx="16" ry="9" fill="#F7F4EC" stroke="#D9D3C7"/>${pC(10,-2,6,"#F1CFB4")}${pC(12,-3,.8,"#333")}${pP("M-14 -6 Q0 -12 6 -6","#9CC8EE")}</g>`);break;
+  case"trophy":out.push(`<g transform="translate(${mx+ms*.28} ${my+ms*.62})"><path d="M-9 0 H9 V7 A9 9 0 0 1 -9 7Z" fill="#E9C46A" stroke="#B8862B"/>${AVL("M-9 2 H-13 A4 4 0 0 0 -9 9 M9 2 H13 A4 4 0 0 1 9 9","#E9C46A",2)}${pR(-2,15,4,6,"#B8862B")}${pR(-7,21,14,4,"#8A6A2E")}</g>`);break;
+  case"medal":out.push(`<g transform="translate(${mx-ms*.16} ${my+ms*.82})">${pP("M-4 -8 L0 0 L4 -8Z","#3E4C8A")}${pC(0,3,4,"#E9C46A",'stroke="#B8862B"')}</g>`);break;
+  case"rosette":out.push(`<g transform="translate(${mx-ms*.16} ${my+ms*.82})">${pP("M-4 2 L-6 12 L0 8 L6 12 L4 2Z","#3E4C8A")}${pC(0,0,6,"#3E78B2")}${pC(0,0,3,"#F2F4F5")}</g>`);out.push(conf());break;
+  case"keys":out.push(`<g transform="translate(${mx+ms*.3} ${my+ms*.5}) rotate(-20)">${pC(0,0,5,"none",'stroke="#D7A744" stroke-width="2"')}${pR(4,-1.5,14,3,"#D7A744")}${pR(14,1,2,4,"#D7A744")}${pR(10,1,2,3,"#D7A744")}</g>`);break;
+  case"champ":out.push(`<g transform="translate(100 30)">${[[-8,-12],[8,12]].map(([dx,r])=>`<g transform="translate(${dx} 0) rotate(${r})">${pP("M-4 -10 H4 L2 4 H-2Z","#F6E7A8",'stroke="#ccc" stroke-width=".6"')}${pR(-.6,4,1.2,10,"#ccc")}${pR(-4,14,8,1.6,"#ccc")}</g>`).join("")}${pC(0,-14,2,"#fff")}${pC(-4,-18,1.2,"#fff")}${pC(5,-19,1.4,"#fff")}</g>`);break;
+  case"case":out.push(`<g transform="translate(${Math.min(182,mx+ms*.55)} 122)">${pR(-12,0,24,26,"#C0453A",'rx="3"')}${pR(-5,-5,10,6,"none",'stroke="#555" stroke-width="2"')}${pR(-12,8,24,3,"#8A2E28")}</g>`);break;
+  case"flowers":out.push(`<g transform="translate(${mx+ms*.26} ${my+ms*.72})">${AVL("M0 0 L-3 18 M0 0 L3 18 M0 0 L0 18","#4E8A4A",1.5)}${[[-6,-2],[0,-6],[6,-2],[-3,-8],[4,-9]].map(([a,b],i)=>pC(a,b,3.6,["#E86A7A","#F6D44A","#F2F4F5","#E86A7A","#9CC8EE"][i])).join("")}</g>`);break;
+  case"gift":out.push(`<g transform="translate(${Math.min(176,mx+ms*.5)} 124)">${pR(-12,0,24,20,"#3E6FB0")}${pR(-2,0,4,20,"#F6D44A")}${pR(-12,6,24,4,"#F6D44A")}${pP("M0 0 Q-10 -10 -8 0 M0 0 Q10 -10 8 0","none",'stroke="#F6D44A" stroke-width="2"')}</g>`);break;
+  case"cheque":out.push(`<g transform="translate(100 128) rotate(-4)">${pR(-60,-10,120,30,"#F7F4EC",'stroke="#7FB2E5" stroke-width="2"')}<text x="0" y="10" font-size="13" font-weight="800" fill="#2B3A50" text-anchor="middle" font-family="system-ui">${esc(String(x||"£1,000,000"))}</text></g>`);out.push(conf());break;
+  case"car":{const c=x||"#3E6FB0";out.push(`<g transform="translate(118 104)"><path d="M0 34 V22 Q2 16 12 14 L26 4 H58 L72 14 Q80 16 80 22 V34Z" fill="${c}"/>${pR(30,8,14,9,"#9CC0D2")}${pR(46,8,14,9,"#9CC0D2")}${pC(18,36,8,"#1B1B1B")}${pC(64,36,8,"#1B1B1B")}${pC(18,36,3,"#ccc")}${pC(64,36,3,"#ccc")}</g>`);break}
+  case"stone":out.push(`<g transform="translate(100 62)"><path d="M-36 88 V10 Q0 -22 36 10 V88Z" fill="#9AA0A6" stroke="#7F868A" stroke-width="2"/><text x="0" y="16" font-size="10" font-weight="700" fill="#3A3F44" text-anchor="middle" font-family="serif">R.I.P.</text><text x="0" y="34" font-size="8" fill="#3A3F44" text-anchor="middle" font-family="serif">${esc(String(x||"").slice(0,18))}</text>${pC(-18,82,4,"#E86A7A")}${pC(-12,84,4,"#F6D44A")}${pC(16,83,4,"#F2F4F5")}</g>`);break;
+  case"boxes":out.push(pR(130,110,34,30,"#C9A87A",'stroke="#9A7A4E"')+pR(150,88,30,24,"#C9A87A",'stroke="#9A7A4E"')+AVL("M134 120 H160","#9A7A4E",1));break;
+  case"mic":out.push(AVL(`M${mx+ms*.42} ${my+ms*.62} V150`,"#555",2)+`<ellipse cx="${mx+ms*.42}" cy="${my+ms*.58}" rx="3.5" ry="5" fill="#333"/>`);break;
+  case"ball":out.push(pC(Math.min(184,mx+ms*.5),140,9,"#fff",'stroke="#333"')+pP(`M${Math.min(184,mx+ms*.5)-4} 136 l4 -3 4 3 -1.5 5 h-5Z`,"#333"));break;
+  case"welcome":out.push(`<g transform="translate(100 18)">${AVL("M-90 -6 Q0 10 90 -6","#888",1)}${pR(-62,-4,124,18,"#F2F4F5",'stroke="#C0453A"')}<text x="0" y="9" font-size="11" font-weight="800" fill="#C0453A" text-anchor="middle" font-family="system-ui">WELCOME HOME</text></g>`);break;
+  case"star":out.push(`<g transform="translate(166 30) scale(1.6)">${pP("M0 -12 L3.5 -4 L12 -4 L5 1.5 L7.5 10 L0 5 L-7.5 10 L-5 1.5 L-12 -4 L-3.5 -4Z","#E9C46A",'stroke="#B8862B"')}</g>`);break;
+  case"balloons":out.push([[20,22,"#E86A7A"],[34,14,"#F6D44A"],[46,26,"#7FB2E5"]].map(([bx,by,c])=>`<ellipse cx="${bx}" cy="${by}" rx="9" ry="11" fill="${c}"/>`+AVL(`M${bx} ${by+11} Q${bx+6} ${by+50} ${bx+10} ${by+80}`,"#999",.8)).join(""));break;
+  case"book":out.push(`<g transform="translate(${mx+ms*.26} ${my+ms*.66}) rotate(-8)">${pR(-9,-12,18,24,"#7A1F2B")}${pR(-7,-10,14,4,"#E9C46A")}</g>`);break;
+  case"pint":out.push([[70,0],[130,1]].map(([px,i])=>`<g transform="translate(${px} 118)">${pP("M-6 -16 H6 L5 10 H-5Z","#E0A030",'opacity=".9"')}${pR(-6,-18,12,4,"#FBF6E8")}</g>`).join(""));break;
+  case"tea":out.push(`<g transform="translate(140 126)">${pP("M-8 -8 H8 V4 Q8 10 0 10 Q-8 10 -8 4Z","#F2F4F5",'stroke="#9AA0A6"')}${AVL("M8 -4 Q14 -4 13 2 Q12 5 8 4","#9AA0A6",1.5)}${AVL("M-3 -12 q2 -4 0 -8 M3 -12 q2 -4 0 -8","#bbb",1)}</g>`);break;
+ }
+ return out.join("");
+}
+function phPerson(code,ph){
+ const [r,name,sx,ag]=String(code).split(":");
+ if(r==="me")return{me:1,a:ph.a,st:{av:Object.assign({},ph.av||S.av,{w:ph.w}),ageOver:ph.a,photo:1,outfit:ph.o||(PH_HOME.includes(ph.sc)?"casual":undefined),hat:ph.h,path:ph.p,nw:ph.nw,smile:!ph.sad,seed:"me"}};
+ if(["dog","cat"].includes(r)||r==="pet")return{pet:r==="pet"?name:r};
+ if(r==="baby")return{baby:1};
+ const sex=r==="mum"?"f":r==="dad"?"m":sx==="m"||sx==="f"?sx:undefined,a=+(r==="mum"||r==="dad"?sx:ag)||30,av=avDefault(name+r,sex);
+ if(a<16){av.face="none";av.bald=false;av.glasses=false;av.lips=false}
+ const shared=["party","santa","beanie","sombrero","flowers"].includes(ph.h)?ph.h:"";
+ const out=["wedding","black","xmas","hols"].includes(ph.o)?ph.o:a<18?"casual":"casual";
+ return{a,st:{av,ageOver:a,photo:1,outfit:out,hat:shared,path:null,nw:0,smile:!ph.sad,seed:name}};
+}
+function photoSVG(ph,av,cls){
+ const bg=(PH_BG[ph.sc]||PH_BG.park)();
+ const ppl=(ph.c||["me"]).map(c=>phPerson(c,Object.assign({av},ph))).filter(Boolean);
+ const humans=ppl.filter(p=>p.st),pets=ppl.filter(p=>p.pet),babies=ppl.filter(p=>p.baby);
+ const size=p=>p.a<6?44:p.a<12?54:p.a<16?66:84,step=p=>size(p)*(humans.length>3?.56:.66);
+ let tot=humans.reduce((t,p)=>t+step(p),0),x=100-tot/2+(humans[0]?step(humans[0])/2:0)-(pets.length?10:0),me=null,people="";
+ humans.forEach((p,i)=>{const z=size(p),y=150-z+(z<84?0:2);if(p.me)me=[x,y,z];
+  people+=`<svg x="${(x-z/2).toFixed(1)}" y="${y}" width="${z}" height="${z}" viewBox="0 0 100 100" overflow="visible">${avatarInner(p.st)}</svg>`;if(i<humans.length-1)x+=(step(p)+step(humans[i+1]))/2});
+ const petSVG=(k,px)=>k==="cat"?`<g transform="translate(${px} 128)" fill="#8E969A"><ellipse cx="0" cy="12" rx="12" ry="9"/><circle cx="10" cy="0" r="7"/><path d="M5 -5 L7 -12 L10 -6Z M12 -6 L15 -12 L16 -4Z"/><path d="M-12 12 Q-22 4 -16 -6" stroke="#8E969A" stroke-width="3" fill="none"/>${pC(12,-1,1,"#2B2B2B")}</g>`:`<g transform="translate(${px} 124)" fill="#8C5A3C"><ellipse cx="0" cy="12" rx="15" ry="8"/><circle cx="14" cy="2" r="7.5"/><path d="M16 -3 L22 -7 L21 3Z" fill="#6B4430"/>${pR(-11,16,4,10,"#8C5A3C")}${pR(7,16,4,10,"#8C5A3C")}<path d="M-15 10 Q-24 2 -20 -4" stroke="#8C5A3C" stroke-width="3" fill="none"/>${pC(17,1,1,"#1B1B1B")}</g>`;
+ const petsOut=pets.map((p,i)=>petSVG(p.pet,i%2?28:176)).join("");
+ const prop=babies.length&&ph.pr!=="baby"?phProps(Object.assign({},ph,{pr:"baby"}),me):"";
+ return `<svg viewBox="0 0 200 150" class="${cls||"photo-svg"}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${bg}${people}${petsOut}${prop}${phProps(ph,me)}</svg>`;
+}
+/* Who is in the picture right now */
+function castNow(o){
+ o=o||{};const c=["me"],a=Math.floor(age());
+ if(o.pt&&typeof inLove==="function"&&inLove()&&S.rel.name)c.push(`pt:${S.rel.name.split(" ")[0]}:${genderOf(S.rel.name)}:${Math.max(18,a+(h32(S.rel.name)%9)-4)}`);
+ if(o.kids)for(const k of S.children){const ka=kidAge(k);if(ka<0)continue;if(ka<1){c.push("baby");continue}if(o.kids!=="all"&&ka>=18)continue;c.push(`kid:${k.n}:${genderOf(k.n)}:${Math.floor(ka)}`)}
+ if(o.folks)for(const f of (S.folks||[]).filter(f=>f.alive))c.push(`${f.r==="par"?"fr":f.r}:${f.n}:${f.r==="par"?"x:":""}${Math.floor(folkAge(f))}`);
+ if(o.fr&&S.friend)c.push(`fr:${S.friend.n.split(" ")[0]}:${genderOf(S.friend.n)}:${Math.max(18,a+(h32(S.friend.n)%7)-3)}`);
+ if(o.pet&&S.pet)c.push(S.pet.kind==="cat"?"cat":"dog");
+ const ppl=c.filter(x=>!["dog","cat"].includes(x)),pets=c.filter(x=>["dog","cat"].includes(x));
+ return [...ppl.slice(0,5),...pets];
+}
+function phBase(){const nw=typeof netWorth==="function"?netWorth():0;return{a:Math.floor(age()),w:+(((S.av&&S.av.w)||.15)).toFixed(2),p:S.path,nw:nw>=5e6?5e6:nw>=5e5?5e5:nw>=4e4?4e4:0}}
+/* Work out the picture for a big moment */
+function photoFor(m){
+ const k=`${m.k||""} ${m.t||""}`,i=m.i,work=PH_WORK[S.path]||"office",uni=AV_UNIFORM[S.path]?"uniform":"";
+ const P=(sc,c,x)=>Object.assign({sc,c},x||{});
+ if(m.turn||/^(New trophy|Goal streak|Challenge complete)$/.test(m.k||""))return null;
+ if(/just married/i.test(k))return P("church",castNow({pt:1}),{o:"wedding",pr:"confetti"});
+ if(/family wedding/i.test(k))return P("church",castNow({pt:1}),{o:"wedding",pr:"flowers"});
+ if(/rest in peace/i.test(m.k||""))return P("funeral",[],{pr:"stone",x:S.name});
+ if(/happy birthday/i.test(m.k||"")){const n=+((m.t||"").match(/\d+/)||[0])[0];return P(n>=70?"lounge":"party",castNow({pt:1,kids:1,fr:1,pet:1}),{h:"party",pr:"nums",x:n})}
+ if(/happy 18th/i.test(k))return P("party",castNow({pt:1}),{h:"party",pr:"nums",x:18});
+ if(i==="baby")return P("ward",castNow({pt:1}),{pr:"baby"});
+ if(/adoption/i.test(k))return P("lounge",castNow({pt:1,kids:1}),{pr:"balloons"});
+ if(i==="candle")return P("funeral",castNow({pt:1}),{o:"black",pr:"flowers",sad:1});
+ if(/divorce|break-up/i.test(k))return P("lounge",["me"],{pr:"boxes",sad:1});
+ if(/lottery|scratch/i.test(k))return P("lounge",castNow({pt:1}),{pr:"cheque",h:"crown"});
+ if(/results day/i.test(k))return P("school",["me"],{pr:"confetti"});
+ if(/graduat|qualified|detective exam|course passed|training complete/i.test(k))return P("grad",castNow({}),{o:uni&&/training|course|detective/i.test(k)?"uniform":"gown",h:/graduat|qualified/i.test(k)?"mortar":""});
+ if(/wounded/i.test(k))return P("ward",["me"],{o:"hosp",pr:"flowers"});
+ if(/home from the front/i.test(k))return P("house",castNow({pt:1,kids:1,pet:1}),{o:"uniform",pr:"welcome"});
+ if(/gallantry|bravery/i.test(k))return P("palace",castNow({pt:1}),{o:uni?"uniform":"suit",pr:"medal"});
+ if(/called up|deployed|returned to unit/i.test(k))return P("war",["me"],{o:"uniform",h:"helmet"});
+ if(/cover blown|recruited/i.test(k))return P("night",["me"],{o:"suit"});
+ if(/selection passed/i.test(k))return P(S.path==="spy"?"night":"war",["me"],{o:"uniform",h:S.path==="soldier"?"helmet":""});
+ if(/election night/i.test(k))return P("parliament",castNow({pt:1}),{o:"suit",pr:"rosette"});
+ if(/record deal/i.test(k))return P("stage",["me"],{pr:"mic"});
+ if(/guide is out/i.test(k))return P("kitchen",["me"],{h:"chef",pr:"star"});
+ if(/taking silk/i.test(k))return P("court",castNow({pt:1}),{o:"suit",pr:"champ"});
+ if(/valuation show|television|breaking news/i.test(k))return P("studio",["me"],{o:"suit"});
+ if(/best in show/i.test(k))return P("park",["me","dog"],{pr:"trophy"});
+ if(/international debut|cup final|season/i.test(k))return P("stadium",["me"],{o:"kit",pr:i==="trophy"?"trophy":"ball"});
+ if(/mortgage paid off/i.test(k))return P("house",castNow({pt:1,kids:1,pet:1}),{pr:"champ"});
+ if(/a slower life/i.test(k))return P("park",castNow({pt:1,pet:1}),{});
+ if(/hero pet/i.test(k))return P("park",castNow({pet:1}).concat(S.pet?[]:["dog"]),{pr:"medal"});
+ if(/a gift/i.test(k))return P("lounge",castNow({pt:1}),{pr:"gift"});
+ if(/home again/i.test(k))return P("runway",castNow({pt:1,kids:1}),{pr:"flowers"});
+ if(/peace/i.test(k))return P("city",castNow({pt:1}),{pr:"confetti"});
+ if(/appointed|second act/i.test(k))return P(work,["me"],{pr:"champ"});
+ const byIcon={trophy:["stage","trophy"],medal:["palace","medal"],star:[work,"champ"],heart:["lounge",""],home:["house",""],key:["house","keys"],shield:["war",""],rocket:[work,"confetti"],dove:["park",""],mask:["night",""],dagger:["war",""],rings:["church","confetti"],cake:["party","cake"],gift:["lounge","gift"],tree:["xmas",""],scroll:["lounge","tea"]}[i]||[work,""];
+ return P(byIcon[0],castNow({pt:i==="heart"||i==="home"}),{pr:byIcon[1],sad:m.tone==="sad"?1:0});
+}
+/* A photo without a celebration card: birthdays, holidays, Christmas, new homes and first days */
+function snap(o){
+ if(!S||S.placeholder)return;S.memories=S.memories||[];
+ S.memories.push({d:S.day,i:o.i||"camera",k:o.k||"",t:o.t,s:o.s||"",tone:o.tone,quiet:1,ph:Object.assign(phBase(),o.ph||{})});
+ while(S.memories.length>160){const j=S.memories.findIndex(x=>x.quiet);S.memories.splice(j>=0?j:0,1)}
+}
+{const _mo=moment;moment=function(o){_mo(o);try{const ms=S&&!S.placeholder&&S.memories,m=ms&&ms[ms.length-1];if(m&&!m.ph&&m.t===o.title&&m.d===S.day){const ph=photoFor(m);if(ph)m.ph=Object.assign(phBase(),ph)}}catch(e){}}}
+/* Older saves: work out a picture for moments from before the album existed */
+const albumPhotos=()=>(S.memories||[]).map((m,idx)=>{if(m.ph)return{m,idx,ph:m.ph};if(m.turn||m.np)return null;let ph=null;try{ph=photoFor(m)}catch(e){}if(!ph){return null}m.ph=Object.assign(phBase(),ph,{a:Math.floor(ageAt(S,m.d))});return{m,idx,ph:m.ph}}).filter(Boolean);
+const phAgeFilter=(a,now)=>{const yrs=Math.max(0,now-a);return yrs>=6?`filter:sepia(${Math.min(.55,yrs*.012).toFixed(2)}) saturate(${(1-Math.min(.35,yrs*.007)).toFixed(2)})`:""};
+function polaroid(ph,cap,sub,attrs,now,tiny){
+ const r=((h32(cap+ph.a)%9)-4)*.7,sad=ph.sad?"filter:grayscale(.85)":phAgeFilter(ph.a,now);
+ return `<button class="pola${tiny?" tiny":""}" style="--r:${r.toFixed(1)}deg" ${attrs||""}><span class="pola-img" style="${sad}">${photoSVG(ph,ph.av||null)}</span><span class="cap">${esc(cap)}</span>${sub?`<span class="ag">${esc(sub)}</span>`:""}</button>`;
+}
+const DECADES=a=>a<20?"Your teens":a<30?"Your twenties":a<40?"Your thirties":a<50?"Your forties":a<60?"Your fifties":a<70?"Your sixties":a<80?"Your seventies":a<90?"Your eighties":"Your nineties and beyond";
+let albumAll=false;
+function albumSec(){
+ const ps=albumPhotos(),now=Math.floor(age());
+ if(!ps.length)return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Photo album</h2></div><p class="hint">Your first photos will appear here: birthdays, holidays, Christmas, weddings and every big moment of your life.</p></div>`;
+ const list=ps.slice().reverse(),shown=albumAll?list:list.slice(0,36);let html="",last="";
+ shown.forEach(p=>{const g=DECADES(p.ph.a);if(g!==last){if(last)html+="</div>";html+=`<div class="label album-dec">${g}</div><div class="album">`;last=g}
+  html+=polaroid(Object.assign({},p.ph,{av:S.av}),p.m.t,`Age ${p.ph.a} · ${shortDate(p.m.d)}`,`data-act="photo" data-i="${p.idx}"`,now)});
+ html+="</div>";
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Photo album</h2><span class="label">${ps.length} photo${ps.length>1?"s":""}</span></div>
+  <p class="hint" style="margin-top:0">Every birthday, holiday, Christmas and big moment, with you at the age you were. Your best photos go on your life record when you share it.</p>
+  ${html}${!albumAll&&list.length>36?`<div class="btn-row"><button class="btn sm" data-act="albumall">Show all ${list.length}</button></div>`:""}
+  <div class="btn-row"><button class="btn sm" data-act="sharelife">Share my life and album</button></div></div>`;
+}
+function photoModal(idx){
+ const ps=albumPhotos(),j=ps.findIndex(p=>p.idx===idx);if(j<0)return;const p=ps[j],now=Math.floor(age());
+ const sad=p.ph.sad?"filter:grayscale(.85)":phAgeFilter(p.ph.a,now);
+ showModal(`<div class="photo-big"><div class="pola big" style="--r:${(((h32(p.m.t)%5)-2)*.6).toFixed(1)}deg"><span class="pola-img" style="${sad}">${photoSVG(Object.assign({},p.ph,{av:S.av}))}</span><span class="cap">${esc(p.m.t)}</span></div>
+  <div class="label" style="margin-top:12px">${esc(p.m.k||"A moment")} · age ${p.ph.a} · ${shortDate(p.m.d)}</div>${p.m.s?`<p>${esc(p.m.s)}</p>`:""}
+  <div class="btn-row" style="justify-content:center"><button class="btn" data-act="photo" data-i="${j>0?ps[j-1].idx:""}" ${j>0?"":"disabled"}>Older</button><button class="btn" data-act="photo" data-i="${j<ps.length-1?ps[j+1].idx:""}" ${j<ps.length-1?"":"disabled"}>Newer</button><button class="btn primary" data-act="hide">Close</button></div></div>`);
+}
+/* The album travels with your life record: up to 18 photos, the big moments first */
+function albumForRecord(){
+ const seen=new Set(),uniq=p=>{const k=String(p.m.t).replace(/d+/g,"#")+p.ph.sc;if(seen.has(k))return false;seen.add(k);return true};
+ const ps=albumPhotos(),big=ps.filter(p=>!p.m.quiet).reverse().filter(uniq).reverse(),quiet=ps.filter(p=>p.m.quiet&&!/birthday/i.test(p.m.t)||p.m.quiet&&/(18th|21st|30th|40th|50th|60th|70th)/.test(p.m.t));
+ let pickd=big.slice(-14);const room=18-pickd.length;
+ if(room>0&&quiet.length){const stepQ=quiet.length/room;for(let i=0;i<room&&i*stepQ<quiet.length;i++)pickd.push(quiet[Math.floor(i*stepQ)])}
+ return pickd.sort((a,b)=>a.m.d-b.m.d).map(p=>{const o={t:String(p.m.t||"").slice(0,64)};for(const k of["a","sc","c","h","o","pr","x","w","p","nw","sad"])if(p.ph[k]!=null&&p.ph[k]!=="")o[k]=p.ph[k];if(o.c)o.c=o.c.map(c=>String(c).slice(0,40));return o});
+}
+function albumStrip(rec,viewer){
+ window.__albumRec=rec;window.__albumViewer=!!viewer;
+ return `<div class="label" style="margin-top:12px">From the photo album</div><div class="album-strip">${rec.al.slice(0,10).map((ph,i)=>polaroid(Object.assign({},ph,{av:rec.av}),ph.t,`Age ${ph.a}`,`data-act="recphoto" data-i="${i}"`,rec.a,1)).join("")}</div>
+  <div class="btn-row"><button class="btn sm" data-act="recphoto" data-i="0">Open the album (${rec.al.length})</button></div>`;
+}
+function recPhotoModal(i){
+ const rec=window.__albumRec;if(!rec||!rec.al)return;const n=rec.al.length;i=clamp(i,0,n-1);const ph=rec.al[i];
+ showModal(`<div class="photo-big"><div class="label">${esc(rec.n)} · photo ${i+1} of ${n}</div><div class="pola big" style="--r:${(((h32(ph.t)%5)-2)*.6).toFixed(1)}deg"><span class="pola-img" style="${ph.sad?"filter:grayscale(.85)":phAgeFilter(ph.a,rec.a)}">${photoSVG(Object.assign({},ph,{av:rec.av}))}</span><span class="cap">${esc(ph.t)}</span></div>
+  <div class="label" style="margin-top:10px">Age ${ph.a}</div>
+  <div class="btn-row" style="justify-content:center"><button class="btn" data-act="recphoto" data-i="${i-1}" ${i?"":"disabled"}>Back</button><button class="btn" data-act="recphoto" data-i="${i+1}" ${i<n-1?"":"disabled"}>Next</button><button class="btn primary" data-act="recback">Life record</button></div></div>`);
+}
+async function drawAlbumRow(x,rec,y){
+ const all=(rec.al||[]).filter(p=>!p.sad),ps=[],used=new Set();for(let i=0;i<all.length&&ps.length<4;i++){const p=all[Math.floor(i*all.length/Math.min(all.length,8))]||all[i];if(p&&!used.has(p.sc)&&!ps.includes(p)){ps.push(p);used.add(p.sc)}}for(const p of all){if(ps.length>=4)break;if(!ps.includes(p))ps.push(p)}ps.sort((a,b)=>a.a-b.a);if(!ps.length)return;
+ x.fillStyle="#D7A744";x.font=`700 28px "IBM Plex Sans",system-ui,sans-serif`;x.fillText("FROM THE PHOTO ALBUM",80,y);
+ for(let i=0;i<ps.length;i++){const ph=ps[i],px=80+i*232,py=y+24;
+  x.save();x.translate(px+105,py+140);x.rotate(((i%2?1:-1)*1.6)*Math.PI/180);x.translate(-105,-140);
+  x.fillStyle="#FBFAF6";x.fillRect(0,0,210,250);
+  try{const img=new Image(),svg=photoSVG(Object.assign({},ph,{av:rec.av})).replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" ');img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);await new Promise((ok,bad)=>{img.onload=ok;img.onerror=bad});x.drawImage(img,10,10,190,143)}catch(e){}
+  x.fillStyle="#2B2B2B";x.font=`600 26px Caveat,"Comic Sans MS",cursive`;const ln=wrapText(x,ph.t,190);ln.slice(0,2).forEach((l,j)=>x.fillText(l,12,186+j*26));
+  x.fillStyle="#777";x.font=`500 16px "IBM Plex Sans",system-ui,sans-serif`;x.fillText(`Age ${ph.a}`,12,240);x.restore()}
+}
+
+/* ---- Birthdays: a photo every year, a party for the big ones, and the odd surprise ---- */
+const BDAY_BIG={18:["Old enough to vote, drink and make mistakes legally.","A party in the back room of the pub. Somebody cries in the toilets."],21:["The key of the door. You're still borrowing your parents' car.","A 21st with a slideshow of embarrassing baby photos."],30:["Thirty, flirty and slightly hungover.","Your knees make a noise getting off the dance floor."],40:["Life begins at forty, apparently.","Your friends got you a 'Lordy Lordy' banner. You can't take it down."],50:["Half a century. A card from the government about bowel screening.","Fifty candles. The smoke alarm goes off."],60:["Sixty, and you've finally worked out the remote.","A bus pass is coming. You're secretly thrilled."],70:["Seventy years young.","A cake, a card and an argument about who's driving home."],80:["Eighty. Everyone sings very slowly.","Four generations in one room, all on their phones."],90:["Ninety. You outlived the doctor who told you to give up bacon.","A party at the care home that goes on until 8pm."],100:["One hundred! A card from the King-ish.","The local paper sends a photographer."]};
+const BDAY_LINES=["The candles set off the smoke alarm.","Nobody sang in tune.","A card from the bank. Thoughtful.","Cake for breakfast. You're an adult.","Someone remembered on Facebook-ish.","Pizza, a film and an early night. Perfect.","A cake shaped like your car. It's not a good likeness.","You get socks. Again.","Your mum rings at 7am to sing.","A card signed by the whole office, except your boss."];
+function birthdayFor(n){
+ if(BDAY_BIG[n]){moment({icon:"cake",kicker:"Happy birthday",title:`${n} today`,sub:pick(BDAY_BIG[n]),big:n>=80});return}
+ snap({i:"cake",k:"Birthday",t:`My ${ord(n)} birthday`,s:pick(BDAY_LINES),ph:{sc:rnd()<.5?"lounge":rnd()<.5?"party":"pub",c:castNow({pt:1,kids:1,pet:1}),h:"party",pr:"cake",x:n}});
+ if(n>=18&&!S.prison&&!S.front&&rnd()<.25&&!S.inbox.some(m=>!m.done&&/^bds_/.test(m.id)))birthdaySurprise(n);
+}
+function birthdaySurprise(n){
+ const p=inLove()?S.rel.name.split(" ")[0]:null,f=S.friend?S.friend.n.split(" ")[0]:null,kid=S.children.find(k=>kidAge(k)>=4&&kidAge(k)<12),opts=[];
+ if(p||f)opts.push({from:p||f,t:"Just a quiet drink?",b:`${p||f} has 'casually' suggested a quiet drink at the pub for your birthday. Their phone keeps buzzing.`,c:[{t:"Act surprised",fx:{home:5,stress:-4},o:"Forty people jump out from behind the bar. You do a very convincing scream."},{t:"Tell them you've guessed",fx:{home:-1,stress:-2},o:"They're crushed. The party happens anyway, slightly flatter."}]});
+ opts.push({from:"Your phone",t:"Anyone?",b:`It's your ${ord(n)} birthday and nobody has said anything. Not even your phone.`,c:[{t:"Treat yourself (£200)",fx:{gbp:-200,stress:-5},o:"A nice dinner, alone, with a very good bottle. At 9pm the messages flood in: everyone forgot the date."},{t:"Mention it loudly at work",fx:{rep:1,home:1},o:"A panic dash to the shop. A slightly squashed cake appears by lunchtime."},{t:"Go to bed early",fx:{stress:2},o:"Your mum rings at 10pm to sing, flat. You feel better."}]});
+ if(!S.over&&R()&&S.rank<4)opts.push({from:"The office",t:"There's cake",b:"Someone has bought a caterpillar-shaped cake for your birthday and the whole team is gathering round your desk.",c:[{t:"Give a little speech",p:.6,win:{fx:{rep:3,home:1},o:"Short, funny and warm. People actually clap."},lose:{fx:{rep:-1},o:"You thank your 'family' and then panic. Silence. Someone cuts the cake."}},{t:"Hide in the toilets until it's over",fx:{stress:-1},o:"They sing to your empty chair."}]});
+ if(p)opts.push({from:p,t:"Your present",b:`${p} hands you a big box with a nervous smile.`,c:[{t:"Open it with real joy",p:.6,win:{fx:{home:6},o:"It's perfect. They've clearly been listening for months."},lose:{fx:{home:2},o:"It's a foot spa. You love it. You say."}},{t:"Guess what it is first",fx:{home:-2},o:"You guess right. Their face falls."}]});
+ if(kid)opts.push({from:kid.n,t:"A card",b:`${kid.n} has made you a birthday card. You look like a potato in it.`,c:[{t:"Put it on the fridge forever",fx:{home:6},o:"It's still there twenty years later."},{t:"Ask why you're a potato",fx:{home:3},o:"'That's your face, silly.'"}]});
+ const e=pick(opts);pushDyn(Object.assign({id:"bds_"+S.day,life:1},e));
+}
+/* Children's birthdays */
+function kidBirthdays(){
+ for(const k of S.children){const now=Math.floor(kidAge(k)+1e-9),was=Math.floor((S.day-1-k.born)/YEAR+1e-9);if(now<=was||now<1)continue;
+  if([1,5,11,13,16,18,21].includes(now))snap({i:"cake",k:"Family",t:now===11?`${k.n}'s first day at big school`:`${k.n} turns ${now}`,s:now===1?"Cake everywhere. Mostly on the dog.":now===11?"A blazer three sizes too big.":now===18?"An adult, technically.":now===21?"Speeches, tears and a very long night.":"",ph:{sc:now===11?"school":now>=16?"party":"lounge",c:["me",...castNow({pt:1}).filter(c=>c.startsWith("pt:")),`kid:${k.n}:${genderOf(k.n)}:${now}`],h:now===11?"":"party",pr:now===11?"":"cake",x:now}});
+  if(now===5&&rnd()<.5)pushDyn({id:"kbd5_"+k.n,life:1,from:k.n,t:`${k.n}'s fifth birthday party`,b:`${k.n} has invited the entire class. All thirty of them.`,c:[{t:"Soft play (£300)",fx:{gbp:-300,stress:6,home:5},o:"Twenty-two children, one ball pit, one lost shoe and a parent who cries."},{t:"A party in the garden (£80)",fx:{gbp:-80,stress:3,home:3},o:"It rains. Everyone crams into the kitchen."},{t:"Just family and a cake",fx:{home:2},o:`${k.n} is perfectly happy. You're the one who's relieved.`}]});
+  if(now===16&&rnd()<.4)pushDyn({id:"kbd16_"+k.n,life:1,from:k.n,t:"A party while you're out?",b:`${k.n} wants a 'few friends' round for their sixteenth while you go out for the evening.`,c:[{t:"Say yes and trust them",p:.55,win:{fx:{home:6},o:"You come home to a tidy house and a thank-you note. Suspicious, but lovely."},lose:{fx:{gbp:-800,home:-2,stress:6},o:"Ninety people, one broken window and a goldfish in the toilet."}},{t:"Say no",fx:{home:-4},o:"Slammed doors for a week."}]});
+ }
+}
+{const _ad=ageDay;ageDay=function(notes){const was=Math.floor(ageAt(S,S.day-1)+1e-9),n=Math.floor(age()+1e-9);_ad(notes);try{if(!S.over){if(n>was)birthdayFor(n);kidBirthdays()}}catch(e){}}}
+
+/* ---- Christmas, New Year and Valentine's ---- */
+const XMAS_LINES={alone:["Christmas for one: a turkey crown and the King's Speech-ish.","A Christmas jumper, a microwave pudding and a long phone call home.","Christmas with the telly. It was quite nice, honestly."],couple:["Christmas for two, still in pyjamas at 4pm.","You burnt the sprouts. Nobody minded.","A walk on Christmas morning, then a three-hour nap."],family:["Paper everywhere, a dog wearing antlers and a very loud board game.","Someone cried at Monopoly-ish. Classic.","The kids were up at 5am. You were up at 5:01am."],big:["Three generations, one turkey, and Grandad asleep by three.","Twelve round a table built for six.","Mum brought her famous trifle. Nobody had the heart to say."]};
+const XMAS_EV=[
+ {ok:()=>!S.over&&!S.prison,id:"xs_santa",from:"The office",t:"Secret Santa",b:"You've drawn the person you like least in the whole office. £10 limit.",c:[{t:"Put real thought into it",fx:{rep:2,stress:2},o:"They're genuinely touched. You might have misjudged them."},{t:"A novelty mug from the garage",fx:{},o:"They got you a scented candle. Fair."},{t:"Something passive-aggressive",p:.5,win:{fx:{stress:-3},o:"Everyone laughs. Even them."},lose:{fx:{rep:-3},o:"HR is copied into an email."}}]},
+ {ok:()=>inLove(),id:"xs_gift",from:"Your diary",t:"A present for {p}",b:"Christmas is ten days away and you still haven't bought {p} anything.",c:[{t:"Something big (£1,500)",fx:{gbp:-1500,home:7},o:"Their face on Christmas morning is worth every penny."},{t:"Something thoughtful and cheap",p:.6,win:{fx:{home:6},o:"A framed photo of your first date. They cry."},lose:{fx:{home:-2},o:"It looked better in your head."}},{t:"A garage-forecourt panic buy",fx:{home:-4},o:"De-icer and a box of chocolates. They know."}]},
+ {ok:()=>(S.folks||[]).some(f=>f.alive)||S.children.some(k=>kidAge(k)>=14),id:"xs_row",from:"The family group chat",t:"The Christmas row",b:"Someone has brought up politics over the turkey. Voices are rising.",c:[{t:"Calm everyone down with a board game",p:.5,win:{fx:{home:5},o:"Peace on earth, for an hour."},lose:{fx:{home:-2,stress:4},o:"The board game makes it so much worse."}},{t:"Join in. You're right, after all",fx:{home:-4,stress:3},o:"Nobody speaks until Boxing Day."},{t:"Take the dog for a very long walk",fx:{stress:-3},o:"You come back to leftovers and silence."}]},
+ {ok:()=>S.children.some(k=>kidAge(k)>=4&&kidAge(k)<8),id:"xs_nativity",from:"The school",t:"The nativity play",b:"{k} has been cast as Third Sheep. The play is on Thursday at 2pm, slap in the middle of work.",c:[{t:"Leave work early",fx:{rep:-2,home:7},o:"Third Sheep steals the show by waving at you for the entire performance."},{t:"Watch the video later",fx:{home:-4},o:"{k} looks for you in the audience. Every parent saw."}]},
+ {ok:()=>S.children.some(k=>kidAge(k)>=6&&kidAge(k)<14),id:"xs_toy",from:"{k}",t:"The must-have toy",b:"{k} only wants one thing this year, and it's sold out everywhere. One is on an auction site for £400.",c:[{t:"Pay the £400",fx:{gbp:-400,home:5},o:"Joy on Christmas morning. Bored of it by Boxing Day."},{t:"Queue outside a shop at 5am",p:.5,win:{fx:{home:7,stress:4},o:"You get the last one. You're a legend."},lose:{fx:{home:-2,stress:5},o:"Sold out before you get to the front."}},{t:"Explain that Father Christmas-ish has supply issues",fx:{home:-3},o:"A very long sulk."}]},
+ {ok:()=>true,id:"xs_jumper",from:"Your neighbour",t:"The Christmas lights",b:"Next door has put up 40,000 Christmas lights and a reindeer that sings. It's lighting up your bedroom.",c:[{t:"Fight fire with fire (£300)",fx:{gbp:-300,home:3},o:"A light war begins. The street votes you the winner."},{t:"Buy blackout blinds",fx:{gbp:-60,stress:-1},o:"Peace, and a faint singing reindeer."},{t:"Complain to the council",fx:{home:-1},o:"The council says it's 'festive'."}]}];
+function xmasMorning(){
+ if(S.over||S.prison)return;const mo=monthOf(S.day),yr=Math.floor((S.day-1)/12);
+ if(mo===11&&S.xmasY!==yr){S.xmasY=yr;
+  const ok=XMAS_EV.filter(e=>{try{return e.ok()&&(S.used[e.id]==null||S.day-S.used[e.id]>=30)}catch(x){return false}});
+  if(ok.length&&rnd()<.6&&!S.front){const e=pick(ok);S.used[e.id]=S.day;const kid=S.children.find(k=>kidAge(k)>=4&&kidAge(k)<14);
+   const fill=t=>String(t).replace(/\{p\}/g,inLove()?S.rel.name.split(" ")[0]:"them").replace(/\{k\}/g,kid?kid.n:"your child");
+   pushDyn({id:e.id+"_"+S.day,life:1,from:fill(e.from),t:fill(e.t),b:fill(e.b),c:e.c.map(c=>JSON.parse(fill(JSON.stringify(c))))})}
+  const c=S.front?["me"]:castNow({pt:1,kids:"all",folks:rnd()<.5,pet:1}),n=c.filter(x=>!["dog","cat"].includes(x)).length;
+  const lost=(S.folks||[]).find(f=>!f.alive&&f.died>0&&S.day-f.died<12);
+  const cap=S.front?"Christmas on the front line":lost?`The first Christmas without ${lost.r==="mum"?"Mum":lost.r==="dad"?"Dad":lost.n}`:n===1?"Christmas for one":n===2?"Christmas for two":n>=5?"The big family Christmas":"Christmas at home";
+  snap({i:"tree",k:"Christmas",t:cap,s:S.front?"Tinned turkey and a carol over the radio.":pick(XMAS_LINES[n===1?"alone":n===2?"couple":n>=5?"big":"family"]),ph:{sc:S.front?"war":"xmas",c,o:S.front?"uniform":rnd()<.6?"xmas":undefined,h:S.front?"helmet":"santa",pr:S.front?"":"gift",sad:lost?1:0}});
+ }
+ if(mo===0&&S.resolY!==yr&&age()>=16&&rnd()<.5&&!S.front){S.resolY=yr;
+  pushDyn({id:"resol_"+S.day,life:1,from:"Your conscience",t:"New Year's resolution",b:"It's January. Everyone at work is doing Dry January and talking about it.",c:[
+   {t:"Get fit this year",fx:{act:"resol",k:"fit"},o:"New trainers, a gym app and a lot of hope."},
+   {t:"Drink less",fx:{act:"resol",k:"dry"},o:"You pour the wine down the sink. Some of it."},
+   {t:"Save more money",fx:{act:"resol",k:"save"},o:"A spreadsheet. Colour-coded."},
+   {t:"Learn something new",fx:{act:"resol",k:"learn"},o:"You download a language app. The owl is watching."},
+   {t:"No resolutions. You're perfect",fx:{stress:-1},o:"Honestly, fair."}]})}
+ if(mo===1&&S.valY!==yr&&inLove()&&rnd()<.4&&!S.front){S.valY=yr;const p=S.rel.name.split(" ")[0];
+  pushDyn({id:"val_"+S.day,life:1,from:"Your diary",t:"Valentine's Day",b:`It's the 14th. ${p} has been dropping hints for a week.`,c:[
+   {t:"A fancy dinner (£180)",fx:{gbp:-180,home:6,act:"valsnap"},o:"Candles, a set menu and a violinist who won't leave."},
+   {t:"A homemade card and breakfast in bed",p:.7,win:{fx:{home:5},o:"Burnt toast, perfect day."},lose:{fx:{home:1},o:"The card looks like a ransom note."}},
+   {t:"'We don't do Valentine's, right?'",p:.4,win:{fx:{home:1},o:"'No, thank goodness.'"},lose:{fx:{home:-6},o:"It turns out you do."}}]})}
+}
+ACTS.resol=fx=>{S.resol={k:fx.k,d:S.day}};
+ACTS.valsnap=()=>snap({i:"heart",k:"Valentine's",t:"Valentine's dinner",s:"Candles and a violinist who wouldn't leave.",ph:{sc:"night",c:castNow({pt:1}),o:"suit",pr:"champ"}});
+function resolDay(notes){
+ const r=S.resol;if(!r||S.day-r.d<2)return;S.resol=null;
+ const ok=rnd()<({fit:S.life&&S.life.gym?.7:.3,dry:.4,save:.45,learn:.35}[r.k]||.4);
+ const T={fit:["Your resolution worked: you're running three times a week.","Your gym membership has been used twice. Both in January."],dry:["You kept it up: less wine, better sleep.","The resolution lasted until a leaving do on the 9th."],save:["The savings spreadsheet worked. There's money in the account.","The spreadsheet is still there. The money isn't."],learn:["Your new skill is coming along nicely.","The app owl has given up on you."]}[r.k];
+ notes.push(ok?T[0]:T[1]);
+ if(ok){if(r.k==="fit"){S.health=clamp(S.health+5,0,100);if(S.av)S.av.w=Math.max(0,(S.av.w||0)-.08)}else if(r.k==="dry"){S.health=clamp(S.health+3,0,100);S.stress=clamp(S.stress-3,0,100)}else if(r.k==="save")S.wealth+=Math.round(Math.max(500,salary()*.03));else S.rep=clamp(S.rep+2,0,100)}
+}
+
+/* ---- Your parents: a whole story of their own ---- */
+const MUM_N=["Linda","Sue","Karen","Jackie","Denise","Angela","Sharon","Pauline","Bev","Carol","Maureen","Gill","Joy","Usha","Grace","Bernadette"];
+const DAD_N=["Graham","Steve","Kevin","Phil","Clive","Tony","Barry","Dave","Keith","Roy","Raj","Winston","Paddy","Colin","Terry","Desmond"];
+const folkAge=f=>f.a0+(S.day-1)/YEAR;
+const folkName=f=>f.r==="mum"?"Mum":f.r==="dad"?"Dad":f.n;
+function ensureFolks(){
+ if(S.folks)return;const n=S.parentsAlive??2,a=S.age0||22;
+ S.folks=[{r:"mum",n:pick(MUM_N),a0:a+25+Math.floor(rnd()*9),alive:n>=1},{r:"dad",n:pick(DAD_N),a0:a+27+Math.floor(rnd()*9),alive:n>=2}];
+ for(const f of S.folks){if(f.alive&&f.a0>=78&&rnd()>clamp((96-f.a0)/22,0,1))f.alive=false;if(!f.alive){f.died=-1;f.da=Math.floor(Math.min(f.a0,60+rnd()*30)-rnd()*4)}}
+ S.parentsAlive=S.folks.filter(f=>f.alive).length;
+ S.folkSeen=S.day;
+}
+const VISIT_LINES=["Dad shows you his new shed. Then the shed's new shelves.","Mum has printed out photos from Facebook-ish to show you.","The telly is on so loud you watch the whole of Countdown-ish.","They ask when you're going to settle down. Twice.","Dad explains the route he took to the garden centre in full.","Mum sends you home with a week's worth of leftovers in old ice-cream tubs.","You fix their Wi-Fi. You are a hero.","A whole afternoon of old photo albums. You were a funny-looking baby.","Dad falls asleep in his chair at 3pm. Mum tells you all the gossip.","They've joined a choir. You get a full performance."];
+function folksVisit(){
+ ensureFolks();const al=S.folks.filter(f=>f.alive);if(!al.length||freeLeft()<1||S.folkSeen===S.day)return;
+ useFree();S.folkSeen=S.day;S.homeLife=clamp(S.homeLife+3,0,100);S.stress=clamp(S.stress-2,0,100);for(const f of al)f.vis=(f.vis||0)+1;
+ const line=pick(VISIT_LINES.filter(l=>al.length>1||!(/Dad.*Mum|Mum.*Dad|They/.test(l))).concat(al.length===1?[`${folkName(al[0])} makes you a cup of tea and you talk for hours.`]:[]));
+ if(rnd()<.35)snap({i:"heart",k:"Family",t:al.length>1?"Sunday lunch at Mum and Dad's":`Tea with ${folkName(al[0])}`,s:line,ph:{sc:"lounge",c:castNow({folks:1,pt:1}),pr:"tea"}});
+ save();render();actResult(al.length>1?"Visiting your parents":`Visiting ${folkName(al[0])}`,esc(line));
+}
+const LAST_WORDS=["Don't let them overcharge you for the funeral.","Check the oil in your car.","I was always proud of you. Even the year with the haircut.","The spare key's under the gnome.","Look after each other.","Did I leave the oven on?","You were the best thing I ever did.","Don't be sad. Be nosy, and go and see the world."];
+const FOLK_LIVES=["A long life, a full church and a lot of stories you'd never heard.","Half the town came to the funeral.","The wake went on until midnight. It's what they'd have wanted.","Everyone said the same thing: they always had time for people."];
+function folksDay(notes){
+ ensureFolks();
+ for(const f of S.folks){if(!f.alive)continue;const a=folkAge(f);
+  const hz=(a<65?.0003:a<75?.0012:a<82?.004:a<90?.009:.02)*(f.frail?1.8:1);
+  if(rnd()<hz&&!S.inbox.some(m=>!m.done&&/^fk_die/.test(m.id))){
+   const lw=pick(LAST_WORDS);f.lw=lw;
+   pushDyn({id:"fk_die_"+f.r+S.day,life:1,from:"Your family",t:`${folkName(f)} has died`,b:`${f.n} died ${f.frail?"in hospital, with family there":"suddenly, at home"}, aged ${Math.floor(a)}. The last thing ${f.r==="mum"?"she":f.r==="dad"?"he":"they"} said to you was: '${lw}'`,c:[
+    {t:"Give the eulogy",fx:{act:"parentdies",who:f.r,home:4,stress:6},o:"You get through it. Just. The whole church laughs at the story about the caravan."},
+    {t:"Organise everything",fx:{act:"parentdies",who:f.r,stress:8,home:2},o:"Flowers, sandwiches, the hymns. Keeping busy helps."},
+    {t:"Take some time off to grieve",fx:{act:"parentdies",who:f.r,stress:-2,pnl:-1},o:"You take a fortnight. Work can wait."}]})}
+ }
+}
+function folksMorning(){
+ ensureFolks();if(S.over||S.prison||S.front)return;
+ const al=S.folks.filter(f=>f.alive);if(!al.length||S.day-(S.folkEvAt??-99)<6||rnd()>.07||S.inbox.some(m=>!m.done&&/^fk_/.test(m.id)))return;
+ const mum=S.folks.find(f=>f.r==="mum"),dad=S.folks.find(f=>f.r==="dad"),opts=[];
+ for(const f of al){const a=folkAge(f),N=folkName(f),he=f.r==="mum"?"she":f.r==="dad"?"he":"they",his=f.r==="mum"?"her":f.r==="dad"?"his":"their";
+  if(a>=63&&a<70&&!f.ret)opts.push(()=>{f.ret=1;return{id:"fk_ret",from:N,t:`${N} has retired`,b:`${N} has retired after forty years and is already driving everyone mad.`,c:[{t:"Buy golf lessons (£300)",fx:{gbp:-300,home:3},o:`${N} is now unbearable about golf.`},{t:"Help set up an online shop",p:.5,win:{fx:{home:4},o:`${N} sells old records online and makes £2,000. ${he[0].toUpperCase()+he.slice(1)} won't stop talking about 'the business'.`},lose:{fx:{home:1,stress:2},o:"Three hundred phone calls about passwords."}},{t:"Suggest volunteering",fx:{home:2,karma:2},o:`${N} joins the hospital radio. ${he[0].toUpperCase()+he.slice(1)}'s a natural.`}]}});
+  if(a>=60&&!S.flags.fk_social)opts.push(()=>{S.flags.fk_social=1;return{id:"fk_social",from:N,t:`${N} is on social media`,b:`${N} has joined Facebook-ish and commented 'IS THIS YOUR NEW GIRLFRIEND x' on a photo of you and your boss.`,c:[{t:"Teach them the privacy settings",fx:{home:3,stress:1},o:`An hour on the phone. ${N} now posts only Minion memes.`},{t:"Leave it. It's harmless",fx:{rep:-1,home:2},o:`${N} becomes the office's favourite commenter.`}]}});
+  if(a>=78&&!f.frail)opts.push(()=>{f.frail=1;return{id:"fk_frail",from:"The hospital",t:`${N} has had a fall`,b:`${N} fell at home and was on the floor for an hour before a neighbour heard. ${he[0].toUpperCase()+he.slice(1)}'s home now, but shaken, and can't really manage alone.`,c:[
+   ...(ownsHome()&&(S.home.tier||0)>=2||typeof hasMod==="function"&&hasMod("annex")?[{t:`Move ${N} in with you`,fx:{home:-3,stress:6,karma:5},o:`${N} moves into the spare room with forty years of stuff and opinions about your cooking.`}]:[]),
+   {t:"Pay for a carer to visit daily (£900 a month)",fx:{act:"care",amt:900,home:2},o:"Someone pops in every morning. You ring every night."},
+   {t:"Find a good care home (£3,200 a month)",fx:{act:"care",amt:3200,stress:3},o:`${N} hates it for a month, then becomes the life and soul of the lounge.`},
+   {t:"They'll manage",fx:{home:-5,karma:-4},o:"They say they're fine. They always say they're fine."}]}});
+ }
+ if(al.length===1&&!S.flags.fk_love){const f=al[0],o=S.folks.find(x=>!x.alive&&x.died>=0);if(o&&S.day-o.died>=9&&folkAge(f)<88){const N=folkName(f),nn=f.r==="mum"?pick(DAD_N):pick(MUM_N);
+  opts.push(()=>{S.flags.fk_love=1;f.newp=nn;return{id:"fk_love",from:N,t:`${N} has met someone`,b:`${N} has met someone at the bowls club. ${nn}. They've been on a coach trip to Bruges.`,c:[{t:`Welcome ${nn} to the family`,fx:{home:4},o:`${nn} turns out to be lovely and brings a trifle to everything.`},{t:"Be frosty about it",fx:{home:-4},o:`${N} is hurt. ${nn} sends you a birthday card anyway.`}]}})}}
+ if(mum&&dad&&mum.alive&&dad.alive&&Math.min(folkAge(mum),folkAge(dad))>=70&&!S.flags.fk_sell)opts.push(()=>{S.flags.fk_sell=1;return{id:"fk_sell",from:"Mum",t:"Selling the family home",b:"Mum and Dad are selling the house you grew up in and moving somewhere smaller. Your old bedroom needs clearing.",c:[{t:"Spend a weekend clearing your old room",fx:{act:"childhoodbox",home:4,stress:-2},o:"Old school reports, a mixtape and a teddy you'd forgotten. You keep the teddy."},{t:"Tell them to bin it all",fx:{home:-2},o:"Your mum keeps it all anyway, in her new loft."}]}});
+ if(al.length&&S.day-(S.folkSeen??S.day)>=18)opts.push(()=>{const N=al.length>1?"Mum and Dad":folkName(al[0]);return{id:"fk_miss",from:al.length>1?"Mum":folkName(al[0]),t:"We never see you",b:`'We never see you any more. We know you're busy.' It's been over a year since you visited ${al.length>1?"your parents":folkName(al[0])}.`,c:[{t:"Drive over this weekend",fx:{act:"folkseen",home:4,stress:2},o:"A roast, a long walk and a lot of 'you look tired'."},{t:"Set up a weekly video call",fx:{act:"folkseen",home:2},o:"Mostly you see the ceiling and an ear. It still helps."},{t:"Work's mad right now",fx:{home:-3,karma:-2},o:"'Of course. Another time.' You feel awful."}]}});
+ if(al.length&&S.children.some(k=>kidAge(k)>=2&&kidAge(k)<10)&&!S.flags.fk_babysit)opts.push(()=>{S.flags.fk_babysit=1;const N=al.length>1?"Mum and Dad":folkName(al[0]);return{id:"fk_babysit",from:al.length>1?"Mum":folkName(al[0]),t:"Grandparent duty",b:`${N} would love to have the grandchildren for a whole weekend.`,c:[{t:"Yes! A weekend off",fx:{stress:-8,home:4},o:"You sleep for eleven hours. The kids come back full of sugar and new words."},{t:"Maybe when they're older",fx:{home:-2},o:"A slightly hurt silence on the phone."}]}});
+ if(!opts.length)return;S.folkEvAt=S.day;pushDyn(Object.assign({life:1},pick(opts)()));
+}
+ACTS.folkseen=()=>{S.folkSeen=S.day};
+ACTS.childhoodbox=()=>{addItem("teddy","Your childhood teddy",5,"Found when your parents sold the family home.")};
+ACTS.parentdies=fx=>{
+ ensureFolks();const f=S.folks.find(x=>x.r===fx.who&&x.alive)||S.folks.filter(x=>x.alive).sort((a,b)=>folkAge(b)-folkAge(a))[0];
+ if(f){f.alive=false;f.died=S.day;f.da=Math.floor(folkAge(f))}
+ const left=S.folks.filter(x=>x.alive).length;S.parentsAlive=left;
+ if(!left||(f&&f.r==="mum"))S.care=0;
+ const N=f?folkName(f):"Your parent";
+ moment({tone:"sad",icon:"candle",kicker:"In loving memory",title:f?`${N}: ${f.n}, ${f.da}`:N,sub:pick(FOLK_LIVES)});
+ let inh=Math.round(rnd()*rnd()*(left?60:400))*1000;
+ const twist=!left&&rnd()<.15;if(twist)inh=Math.round(inh*.4);
+ if(inh){S.wealth+=inh;S.log.unshift({d:S.day,t:`Inheritance from ${N}: ${money(inh)}.${twist?" Most of the estate went to the donkey sanctuary, as the will made very clear.":""}`})}
+ if(f&&rnd()<.6){const opts=f.r==="mum"?[["Mum's engagement ring",1500],["Mum's recipe book",5],["Mum's good teapot",20]]:f.r==="dad"?[["Dad's old watch",800],["Dad's toolbox",60],["Dad's record collection",400]]:[[`${f.n}'s old watch`,800],[`${f.n}'s photo albums`,5]];
+  const [n,v]=pick(opts);addItem("heirloom",n,v,`Left to you by ${f.n}.`);S.log.unshift({d:S.day,t:`${f.n} left you ${n.toLowerCase()}.`})}
+ if(S.day-(S.folkSeen??S.day)>24){S.homeLife=clamp(S.homeLife-6,0,100);S.log.unshift({d:S.day,t:`You hadn't visited ${N} in two years. That one stays with you.`})}
+};
+/* Old parent events are now handled by the story above */
+for(const e of EV)if(["par_death","par_care","ls_parents"].includes(e.id))e.cond=()=>false;
+function folksSec(){
+ ensureFolks();const al=S.folks.filter(f=>f.alive);
+ const row=f=>{const a=Math.floor(f.alive?folkAge(f):f.da||0),st=!f.alive?(f.died>=0?`Died ${shortDate(f.died)}, aged ${a}`:"Died before you left home"):[f.ret?"retired":"",f.frail?"frail":"",S.care&&f.r==="mum"&&f.frail?"has care":"",f.newp?`with ${f.newp}`:""].filter(Boolean).join(", ");
+  return `<li class="${f.alive?"":"gone"}"><span>${f.r==="mum"?"👩":f.r==="dad"?"👨":"🧑"}</span><span><b>${esc(folkName(f))}</b> · ${esc(f.n)}${f.alive?`, ${a}`:""}<small>${esc(st)}${f.lw&&!f.alive?` · Last words: '${esc(f.lw)}'`:""}</small></span></li>`};
+ const since=S.day-(S.folkSeen??S.day);
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Your parents</h2>${al.length?`<span class="label">${since<=1?"Seen this month":since>=12?`Not seen for ${Math.floor(since/12)} year${since>=24?"s":""}`:`Last visit ${since} months ago`}</span>`:""}</div>
+  <ul class="folks">${S.folks.map(row).join("")}</ul>
+  ${al.length?`<div class="btn-row"><button class="btn sm ${since>=12?"primary":""}" data-act="folkvisit" ${freeLeft()<1||S.folkSeen===S.day?"disabled":""}>Visit ${al.length>1?"Mum and Dad":esc(folkName(al[0]))} (1 free evening)</button></div>`:""}</div>`;
+}
+
+/* ---- Your will ---- */
+const WILL_N={equal:"Split equally between your children",spouse:"Everything to your partner",fav:"Most of it to a favourite child",charity:"Mostly to charity",pet:"Everything to your pet",friend:"Half to your best friend"};
+function willOpts(){
+ const o=[],kids=S.children||[];
+ if(kids.length)o.push({k:"equal",t:kids.length>1?"Split everything equally between the children":`Leave everything to ${kids[0].n}`});
+ if(S.rel.st==="married")o.push({k:"spouse",t:`Everything to ${S.rel.name.split(" ")[0]}`});
+ if(kids.length>1)kids.slice(0,3).forEach(k=>o.push({k:"fav",n:k.n,t:`Most of it to ${k.n}`}));
+ o.push({k:"charity",t:"Most of it to charity"});
+ if(S.friend)o.push({k:"friend",n:S.friend.n,t:`Half to ${S.friend.n.split(" ")[0]}, your best friend`});
+ if(S.pet)o.push({k:"pet",n:S.pet.n,t:`Everything to ${S.pet.n} the ${S.pet.kind}`});
+ return o;
+}
+const willDesc=w=>!w?"No will yet":w.k==="fav"?`Most of it to ${w.n}`:w.k==="friend"?`Half to ${w.n}`:w.k==="pet"?`Everything to ${w.n} the ${(S.pet&&S.pet.kind)||"pet"}`:w.k==="spouse"?`Everything to ${S.rel.name?S.rel.name.split(" ")[0]:"your partner"}`:WILL_N[w.k];
+ACTS.will=fx=>{S.will={k:fx.k,n:fx.n||"",d:S.day};S.log.unshift({d:S.day,t:`Made a will: ${willDesc(S.will).toLowerCase()}.`})};
+function willMorning(){
+ if(S.over||S.prison||S.front||age()<55||S.will||S.day-(S.willAsk??-99)<24||rnd()>.03||S.inbox.some(m=>!m.done&&/^will_/.test(m.id)))return;
+ S.willAsk=S.day;const o=willOpts().slice(0,4);
+ pushDyn({id:"will_"+S.day,life:1,from:"Your solicitor",t:"Time to make a will?",b:`At ${Math.floor(age())}, your solicitor suggests making a will. Without one, the family will have to fight it out.`,c:[...o.map(x=>({t:x.t,fx:{act:"will",k:x.k,n:x.n},o:x.k==="pet"?"Your solicitor asks you to repeat that. Twice.":x.k==="charity"?"Your solicitor nods slowly. Your children won't be pleased.":"Signed, witnessed and filed."})),{t:"Not yet. You're not going anywhere",fx:{},o:"Famous last words."}]});
+}
+function willModal(){
+ const o=willOpts();
+ showModal(`<div class="label">Your will</div><h2 style="margin-top:4px">Who gets what?</h2><p>Your estate is worth about ${money(Math.max(0,netWorth()))}. When you die, your will is read out at the funeral, and it goes on your life record.</p>
+  <div class="desk-pick switch-pick">${o.map(x=>`<button data-act="willset" data-k="${x.k}" data-n="${esc(x.n||"")}" class="${S.will&&S.will.k===x.k&&(S.will.n||"")===(x.n||"")?"on":""}"><span><b>${esc(x.t)}</b></span></button>`).join("")}</div>
+  <div class="btn-row"><button class="btn" data-act="hide">Close</button></div>`);
+}
+function willSec(){
+ if(age()<40&&!S.will)return"";
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Your will</h2><span class="label">${S.will?`Made ${shortDate(S.will.d)}`:""}</span></div><p class="hint" style="margin:0 0 8px">${esc(willDesc(S.will))}.</p><div class="btn-row"><button class="btn sm" data-act="willedit">${S.will?"Change your will":"Make a will"}</button></div></div>`;
+}
+{const _es=estate;estate=function(){
+ const e=_es(),w=S.will,kids=S.children||[],n=Math.max(1,kids.length),pool=Math.max(0,e.gross-e.spouse-e.tax);e.forKid=()=>e.each;if(!w)return e;
+ if(w.k==="spouse"&&S.rel.st==="married"){e.each=e.each*.25;e.forKid=()=>e.each}
+ else if(w.k==="charity"){e.charity=pool*.8;e.each=pool*.2/n;e.forKid=()=>e.each}
+ else if(w.k==="pet"&&S.pet){e.pet=pool;e.each=0;e.forKid=()=>0}
+ else if(w.k==="friend"&&S.friend){e.friend=pool/2;e.each=pool/2/n;e.forKid=()=>e.each}
+ else if(w.k==="fav"&&kids.length>1){const fav=kids.find(k=>k.n===w.n);if(fav){const rest=pool*.3/(n-1);e.forKid=k=>k===fav?pool*.7:rest}}
+ return e}}
+/* The reading of the will, worked out once when you die */
+function willSettle(){
+ if(S.willText!=null)return;const w=S.will,kids=S.children||[],es=estate(),big=es.gross>=200000,sp=S.rel.st==="married"?S.rel.name.split(" ")[0]:null;let t;
+ if(!w)t=kids.length>1&&big?"There was no will. Your children didn't speak to each other for three years.":kids.length||sp?"There was no will, but there wasn't much to argue over.":"There was no will. The taxman was delighted.";
+ else if(w.k==="equal")t=kids.length>1?"Everything was split equally between the children. Nobody argued. Well, not much.":`Everything went to ${kids[0]?kids[0].n:"your child"}.`;
+ else if(w.k==="spouse")t=`Everything went to ${sp||"your partner"}. The children got your record collection.`;
+ else if(w.k==="fav"){const o=kids.filter(k=>k.n!==w.n);t=`${w.n} got the lion's share.${o.length?` ${o[0].n} hasn't been invited to Christmas since.`:""}`}
+ else if(w.k==="charity"){t=`You left ${money(es.charity||0)} to charity. There's a bench in the park with your name on it.`;S.karma=(S.karma||0)+10}
+ else if(w.k==="pet")t=S.pet?`You left everything to ${S.pet.n} the ${S.pet.kind}. The papers called ${S.pet.kind==="cat"?"her":"him"} 'the richest ${S.pet.kind} in Britain'.`:"You left everything to a pet that had already died. Lawyers are still arguing.";
+ else if(w.k==="friend")t=S.friend?`${S.friend.n.split(" ")[0]} got half of everything. Your family were stunned. ${S.friend.n.split(" ")[0]} cried at the reading.`:"Your best friend was in the will, but you'd fallen out. More lawyers.";
+ if(rnd()<.1&&big)t+=pick([" A long-lost child turned up at the reading claiming a share."," The will was written on the back of a takeaway menu, but it held up in court."," Three people you'd never met claimed you'd promised them your car."]);
+ if((S.rel.marriages||0)>=2&&rnd()<.5)t+=" Your exes asked if they were mentioned. They were not.";
+ S.willText=t;
+}
+{const _d=die;die=function(c){_d(c);try{willSettle()}catch(e){}}}
+function willEndHTML(){if(S.over!=="died")return"";try{willSettle()}catch(e){}return S.willText?`<div class="note"><b>The reading of the will.</b> ${esc(S.willText)}</div>`:""}
+{const _lg=legacy;legacy=function(){const L=_lg();if(S.over==="died"&&S.will&&S.will.k==="charity"){const p=Math.round(Math.max(0,netWorth())/1e5)+20;L.parts.push(["Left to charity in your will",p]);L.total+=p}return L}}
+
+/* ---- More photos: first days, promotions, homes, cars, holidays, pets and retirement ---- */
+{const _p=promote;promote=function(){_p.apply(this,arguments);try{if(!S.over)snap({i:"star",k:"Promoted",t:`First day as ${R().t}`,s:S.bank||"",ph:{sc:PH_WORK[S.path]||"office",c:["me"],pr:S.rank>=3?"champ":"",h:S.path==="arch"||S.path==="elec"?"hardhat":S.path==="chef"?"chef":""}})}catch(e){}}}
+{const _bh=buyHome;buyHome=function(id){const was=S.home&&S.home.n;_bh(id);try{if(S.home&&S.home.n!==was)snap({i:"home",k:"New home",t:inLove()?"Our new home":"My new home",s:S.home.n,ph:{sc:"house",c:castNow({pt:1,kids:1,pet:1}),pr:"keys"}})}catch(e){}}}
+{const _bc=buyCar;buyCar=function(id){const was=S.car&&S.car.id;_bc(id);try{if(S.car&&S.car.id===id&&id!==was&&id!=="none")snap({i:"key",k:"New wheels",t:`The new ${carOf(id).n}`,s:"",ph:{sc:"road",c:castNow({}),pr:"car",x:S.car.color}})}catch(e){}}}
+{const _tt=takeTrip;takeTrip=function(k){const was=S.lastTrip;_tt(k);try{if(S.lastTrip===S.day&&was!==S.day){const t=TRIPS.find(x=>x.k===k),tp=TRIP_PH[k]||["beach",""];snap({i:"star",k:"Holiday",t:t.n,s:"",ph:{sc:tp[0],c:castNow({pt:1,kids:1}),o:"hols",h:tp[1],pr:k==="cruise"?"champ":"case"}})}}catch(e){}}}
+{const _pet=ACTS.pet;ACTS.pet=fx=>{_pet(fx);try{snap({i:"heart",k:"New arrival",t:`Meet ${S.pet.n}`,s:`Your new ${S.pet.kind}.`,ph:{sc:"park",c:castNow({pt:1,kids:1,pet:1})}})}catch(e){}}}
+{const _em=endModal;endModal=function(){try{if(S.over==="retired"&&!S.flags.snapRet){S.flags.snapRet=1;snap({i:"gift",k:"Retirement",t:"My retirement do",s:`Leaving ${S.bank}.`,ph:{sc:"party",c:castNow({pt:1,fr:1}),pr:"gift"}})}}catch(e){}_em.apply(this,arguments)}}
+function albumMorning(){
+ if(S.over)return;
+ if(S.snapPath===undefined&&S.day>3)S.snapPath=S.path;
+ if(S.snapPath!==S.path){S.snapPath=S.path;snap({i:"rocket",k:"First day",t:`First day at ${S.bank}`,s:R().t,ph:{sc:PH_WORK[S.path]||"office",c:["me"],h:S.path==="arch"?"hardhat":""}})}
+ if(S.day<=2&&!S.daily&&!S.flags.lookAsk){S.flags.lookAsk=1;pushDyn({id:"look1",life:1,from:"The mirror",t:"Is this you?",b:"Before your first day: this is the face you'll grow old with. It shows up in your photo album at every age.",c:[{t:"Change how I look",fx:{act:"avopen"},o:"Looking good."},{t:"That's me",fx:{},o:"Looking good."}]})}
+}
+ACTS.avopen=()=>{setTimeout(()=>{try{avatarModal()}catch(e){}},350)};
+function albumDay(notes){bodyDay();resolDay(notes);folksDay(notes)}
+{const _lt=lifeTodo;lifeTodo=function(){const o=_lt();o.album=0;if(!S||S.placeholder)return o;const ms=S.memories||[],last=ms.length?ms[ms.length-1].d:-1,seen=(S.lifeSeen||{}).album;if(ms.length&&(seen==null||last>seen)&&!S.over)o.album=1;if((S.folks||[]).some(f=>f.alive)&&S.day-(S.folkSeen??S.day)>=12&&freeLeft()>0&&(S.lifeSeen||{}).family!==S.day)o.family=1;return o}}
+{const _lr=lifeRecord;lifeRecord=function(t){const r=_lr(t);try{r.wl=S.over==="died"?(S.willText||""):"";r.al=albumForRecord();r.av=S.av}catch(e){}return r}}
+{const _rh=recordHTML;recordHTML=function(rec,viewer){let h=_rh(rec,viewer);if(rec.wl)h=h.replace(/<\/div>(\s*)$/,`<div class="note" style="margin-top:10px"><b>The will.</b> ${esc(rec.wl)}</div></div>$1`);if(rec.al&&rec.al.length)h=h.replace(/<\/div>(\s*)$/,albumStrip(rec,viewer)+"</div>$1");return h}}
+Object.assign(MOMENT_ICONS,{
+ cake:`<rect x="20" y="52" width="60" height="30" rx="5" fill="#F2B8C6"/><rect x="20" y="52" width="60" height="9" rx="4" fill="#fff"/><rect x="14" y="80" width="72" height="7" rx="3" fill="#E9ECEE"/>${[32,44,56,68].map((x,i)=>`<rect x="${x-2}" y="34" width="4" height="18" fill="${["#7FB2E5","#F6D44A","#E86A7A","#4BBA85"][i]}"/><ellipse cx="${x}" cy="29" rx="3" ry="5" fill="#F6A33D"/>`).join("")}`,
+ gift:`<rect x="18" y="40" width="64" height="46" rx="3" fill="#3E6FB0"/><rect x="14" y="32" width="72" height="12" rx="3" fill="#4A7FD0"/><rect x="45" y="32" width="10" height="54" fill="#F6D44A"/><path d="M50 32 C38 14 22 22 36 32 M50 32 C62 14 78 22 64 32" stroke="#F6D44A" stroke-width="5" fill="none"/>`,
+ tree:`<path d="M50 8 L80 74 H20Z" fill="#2F7A3E"/><rect x="45" y="74" width="10" height="14" fill="#7A5B3A"/>${[[42,40,"#E86A7A"],[58,52,"#F6D44A"],[38,62,"#7FB2E5"],[62,66,"#E86A7A"]].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="4" fill="${c}"/>`).join("")}<path d="M50 2 l3 7 7 0 -6 4 2 7 -6 -4 -6 4 2 -7 -6 -4 7 0Z" fill="#F6D44A"/>`,
+ camera:`<rect x="12" y="30" width="76" height="52" rx="8" fill="#2B3A44"/><rect x="34" y="22" width="24" height="12" rx="3" fill="#2B3A44"/><circle cx="50" cy="56" r="17" fill="#9CC0D2" stroke="#E9ECEE" stroke-width="5"/><circle cx="76" cy="40" r="3.5" fill="#F6D44A"/>`,
+ scroll:`<rect x="24" y="16" width="52" height="68" rx="4" fill="#F2EBDD" stroke="#C9B48A" stroke-width="2"/>${[30,40,50,60].map(y=>`<rect x="32" y="${y}" width="36" height="3" fill="#B9A27A"/>`).join("")}<circle cx="62" cy="74" r="7" fill="#C0453A"/>`});
+HL_RANK.cake=2;
 
 /* ============ Inbox illustrations: a scene at the top of each message, picked from what it's about ============ */
 const IA_W=320,IA_H=84;
@@ -7840,6 +8485,8 @@ function renderLife(){
   ${lifeTab==="people"?peopleSec()+hobbySec()+freeSec()+luckSec():""}
   ${lifeTab==="home"?homeLifeSec():""}
   ${lifeTab==="things"?itemsSec():""}
+  ${lifeTab==="album"?albumSec():""}
+  ${lifeTab==="family"?folksSec()+willSec():""}
   ${lifeTab==="lifestyle"?`
   ${goalSec()}
   <div class="pane-sec">
@@ -7854,11 +8501,11 @@ function renderLife(){
 }
 const openShops={};
 /* Life sub-tabs keep the pane short. The choice is a per-device preference. */
-const LIFE_TABS=[["money","Money"],["home","Home"],["family","Family"],["people","People"],["things","Things"],["lifestyle","Lifestyle"],["town","Town"]];
+const LIFE_TABS=[["money","Money"],["home","Home"],["family","Family"],["people","People"],["things","Things"],["lifestyle","Lifestyle"],["town","Town"],["album","Album"]];
 let lifeTab="money";try{const v=localStorage.getItem("ftb-lifetab");if(LIFE_TABS.some(t=>t[0]===v))lifeTab=v}catch(e){}
 /* ---- Life badges: a dot where there's something worth doing, cleared once you've looked this month ---- */
 function lifeTodo(){
- const o={money:0,home:0,family:0,people:0,things:0,lifestyle:0,town:0};
+ const o={money:0,home:0,family:0,people:0,things:0,lifestyle:0,town:0,album:0};
  if(!S||S.placeholder||S.over||S.prison)return o;
  if(S.wealth<0||(S.pension&&!S.pension.rate&&salary()>18000))o.money=1;
  if(S.home&&S.home.value<=0&&S.wealth>=35000)o.home=1;else if(S.car&&S.car.id==="none"&&S.wealth>=15000)o.home=1;
@@ -8149,7 +8796,7 @@ function endModal(){
  const role=bestRole(),careers=[...(S.past||[]).map(p=>CAREERS[p.path].n),CAR_().n].filter((x,i,arr)=>arr.indexOf(x)===i);
  recordHof(t);window.__endTitle=t;
  const endKey=S.over+":"+S.day;if(window.__endSfx!==endKey){window.__endSfx=endKey;if(S.over==="died")sfx.sad();else if(["won","retired","founder","exit"].includes(S.over)){sfx.fanfare();celebrate("big")}else sfx.bad()}
- showModal(`<div class="label">${S.over==="died"?"In memoriam":more?"Career over":"Life story"} · Age ${a}</div><h2 style="margin-top:4px">${t}</h2><p>${b}</p><p class="epitaph">“${esc(epitaph())}”</p>
+ showModal(`<div class="label">${S.over==="died"?"In memoriam":more?"Career over":"Life story"} · Age ${a}</div><h2 style="margin-top:4px">${t}</h2><p>${b}</p><p class="epitaph">“${esc(epitaph())}”</p>${willEndHTML()}
   ${more?`<div class="btn-row" style="margin:6px 0 14px"><button class="btn primary big" data-act="newchapter">Start a new career</button></div>`:""}
   ${heirOk?`<div class="btn-row" style="margin:6px 0 14px"><button class="btn primary big" data-act="heirs">Carry on as your child</button></div>`:""}
   ${dynastyLine()}
@@ -8250,6 +8897,15 @@ document.addEventListener("click",e=>{
  if(a==="letroom"){S.roomLet=roomRent();S.log.unshift({d:S.day,t:`Started renting out a room for ${money(S.roomLet)} a month.`});save();render();return}
  if(a==="unletroom"){S.roomLet=0;save();render();return}
  if(a==="diarygo"){const D=S.diary;if(D){const i=+t.dataset.i;D.items.forEach((x,j)=>{if(x.clash)x.go=j===i})}save();render();return}
+ if(a==="avset2"){avSet(t.dataset.k,t.dataset.v);save();avatarModal();render();return}
+ if(a==="avtab"){avTab=t.dataset.v;avatarModal();return}
+ if(a==="photo"){if(t.dataset.i!=="")photoModal(+t.dataset.i);return}
+ if(a==="albumall"){albumAll=true;render();return}
+ if(a==="recphoto"){recPhotoModal(+t.dataset.i);return}
+ if(a==="recback"){if(window.__albumViewer)showRecordFromHash();else recordModal(window.__albumRec);return}
+ if(a==="folkvisit"){folksVisit();return}
+ if(a==="willedit"){willModal();return}
+ if(a==="willset"){ACTS.will({k:t.dataset.k,n:t.dataset.n});save();render();willModal();return}
  if(a==="avatar"){avatarModal();return}
  if(a==="avset"){const k=t.dataset.k,v=t.dataset.v;S.av=S.av||avDefault();if(k==="random")S.av=avDefault();else if(k==="glasses")S.av.glasses=v==="1";else S.av[k]=/^\d$/.test(v)?+v:v;save();avatarModal();render();return}
  if(a==="ambtoggle"){ambOn=!ambOn;try{localStorage.setItem("ftb-amb",ambOn?"1":"0")}catch(e){}if(ambOn&&!soundOn){soundOn=true;try{localStorage.setItem("ftb-sound","1")}catch(e){}}ambSync();menuModal();return}
