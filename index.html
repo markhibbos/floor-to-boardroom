@@ -1422,10 +1422,10 @@ const CAREERS={
   offerFrom:"Recruitment team at ",
   winText:"Three strong board reviews. You retire with a knighthood for services to medicine and still get stopped by grateful patients.",
   banText:"Clinical risk hit 100. The General Medical Council erases you from the medical register."},
- teach:{id:"teach",n:"Teacher",mech:"jobs",blurb:"Newly qualified teacher to chief executive of an academy trust.",teamFrom:2,heatName:"Conduct concerns",heatShort:"Conduct",outName:"Pupil progress",fmt:"pts",lift:"Career ladder",
+ teach:{id:"teach",n:"Teacher",mech:"jobs",blurb:"Early career teacher to chief executive of an academy trust.",teamFrom:2,heatName:"Conduct concerns",heatShort:"Conduct",outName:"Pupil progress",fmt:"pts",lift:"Career ladder",
   employers:["Hollybrook Academy","St Edmund's C of E School","Riverside High","Kingsmead Comprehensive","Oakwood Grammar"],
   ranks:[
-   {t:"Newly qualified teacher",place:"Year 7 and a lot of marking",sal:32e3,cap:6,js:1,pm:.6,bonus:.05,repName:"Reputation"},
+   {t:"Early career teacher",place:"Year 7 and a lot of marking",sal:32e3,cap:6,js:1,pm:.6,bonus:.05,repName:"Reputation"},
    {t:"Classroom teacher",place:"Your own GCSE classes",sal:40e3,cap:8,js:1,pm:1,bonus:.05,repName:"Reputation"},
    {t:"Head of department",place:"A team of eight teachers",sal:52e3,cap:24,js:2.5,pm:1.2,bonus:.05,repName:"Reputation"},
    {t:"Headteacher",place:"Your own school",sal:100e3,cap:30,js:3,pm:1.4,bonus:.05,repName:"Governors' confidence"},
@@ -1515,7 +1515,7 @@ const CAREERS={
    {t:"First officer",place:"The right-hand seat",sal:60e3,cap:8,js:1,pm:1,bonus:.003,repName:"Reputation"},
    {t:"Senior first officer",place:"Flying the line",sal:85e3,cap:10,js:1,pm:1.3,bonus:.003,repName:"Reputation"},
    {t:"Captain",place:"Four gold stripes and a crew",sal:150e3,cap:30,js:3,pm:1.4,bonus:.003,repName:"Reputation"},
-   {t:"Airline CEO",place:"Airline headquarters",sal:1.6e6,cap:300,js:25,pm:1.6,bonus:.0008,repName:"Board confidence"}],
+   {t:"Director of flight operations",place:"Running the whole fleet",sal:260e3,cap:300,js:25,pm:1.6,bonus:.0008,repName:"Board confidence"}],
   promo:["","You've got your wings. First officer, right-hand seat.","You fly the line with confidence. The left seat is in sight.","You're a captain. The aircraft and its crew are yours.","You run the airline. Three strong board reviews and you retire on top."],
   appr:[{n:"Cut it fine",pay:1,h:.75,q:-.2,risk:2},{n:"By the checklist",pay:1,h:1,q:0,risk:1},{n:"Extra margins",pay:1.15,h:1.3,q:.12,risk:.5}],
   big:["","",""," (with your crew)"," (fleet-wide)"],
@@ -2652,7 +2652,7 @@ function newRival(){
 const invTotal=()=>INV.reduce((a,i)=>a+(S.inv[i.id]||0),0);
 /* Self-employed careers are paid what they actually earn. Lenders and prices use their average over the last year. */
 const selfPaid=()=>!!(S&&(CAR_().selfPaid||R().self));
-const salary=()=>{if(selfPaid()){const h=(S.selfHist||[]).slice(-12);return h.length?Math.max(1000,h.reduce((a,b)=>a+b,0)/h.length*12):R().sal*.5}return R().sal*S.salMult};
+const salary=()=>{if(S.path==="foot"&&S.lg&&!selfPaid())return R().sal*S.salMult*[.08,.18,.35,.65,1.1][S.lg.div];if(selfPaid()){const h=(S.selfHist||[]).slice(-12);return h.length?Math.max(1000,h.reduce((a,b)=>a+b,0)/h.length*12):R().sal*.5}return R().sal*S.salMult};
 /* UK income tax and National Insurance on a year's pay (2026 bands). The budget can shift it a few pence. */
 function ukTax(y){y=Math.max(0,y);const pa=Math.max(0,12570-Math.max(0,y-100000)/2),taxable=Math.max(0,y-pa);
  let t=Math.min(taxable,37700)*.2+Math.max(0,Math.min(taxable,125140-pa)-37700)*.4+Math.max(0,taxable-(125140-pa))*.45;
@@ -3951,14 +3951,14 @@ function loveGo(k){
  if(!isSingle()||S.day-(S.loveTry??-99)<3)return;S.loveTry=S.day;
  if(k==="app"){const e=EV.find(x=>x.id==="lv_app");S.inbox=S.inbox.filter(m=>m.id!=="lv_app");S.inbox.unshift({id:"lv_app",done:false,vars:varsFor(e)});save();setTab("inbox");render();return}
  const c=Math.round(80*Math.max(1,priceScale()*2)/10)*10;S.wealth-=c;S.homeLife=clamp(S.homeLife+3,0,100);S.stress=clamp(S.stress-3,0,100);
- if(rnd()<.5+(hasT("charming")?.15:0)){const n=pick(NAMES),job=pick(JOBS),id="meet"+S.day;
+ if(rnd()<.5+(hasT("charming")?.15:0)){const n=partnerFirst(),job=pick(JOBS),id="meet"+S.day;
   pushDyn({id,from:"A night out",t:"Someone catches your eye",b:`At the bar you get talking to ${n}, who works as a ${job.toLowerCase()}. You make each other laugh.`,c:[
    {t:"Ask for their number",fx:{act:"date",home:8,stress:-3},o:`${n} says yes. You have a date on Saturday.`},
    {t:"Just enjoy the conversation",fx:{home:3},o:"A lovely evening, nothing more."}]});
   const m=S.inbox.find(x=>x.id===id);if(m)m.vars={p:n,job};save();setTab("inbox");render();
  }else{S.loveMsg=`A fun night out (${money(c)}), but no sparks this time.`;save();render()}
 }
-function profiles(){const v={},used=[];for(let i=1;i<=3;i++){const n=pick(NAMES.filter(x=>!used.includes(x)));used.push(n);v["n"+i]=n;v["j"+i]=pick(JOBS);v["t"+i]=pick(PT_KEYS);v["d"+i]=PT[v["t"+i]].d;v["a"+i]=Math.max(20,Math.round(ageAt(S)+(rnd()-.5)*8));v["k"+i]=ageAt(S)>30&&rnd()<.25?1+(rnd()<.4?1:0):0;v["kd"+i]=v["k"+i]?` Has ${v["k"+i]===1?"a child":"two children"}.`:""}return v}
+function profiles(){const v={},used=[];for(let i=1;i<=3;i++){const n=pick(partnerPool().filter(x=>!used.includes(x)));used.push(n);v["n"+i]=n;v["j"+i]=pick(JOBS);v["t"+i]=pick(PT_KEYS);v["d"+i]=PT[v["t"+i]].d;v["a"+i]=Math.max(20,Math.round(ageAt(S)+(rnd()-.5)*8));v["k"+i]=ageAt(S)>30&&rnd()<.25?1+(rnd()<.4?1:0):0;v["kd"+i]=v["k"+i]?` Has ${v["k"+i]===1?"a child":"two children"}.`:""}return v}
 EV.push(
  {id:"lv_app",life:1,again:18,cond:s=>(s.rel.st==="single"||s.rel.st==="widowed"&&s.day-s.rel.since>=24)&&ageAt(s)<68,vars:profiles,from:"A dating app",t:"Three new matches",b:"You've got three matches waiting. Who do you message?",c:[
   {t:"{n1}, {a1}, {j1}: {d1}.{kd1}",fx:{act:"datepick",i:1,home:6},o:"Drinks turn into dinner. You're seeing {n1} again on Friday."},
@@ -4132,6 +4132,7 @@ function seasonEnd(){
 }
 /* Transfers */
 function marketValue(){
+ if(!S.fb)return 0;
  const f=S.fb,base=[60e3,600e3,6e6,25e6,60e6][S.rank],a=age(),af=a<24?.85+(a-17)*.02:a<=29?1:Math.max(.2,1-(a-29)*.15);
  return Math.round(base*(.5+f.form/100)*af*(1+Math.min(.6,(f.goals+f.assists*.5)/Math.max(10,f.apps)))*(.8+S.lg.div*.12)/1e4)*1e4;
 }
@@ -4169,7 +4170,7 @@ function footballLeagueSec(){
  ensureLeague();const L=S.lg,pos=lgPos(),m=monthOf(S.day),win=[0,5,6].includes(m);
  const cup=L.cup.alive?(m<=4&&L.cup.round===m?`Leek Cup ${CUP_ROUNDS[L.cup.round].toLowerCase()} this month`:m>4&&m<7?"Leek Cup starts in January":`Still in the Leek Cup (${CUP_ROUNDS[Math.min(4,L.cup.round)].toLowerCase()} next)`):"Out of the Leek Cup";
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">${esc(DIVS[L.div])}</h2><span class="label">Season ${esc(L.season)}</span></div>
-  <div class="kv" style="margin:0 0 10px"><span>League position</span><span>${inSeason(S.day)||L.round?ord(pos):"Season starts in August"}</span><span>Cup</span><span>${esc(cup)}</span><span>Your market value</span><span>${money(marketValue())}</span><span>Transfer window</span><span>${win?"Open":m<5&&m>0?"Opens in June":"Opens in January"}</span></div>
+  <div class="kv" style="margin:0 0 10px"><span>League position</span><span>${inSeason(S.day)||L.round?ord(pos):"Season starts in August"}</span><span>Cup</span><span>${esc(cup)}</span>${S.fb?`<span>Your market value</span><span>${money(marketValue())}</span>`:`<span>Your job</span><span>${esc(R().t)}</span>`}<span>Transfer window</span><span>${win?"Open":m<5&&m>0?"Opens in June":"Opens in January"}</span></div>
   ${L.last&&L.last.length?`<div class="label">Last month's results</div><ul class="lg-results">${L.last.map(r=>`<li>${esc(r)}</li>`).join("")}</ul>`:""}
   ${leagueTable(false)}
   <details class="shop"><summary>Full table</summary>${leagueTable(true)}</details>
@@ -4890,7 +4891,7 @@ function courseCard(){
   <p class="hint" style="margin:0">One test a month arrives in your inbox, alongside your normal work. Your chance with the steady option is about <b>${Math.round(Math.min(.92,d.odds()+.08)*100)}%</b>.</p></div>`;
 }
 const specPlace=()=>{const d=specOf();return d?d.unit:R().place};
-const specTitle=()=>{const d=specOf();return d?(d.title||R().t)+(d.suffix||""):R().t};
+const specTitle=()=>{const d=specOf(),tt=typeof trackTitle==="function"?trackTitle():null;return d?(d.title||tt||R().t)+(d.suffix||""):(tt||R().t)};
 Object.assign(ACTS,{
  crsstart:fx=>{if(S.course)return;S.course={id:fx.id,stage:0,since:S.day};S.crsTries=S.crsTries||{};S.crsTries[fx.id]=(S.crsTries[fx.id]||0)+1;S.log.unshift({d:S.day,t:`Started: ${SPECS[fx.id].n.toLowerCase()}.`})},
  crsnext:()=>{if(!S.course)return;const id=S.course.id,d=SPECS[id];S.course.stage++;
@@ -5046,16 +5047,16 @@ function doActivity(k){
  if(a.g==="Dating"&&inLove()&&!S.open){S.karma=clamp((S.karma||0)-4,-100,100);S.stress=clamp(S.stress+2,0,100)}
  if(k==="openask"){openAsk(true);save();setTab("inbox");render();return}
  if(k==="swipr"){const e=EV.find(q=>q.id==="lv_app");S.inbox=S.inbox.filter(m=>m.id!=="lv_app");S.inbox.unshift({id:"lv_app",done:false,vars:varsFor(e)});save();setTab("inbox");render();return}
- if(k==="speed"){const a1=fullName(),a2=fullName();S.homeLife=clamp(S.homeLife+3,0,100);
+ if(k==="speed"){const a1=partnerFull(),a2=fullName();S.homeLife=clamp(S.homeLife+3,0,100);
   if(r<.55){t=`Of the twelve, ${a1.split(" ")[0]} made you laugh the most, and ticked 'yes' too. Check your inbox.`;dateWith(a1,pick(JOBS),"Speed dating")}
   else if(r<.8){t=`No sparks, but you swap numbers with ${a2.split(" ")[0]}, who was as bad at it as you.`;meetSomeone("Speed dating")}
   else t="Twelve people, thirty-six minutes, zero matches. One of them was your dentist."}
- if(k==="blind"){const fr=S.friend?S.friend.n:alivePeople().find(p=>p.role==="friend").n.split(" ")[0],n=fullName();
+ if(k==="blind"){const fr=S.friend?S.friend.n:alivePeople().find(p=>p.role==="friend").n.split(" ")[0],n=partnerFull();
   if(S.friend)S.friend.bond=clamp(S.friend.bond+4,0,100);
   if(r<.45){t=`${fr} was right for once. ${n.split(" ")[0]} is lovely. Check your inbox.`;dateWith(n,pick(JOBS),`${fr}'s blind date`)}
   else if(r<.75){t=`${n.split(" ")[0]} spends the whole evening talking about their ex. You get home by nine.`;S.stress=clamp(S.stress+2,0,100)}
   else{t=`Not a romance, but ${n.split(" ")[0]} becomes a friend.`;meetSomeone(`A blind date set up by ${fr}`)}}
- if(k==="singles"){S.stress=clamp(S.stress-10,0,100);S.homeLife=clamp(S.homeLife+6,0,100);const n=fullName();
+ if(k==="singles"){S.stress=clamp(S.stress-10,0,100);S.homeLife=clamp(S.homeLife+6,0,100);const n=partnerFull();
   if(r<.45){t=`A holiday romance with ${n.split(" ")[0]}. You both live within an hour of each other. Check your inbox.`;dateWith(n,pick(JOBS),"A singles holiday")}
   else{t=`A brilliant week. You come home tanned, with a new friend: ${n}.`;addPerson(n,"friend","Met on a singles holiday",55)}}
  if(k==="weekend"){S.homeLife=clamp(S.homeLife+12,0,100);S.stress=clamp(S.stress-8,0,100);t=r<.85?`You remember why you fell for ${S.rel.name}.`:`It rains all weekend. You play cards and laugh more than you have in months.`}
@@ -5092,7 +5093,7 @@ function peopleWeave(notes){
  if(cool("reconnect")){const q=pick1(x=>S.day-x.last>=24);if(q)sto.push(()=>reconnect(q))}
  if(cool("fallout")){const q=pick1(x=>x.bond>=40&&x.role==="friend");if(q)sto.push(()=>fallout(q))}
  if(isSingle()&&cool("setup")){const q=pick1(x=>x.bond>=50&&x.role==="friend");if(q)sto.push(()=>setUp(q))}
- if(inLove()&&!S.open&&(S.secret||[]).length<3&&S.homeLife<60&&cool("spark")){const q=pick1(x=>x.bond>=45&&["friend","acq","contact"].includes(x.role));if(q)sto.push(()=>sparkEv(q))}
+ if(inLove()&&!S.open&&(S.secret||[]).length<3&&S.homeLife<60&&cool("spark")){const q=pick1(x=>x.bond>=45&&["friend","acq","contact"].includes(x.role)&&fitsPref(x.n));if(q)sto.push(()=>sparkEv(q))}
  for(const lv of secretLovers())sto.push(()=>wantsMore(lv));
  if(inLove()&&!S.open&&S.day-(S.rel.since||0)>36&&rnd()<.12)sto.push(()=>openAsk());
  if(S.open&&openLovers().length)sto.push(()=>jealous());
@@ -5122,7 +5123,7 @@ function reconnect(p){pp("reconnect",p,{from:p.n,t:`${p.n.split(" ")[0]} gets in
 function fallout(p){pp("fallout",p,{from:p.n,t:`An argument with ${p.n.split(" ")[0]}`,b:`A silly disagreement with ${p.n} turns into a real row.`,c:[
  {t:"Apologise first",fx:{act:"ppbond",d:6,karma:2},o:"They apologise too. It's forgotten by Friday."},
  {t:"Wait for them to apologise",p:.4,win:{fx:{act:"ppbond",d:2},o:"They do, eventually."},lose:{fx:{act:"ppbond",d:-30},o:"Neither of you does. Months pass."}}]})}
-function setUp(p){const n=fullName();pp("setup",p,{from:p.n,t:`${p.n.split(" ")[0]} wants to set you up`,b:`${p.n} has a friend called ${n.split(" ")[0]} who would be 'perfect' for you.`,c:[
+function setUp(p){const n=partnerFull();pp("setup",p,{from:p.n,t:`${p.n.split(" ")[0]} wants to set you up`,b:`${p.n} has a friend called ${n.split(" ")[0]} who would be 'perfect' for you.`,c:[
  {t:"Go on the date",p:.55,win:{fx:{act:"date",home:8,act2:"ppbond",d:6},o:`${n.split(" ")[0]} is lovely. A second date is booked.`},lose:{fx:{act:"ppbond",d:2},o:"Perfect for someone, just not you."}},
  {t:"Thanks, but no",fx:{},o:"Maybe next time."}]});const m=S.inbox.find(x=>x.id===`pp_setup_${S.day}`);if(m)Object.assign(m.vars,{p:n.split(" ")[0],job:pick(JOBS)})}
 function sparkEv(p){pp("spark",p,{from:p.n,t:`A spark with ${p.n.split(" ")[0]}`,b:`Things at home have been hard. ${p.n} has been a good listener, and tonight they linger a little too long when saying goodbye.`,c:[
@@ -5184,7 +5185,7 @@ function peopleSec(){
  if(S.rival)core.push(`<div class="person"><div><b>${esc(S.rival.name)}</b><span class="role">Rival at work</span></div>${meterMini(S.rival.bond||20)}</div>`);
  for(const x of (S.exes||[]).slice(-2))core.push(`<div class="person"><div><b>${esc(x.n)}</b><span class="role">Ex</span></div></div>`);
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">People in your life</h2><span class="label">${ps.length+core.length}</span></div>
-  <div class="people">${core.join("")}${ps.map(p=>`<div class="person"><div><b>${esc(p.n)}</b><span class="role">${esc(ROLE_N[p.role]||"Friend")} · ${esc(p.how)}${p.owed?` · owes you ${money(p.owed)}`:""}</span></div>${meterMini(p.bond)}${p.role!=="lover"?`<button class="btn sm" data-act="catchup2" data-p="${p.id}" ${freeLeft()<=0?"disabled":""}>Catch up</button>`:""}</div>`).join("")}</div>
+  <div class="people">${core.join("")}${ps.map(p=>`<div class="person"><div><b>${esc(p.n)}</b><span class="role">${esc(ROLE_N[p.role]||"Friend")} · ${esc(p.how)}${p.owed?` · owes you ${money(p.owed)}`:""}</span></div>${meterMini(p.bond)}${p.role==="lover"||p.role==="openlover"?`<button class="btn sm" data-act="endlover" data-p="${p.id}">End it</button>`:""}${p.role!=="lover"&&p.role!=="openlover"?`<button class="btn sm" data-act="catchup2" data-p="${p.id}" ${freeLeft()<=0?"disabled":""}>Catch up</button>`:""}</div>`).join("")}</div>
   ${!ps.length?`<p class="hint" style="margin:8px 0 0">Meet people through your free time below. Friends can lend a hand, ask for one, invite you to weddings, set you up on dates or tip you off about jobs.</p>`:""}
   ${gone.length?`<div class="label" style="margin-top:10px">Remembered</div><p class="hint" style="margin:2px 0 0">${gone.map(p=>esc(p.n)).join(", ")}</p>`:""}</div>`;
 }
@@ -5402,7 +5403,7 @@ function takeTrip(k){
  S.stress=clamp(S.stress-(bad?8:16),0,100);S.homeLife=clamp(S.homeLife+(inLove()||S.children.length?10:5),0,100);
  lines.push(bad?t.bad:pick(t.st));
  if(t.k==="ski"&&bad)goSick(1,-8);
- if(isSingle()&&rnd()<.35){const n=fullName();dateWith(n,pick(JOBS),`A holiday romance in ${t.n.split(" in ").pop()}`);lines.push(`You meet ${n.split(" ")[0]}. You've swapped numbers. Check your inbox.`)}
+ if(isSingle()&&rnd()<.35){const n=partnerFull();dateWith(n,pick(JOBS),`A holiday romance in ${t.n.split(" in ").pop()}`);lines.push(`You meet ${n.split(" ")[0]}. You've swapped numbers. Check your inbox.`)}
  else if(rnd()<.3){const p=addPerson(fullName(),"friend",`Met on holiday: ${t.n.toLowerCase()}`,55);lines.push(`You make a new friend: ${p.n}.`)}
  const sv=addItem("souvenir",t.sv,20,`From ${t.n.toLowerCase()}, ${shortDate(S.day)}.`);
  lines.push(`You bring home ${t.sv.toLowerCase()}.`);S.log.unshift({d:S.day,t:`Holiday: ${t.n.toLowerCase()}.`});
@@ -5736,7 +5737,7 @@ function inboxMorning(){
 }
 function varsFor(e){
  if(e.vars)return e.vars();
- if(e.id==="meet"||e.newPartner)return{p:pick(NAMES),job:pick(JOBS)};
+ if(e.id==="meet"||e.newPartner)return{p:partnerFirst(),job:pick(JOBS)};
  if(e.kid){const ks=S.children.filter(k=>{const a=kidAge(k);return a>=e.kid[0]&&a<e.kid[1]&&(!e.kidP||k.p===e.kidP)});if(ks.length)return{k:pick(ks).n}}
  return{};
 }
@@ -5843,7 +5844,7 @@ function closeDay(off){
  if(pending){setTab("inbox");(document.querySelector("#pane-inbox .mail.pending")||document.getElementById("pane-inbox")).scrollIntoView({behavior:"smooth",block:"center"});return}
  if(!off&&needWork()){setTab("desk");const wb=document.getElementById("workBoard");if(wb)wb.scrollIntoView({behavior:"smooth",block:"start"});toastLimit("Pick at least one job for this month, or take a break.");return}
  const rk=R(), K=rankK();
- const W=S.prison?prisonClose():S.front?frontClose():S.sel?selClose():S.sabb?sabbClose():CAR_().mech==="markets"?marketsClose(off):CAR_().mech==="jobs"?jobsClose(off):fbClose(off);
+ const W=S.prison?prisonClose():S.front?frontClose():S.sel?selClose():S.sabb?sabbClose():CAR_().mech==="markets"?marketsClose(off):CAR_().mech==="jobs"?(S.path==="manager"?mgrClose(off):jobsClose(off)):fbClose(off);
  if(!S.prison&&!S.front&&!S.sel&&!S.sabb)runMoves(W);
  const ill=S.sick>0&&CAR_().mech!=="football";
  if(ill){const k=.3;W.tot*=k;W.lines.forEach(l=>l[1]*=k);W.u=.1;W.repD=W.repD!=null?Math.min(0,W.repD):-.5;W.notes.push(`Off sick: colleagues covered most of your work. ${S.sick>1?`${S.sick-1} more month${S.sick>2?"s":""} to recover.`:"You're back to full strength next month."}`)}
@@ -5877,7 +5878,7 @@ function closeDay(off){
  S.day++;
  if(monthOf(S.day)===0&&S.day>12&&!S.over)awardsNight(notes);
  modalQueue=[["report",report]];
- if(S.path==="foot"&&S.lg&&monthOf(dayDone)===4&&!S.over)modalQueue.push(["season",seasonEnd()]);
+ if((S.path==="foot"||(S.path==="manager"&&S.rank<4))&&S.lg&&monthOf(dayDone)===4&&!S.over){const se=seasonEnd();if(S.path==="manager"){if(se.move<0){S.heat=clamp(S.heat+20,0,100);se.title+=" The board is furious."}if(se.move>0)S.rep=clamp(S.rep+6,0,100)}modalQueue.push(["season",se])}
  if(monthOf(S.day)===0&&S.day>12&&!S.over)modalQueue.push(["year",yearRecap()]);
  if(monthOf(S.day)===2&&S.day>12&&!S.over)modalQueue.push(["budget",budgetDay()]);
  {const pp=paperFor(dayDone);if(pp.big&&!S.over)modalQueue.push(["paper",pp])}
@@ -5888,7 +5889,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -5953,6 +5954,8 @@ function promote(){
  S.pos={};
  if(S.path==="bank"&&S.rank>=3)visible().forEach(id=>S.pos[id]=2);
  if(S.rank===CAR_().teamFrom)S.morale=60;
+ if(S.path==="manager")S.lg=null;
+ if(S.path==="tech"&&S.rank===3&&typeof addItem==="function"&&!(S.items||[]).some(i=>i.k==="equity"))addItem("equity","Shares in your company",80000,"Granted when you became CTO.");
  newRival();
  moment({icon:S.rank===4?"trophy":"medal",kicker:"Promotion",title:R().t,sub:S.rank===4?`The top job at ${S.bank}. You made it.`:`Congratulations. New title, bigger pay packet, longer hours.`,big:S.rank>=3});
 }
@@ -5990,6 +5993,10 @@ function setJob(id,v){
  if(nu>R().cap+.01){toastLimit("Not enough hours left. Drop another job first.");return}
  S.pick[id]=v;save();render();
 }
+/* Managers: the month's work shapes the team, then the league plays on */
+function mgrClose(off){const w=jobsClose(off);if(S.rank>=4||!inSeason(S.day))return w;
+ if(!S.lg||!S.lg.teams.some(t=>t.n===S.bank))S.lg=newLeague([0,0,1,3][S.rank],S.bank,roundsSoFar(S.day));
+ const me=lgMe();me.str=clamp(me.str+(w.tot/Math.max(1,rankK())-.9)*.15,0,6);const L=lgMonth(null);w.lines.push(...L.lines);return w}
 function jobsClose(off){
  const c=CAR_(),rk=R(),a=c.appr,lines=[],notes=[];let tot=0,heat=0,repD=0;
  const mf=isTeam()?(.6+S.morale/125):1;
@@ -6012,6 +6019,167 @@ function pointsHelpText(){const x=targetInfo();return `Everything you do at work
 const foldOpen=id=>{try{return localStorage.getItem("ftb-fold-"+id)!=="0"}catch(e){return true}};
 const fold=(id,title,html,attr="")=>`<details class="fold" data-fold="${id}" ${attr} ${foldOpen(id)?"open":""}><summary>${title}</summary>${html}</details>`;
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.matches&&d.matches("details[data-fold]"))try{localStorage.setItem("ftb-fold-"+d.dataset.fold,d.open?"1":"0")}catch(x){}},true);
+/* ============ Authentic careers: qualifications, elections, specialties, more events, second acts and a calendar ============ */
+
+/* ---- 1. Specialties and tracks: doctors choose a specialty, lawyers choose solicitor or barrister, and barristers can become judges ---- */
+Object.assign(SPECS,{
+ judge:{career:"law",spec:1,n:"Judicial appointment",unit:"The bench",title:"Judge",from:"The Judicial Appointments Commission-ish",inviteT:"Apply to be a judge?",inviteB:"Your name has been mentioned. A judge earns less than a top barrister, but it's the pinnacle of the profession.",yes:"Apply",yesO:"You fill in a very long form about your character.",staff:"The selection panel",
+  elig:()=>S.rank>=3&&S.lawTrack==="bar"&&!S.spec&&S.rep>=70&&age()>=45,odds:()=>specOdds((S.rep-70)/120,(S.karma||0)/300,-(S.heat-20)/200),retry:24,tries:2,pay:.75,
+  stages:[{t:"Qualifying test",b:"A written test of judgement on tricky cases.",safe:"Careful and balanced",bold:"Bold and decisive",win:"Through to the next stage.",lose:["Your answers are too one-sided.","You miss a key point of law."]},
+   {t:"Selection day",b:"A role-play hearing, then an interview.",safe:"Fair and patient",bold:"Firm and quick",win:"You're appointed to the bench.",lose:["The panel prefers someone else.","They worry about your temperament."]}],
+  pass:()=>{S.rep=clamp(S.rep+15,0,100);moment({icon:"star",kicker:"Appointed",title:"Your Honour",sub:"A wig, a robe and the final word in court.",big:true})}}
+});
+/* Surgical training follows surgery as a specialty, and silk is for barristers */
+SPECS.surgeon.elig=()=>S.rank>=1&&S.rank<=2&&!S.spec&&S.rep>=60&&S.skill>=45&&(S.docSpec||"surgery")==="surgery";
+const _kcElig=SPECS.kc.elig;SPECS.kc.elig=()=>_kcElig()&&(S.lawTrack!=="sol"||S.rep>=88);
+
+/* Specialty and track titles */
+const DOC_TITLES={gp:["Foundation doctor","GP registrar","GP partner","Clinical director","Chief medical officer"],ed:["Foundation doctor","Emergency medicine registrar","A&E consultant","Clinical director","Chief medical officer"],surgery:["Foundation doctor","Surgical registrar","Consultant surgeon","Clinical director","Chief medical officer"]};
+const BAR_TITLES=["Pupil barrister","Junior barrister","Senior barrister","Head of chambers","Leader of the Bar-ish"];
+const trackTitle=()=>S.path==="doc"&&S.docSpec?DOC_TITLES[S.docSpec][S.rank]:S.path==="law"&&S.lawTrack==="bar"?BAR_TITLES[S.rank]:null;
+
+function trackMorning(){
+ if(S.over||S.prison)return;
+ if(S.path==="doc"&&!S.docSpec&&S.day-S.careerStart>=8&&!S.inbox.some(m=>!m.done&&/^dspec_/.test(m.id)))pushDyn({id:"dspec_"+S.day,from:"The deanery",t:"Choose your specialty",b:"Your foundation years are nearly done. Which way will your career go?",c:[
+  {t:"General practice",fx:{act:"settrack",docSpec:"gp"},o:"Continuity, whole families and a lot of coughs."},
+  {t:"Emergency medicine",fx:{act:"settrack",docSpec:"ed"},o:"Nights, chaos and saving lives."},
+  {t:"Surgery",fx:{act:"settrack",docSpec:"surgery"},o:"Long operations and steady hands."}]});
+ if(S.path==="law"&&!S.lawTrack&&S.day-S.careerStart>=4&&!S.inbox.some(m=>!m.done&&/^ltrack_/.test(m.id)))pushDyn({id:"ltrack_"+S.day,from:"Your careers adviser",t:"Solicitor or barrister?",b:"Solicitors advise clients and run their cases. Barristers stand up in court in a wig. Which are you?",c:[
+  {t:"Solicitor: clients, deals and partnership",fx:{act:"settrack",lawTrack:"sol"},o:"Big firms, long hours, a shot at equity partner."},
+  {t:"Barrister: courtrooms and chambers",fx:{act:"settrack",lawTrack:"bar"},o:"Pupillage, then the courts. One day, perhaps, silk."}]});
+}
+/* ---- 2. Politics: elections, leadership contests and questions in the House ---- */
+function polMorning(){
+ if(S.path!=="pol"||S.over||S.prison)return;
+ if(S.rank>=1){if(S.nextElection==null)S.nextElection=S.day+30+Math.floor(rnd()*24);
+  if(S.day>=S.nextElection&&!S.inbox.some(m=>!m.done&&/^elec_/.test(m.id))){S.nextElection=S.day+54+Math.floor(rnd()*12);
+   const w=clamp(.5+(S.rep-55)/120-(S.heat||0)/300+(S.karma||0)/400,.15,.9);
+   pushDyn({id:"elec_"+S.day,from:"The returning officer",t:"A general election",b:`The country goes to the polls. Your majority is ${S.rep>=65?"comfortable":S.rep>=50?"slim":"wafer-thin"}. How do you fight it?`,c:[
+    {t:"Knock on every door in your seat",p:Math.min(.92,w+.08),win:{fx:{act:"elecwin",stress:6},o:"You hold your seat with an increased majority."},lose:{fx:{act:"elecloss"},o:"It wasn't enough. A national swing sweeps you away."}},
+    {t:"Front the national TV campaign",p:w,win:{fx:{act:"elecwin",rep:4},o:"You're everywhere, and it works."},lose:{fx:{act:"elecloss"},o:"You were on TV so much you forgot your own voters."}},
+    {t:"Go negative on your opponent",p:Math.min(.92,w+.05),win:{fx:{act:"elecwin",karma:-6},o:"Ugly, but effective."},lose:{fx:{act:"elecloss",karma:-6},o:"It backfires. Voters punish the mudslinging."}}]})}}
+ if(S.rank===3&&rnd()<.015&&!S.inbox.some(m=>!m.done&&/^lead_/.test(m.id)))pushDyn({id:"lead_"+S.day,from:"The party",t:"A leadership contest",b:"The Prime Minister has resigned. Colleagues are urging you to stand.",c:[
+  {t:"Throw your hat in the ring",p:clamp(.25+(S.rep-60)/100,.1,.7),win:{fx:{act:"becomepm"},o:"You win the ballot of members."},lose:{fx:{rep:-4},o:"You come third. The winner remembers who backed whom."}},
+  {t:"Back a colleague and wait",fx:{rep:3},o:"Loyalty is noted. Your time may come."}]});
+ if(S.rank===4&&monthOf(S.day)%3===0&&!S.inbox.some(m=>!m.done&&/^pmq_/.test(m.id)))pushDyn({id:"pmq_"+S.day,from:"The House",t:"Prime Minister's Questions-ish",b:"The Leader of the Opposition is on their feet with a killer question about hospital waiting lists.",c:[
+  {t:"Answer with facts and figures",p:.65,win:{fx:{rep:4},o:"Solid. The sketch-writers call it 'dull but effective'."},lose:{fx:{rep:-4},o:"Your figures are out of date. Ouch."}},
+  {t:"Hit back with a zinger",p:.5,win:{fx:{rep:7},o:"Your own benches roar. The clip goes viral."},lose:{fx:{rep:-7},o:"The zinger falls flat. Silence, then laughter from the other side."}}]});
+}
+
+/* ---- 3. More events for the thinner careers ---- */
+EV.push(
+ {id:"tv_burn",career:"tvchef",again:18,from:"The studio floor",t:"Live on air",b:"Your soufflé collapses live in front of two million viewers.",c:[{t:"Laugh it off",p:.75,win:{fx:{rep:5},o:"The clip becomes a much-loved meme."},lose:{fx:{rep:-3},o:"It looks like you've lost your touch."}},{t:"Blame the oven",fx:{rep:-5},o:"Viewers aren't impressed."}]},
+ {id:"tv_rival",career:"tvchef",again:24,from:"A tabloid",t:"A rival TV chef",b:"A rival chef says your recipes 'wouldn't survive a real kitchen'.",c:[{t:"Challenge them to a cook-off",p:.55,win:{fx:{rep:8,pnl:3},o:"You win on live TV."},lose:{fx:{rep:-6},o:"You lose. They're insufferable about it."}},{t:"Rise above it",fx:{rep:1,karma:2},o:"Dignity intact."}]},
+ {id:"tv_book",career:"tvchef",again:24,from:"Your publisher",t:"A cookbook deadline",b:"Your Christmas cookbook is due in a month and you've written four recipes.",c:[{t:"Cook and write every night",fx:{stress:10,pnl:3},o:"Number one in the bestseller list by December."},{t:"Hire a ghostwriter",fx:{pnl:2,karma:-3},o:"It sells. You've never cooked half of it."}]},
+ {id:"tv_range",career:"tvchef",r:[2,4],again:30,from:"A supermarket",t:"Your own range",b:"A supermarket wants a ready-meal range with your face on the box.",c:[{t:"Sign the deal",fx:{cash:40,rep:-2},o:"The lasagne is a bestseller. Critics are sniffy."},{t:"Only if you control the recipes",p:.6,win:{fx:{cash:30,rep:4},o:"Quality and cash. Rare."},lose:{fx:{},o:"They walk away."}}]},
+ {id:"tv_guest",career:"tvchef",again:18,from:"A chat show",t:"A sofa spot",b:"A big chat show wants you to cook live alongside a Hollywood star.",c:[{t:"Go for it",p:.7,win:{fx:{rep:6},o:"Funny, charming, and the star loves your food."},lose:{fx:{rep:-3},o:"You set off the studio fire alarm."}},{t:"Too busy",fx:{},o:"Next time."}]},
+ {id:"tv_school",career:"tvchef",again:36,from:"A campaign group",t:"School dinners",b:"Campaigners want you to front a drive to improve school dinners.",c:[{t:"Lead the campaign",fx:{rep:6,karma:6,stress:6},o:"The government changes the rules. Kids eat better."},{t:"Stay out of politics",fx:{},o:"Fair enough."}]},
+ {id:"as_iss",career:"astronaut",r:[1,4],again:18,from:"The space station",t:"An ammonia leak",b:"An alarm sounds: there may be an ammonia leak in the cooling system.",c:[{t:"Isolate it yourself",p:.75,win:{fx:{pnl:4,rep:8},o:"Leak sealed. Mission control applauds."},lose:{fx:{health:-15,stress:12},o:"You're exposed briefly. You'll recover."}},{t:"Evacuate to the safe module",fx:{pnl:1,stress:4},o:"By the book. The engineers fix it remotely."}]},
+ {id:"as_school",career:"astronaut",again:12,from:"Education outreach",t:"A call from a school",b:"Thousands of children are watching a live link from orbit.",c:[{t:"Do a zero-gravity trick",fx:{rep:6,karma:3},o:"The children scream with delight."},{t:"Talk about the science",fx:{rep:4,karma:3},o:"One girl asks the best question you've ever heard."}]},
+ {id:"as_food",career:"astronaut",again:18,from:"Your crewmate",t:"Space food",b:"Your crewmate has smuggled a jar of something that smells extraordinary.",c:[{t:"Share it",fx:{home:4,stress:-4},o:"Space curry night. Morale soars."},{t:"Report it",fx:{rep:1,home:-2},o:"Rules are rules."}]},
+ {id:"as_mars",career:"astronaut",r:[3,4],again:36,from:"The agency",t:"A seat on the Mars mission",b:"A three-year round trip to Mars. You'd miss a lot of life at home.",c:[{t:"Volunteer",p:.85,win:{fx:{pnl:6,rep:15,home:-15},o:"You become one of the first humans to see Mars up close."},lose:{fx:{act:"spechurt",dieP:.25,cause:"You died on the first crewed mission to Mars. You are remembered as a pioneer."},o:"Something goes wrong deep in space."}},{t:"Stay for your family",fx:{home:10},o:"You watch the launch from the sofa, with your family."}]},
+ {id:"as_tired",career:"astronaut",again:18,from:"The flight surgeon",t:"Bones and eyes",b:"Six months in orbit have weakened your bones and blurred your vision.",c:[{t:"Hard rehab",fx:{health:6,stress:4},o:"Back to full strength in months."},{t:"Push on",fx:{health:-8,pnl:2},o:"You'll pay for it later."}]},
+ {id:"sp_honey",career:"spy",again:18,from:"An embassy party",t:"A charming diplomat",b:"A diplomat from a hostile state is paying you a lot of attention.",c:[{t:"Play along and report it",p:.6,win:{fx:{pnl:4,rep:6},o:"You turn them into an asset."},lose:{fx:{heat:12,stress:8},o:"They were playing you. Security wants a word."}},{t:"Walk away",fx:{rep:1},o:"Sensible."}]},
+ {id:"sp_drop",career:"spy",again:12,from:"Your asset",t:"A dead drop",b:"Your asset has left documents behind a loose brick in a park. You might be followed.",c:[{t:"Run counter-surveillance first",fx:{pnl:2,stress:3},o:"Two hours of walking in circles. Clean."},{t:"Grab it quickly",p:.65,win:{fx:{pnl:4},o:"Got it."},lose:{fx:{heat:10,rep:-4},o:"Photographed. The asset is burned."}}]},
+ {id:"sp_cover",career:"spy",again:24,from:"Home",t:"What do you do for work?",b:"Your partner's new friend asks what you actually do. Your cover story is wearing thin.",c:[{t:"Stick to the cover",fx:{home:-3,stress:3},o:"'Something boring at the Foreign Office.' They believe you. Mostly."},{t:"Change the subject",fx:{home:-1},o:"Smooth."}]},
+ {id:"sp_poly",career:"spy",again:30,from:"Vetting",t:"A lie detector",b:"Your security clearance is up for review. They want you on a polygraph.",c:[{t:"Answer everything honestly",p:.85,win:{fx:{rep:3},o:"Cleared again."},lose:{fx:{heat:8,stress:6},o:"An old debt flags you. More interviews."}}]},
+ {id:"sp_rescue",career:"spy",r:[2,4],again:30,from:"Control",t:"A hostage abroad",b:"A British aid worker has been kidnapped. You have a contact who might help.",c:[{t:"Negotiate in person",p:.6,win:{fx:{pnl:6,rep:10,act:"specmedal",n:"A quiet medal",sub:"Awarded in a room with no windows for bringing someone home."},o:"The aid worker comes home."},lose:{fx:{stress:15,rep:-4},o:"The talks collapse. Others step in."}},{t:"Leave it to the military",fx:{},o:"The special forces go in."}]},
+ {id:"co_mgr",career:"clubowner",again:18,from:"The boardroom",t:"Sack the manager?",b:"Five defeats in a row. Fans are chanting for the manager to go.",c:[{t:"Back the manager",p:.5,win:{fx:{rep:6,pnl:2},o:"Results turn. You look a genius."},lose:{fx:{rep:-8},o:"Relegation looms."}},{t:"Sack them and spend big",fx:{cash:-20,rep:2},o:"A new manager bounce, at a price."}]},
+ {id:"co_takeover",career:"clubowner",r:[1,4],again:30,from:"A sovereign fund",t:"A takeover bid",b:"A wealthy state fund offers a huge sum for your club.",c:[{t:"Sell",fx:{act:"sellclub"},o:"You make a fortune. The fans are uneasy."},{t:"Refuse: the club belongs to the town",fx:{rep:8,karma:4},o:"The fans unfurl a banner with your name on it."}]},
+ {id:"co_stadium",career:"clubowner",again:30,from:"The council",t:"A new stadium",b:"You could move to a 40,000-seat stadium on the edge of town.",c:[{t:"Build it",p:.6,win:{fx:{pnl:5,rep:5},o:"Sold out every week."},lose:{fx:{pnl:-4,rep:-5},o:"Over budget and soulless."}},{t:"Stay at the old ground",fx:{rep:3},o:"The fans love the history."}]},
+ {id:"co_ffp",career:"clubowner",r:[1,4],again:24,from:"The league",t:"Spending rules",b:"Accountants say you've broken the league's spending rules.",c:[{t:"Accept the points deduction",fx:{rep:-6,heat:-5},o:"Painful but clean."},{t:"Fight it in court",p:.5,win:{fx:{rep:4},o:"You win on a technicality."},lose:{fx:{heat:15,rep:-8},o:"A bigger deduction."}}]},
+ {id:"co_wonder",career:"clubowner",again:24,from:"Your academy",t:"A wonderkid",b:"Europe's biggest club bids £60m for your seventeen-year-old star.",c:[{t:"Sell",fx:{cash:50,rep:-4},o:"Record profit. Fans are heartbroken."},{t:"Keep him",p:.6,win:{fx:{pnl:5,rep:6},o:"He fires you up the league."},lose:{fx:{rep:-2},o:"He sulks and leaves for free two years later."}}]},
+ {id:"ac_audition",career:"actor",again:12,from:"Your agent",t:"The big audition",b:"A major director wants to see you for a lead role. You have three days.",c:[{t:"Prepare obsessively",p:.55,win:{fx:{pnl:4,rep:6},o:"You get the part."},lose:{fx:{stress:6},o:"They go with a bigger name."}},{t:"Go in fresh",p:.4,win:{fx:{pnl:4,rep:6},o:"Your spontaneity wins them over."},lose:{fx:{},o:"Not this time."}}]},
+ {id:"ac_review",career:"actor",again:18,from:"The critics",t:"Opening night",b:"Your new play opens tonight. The critics are in.",c:[{t:"Read the reviews",p:.6,win:{fx:{rep:7},o:"Five stars. 'A revelation.'"},lose:{fx:{rep:-4,stress:6},o:"Two stars. 'Miscast.'"}},{t:"Never read reviews",fx:{stress:-3},o:"Bliss."}]},
+ {id:"ac_franchise",career:"actor",r:[2,4],again:30,from:"A studio",t:"A superhero franchise",b:"A nine-film deal to play a superhero. Huge money, ten years in a cape.",c:[{t:"Sign it",fx:{cash:80,rep:2},o:"You're a household name. Serious roles dry up."},{t:"Stick to serious films",fx:{rep:4},o:"Critics love you. Your bank balance doesn't."}]},
+ {id:"ac_method",career:"actor",again:24,from:"The director",t:"Method acting",b:"To play a boxer you could gain three stone and train for six months.",c:[{t:"Commit totally",p:.7,win:{fx:{pnl:5,rep:8,health:-6},o:"An awards-worthy transformation."},lose:{fx:{health:-10,stress:8},o:"You injure your back."}},{t:"Use a body double",fx:{rep:-2},o:"Nobody notices. Probably."}]},
+ {id:"ac_award",career:"actor",r:[2,4],again:24,from:"The academy-ish",t:"Awards season",b:"You're nominated. There's a campaign of dinners, parties and interviews.",c:[{t:"Campaign hard",p:.35,win:{fx:{rep:12,act:"specmedal",n:"Best Actor-ish",sub:"You thank your mum, your agent and a dog you had as a child."},o:"You win!"},lose:{fx:{rep:3},o:"You lose to a national treasure. You clap graciously."}},{t:"Stay home",fx:{stress:-4},o:"Nominated is enough."}]}
+);
+
+/* ---- 6. A calendar of big moments in each career ---- */
+const cal=(id,career,month,from,t,b,c)=>({id,career,season:1,again:11,cond:s=>monthOf(s.day)===month,from,t,b,c});
+EV.push(
+ cal("cal_teach",  "teach",7,"The exams office","Results day","Your Year 11s collect their GCSE results this morning.",[{t:"Be there for every pupil",fx:{rep:4,home:-2,karma:3},o:"Tears, hugs and one pupil who got a 9 against all the odds."},{t:"Check the results online",fx:{rep:1},o:"Respectable. You'll hear the stories in September."}]),
+ cal("cal_chef",   "chef",11,"The bookings diary","Christmas bookings","Every table is booked from now until Christmas Eve, plus three office parties.",[{t:"Add extra sittings",fx:{pnl:4,stress:10},o:"Record takings. You sleep on Boxing Day."},{t:"Keep it manageable",fx:{pnl:2,stress:2},o:"Busy, calm and profitable."}]),
+ cal("cal_pilot",  "pilot",6,"Operations","Summer peak","Air traffic control strikes in France are causing chaos at the height of the holidays.",[{t:"Fly extra rotations",fx:{pnl:3,stress:8},o:"Thousands of families get their holidays."},{t:"Stick to your hours",fx:{rep:-1},o:"Sensible. Someone else covers."}]),
+ cal("cal_pilot2", "pilot",0,"The ramp","De-icing chaos","Freezing fog and a queue of thirty planes waiting to be de-iced.",[{t:"Wait your turn",fx:{stress:4},o:"Two hours late, but safe."},{t:"Push to go now",p:.7,win:{fx:{pnl:2},o:"You slip out ahead of the queue."},lose:{fx:{heat:12},o:"An inspector reports you."}}]),
+ cal("cal_foot",   "foot",0,"Your agent","Deadline day","It's the last day of the January window. Two clubs are asking about you.",[{t:"Stay and fight for your place",fx:{rep:3},o:"The fans appreciate your loyalty."},{t:"Push for a move",p:.5,win:{fx:{act:"raise",rep:-2},o:"A new contract, better money."},lose:{fx:{rep:-4},o:"The deal collapses at 10.59pm."}}]),
+ cal("cal_mgr",    "manager",7,"The chairman","Deadline day","The window shuts at 11pm. The chairman has found £5m down the back of the sofa.",[{t:"Sign a proven striker",p:.6,win:{fx:{pnl:4,rep:4},o:"He scores on debut."},lose:{fx:{pnl:-1,rep:-2},o:"He's injured in his first training session."}},{t:"Save it for January",fx:{rep:-1},o:"The fans wanted a signing."}]),
+ cal("cal_pol",    "pol",8,"The party","Party conference","Conference week: speeches, fringe events and far too much warm wine.",[{t:"Give a barnstorming fringe speech",p:.6,win:{fx:{rep:6},o:"The papers call you a future leader."},lose:{fx:{rep:-3},o:"Half-empty room, one heckler."}},{t:"Work the receptions",fx:{rep:3,health:-2},o:"You collect phone numbers and a hangover."}]),
+ cal("cal_bank",   "bank",0,"Your desk head","Bonus day","Bonus numbers are handed out in a small glass room, one by one.",[{t:"Take it graciously",fx:{rep:2},o:"Smaller than you hoped. You smile anyway."},{t:"Argue for more",p:.4,win:{fx:{act:"raise"},o:"They top it up."},lose:{fx:{rep:-5},o:"'Noted.' Not a good look."}}]),
+ cal("cal_tvchef", "tvchef",11,"The channel","The Christmas special","The channel wants a two-hour Christmas Day special.",[{t:"Go all out",p:.7,win:{fx:{pnl:4,rep:6},o:"Ten million viewers."},lose:{fx:{rep:-3},o:"The turkey is raw in the middle. On live TV."}},{t:"Keep it simple",fx:{pnl:2},o:"Cosy and charming."}]),
+ cal("cal_music",  "music",5,"Your agent","Festival season","Summer festival season: four festivals in four weekends.",[{t:"Play them all",fx:{pnl:4,stress:8,health:-3},o:"Mud, sunburn and the best crowds of your life."},{t:"Just the big one",fx:{pnl:2},o:"One great show."}]),
+ cal("cal_dj",     "dj",5,"Your agent","Ibiza season","The White Isle-ish season opens. A club wants you every Thursday.",[{t:"Take the residency",fx:{pnl:4,stress:6,health:-4},o:"Sunrise sets every week."},{t:"Stick to home gigs",fx:{},o:"You watch the clips with envy."}]),
+ cal("cal_fire",   "fire",10,"Control","Bonfire night","It's the busiest night of the year. Fireworks and garden fires everywhere.",[{t:"Double shift",fx:{pnl:3,stress:8},o:"Eleven call-outs. Nobody hurt."},{t:"Run a safety campaign beforehand",fx:{rep:3,karma:3},o:"Call-outs are down a third."}]),
+ cal("cal_police", "police",11,"Your sergeant","The Christmas drink-drive campaign","December's drink-drive campaign starts tonight.",[{t:"Run roadside checks all month",fx:{pnl:3,stress:4},o:"Fifty arrests and, you hope, a few lives saved."},{t:"Focus on the busy town centre",fx:{pnl:2},o:"Fights, lost phones and a man dressed as an elf."}]),
+ cal("cal_doc",    "doc",0,"The bed manager","The winter crisis","Flu, falls and a hospital with no beds. Patients are waiting on trolleys.",[{t:"Work extra shifts",fx:{pnl:3,stress:10,karma:3},o:"Exhausting, and you make a real difference."},{t:"Speak out to the press",p:.5,win:{fx:{rep:5,karma:3},o:"Ministers promise more beds."},lose:{fx:{heat:10},o:"Management are not happy."}}]),
+ cal("cal_nurse",  "nurse",0,"The bed manager","The winter crisis","Corridors full of trolleys and two nurses off sick.",[{t:"Stay late every night",fx:{pnl:3,stress:10,karma:3},o:"You hold the ward together."},{t:"Escalate the staffing",fx:{rep:2},o:"Agency nurses arrive by Thursday."}]),
+ cal("cal_vet",    "vet",10,"Out of hours","Fireworks night","Panicking dogs, a cat stuck up a chimney and a goat that ate a sparkler.",[{t:"Open late for frightened pets",fx:{pnl:3,karma:3,stress:5},o:"A lot of grateful owners."},{t:"Normal hours",fx:{},o:"The emergency clinic is swamped."}]),
+ cal("cal_hair",   "hair",11,"The diary","Party season","Every slot is booked for Christmas parties and New Year's Eve.",[{t:"Open late and on Sundays",fx:{pnl:4,stress:8},o:"Record month."},{t:"Keep normal hours",fx:{pnl:2},o:"Regulars first."}]),
+ cal("cal_plumb",  "plumb",0,"Your phone","Boiler breakdown season","The first cold snap. Boilers are failing all over town.",[{t:"Work every hour",fx:{pnl:4,stress:8},o:"Warm homes and a full diary."},{t:"Elderly customers first",fx:{pnl:2,karma:5},o:"You get a lot of tins of biscuits."}]),
+ cal("cal_elec",   "elec",10,"The council","Christmas lights","The town wants its Christmas lights switched on by Friday.",[{t:"Take the job",fx:{pnl:3,rep:3},o:"A local celebrity flicks the switch. It all works."},{t:"Too busy",fx:{},o:"Someone else does it. One street stays dark."}]),
+ cal("cal_soldier","soldier",10,"Your regiment","Remembrance","Your unit has been chosen to march at the national service of remembrance.",[{t:"March with pride",fx:{rep:4,karma:3,home:2},o:"Your family watch on TV."}]),
+ cal("cal_infl",   "influencer",10,"Your brand manager","Black Friday","Brands are throwing money at creators for Black Friday deals.",[{t:"Post every deal you're offered",fx:{cash:20,rep:-3},o:"Kerching. Some followers unfollow."},{t:"Only brands you love",fx:{cash:8,rep:3},o:"Your followers trust you more."}]),
+ cal("cal_actor",  "actor",1,"Your publicist","Awards season","Red carpets, after-parties and borrowed jewellery.",[{t:"Go to everything",fx:{rep:4,health:-3},o:"Photographed everywhere."},{t:"Pick one or two",fx:{rep:2},o:"Rested and charming."}]),
+ cal("cal_teach2", "teach",8,"Your inbox","The Ofsted call","It's the call every school dreads: inspectors arrive tomorrow.",[{t:"Stay up planning perfect lessons",p:.65,win:{fx:{rep:6,stress:10},o:"Your lesson is graded 'outstanding'."},lose:{fx:{stress:12},o:"The inspector arrives in the middle of a fire drill."}},{t:"Teach as you always do",p:.55,win:{fx:{rep:4},o:"Authentic and calm. They're impressed."},lose:{fx:{rep:-3},o:"Year 9 pick today to misbehave."}}])
+);
+
+Object.assign(ACTS,{
+ settrack:fx=>{if(fx.docSpec)S.docSpec=fx.docSpec;if(fx.lawTrack)S.lawTrack=fx.lawTrack;S.log.unshift({d:S.day,t:`Chose a path: ${fx.docSpec?{gp:"general practice",ed:"emergency medicine",surgery:"surgery"}[fx.docSpec]:fx.lawTrack==="bar"?"the Bar":"solicitor"}.`})},
+ elecwin:()=>{S.rep=clamp(S.rep+4,0,100);S.log.unshift({d:S.day,t:"Re-elected."});
+  if(S.rank>=3&&rnd()<.4){const was=R().t;S.rank=1;S.rankSince=S.day;S.log.unshift({d:S.day,t:"Your party lost the election. You're back on the backbenches."});
+   moment({tone:"solemn",icon:"shield",kicker:"Election night",title:"In opposition",sub:`You held your seat, but your party lost. No longer ${was.toLowerCase()}, you're back on the backbenches.`})}
+  else moment({icon:"star",kicker:"Election night",title:"Re-elected",sub:"A cheer in the sports hall at 3am. Another term."})},
+ elecloss:()=>{S.rank=0;S.rankSince=S.day;S.nextElection=null;S.rep=clamp(S.rep-10,0,100);S.log.unshift({d:S.day,t:"Lost your seat at the general election."});
+  moment({tone:"solemn",icon:"shield",kicker:"Election night",title:"You lost your seat",sub:"You give a gracious speech at 4am. You could stand again, or try something new."})},
+ becomepm:()=>{if(S.rank===3)promote()},
+ sellclub:()=>{S.wealth+=salary()*8;S.log.unshift({d:S.day,t:"Sold your club for a fortune."});S.over="exit"}
+});
+
+/* ---- 5. More second acts ---- */
+Object.assign(SECOND_ACTS,{
+ chef:{why:"Twenty years of hot kitchens have taken their toll",when:()=>age()>=50,opts:[["tvchef",()=>1,"Become a TV chef","The cameras love you."],["teach",()=>0,"Teach cookery","Run a catering course at the local college."]]},
+ doc:{why:"After decades on the wards, you want a change",when:()=>age()>=58,opts:[["pol",()=>1,"Go into politics","A doctor in Parliament, fighting for the health service."],["influencer",()=>2,"Become a TV doctor","Daytime telly and a column in a magazine."]]},
+ law:{why:"You've done it all in law",when:()=>age()>=60&&S.spec!=="judge",opts:[["pol",()=>1,"Stand for Parliament","Lawyers make good legislators. Allegedly."],["teach",()=>1,"Teach law","Pass on the craft."]]},
+ tech:{why:"Burnout is real, and the industry has changed",when:()=>age()>=45,opts:[["influencer",()=>2,"Become a tech YouTuber","Gadget reviews and opinions."],["teach",()=>1,"Teach computing","Inspire the next generation of coders."],["pol",()=>0,"Go into politics","Somebody has to understand AI policy."]]},
+ nurse:{why:"After years of night shifts, you want something new",when:()=>age()>=55,opts:[["doc",()=>0,"Train as a doctor","Graduate medicine, at last."],["teach",()=>1,"Teach nursing","Train the next generation of nurses."],["pol",()=>0,"Stand for Parliament","Fight for the NHS from the inside."]]},
+ manager:{why:"The touchline has aged you",when:()=>age()>=60,opts:[["influencer",()=>2,"Become a pundit","Big opinions, nice suits."],["clubowner",()=>0,"Buy a club","Now you pick the manager.",()=>netWorth()>=5e6]]}
+});
+
+/* ---- Love: who you're interested in, and ending things ---- */
+const NAMES_M=["Tom","Marco","Leo","Danny","Raj","Marcus","Ollie","Gav","Kofi","Ben","Josh","Arjun","Callum","Theo","Jamal","Luca"];
+const NAMES_F=["Priya","Elena","Aisha","Hannah","Grace","Zara","Becca","Fiona","Leah","Nadia","Steph","Jess","Sophie","Maya","Chloe","Amara"];
+const PREF_N={m:"Men",f:"Women",any:"Anyone"};
+const partnerPool=()=>S.pref==="m"?NAMES_M:S.pref==="f"?NAMES_F:[...NAMES_M,...NAMES_F];
+const partnerFirst=()=>pick(partnerPool());
+const partnerFull=()=>`${partnerFirst()} ${pick(SURNAMES)}`;
+const genderOf=n=>{const f=String(n||"").split(" ")[0];return NAMES_F.includes(f)||["Priya","Elena","Aisha","Hannah","Grace","Zara","Becca","Fiona","Leah","Nadia","Steph","Jess"].includes(f)?"f":NAMES_M.includes(f)?"m":"x"};
+const fitsPref=n=>!S.pref||S.pref==="any"||genderOf(n)===S.pref||genderOf(n)==="x";
+function prefMorning(){
+ if(S.pref||S.over||ageAt(S)<16||S.day<2||S.inbox.some(m=>!m.done&&/^pref_/.test(m.id)))return;
+ pushDyn({id:"pref_"+S.day,from:"Your love life",t:"Who are you interested in?",b:"So the game can introduce you to the right people. You can change this any time on the Life tab, under Family.",c:[
+  {t:"Men",fx:{act:"setpref",v:"m"},o:"Noted."},{t:"Women",fx:{act:"setpref",v:"f"},o:"Noted."},{t:"Anyone",fx:{act:"setpref",v:"any"},o:"Noted."}]});
+}
+function endRelModal(){
+ if(!inLove())return;const married=S.rel.st==="married";
+ showModal(`<div class="label">Your relationship</div><h2 style="margin-top:4px">${married?"Ask for a divorce?":"End things with "+esc(S.rel.name)+"?"}</h2>
+  <p>${married?`A divorce splits what you own and takes a toll on everyone${S.children.length?", especially the children":""}.`:`${esc(S.rel.name)} will be hurt. Your social life takes a knock for a while.`}</p>
+  <div class="btn-row"><button class="btn primary" data-act="endrelgo">${married?"Divorce":"End it"}</button><button class="btn" data-act="hide">Not now</button></div>`);
+}
+function endRel(){
+ if(!inLove())return;const n=S.rel.name,married=S.rel.st==="married";
+ if(married)ACTS.divorce();else ACTS.breakup();S.open=0;S.stress=clamp(S.stress+8,0,100);
+ S.log.unshift({d:S.day,t:married?`Divorced ${n}.`:`Broke up with ${n}.`});
+ hideModal();save();render();
+ moment({tone:"solemn",icon:"heart",kicker:married?"Divorce":"A break-up",title:"It's over",sub:`You and ${n} go your separate ways.`});
+}
+function endLover(pid){
+ const p=personBy(pid);if(!p)return;
+ if(p.role==="lover")endSecret(p,"exlover");else{p.role="exlover";p.bond=clamp(p.bond-20,0,100)}
+ S.log.unshift({d:S.day,t:`Ended things with ${p.n}.`});save();render();
+}
+ACTS.setpref=fx=>{S.pref=fx.v};
+
 /* ============ Inbox illustrations: a scene at the top of each message, picked from what it's about ============ */
 const IA_W=320,IA_H=84;
 const iaSky=(c)=>rc(0,0,IA_W,IA_H,c||"var(--sky)");
@@ -6811,6 +6979,7 @@ function renderLife(){
    <div class="meters">${meter(single?"Social life":"Home life",S.homeLife,"good")}</div>
    <p class="hint" style="margin:8px 0 0">Long hours and high stress wear this down. ${single?"":"Below 15 and your partner may leave. "}A good home life above 65 eases your stress.</p>
    ${loveSec()}
+   <div class="btn-row" style="margin-top:10px">${inLove()?`<button class="btn sm" data-act="endrel">${S.rel.st==="married"?"Ask for a divorce":"End the relationship"}</button>`:""}<button class="btn sm" data-act="prefcycle">Interested in: ${PREF_N[S.pref]||"not set"}</button></div>
   </div>
   ${friendSec()}
   <div class="pane-sec">
@@ -6912,7 +7081,7 @@ function renderDesk(){
   ${courseCard()}${miniCard()}
   ${!S.prison&&!S.front&&!S.sel&&!S.sabb&&!S.over&&stagesOn()?`<div class="pane-sec stage-wrap">${stageSec(true)}</div>`:""}${musicSec()}
   <div class="pane-sec">${part.body}</div>${movesSec()}
-  ${S.path==="foot"&&!S.prison&&!S.over?footballLeagueSec():clSec()}
+  ${(S.path==="foot"||(S.path==="manager"&&S.rank<4&&S.lg))&&!S.prison&&!S.over?footballLeagueSec():clSec()}
   <div class="pane-sec desk-close"><div class="close-row">
    <button class="btn primary big" data-act="close">${closeLab}</button>
    <button class="btn" data-act="dayoff" ${offOk&&!S.prison&&!S.front&&!S.sel&&!S.sabb?"":"disabled"}>${offOk?"Take a break":`Break in ${8-(S.day-S.lastOff)} months`}</button>
@@ -7229,6 +7398,10 @@ document.addEventListener("click",e=>{
  if(a==="lifetab"){lifeTab=t.dataset.v;try{localStorage.setItem("ftb-lifetab",lifeTab)}catch(e){}renderLife();return}
  if(a==="pointshelp"){if(CAR_().mech==="jobs"&&!S.prison&&!S.front){setTab("desk");const el=document.getElementById("pointsHelp");if(el){el.open=true;el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}}else showModal(`<h2>${CAR_().fmt==="pts"?"Points":"Your numbers"} explained</h2><p>${pointsHelpText()}</p><div class="btn-row"><button class="btn primary" data-act="hide">Got it</button></div>`);return}
  if(a==="lovego"){loveGo(t.dataset.k);return}
+ if(a==="endrel"){endRelModal();return}
+ if(a==="endrelgo"){endRel();return}
+ if(a==="endlover"){endLover(t.dataset.p);return}
+ if(a==="prefcycle"){S.pref={m:"f",f:"any",any:"m"}[S.pref]||"f";save();render();return}
  if(a==="doact"){if(t.dataset.k==="holiday"){holidayModal();return}doActivity(t.dataset.k);return}
  if(a==="trip"){takeTrip(t.dataset.k);return}
  if(a==="tiyl"){tiylModal(+t.dataset.i);return}
