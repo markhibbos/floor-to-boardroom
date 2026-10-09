@@ -445,6 +445,18 @@ a.btn.primary{color:var(--on-accent)}
 .pola.big{max-width:420px;margin:8px auto 0;padding:12px 12px 14px}.pola.big .cap{font-size:26px}.photo-big{text-align:center}
 .album-strip{display:flex;gap:12px;overflow-x:auto;padding:8px 4px 12px;scroll-snap-type:x mandatory}.album-strip .pola{flex:0 0 120px;scroll-snap-align:start}.pola.tiny .cap{font-size:15px}
 .folks{list-style:none;padding:0;margin:4px 0 8px;display:grid;gap:6px}.folks li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line));font-size:14px}.folks li small{display:block;color:var(--muted);font-size:12px}.folks li.gone{opacity:.7}
+.auth{position:fixed;inset:0;z-index:70;background:var(--field,var(--bg));overflow-y:auto;display:flex;justify-content:center;padding:32px 16px}
+.auth-card{width:100%;max-width:420px}.auth-card form{display:grid;gap:12px;margin-top:10px}.auth-f{display:grid;gap:4px;font-size:14px;color:var(--muted)}
+.auth-f input{font:inherit;font-size:16px;padding:12px 14px;border-radius:12px;border:1px solid var(--glass-line,var(--line));background:var(--glass,var(--surface));color:var(--ink,inherit)}
+.auth-alt{margin:0;text-align:center;font-size:14px}.linkbtn{background:none;border:none;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer}
+.acct-line{text-align:center;font-size:14px;color:var(--muted);margin-top:6px}
+.admin{position:fixed;inset:0;z-index:45;background:var(--field,var(--bg));overflow-y:auto;padding:20px 16px}.adm-in{max-width:1200px;margin:0 auto}
+.adm-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.adm-head h1{margin:0;font-family:"Big Shoulders Display",sans-serif;font-size:36px}.adm-head .hint{flex:1}
+.adm-kpi{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))!important}.adm-q{width:100%;font:inherit;font-size:15px;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-line,var(--line));background:var(--glass,var(--surface));color:inherit;margin:10px 0}
+.adm-body{overflow-x:auto}.adm-table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}.adm-table th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px;border-bottom:1px solid var(--line)}
+.adm-table td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}.adm-table td small{display:block;color:var(--muted);font-size:12px}.adm-table tbody tr{cursor:pointer}.adm-table tbody tr:hover{background:var(--glass-soft,rgba(127,127,127,.08))}
+.adm-bars{list-style:none;padding:0;margin:6px 0 16px;display:grid;gap:6px}.adm-bars li{display:grid;grid-template-columns:minmax(120px,38%) 1fr 48px;gap:10px;align-items:center;font-size:14px}.adm-bars .bar{height:10px;border-radius:5px;background:var(--glass-soft,rgba(127,127,127,.15));overflow:hidden}.adm-bars .bar i{display:block;height:100%;background:var(--accent)}.adm-bars b{text-align:right}
+.desk-inline{grid-column:1/-1;padding:10px 12px;border-radius:14px;border:1px dashed var(--accent);background:var(--glass-soft,transparent)}.desk-inline[hidden]{display:none}.desk-inline .desk-pick{margin-top:6px}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -644,6 +656,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div class="moment" id="moment" hidden></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 /* ============ Data ============ */
 const RANKS=[
@@ -7391,7 +7404,7 @@ function albumForRecord(){
  const seen=new Set(),uniq=p=>{const k=String(p.m.t).replace(/d+/g,"#")+p.ph.sc;if(seen.has(k))return false;seen.add(k);return true};
  const ps=albumPhotos(),big=ps.filter(p=>!p.m.quiet).reverse().filter(uniq).reverse(),quiet=ps.filter(p=>p.m.quiet&&!/birthday/i.test(p.m.t)||p.m.quiet&&/(18th|21st|30th|40th|50th|60th|70th)/.test(p.m.t));
  let pickd=big.slice(-14);const room=18-pickd.length;
- if(room>0&&quiet.length){const stepQ=quiet.length/room;for(let i=0;i<room&&i*stepQ<quiet.length;i++)pickd.push(quiet[Math.floor(i*stepQ)])}
+ if(room>0&&quiet.length){if(quiet.length<=room)pickd.push(...quiet);else{const stepQ=quiet.length/room;for(let i=0;i<room;i++)pickd.push(quiet[Math.floor(i*stepQ)])}}
  return pickd.sort((a,b)=>a.m.d-b.m.d).map(p=>{const o={t:String(p.m.t||"").slice(0,64)};for(const k of["a","sc","c","h","o","pr","x","w","p","nw","sad"])if(p.ph[k]!=null&&p.ph[k]!=="")o[k]=p.ph[k];if(o.c)o.c=o.c.map(c=>String(c).slice(0,40));return o});
 }
 function albumStrip(rec,viewer){
@@ -7649,6 +7662,202 @@ Object.assign(MOMENT_ICONS,{
  camera:`<rect x="12" y="30" width="76" height="52" rx="8" fill="#2B3A44"/><rect x="34" y="22" width="24" height="12" rx="3" fill="#2B3A44"/><circle cx="50" cy="56" r="17" fill="#9CC0D2" stroke="#E9ECEE" stroke-width="5"/><circle cx="76" cy="40" r="3.5" fill="#F6D44A"/>`,
  scroll:`<rect x="24" y="16" width="52" height="68" rx="4" fill="#F2EBDD" stroke="#C9B48A" stroke-width="2"/>${[30,40,50,60].map(y=>`<rect x="32" y="${y}" width="36" height="3" fill="#B9A27A"/>`).join("")}<circle cx="62" cy="74" r="7" fill="#C0453A"/>`});
 HL_RANK.cake=2;
+
+/* ============ Player accounts (Supabase): sign in to play, every life recorded, and an admin view at #admin ============ */
+/* Fill these in from Supabase: Project Settings → API. The anon key is designed to be public; the data is protected by row-level security. */
+const SB_URL="",SB_KEY="";
+const acctOn=()=>!!(SB_URL&&SB_KEY);
+let sb=null,sbUser=null,sbName="",sbReady=false,sbErr="";
+function sbClient(){
+ if(sb||!acctOn())return sb;
+ try{if(!window.supabase)throw new Error("no lib");sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}catch(e){sbErr="Couldn't reach the sign-in service. Check your connection and reload."}
+ return sb;
+}
+const isAdminView=()=>/^#admin\b/.test(location.hash);
+/* ---- The sign-in screen ---- */
+let authMode="in",authMsg="",authBusy=false;
+function authEl(){let el=document.getElementById("auth");if(!el){el=document.createElement("div");el.id="auth";el.className="auth";document.body.appendChild(el)}return el}
+function showAuth(mode,msg){
+ if(mode)authMode=mode;if(msg!=null)authMsg=msg;const el=authEl();el.hidden=false;document.body.classList.add("at-auth");
+ const f=(id,lab,type,ac,extra)=>`<label class="auth-f"><span>${lab}</span><input id="${id}" type="${type}" autocomplete="${ac}" ${extra||""}></label>`;
+ const body=sbErr?`<p>${esc(sbErr)}</p>`:authMode==="up"?`
+   ${f("auName","Your name","text","name",'maxlength="40"')}${f("auEmail","Email","email","email")}${f("auPass","Password (at least 8 characters)","password","new-password",'minlength="8"')}
+   <button class="btn primary big" data-auth="signup" ${authBusy?"disabled":""}>Create account</button>
+   <p class="hint">We store your name, email and the lives you play so the game's owner can run leaderboards and see how the game is played. Nothing is shared or sold. Ask to have your account deleted at any time.</p>
+   <p class="auth-alt">Already playing? <button class="linkbtn" data-auth="mode" data-v="in">Sign in</button></p>`
+  :authMode==="reset"?`${f("auEmail","Email","email","email")}<button class="btn primary big" data-auth="reset" ${authBusy?"disabled":""}>Send a reset link</button><p class="auth-alt"><button class="linkbtn" data-auth="mode" data-v="in">Back to sign in</button></p>`
+  :authMode==="newpass"?`${f("auPass","New password (at least 8 characters)","password","new-password",'minlength="8"')}<button class="btn primary big" data-auth="newpass" ${authBusy?"disabled":""}>Save new password</button>`
+  :`${f("auEmail","Email","email","email")}${f("auPass","Password","password","current-password")}
+   <button class="btn primary big" data-auth="signin" ${authBusy?"disabled":""}>Sign in</button>
+   <p class="auth-alt"><button class="linkbtn" data-auth="mode" data-v="reset">Forgotten your password?</button></p>
+   <p class="auth-alt">New here? <button class="linkbtn" data-auth="mode" data-v="up">Create an account</button></p>`;
+ el.innerHTML=`<div class="auth-card"><div class="label home-kicker">${isAdminView()?"Admin":"A career and life simulator"}</div><h1 class="home-title" style="font-size:44px">Floor to<br>Boardroom</h1>
+  <h2 style="margin:10px 0 4px">${authMode==="up"?"Create your account":authMode==="reset"?"Reset your password":authMode==="newpass"?"Choose a new password":"Sign in to play"}</h2>
+  ${authMsg?`<div class="note" role="status">${esc(authMsg)}</div>`:""}<form onsubmit="return false">${body}</form></div>`;
+ const first=el.querySelector("input");if(first)setTimeout(()=>{try{first.focus()}catch(e){}},50);
+}
+function hideAuth(){const el=document.getElementById("auth");if(el){el.hidden=true;el.innerHTML=""}document.body.classList.remove("at-auth")}
+const authVal=id=>{const e=document.getElementById(id);return e?e.value.trim():""};
+async function authAct(k,v){
+ const c=sbClient();if(!c)return;
+ if(k==="mode"){showAuth(v,"");return}
+ const email=authVal("auEmail"),pass=document.getElementById("auPass")?document.getElementById("auPass").value:"",name=authVal("auName");
+ if((k==="signin"||k==="signup"||k==="reset")&&!/^\S+@\S+\.\S+$/.test(email)){showAuth(null,"Enter a valid email address.");return}
+ if((k==="signup"||k==="newpass")&&pass.length<8){showAuth(null,"Use a password of at least 8 characters.");return}
+ if(k==="signup"&&!name){showAuth(null,"Tell us your name.");return}
+ authBusy=true;showAuth(null,"Just a moment…");const site=location.origin+location.pathname;
+ try{
+  if(k==="signin"){const{error}=await c.auth.signInWithPassword({email,password:pass});if(error)throw error}
+  else if(k==="signup"){const{data,error}=await c.auth.signUp({email,password:pass,options:{data:{name},emailRedirectTo:site}});if(error)throw error;if(!data.session){authBusy=false;showAuth("in","Nearly there: we've sent you an email. Tap the link in it to confirm your account, then sign in here.");return}}
+  else if(k==="reset"){const{error}=await c.auth.resetPasswordForEmail(email,{redirectTo:site});if(error)throw error;authBusy=false;showAuth("in","If that email has an account, a reset link is on its way.");return}
+  else if(k==="newpass"){const{error}=await c.auth.updateUser({password:pass});if(error)throw error;authBusy=false;authMsg="";hideAuth();toastMsg("Password changed.");return}
+ }catch(e){authBusy=false;showAuth(null,/invalid login/i.test(e.message||"")?"That email and password don't match.":/not confirmed/i.test(e.message||"")?"Confirm your email first: tap the link we sent you.":(e.message||"Something went wrong. Try again."));return}
+ authBusy=false;authMsg="";
+}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-auth]");if(!t)return;e.preventDefault();authAct(t.dataset.auth,t.dataset.v)});
+document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const el=document.getElementById("auth");if(!el||el.hidden)return;const b=el.querySelector("button.btn.primary");if(b){e.preventDefault();b.click()}});
+/* Until you're signed in, the only things you can do are look at a shared life record */
+const AUTH_FREE=["recphoto","recback","recimg","reclink","hide","momentok"];
+document.addEventListener("click",e=>{
+ if(!acctOn()||sbUser)return;const t=e.target.closest("[data-act],[data-tab]");if(!t||t.closest("#auth"))return;
+ if(t.dataset.act&&AUTH_FREE.includes(t.dataset.act))return;
+ e.preventDefault();e.stopImmediatePropagation();if(t.dataset.act==="playown"){history.replaceState(null,"",location.pathname);try{hideModal()}catch(x){}}showAuth("in","");
+},true);
+/* ---- After signing in ---- */
+async function onSignedIn(user){
+ const fresh=!sbUser||sbUser.id!==user.id;sbUser=user;sbName=(user.user_metadata&&user.user_metadata.name)||user.email.split("@")[0];
+ if(authMode!=="newpass")hideAuth();
+ if(!fresh)return;
+ try{await sb.from("profiles").update({last_seen:new Date().toISOString(),name:sbName}).eq("id",user.id);await sb.rpc("bump_play",{n:0})}catch(e){}
+ if(isAdminView()){adminOpen();return}
+ try{renderHome()}catch(e){}
+ /* A new device: pick up where you left off */
+ if(S&&S.placeholder){try{const{data}=await sb.from("saves").select("game_id,state,updated_at").eq("user_id",user.id).is("meta->over",null).order("updated_at",{ascending:false}).limit(1);
+  const row=data&&data[0];if(row&&row.state&&row.state.v&&S&&S.placeholder){S=row.state;ensure(S);delete S.placeholder;rngState=S.daily&&S.rs!=null?S.rs:null;save();render();renderHome();toastMsg("Your game has been loaded from your account.")}}catch(e){}}
+}
+function onSignedOut(){sbUser=null;sbName="";if(acctOn())showAuth("in","");}
+async function acctBoot(){
+ const c=sbClient();if(!c){if(acctOn())showAuth("in","");return}
+ c.auth.onAuthStateChange((ev,session)=>{
+  if(ev==="PASSWORD_RECOVERY"){authMode="newpass";showAuth("newpass","Choose a new password for your account.");if(session)sbUser=session.user;return}
+  if(session&&session.user)onSignedIn(session.user);else if(ev==="SIGNED_OUT")onSignedOut()});
+ try{const{data}=await c.auth.getSession();sbReady=true;if(data.session)onSignedIn(data.session.user);else if(!/^#life=/.test(location.hash))showAuth("in","")}catch(e){sbErr="Couldn't reach the sign-in service.";showAuth("in","")}
+}
+{const _st=start;start=function(data){_st(data);if(acctOn())acctBoot()}}
+/* ---- Recording: the game you're playing (throttled) and every finished life ---- */
+const gameId=()=>{if(!S.gid)S.gid=Date.now().toString(36)+Math.random().toString(36).slice(2,7);return S.gid};
+let sbSaveT=null,sbStateAt=0,sbMonths=0;
+function sbSync(now){
+ if(!sbUser||!sb||!S||S.placeholder)return;clearTimeout(sbSaveT);
+ const go=()=>{const meta=Object.assign(saveMeta(),{over:S.over||null,legacy:(()=>{try{return legacy().total}catch(e){return 0}})(),gen:S.gen||1,daily:S.daily||null,photos:(S.memories||[]).length});
+  const row={user_id:sbUser.id,game_id:gameId(),meta,updated_at:new Date().toISOString()};
+  if(now||Date.now()-sbStateAt>60000){row.state=S;sbStateAt=Date.now()}
+  sb.from("saves").upsert(row).then(()=>{},()=>{});
+  if(sbMonths){const n=sbMonths;sbMonths=0;sb.rpc("bump_play",{n}).then(()=>{},()=>{})}};
+ if(now)go();else sbSaveT=setTimeout(go,4000);
+}
+{const _sv=save;save=function(){_sv.apply(this,arguments);try{sbSync(false)}catch(e){}}}
+{const _cd=closeDay;closeDay=function(off){const d=S&&S.day;_cd(off);if(S&&S.day!==d)sbMonths++}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")try{sbSync(true)}catch(e){}});
+function sbLife(){
+ if(!sbUser||!sb||!S||S.placeholder||S.sbLife)return;const id=S.hofId||(S.daily&&S.dailyPosted?"daily-"+S.daily+"-"+gameId():null);if(!id)return;
+ S.sbLife=id;let rec=null;try{rec=lifeRecord((window.__endTitle)||undefined)}catch(e){}
+ sb.from("lives").upsert({user_id:sbUser.id,hof_id:id,game_id:gameId(),name:S.name,career:CAR_().n,role:bestRole().n,ending:S.over||null,cause:S.over==="died"?(S.deathCause||""):(rec&&rec.d)||"",age:ageInt(),legacy:legacy().total,net_worth:Math.round(netWorth()),daily:S.daily||null,record:rec},{onConflict:"user_id,hof_id",ignoreDuplicates:true}).then(()=>{},()=>{});
+ sbSync(true);
+}
+{const _rh=recordHof;recordHof=function(){const r=_rh.apply(this,arguments);try{sbLife()}catch(e){}return r}}
+/* ---- Your account, from the main menu ---- */
+function accountModal(){
+ showModal(`<div class="label">Your account</div><h2 style="margin-top:4px">${esc(sbName||"Player")}</h2><p class="hint">${esc(sbUser?sbUser.email:"")}</p>
+  <p>Your lives are saved to your account, so you can carry on from any phone or computer by signing in.</p>
+  <div class="btn-row"><button class="btn" data-act="acctout">Sign out</button><button class="btn" data-act="acctdel">Delete my game data</button><button class="btn primary" data-act="hide">Close</button></div>`);
+}
+async function acctDelete(){
+ if(!confirm("Delete all your recorded lives and saved games from your account? Your login stays until you ask for it to be removed."))return;
+ try{await sb.from("lives").delete().eq("user_id",sbUser.id);await sb.from("saves").delete().eq("user_id",sbUser.id);await sb.from("plays").delete().eq("user_id",sbUser.id)}catch(e){}
+ toastMsg("Your game data has been deleted.");hideModal();
+}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-act]");if(!t)return;const a=t.dataset.act;
+ if(a==="account"){accountModal()}else if(a==="acctout"){hideModal();sb&&sb.auth.signOut()}else if(a==="acctdel"){acctDelete()}else if(a==="adminback"){adminOpen()}else return;e.stopImmediatePropagation()});
+{const _rhm=renderHome;renderHome=function(){_rhm.apply(this,arguments);if(!acctOn())return;const b=document.getElementById("homeBtns");if(b&&sbUser&&!b.querySelector(".acct-line"))b.insertAdjacentHTML("beforeend",`<div class="acct-line">Signed in as <b>${esc(sbName)}</b> · <button class="linkbtn" data-act="account">Account</button></div>`)}}
+
+/* ============ Admin: who's playing and what happened in their lives ============ */
+let adm={tab:"stats",data:null,err:"",q:""};
+function admEl(){let el=document.getElementById("admin");if(!el){el=document.createElement("div");el.id="admin";el.className="admin";document.body.appendChild(el)}return el}
+async function adminLoad(){
+ const [p,l,s,pl]=await Promise.all([sb.from("profiles").select("*").order("created_at",{ascending:false}).limit(1000),
+  sb.from("lives").select("id,user_id,hof_id,name,career,role,ending,cause,age,legacy,net_worth,daily,created_at").order("created_at",{ascending:false}).limit(1000),
+  sb.from("saves").select("user_id,game_id,meta,updated_at").order("updated_at",{ascending:false}).limit(1000),
+  sb.from("plays").select("user_id,day,months").gte("day",new Date(Date.now()-30*864e5).toISOString().slice(0,10)).limit(5000)]);
+ for(const r of [p,l,s,pl])if(r.error)throw r.error;
+ return{players:p.data,lives:l.data,saves:s.data,plays:pl.data};
+}
+async function adminOpen(){
+ hideAuth();document.getElementById("home").hidden=true;const el=admEl();el.hidden=false;document.body.classList.add("at-admin");
+ if(!sbUser){showAuth("in","Sign in with your admin account.");return}
+ el.innerHTML=`<div class="adm-in"><p>Loading…</p></div>`;
+ try{const{data:ok}=await sb.rpc("is_admin");if(!ok){el.innerHTML=`<div class="adm-in"><h1>Admin</h1><p>This account (${esc(sbUser.email)}) isn't an admin.</p><p class="hint">In Supabase, run: insert into admins(user_id) select id from auth.users where email='${esc(sbUser.email)}';</p><button class="btn" data-act="acctout">Sign out</button></div>`;return}
+  adm.data=await adminLoad();adm.err=""}catch(e){adm.err=e.message||String(e)}
+ adminRender();
+}
+const pName=(d,uid)=>{const p=d.players.find(x=>x.id===uid);return p?(p.name||p.email):"Unknown"};
+const ago=t=>{const s=(Date.now()-new Date(t).getTime())/1000;return s<90?"just now":s<3600?Math.round(s/60)+" min ago":s<86400?Math.round(s/3600)+" h ago":(Math.round(s/86400)===1?"yesterday":Math.round(s/86400)+" days ago")};
+const dmy=t=>new Date(t).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+function admBars(rows,fmt){const mx=Math.max(1,...rows.map(r=>r[1]));return `<ul class="adm-bars">${rows.map(([k,v])=>`<li><span>${esc(k)}</span><span class="bar"><i style="width:${(v/mx*100).toFixed(0)}%"></i></span><b>${fmt?fmt(v):v}</b></li>`).join("")}</ul>`}
+const countBy=(arr,f)=>{const m={};for(const x of arr){const k=f(x);if(k)m[k]=(m[k]||0)+1}return Object.entries(m).sort((a,b)=>b[1]-a[1])};
+function adminRender(){
+ const el=admEl(),d=adm.data,T=[["stats","Stats"],["players","Players"],["lives","Lives"],["live","Playing now"]];
+ let body="";
+ if(adm.err)body=`<div class="note">Couldn't load: ${esc(adm.err)}</div>`;
+ else if(d){const q=adm.q.toLowerCase(),match=s=>!q||String(s||"").toLowerCase().includes(q);
+  if(adm.tab==="stats"){const today=new Date().toISOString().slice(0,10),wk=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+   const dau=new Set(d.plays.filter(x=>x.day===today).map(x=>x.user_id)).size,wau=new Set(d.plays.filter(x=>x.day>=wk).map(x=>x.user_id)).size,months=d.plays.reduce((a,x)=>a+(x.months||0),0);
+   const days=[...Array(14)].map((_,i)=>{const day=new Date(Date.now()-(13-i)*864e5).toISOString().slice(0,10);return[day.slice(5),new Set(d.plays.filter(x=>x.day===day).map(x=>x.user_id)).size]});
+   const avg=d.lives.length?Math.round(d.lives.reduce((a,x)=>a+(x.legacy||0),0)/d.lives.length):0;
+   const careers=countBy([...d.lives,...d.saves.map(s=>({career:s.meta&&s.meta.career}))],x=>x.career).slice(0,10);
+   const deaths=countBy(d.lives.filter(x=>x.ending==="died"),x=>x.cause).slice(0,10),ends=countBy(d.lives,x=>x.ending).slice(0,8);
+   body=`<div class="target-sum adm-kpi"><div><span class="label">Players</span><b class="mono">${d.players.length}</b></div><div><span class="label">Playing today</span><b class="mono">${dau}</b></div><div><span class="label">This week</span><b class="mono">${wau}</b></div><div><span class="label">Lives finished</span><b class="mono">${d.lives.length}</b></div><div><span class="label">Average legacy</span><b class="mono">${avg.toLocaleString("en-GB")}</b></div><div><span class="label">Months played (30 days)</span><b class="mono">${months.toLocaleString("en-GB")}</b></div></div>
+    <h3>Players each day</h3>${admBars(days)}<h3>Most popular careers</h3>${careers.length?admBars(careers):"<p class='hint'>None yet.</p>"}
+    <h3>How lives end</h3>${ends.length?admBars(ends.map(([k,v])=>[(ENDINGS[k]||[k])[0],v])):"<p class='hint'>None yet.</p>"}<h3>Most common deaths</h3>${deaths.length?admBars(deaths):"<p class='hint'>Nobody has died yet.</p>"}
+    <h3>Top lives</h3>${admLives(d.lives.slice().sort((a,b)=>(b.legacy||0)-(a.legacy||0)).slice(0,10),d)}`}
+  else if(adm.tab==="players"){const rows=d.players.filter(p=>match(p.name)||match(p.email));
+   body=`<table class="adm-table"><thead><tr><th>Player</th><th>Joined</th><th>Last seen</th><th>Lives</th><th>Best legacy</th><th>Playing now</th></tr></thead><tbody>${rows.map(p=>{const L=d.lives.filter(x=>x.user_id===p.id),G=d.saves.filter(x=>x.user_id===p.id&&x.meta&&!x.meta.over);
+    return `<tr data-act="admplayer" data-u="${p.id}"><td><b>${esc(p.name||"")}</b><small>${esc(p.email||"")}</small></td><td>${dmy(p.created_at)}</td><td>${p.last_seen?ago(p.last_seen):""}</td><td>${L.length}</td><td>${L.length?Math.max(...L.map(x=>x.legacy||0)).toLocaleString("en-GB"):"–"}</td><td>${G.map(g=>esc(`${g.meta.name}, ${g.meta.role}, ${g.meta.age}`)).join("<br>")||"–"}</td></tr>`}).join("")}</tbody></table>`}
+  else if(adm.tab==="lives")body=admLives(d.lives.filter(x=>match(x.name)||match(x.career)||match(x.cause)||match(pName(d,x.user_id))),d);
+  else if(adm.tab==="live")body=admGames(d.saves.filter(s=>s.meta&&!s.meta.over&&(match(s.meta.name)||match(s.meta.career)||match(pName(d,s.user_id)))),d);
+  else if(adm.tab==="player"){const p=d.players.find(x=>x.id===adm.u)||{};body=`<button class="btn sm" data-act="admtab" data-v="players">← All players</button><h2>${esc(p.name||"")}</h2><p class="hint">${esc(p.email||"")} · joined ${p.created_at?dmy(p.created_at):""} · last seen ${p.last_seen?ago(p.last_seen):"never"}</p>
+   <h3>Playing now</h3>${admGames(d.saves.filter(s=>s.user_id===adm.u&&s.meta&&!s.meta.over),d)}<h3>Finished lives</h3>${admLives(d.lives.filter(x=>x.user_id===adm.u),d)}`}}
+ el.innerHTML=`<div class="adm-in"><div class="adm-head"><h1>Admin</h1><span class="hint">${esc(sbUser.email)}</span><button class="btn sm" data-act="admreload">Refresh</button><button class="btn sm" data-act="admplay">Play the game</button></div>
+  <div class="subtabs">${T.map(([k,n])=>`<button data-act="admtab" data-v="${k}" class="${adm.tab===k?"on":""}">${n}${d&&k==="players"?` (${d.players.length})`:d&&k==="lives"?` (${d.lives.length})`:d&&k==="live"?` (${d.saves.filter(s=>s.meta&&!s.meta.over).length})`:""}</button>`).join("")}</div>
+  ${["players","lives","live"].includes(adm.tab)?`<input class="adm-q" id="admQ" placeholder="Search names, careers, causes of death…" value="${esc(adm.q)}">`:""}<div class="adm-body">${body}</div></div>`;
+ const qi=document.getElementById("admQ");if(qi)qi.oninput=()=>{adm.q=qi.value;const pos=qi.selectionStart;adminRender();const n=document.getElementById("admQ");n.focus();n.setSelectionRange(pos,pos)};
+}
+function admLives(rows,d){
+ if(!rows.length)return"<p class='hint'>No lives yet.</p>";
+ return `<table class="adm-table"><thead><tr><th>Life</th><th>Player</th><th>Career</th><th>Ended</th><th>Age</th><th>Legacy</th><th>Net worth</th><th>When</th></tr></thead><tbody>${rows.map(x=>`<tr data-act="admlife" data-id="${x.id}"><td><b>${esc(x.name||"")}</b>${x.daily?`<small>Daily ${esc(x.daily)}</small>`:""}</td><td>${esc(pName(d,x.user_id))}</td><td>${esc(x.career||"")}<small>${esc(x.role||"")}</small></td><td>${esc((ENDINGS[x.ending]||[x.ending||""])[0])}${x.cause?`<small>${esc(x.cause)}</small>`:""}</td><td>${x.age??""}</td><td>${(x.legacy||0).toLocaleString("en-GB")}</td><td>${money(x.net_worth||0)}</td><td>${ago(x.created_at)}</td></tr>`).join("")}</tbody></table>`;
+}
+function admGames(rows,d){
+ if(!rows.length)return"<p class='hint'>Nobody is mid-life right now.</p>";
+ return `<table class="adm-table"><thead><tr><th>Character</th><th>Player</th><th>Career</th><th>Age</th><th>Month</th><th>Net worth</th><th>Photos</th><th>Updated</th></tr></thead><tbody>${rows.map(s=>{const m=s.meta||{};return `<tr data-act="admgame" data-u="${s.user_id}" data-g="${esc(s.game_id)}"><td><b>${esc(m.name||"")}</b>${m.gen>1?`<small>Generation ${m.gen}</small>`:""}${m.daily?`<small>Daily ${esc(m.daily)}</small>`:""}</td><td>${esc(pName(d,s.user_id))}</td><td>${esc(m.career||"")}<small>${esc(m.role||"")}</small></td><td>${m.age??""}</td><td>${m.day??""}</td><td>${money(m.nw||0)}</td><td>${m.photos??""}</td><td>${ago(s.updated_at)}</td></tr>`}).join("")}</tbody></table>`;
+}
+async function admLife(id){
+ const{data,error}=await sb.from("lives").select("*").eq("id",id).single();if(error||!data||!data.record){toastMsg("That life has no record.");return}
+ window.__rec=data.record;showModal(`${recordHTML(data.record,true)}<div class="btn-row"><button class="btn primary" data-act="hide">Close</button></div>`);
+}
+/* Look at a game in progress by borrowing the game's own life record for it */
+async function admGame(u,g){
+ const{data,error}=await sb.from("saves").select("state,meta,updated_at").eq("user_id",u).eq("game_id",g).single();if(error||!data||!data.state){toastMsg("No saved state for that game yet.");return}
+ const keep=S,keepR=rngState;let rec=null,log=[];
+ try{S=data.state;ensure(S);rec=lifeRecord("Still playing");log=(S.log||[]).slice(0,25)}catch(e){}finally{S=keep;rngState=keepR}
+ if(!rec){toastMsg("Couldn't read that game.");return}
+ window.__rec=rec;showModal(`${recordHTML(rec,true)}<div class="label" style="margin-top:12px">Recent log</div><ul class="lr-list">${log.map(l=>`<li><span>${esc(l.t)}</span><em>month ${l.d}</em></li>`).join("")}</ul><div class="btn-row"><button class="btn primary" data-act="hide">Close</button></div>`);
+}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-act]");if(!t||!t.closest("#admin"))return;const a=t.dataset.act;e.stopImmediatePropagation();
+ if(a==="admtab"){adm.tab=t.dataset.v;adminRender()}else if(a==="admreload")adminOpen();else if(a==="admplayer"){adm.tab="player";adm.u=t.dataset.u;adminRender()}
+ else if(a==="admlife")admLife(+t.dataset.id);else if(a==="admgame")admGame(t.dataset.u,t.dataset.g);
+ else if(a==="admplay"){history.replaceState(null,"",location.pathname);admEl().hidden=true;document.body.classList.remove("at-admin");showHome()}
+ else if(a==="acctout"){sb.auth.signOut();admEl().hidden=true}});
+window.addEventListener("hashchange",()=>{if(isAdminView()&&acctOn()){if(sbUser)adminOpen();else showAuth("in","Sign in with your admin account.")}});
 
 /* ============ Inbox illustrations: a scene at the top of each message, picked from what it's about ============ */
 const IA_W=320,IA_H=84;
@@ -8842,10 +9051,8 @@ function startModal(){
   <p>Pick a career and start at the bottom in a Bethnal Green flatshare. Make the calls nobody wants to make, jump ship when the offers come, buy the house and the car, try to keep a marriage together, and climb to the top. Or retire rich.</p>
   <div class="field"><label class="label" for="nameIn">Your name</label><input id="nameIn" maxlength="28" placeholder="Alex Morgan" autocomplete="off"></div>
   <div class="label">Choose your career</div>
-  <div class="desk-pick career-pick">${Object.values(CAREERS).map(c=>isLocked(c.id)?lockedCard(c):`<button data-act="career" data-k="${c.id}" class="${c.id===pickCareer?"on":""}">${careerIcon(c.id)}<span><b style="font-size:17px">${esc(c.n)}</b><span>${esc(c.blurb)}</span></span></button>`).join("")}</div>
+  <div class="desk-pick career-pick">${Object.values(CAREERS).map(c=>(isLocked(c.id)?lockedCard(c):`<button data-act="career" data-k="${c.id}" class="${c.id===pickCareer?"on":""}">${careerIcon(c.id)}<span><b style="font-size:17px">${esc(c.n)}</b><span>${esc(c.blurb)}</span></span></button>`)+(c.id==="bank"?`<div id="deskBlock" class="desk-inline" ${pickCareer==="bank"?"":"hidden"}><div class="label">Choose your trading desk</div><div class="desk-pick">${Object.entries(DESKS).map(([k,d])=>`<button data-act="desk" data-k="${k}" class="${k===pickDesk?"on":""}"><b>${d.n}</b><span>${d.blurb}</span></button>`).join("")}</div></div>`:"")).join("")}</div>
   <p class="hint career-blurb" id="careerBlurb">${esc(CAREERS[pickCareer].blurb)}</p>
-  <div id="deskBlock" ${pickCareer==="bank"?"":"hidden"}><div class="label">Your trading desk · investment banking only</div>
-  <div class="desk-pick">${Object.entries(DESKS).map(([k,d])=>`<button data-act="desk" data-k="${k}" class="${k===pickDesk?"on":""}"><b>${d.n}</b><span>${d.blurb}</span></button>`).join("")}</div></div>
   <div class="label">Your background</div>
   <div class="desk-pick">${BGS.map(b=>`<button data-act="bg" data-k="${b.id}" class="${b.id===pickBg?"on":""}"><b style="font-size:16px">${esc(b.n)}</b><span>${esc(b.d)}</span></button>`).join("")}</div>
   <details class="shop opt-pick"${pickTraits.length||pickChallenge?" open":""}><summary>Personality and challenge (optional)</summary>
