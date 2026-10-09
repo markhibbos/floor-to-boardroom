@@ -486,6 +486,8 @@ a.btn.primary{color:var(--on-accent)}
 @media (max-width:480px){.ops{padding:10px}.op-brief b{font-size:13.5px}.op-brief>div{padding:6px 8px}.op-opts{grid-template-columns:1fr 1fr}.op-opts button{padding:7px 9px;font-size:14px}.op-opts button span{font-size:11.5px;line-height:1.3}.op-opts button:only-child,.op-opts button:last-child:nth-child(odd){grid-column:1/-1}}
 .dec-card .target-sum b{white-space:normal;overflow-wrap:anywhere}
 .op-pills{display:flex;flex-wrap:wrap;gap:6px}
+.plan-svg{display:block;width:100%;height:auto;border-radius:12px;margin:4px 0}.plan-room.ok{cursor:pointer}.plan-room.ok:hover rect{fill:#FFE7A6}
+.mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
 @keyframes petwag{0%,100%{transform:translate(0,0)}20%{transform:translate(-2px,-3px) rotate(-3deg)}40%{transform:translate(2px,-5px) rotate(3deg)}60%{transform:translate(-2px,-3px) rotate(-2deg)}80%{transform:translate(1px,-1px)}}
@@ -3136,7 +3138,8 @@ function pay(cost,what){if(S.wealth<cost)return`You need ${money(cost)} for ${wh
 function customClick(a,t){
  const done=(fn,msg)=>{save();render();fn(msg)};
  if(a==="hcustom")homeCustomModal();
- else if(a==="hmod"){const m=HOME_MODS.find(x=>x.id===t.dataset.id);if(!m||modOk(m))return true;const c=modCost(m);S.wealth-=c;S.home.mods=Object.assign({},S.home.mods,{[m.id]:1});S.home.value+=c*m.val;S.homeLife=clamp(S.homeLife+3,0,100);S.log.unshift({d:S.day,t:`Added a ${m.n.toLowerCase()} to your home for ${money(c)}.`});done(homeCustomModal,`${m.n} added.`)}
+ else if(a==="hplace"){placeMod(t.dataset.mod,t.dataset.room)}
+ else if(a==="hmod"){if(FLOOR_PLANS[S.home.t]){const m0=HOME_MODS.find(x=>x.id===t.dataset.id);if(m0&&!modOk(m0))pickRoomModal(m0.id);return true}const m=HOME_MODS.find(x=>x.id===t.dataset.id);if(!m||modOk(m))return true;const c=modCost(m);S.wealth-=c;S.home.mods=Object.assign({},S.home.mods,{[m.id]:1});S.home.value+=c*m.val;S.homeLife=clamp(S.homeLife+3,0,100);S.log.unshift({d:S.day,t:`Added a ${m.n.toLowerCase()} to your home for ${money(c)}.`});done(homeCustomModal,`${m.n} added.`)}
  else if(a==="hdoor"){const e=pay(400,"a new front door");if(!e){S.home.door=t.dataset.c}done(homeCustomModal,e||"Front door repainted.")}
  else if(a==="hstyle"){const c=8000*(1+(S.home.tier||0)),e=S.home.style===t.dataset.v?"":pay(c,"redecorating");if(!e&&S.home.style!==t.dataset.v){S.home.style=t.dataset.v;S.homeLife=clamp(S.homeLife+5,0,100);S.log.unshift({d:S.day,t:`Redecorated your home in a ${t.dataset.v.toLowerCase()} style.`})}done(homeCustomModal,e||`Redecorated: ${t.dataset.v}.`)}
  else if(a==="hname"){const v=(document.getElementById("homeName").value||"").trim().slice(0,32);S.home.name=v||null;done(homeCustomModal,v?`Your home is now called ${v}.`:"House name removed.")}
@@ -4024,7 +4027,7 @@ const yrs=m=>m<12?`${m} months`:`${Math.round(m/12*10)/10} years`;
 function mkTrial(crime,months){
  const g=Math.max(3,Math.round(months*.6)),hard=Math.round(months*1.3);
  return{id:"trial"+S.day,from:"The Crown Court",t:"Your trial",b:`You're charged with ${crime}. If you're convicted, you face around ${yrs(months)} in prison.`,c:[
-  {t:"Plead guilty for a lighter sentence",fx:{act:"prison",months:g,crime},o:`The judge credits your guilty plea: ${yrs(g)}.`},
+  months<=12?{t:"Plead guilty and hope for leniency",p:.75,win:{fx:{gbp:-Math.round(Math.max(1500,salary()*.08)/100)*100,rep:-8,heat:10,karma:-2,stress:8},o:"A suspended sentence, 200 hours of community service and a fine. You keep your job, just."},lose:{fx:{act:"prison",months:g,crime},o:`The judge wants to make an example of you: ${yrs(g)}.`}}:{t:"Plead guilty for a lighter sentence",fx:{act:"prison",months:g,crime},o:`The judge credits your guilty plea: ${yrs(g)}.`},
   {t:"Plead not guilty",p:.4,win:{fx:{act:"acquit",stress:-10},o:"Not guilty! You walk out of court shaking."},lose:{fx:{act:"prison",months:hard,crime},o:`Guilty. The judge gives you ${yrs(hard)}.`}},
   {t:"Hire a top barrister (£60k) and fight",p:.65,win:{fx:{gbp:-60000,fixed:1,act:"acquit"},o:"Your barrister takes the prosecution apart. Not guilty."},lose:{fx:{gbp:-60000,fixed:1,act:"prison",months,crime},o:`Even the best barrister can't save you: ${yrs(months)}.`}}]};
 }
@@ -5018,7 +5021,7 @@ const SPECS={
    {t:"Flight training",b:"Helicopter safety, winching and working in a space the size of a phone box.",safe:"Learn the drills",bold:"Volunteer for the first winch",win:"You're signed off to fly.",lose:["You're violently airsick, every flight.","You walk towards the tail rotor. Everyone shouts."]}],
   pass:()=>moment({icon:"star",kicker:"Selection passed",title:"Flight nurse",sub:"Your new office is a helicopter.",big:true})},
  kc:{career:"law",spec:1,n:"Taking silk",unit:"King's Counsel-ish",title:"",suffix:" KC",from:"The senior partner",inviteT:"Apply for silk?",inviteB:"You could apply to become King's Counsel-ish: the top rank of advocates. It's a long application, and most fail first time.",yes:"Apply",yesO:"You spend your weekends on a 40-page application.",staff:"The selection panel",
-  elig:()=>S.rank>=2&&!S.spec&&S.rep>=70,odds:()=>specOdds((S.rep-70)/120,(S.skill-50)/200,-(S.heat-20)/200),retry:12,tries:3,pay:1.3,
+  elig:()=>S.rank>=2&&!S.spec&&S.rep>=70,odds:()=>specOdds((S.rep-70)/120,(S.skill-50)/200,-(S.heat-20)/200),retry:24,tries:3,pay:1.3,
   stages:[{t:"The application",b:"Twelve judges and senior lawyers must back you in writing.",safe:"Ask the judges who know you best",bold:"Ask the most famous names",win:"Glowing references come back.",lose:["One reference is lukewarm. It's enough.","The famous names barely remember you."]},
    {t:"The interview",b:"A panel grills you about your hardest cases.",safe:"Be modest and precise",bold:"Show off your best wins",win:"A letter arrives on Maundy Thursday: you're in.",lose:["You ramble.","The panel finds you arrogant."]}],
   pass:()=>moment({icon:"star",kicker:"Taking silk",title:"King's Counsel-ish",sub:"Silk gown, bigger cases, much bigger fees.",big:true})},
@@ -6153,7 +6156,7 @@ function review(){
   else if(S.reviewPnl<-.5*rankTarget()||S.rep<30){S.warnings++;r.title=S.warnings>=2?"Fired":"Formal warning";r.outcome=S.warnings>=2?(S.path==="foot"?"Second warning. The club releases you.":"Second warning. You're let go."):"Your boss puts you on notice. Another review like this and you're out.";if(S.warnings>=2)S.over="fired"}
   else{r.title="Kept on";r.outcome=hit?`Target met, but your ${rk.repName.toLowerCase()} needs to be 55+ to step up.`:"Not enough to step up. Hit the target and keep your reputation high.";if(hit)S.rep=clamp(S.rep+3,0,100)}
  }else{
-  if(hit&&S.rep>=50){S.ceoPassed++;
+  if(hit&&S.rep>=50){S.ceoPassed++;S.warnings=0;
    if(S.ceoPassed<3){r.title=`Board review ${S.ceoPassed} of 3 passed`;r.outcome="The board backs your strategy."}
    else if(S.ceoPassed===3){r.title="Board review 3 of 3 passed";r.outcome="Three strong reviews. You can retire a legend now, or stay on and build an even bigger legacy.";ach("legend");
     S.inbox.push({id:"legend"+S.day,dyn:{id:"legend"+S.day,dyn:1,from:"The chair",t:"Name your successor?",b:`Three outstanding reviews. The board would understand if you retired now, at ${ageInt()}, a legend. Or you could stay on.`,c:[
@@ -6192,12 +6195,12 @@ function checkOver(fromClose){
 /* ============ Job board (trades, hair, chef, tech) ============ */
 function jobsMorning(){
  const c=CAR_(),rk=R(),tags=Object.keys(c.trends);S.trends={};S.news=[];S.pick={};
- const n=1+(rnd()<.5?1:0),taken={};
+ const n=rnd()<.3?2:1,taken={};
  for(let i=0;i<n;i++){const tag=pick(tags);if(taken[tag])continue;taken[tag]=1;
   const dir=rnd()<.5?1:-1,rum=rnd()<.28,real=rnd()<(rum?.45:(S.bg==="quant"?.8:.72));
   if(real)S.trends[tag]=dir>0?1.5:.65;
   S.news.push({tag,dir,rum,t:pick(dir>0?c.trends[tag].up:c.trends[tag].dn)})}
- S.news.push({t:pick(c.noise)});
+ if(n===1)S.news.push({t:pick(c.noise)});
  const pool=c.jobs.filter(j=>(j.rmin||0)<=S.rank&&(j.rmax??9)>=S.rank&&(!j.sf||S.sf)&&(!j.spec||S.spec===j.spec)&&!(S.spec&&S.path==="police"&&/Neighbourhood patrol/.test(j.n))&&!(S.sf&&/Guard duty|Ceremonial/.test(j.n))),cards=[];window.__jobPool=pool;
  const want=S.news.filter(x=>x.tag).map(x=>x.tag);
  for(const tg of want){const j=pool.filter(x=>x.tag===tg);if(j.length)cards.push(pick(j))}
@@ -6283,7 +6286,7 @@ function polMorning(){
  if(S.rank===3&&rnd()<.015&&!S.inbox.some(m=>!m.done&&/^lead_/.test(m.id)))pushDyn({id:"lead_"+S.day,from:"The party",t:"A leadership contest",b:"The Prime Minister has resigned. Colleagues are urging you to stand.",c:[
   {t:"Throw your hat in the ring",p:clamp(.25+(S.rep-60)/100,.1,.7),win:{fx:{act:"becomepm"},o:"You win the ballot of members."},lose:{fx:{rep:-4},o:"You come third. The winner remembers who backed whom."}},
   {t:"Back a colleague and wait",fx:{rep:3},o:"Loyalty is noted. Your time may come."}]});
- if(S.rank===4&&S.day-(S.pmqAt??-99)>=9&&rnd()<.4&&!S.inbox.some(m=>!m.done&&/^pmq_/.test(m.id))&&(S.pmqAt=S.day))pushDyn({id:"pmq_"+S.day,from:"The House",t:"Prime Minister's Questions-ish",b:"The Leader of the Opposition is on their feet with a killer question about hospital waiting lists.",c:[
+ if(S.rank===4&&S.day-(S.pmqAt??-99)>=15&&rnd()<.35&&!S.inbox.some(m=>!m.done&&/^pmq_/.test(m.id))&&(S.pmqAt=S.day))pushDyn({id:"pmq_"+S.day,from:"The House",t:"Prime Minister's Questions-ish",b:"The Leader of the Opposition is on their feet with a killer question about hospital waiting lists.",c:[
   {t:"Answer with facts and figures",p:.65,win:{fx:{rep:4},o:"Solid. The sketch-writers call it 'dull but effective'."},lose:{fx:{rep:-4},o:"Your figures are out of date. Ouch."}},
   {t:"Hit back with a zinger",p:.5,win:{fx:{rep:7},o:"Your own benches roar. The clip goes viral."},lose:{fx:{rep:-7},o:"The zinger falls flat. Silence, then laughter from the other side."}}]});
 }
@@ -6342,7 +6345,7 @@ EV.push(
  cal("cal_elec",   "elec",10,"The council","Christmas lights","The town wants its Christmas lights switched on by Friday.",[{t:"Take the job",fx:{pnl:3,rep:3},o:"A local celebrity flicks the switch. It all works."},{t:"Too busy",fx:{},o:"Someone else does it. One street stays dark."}]),
  cal("cal_soldier","soldier",10,"Your regiment","Remembrance","Your unit has been chosen to march at the national service of remembrance.",[{t:"March with pride",fx:{rep:4,karma:3,home:2},o:"Your family watch on TV."}]),
  cal("cal_infl",   "influencer",10,"Your brand manager","Black Friday","Brands are throwing money at creators for Black Friday deals.",[{t:"Post every deal you're offered",fx:{cash:20,rep:-3},o:"Kerching. Some followers unfollow."},{t:"Only brands you love",fx:{cash:8,rep:3},o:"Your followers trust you more."}]),
- cal("cal_actor",  "actor",1,"Your publicist","Awards season","Red carpets, after-parties and borrowed jewellery.",[{t:"Go to everything",fx:{rep:4,health:-3},o:"Photographed everywhere."},{t:"Pick one or two",fx:{rep:2},o:"Rested and charming."}]),
+ cal("cal_actor",  "actor",1,"Your publicist","Red-carpet season","Red carpets, after-parties and borrowed jewellery.",[{t:"Go to everything",fx:{rep:4,health:-3},o:"Photographed everywhere."},{t:"Pick one or two",fx:{rep:2},o:"Rested and charming."}]),
  cal("cal_teach2", "teach",8,"Your inbox","The Ofsted call","It's the call every school dreads: inspectors arrive tomorrow.",[{t:"Stay up planning perfect lessons",p:.65,win:{fx:{rep:6,stress:10},o:"Your lesson is graded 'outstanding'."},lose:{fx:{stress:12},o:"The inspector arrives in the middle of a fire drill."}},{t:"Teach as you always do",p:.55,win:{fx:{rep:4},o:"Authentic and calm. They're impressed."},lose:{fx:{rep:-3},o:"Year 9 pick today to misbehave."}}])
 );
 
@@ -6802,6 +6805,7 @@ function homeLifeSec(){
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Living here</h2><span class="label">${esc(S.home.area||"")}</span></div>
   <div class="kv"><span>${S.path==="dj"||S.path==="music"?"Getting to gigs":"Commute"}</span><span>${S.path==="influencer"?"None: you work from home":COMMUTE_N[c]+(c>=1&&carOf(S.car.id).lvl>=1?" by car":"")}</span><span>Schools</span><span>${goodSchool()?"Good catchment area":"Average"}</span><span>Hosting</span><span>${["Cramped","Cosy","Comfortable","Great","Spectacular"][clamp(Math.floor(hostScore()/2),0,4)]}</span><span>Car</span><span>${S.car.id==="none"?"Public transport":carOld()?"Getting unreliable":carFlash()?"Turns heads":"Reliable"}</span></div>
   <p class="hint" style="margin:8px 0 0">${S.path==="influencer"?"No commute: your work is wherever your phone is.":S.path==="dj"||S.path==="music"?(c===2?"Living out here means long late drives home from gigs. A car helps.":c===1?"Late-night journeys home from gigs add a little stress. A car helps.":"Most venues are close by. Easy nights home."):c===2?"A long commute adds stress every month. A home office or a car helps.":c===1?"Your commute adds a little stress. A car or a home office helps.":"A short commute keeps stress down."} ${goodSchool()?"Children here do better at school.":""} A nicer home makes parties and dinners go better.</p>
+  ${own?floorPlanSec():""}${own&&S.home.loan>0?`<div class="mort-box"><div class="label">Mortgage</div><p class="hint" style="margin:2px 0 6px">${money(S.home.loan)} left · ${money(homePay())} a month · ${Math.ceil((S.home.left||0)/12)} years to go</p><div class="btn-row" style="margin:0"><button class="btn sm" data-act="payoffmort" ${S.wealth<payoffAmt()?"disabled":""}>Pay it all off: ${money(payoffAmt())}</button>${S.overpayYr!==Math.floor(S.day/12)&&S.wealth>=overpayAmt()&&overpayAmt()>=1000?`<button class="btn sm" data-act="overpay">Overpay ${money(overpayAmt())} (no fee)</button>`:""}</div>${S.wealth<payoffAmt()?`<p class="hint" style="margin:6px 0 0">Paying it off early costs the balance plus a 2% early repayment fee and £300.</p>`:""}</div>`:""}
   ${own?`<div class="btn-row" style="margin-top:10px">${rm>=10000?`<button class="btn sm" data-act="remortgage">Remortgage: release ${money(rm)}</button>`:""}${canLet?`<button class="btn sm" data-act="letroom">Rent out a room (${money(roomRent())}/month)</button>`:""}${S.roomLet?`<button class="btn sm" data-act="unletroom">Stop renting out the room</button>`:""}</div>`:""}</div>`;
 }
 const roomRent=()=>Math.round((700+(S.home.tier||0)*250)/50)*50;
@@ -8692,6 +8696,7 @@ const OP_RISK=[["Cautious","Safer, smaller payoff.",.12,.7],["Standard","",0,1],
 function opGen(){
  const T=OPS[S.path];if(!T||S.prison||S.front||S.sel||S.sabb||S.over||CAR_().mech!=="jobs"){S.op=null;return}
  if(S.op&&S.op.d===S.day)return;
+ if(S.opLast!=null&&S.day-S.opLast<2&&rnd()<.85){S.op=null;return}S.opLast=S.day;
  const conds=T.brief.map(()=>{const truth=rnd()<.5?0:1,conf=rnd()<.55,shown=rnd()<(conf?.9:.55)?truth:1-truth;return{truth,shown,conf}});
  const top=(S.cards||[]).map(c=>c.pay).sort((a,b)=>b-a).slice(0,2).reduce((a,b)=>a+b,0);
  S.op={d:S.day,name:pick(T.names),conds,plan:null,kit:null,risk:1,on:false,h:Math.round(R().cap*(.35+rnd()*.15)*10)/10,base:Math.max(1,Math.round(top*1.5))};
@@ -13372,6 +13377,210 @@ for(const k of ["rivalout","rivalboost","rivalhit"]){const f=ACTS[k];if(f)ACTS[k
 /* More football news, so the morning brief does not repeat */
 const FB_OFF_NEWS=["The manager wants more intensity in training","Physio warns about a heavy fixture list","Club confirms a new kit sponsor","Transfer gossip: rivals circling the squad","Groundsman says the pitch is in top shape","Pre-season tour dates announced","New training ground canteen bans chips","Club unveils a statue of a 1970s legend","Squad spotted at a go-karting team-building day","Academy graduate signs first pro contract","Manager bans phones at the dinner table","Club mascot suspended for dancing on the crossbar","Fitness coach introduces 6am beach runs","Season ticket prices frozen, fans relieved","Club launches a podcast nobody asked for","Captain opens a children's hospital ward","Kit man reveals the squad's worst boot habits","Ice baths installed at the training ground","Charity match against local firefighters announced","Club to trial a four-day training week","Rumour: the chairman wants a new stadium","Youth team reaches the cup quarter-finals","Club chef puts the squad on a pasta ban","Pundit questions the team's 'mentality'","Women's team sells out the stadium","Nutritionist bans fizzy drinks from the bus","Goalkeeping coach brings in tennis-ball drills","Dressing room playlist leaks online","New dugout seats 'heated, but only slightly'","Former captain returns as a coach"];
 const FB_MORE_NEWS=["Ticket sales up for the next home game","League table tight at the top","Pundit names you one to watch","Club academy wins a youth cup","Fans' forum calls for more young players","Away end sold out in an hour","Club shop runs out of your shirt","Bookies cut the odds on a top-four finish","Supporters' club votes on a new chant","Local paper runs a player ratings special","Stadium tour numbers hit a record","TV picks the next game for a Sunday slot","Referee for the weekend named; fans groan","Club fined for a late kick-off","Groundhopping fans travel from Norway","Programme cover features the youth team","Fan writes a 900-word letter about the left-back","Survey: fans want the old badge back","Supporters plan a tifo for the next home game","Matchday pie price rises by 20p","Weather warning for the weekend fixtures","VAR controversy dominates the phone-ins","Club launches a walking football team","Stadium solar panels switched on","Rival fans mock the new away kit","Season review DVD 'nearly finished'","Club's oldest fan turns 101","Fantasy football managers rush to pick you","Pundits debate the manager's formation","Training clip of a 40-yard volley goes viral"];
+/* ============ Less repetition: seasonal versions, life-stage diary, new activities ============ */
+const ageNow=s=>ageAt(s),kidsU=(s,a,b)=>hasKidAged(s,a,b),coupled=s=>["dating","engaged","married"].includes(s.rel.st);
+/* Seasonal events come in versions for different stages of life; only one of each season a year */
+for(const [id,g] of [["se_xmas","xmas"],["se_newyear","newyear"],["se_val","val"],["se_summer","summer"],["holiday","summer"]]){const e=EV.find(x=>x.id===id);if(e){e.group=g;e.base=1}}
+EV.push(
+ /* Christmas */
+ {id:"se_xmas2",group:"xmas",life:1,season:1,again:11,cond:s=>monthOf(s.day)===11&&ageNow(s)<30&&!s.children.length,from:"The family group chat",t:"Home for Christmas?",b:"Mum wants to know if you're coming home. Your flatmates are planning a 'Friendsmas' with a 9kg turkey.",c:[
+  {t:"Go home to Mum and Dad",fx:{home:6,stress:-4,gbp:-150},o:"Your old bedroom, a stocking, and Dad asleep by three."},{t:"Friendsmas",fx:{home:4,stress:-2,gbp:-80},o:"The turkey takes eleven hours. Nobody minds."},{t:"Split it: Christmas Day here, Boxing Day there",fx:{stress:3,home:5},o:"Two dinners, one train and a lot of leftovers."}]},
+ {id:"se_xmas3",group:"xmas",life:1,season:1,again:11,cond:s=>monthOf(s.day)===11&&kidsU(s,2,9),from:"The North Pole (allegedly)",t:"Father Christmas logistics",b:"The kids want a bike, a puppy and 'a real unicorn'. It's 23rd December.",c:[
+  {t:"Queue at the toy shop at 7am (£400)",fx:{gbp:-400,stress:4,home:8},o:"You get the last bike in the city. Their faces on Christmas morning are worth it."},{t:"Homemade presents and a sleigh-bell performance",fx:{home:6,stress:-1},o:"They believe in Father Christmas for one more year. So do you, a bit."},{t:"Order online and pray",p:.6,win:{fx:{gbp:-350,home:6},o:"It arrives on Christmas Eve. You hide it in the shed."},lose:{fx:{gbp:-350,home:-3,stress:5},o:"It arrives on the 28th. Father Christmas had 'a delay'."}}]},
+ {id:"se_xmas4",group:"xmas",life:1,season:1,again:11,cond:s=>monthOf(s.day)===11&&kidsU(s,13,20),from:"Your teenagers",t:"A teenage Christmas",b:"The kids would rather sleep until noon and stare at their phones. You want a family walk.",c:[
+  {t:"Bribe them with a big present",fx:{gbp:-600,home:3},o:"They emerge, thank you, and go back to bed."},{t:"Insist on the walk and charades",p:.5,win:{fx:{home:8,stress:-3},o:"Grumbling at first. By the evening everyone is crying with laughter."},lose:{fx:{home:-3,stress:4},o:"A sulk that lasts until New Year."}},{t:"Let them sleep. Enjoy the peace",fx:{stress:-5},o:"A quiet coffee and the good chocolates, all to yourself."}]},
+ {id:"se_xmas5",group:"xmas",life:1,season:1,again:11,cond:s=>monthOf(s.day)===11&&ageNow(s)>=60,from:"Your phone",t:"Christmas with the grandchildren?",b:"The family want to come to yours this year. All of them.",c:[
+  {t:"Host the lot (£800)",fx:{gbp:-800,home:10,stress:5},o:"Fourteen at the table, a dog under it, and the best day of your year."},{t:"Go to them",fx:{home:6,stress:2},o:"Someone else does the washing up. Bliss."},{t:"A quiet one, then visit on Boxing Day",fx:{stress:-4,home:3},o:"A walk, a nap, and the King's speech."}]},
+ {id:"se_xmas6",group:"xmas",life:1,season:1,again:11,cond:s=>monthOf(s.day)===11&&coupled(s)&&!s.children.length,from:"{p}",t:"Whose family this year?",b:"{p}'s family want you there. So does yours. It's the annual negotiation.",c:[
+  {t:"{p}'s family this year",fx:{home:6,stress:2},o:"You learn their Christmas rules. There are many."},{t:"Yours this year",p:.6,win:{fx:{home:4},o:"{p} is a hit. Your nan loves them."},lose:{fx:{home:-4,stress:3},o:"A long, quiet drive home."}},{t:"Just the two of you",fx:{home:8,stress:-5,gbp:-200},o:"Christmas in pyjamas. No negotiation needed."}]},
+ /* New Year */
+ {id:"se_ny2",group:"newyear",life:1,season:1,again:11,cond:s=>monthOf(s.day)===0&&s.day>1&&ageNow(s)<40&&!kidsU(s,0,8),from:"The group chat",t:"New Year's Eve plans",b:"A house party, a club night with £60 tickets, or the sofa?",c:[
+  {t:"The club night (£60)",fx:{gbp:-60,stress:-4,health:-2},o:"Midnight on a dance floor with strangers. Home at 5."},{t:"The house party",fx:{home:4,stress:-3},o:"Someone falls in the hedge at 12:03."},{t:"The sofa and the fireworks on telly",fx:{stress:-5},o:"Asleep by 11:40. Happy new year."}]},
+ {id:"se_ny3",group:"newyear",life:1,season:1,again:11,cond:s=>monthOf(s.day)===0&&s.day>1&&kidsU(s,0,8),from:"Your living room",t:"New Year with small children",b:"The kids want to stay up for midnight. They will not make it.",c:[
+  {t:"Do a 'midnight' at 7pm",fx:{home:6,stress:-3},o:"Countdown, party poppers, bed by half past. Genius."},{t:"Let them try",p:.3,win:{fx:{home:6},o:"They make it! Cheering, then instant sleep."},lose:{fx:{stress:5},o:"Meltdown at 10:15. You're both asleep before midnight."}}]},
+ {id:"se_ny4",group:"newyear",life:1,season:1,again:11,cond:s=>monthOf(s.day)===0&&s.day>1&&ageNow(s)>=45,from:"Your GP",t:"A New Year health check",b:"The surgery has sent a letter: you're due an MOT.",c:[
+  {t:"Book it and listen to the advice",fx:{health:5,stress:1},o:"Blood pressure fine. Cholesterol 'could be better'. You buy oats."},{t:"Join a gym in January (£300)",p:.35,win:{fx:{gbp:-300,health:8},o:"You actually keep going. Remarkable."},lose:{fx:{gbp:-300},o:"You go four times. The direct debit continues."}},{t:"Bin the letter",fx:{health:-2},o:"What you don't know can't hurt you. Probably."}]},
+ {id:"se_ny5",group:"newyear",life:1,season:1,again:11,cond:s=>monthOf(s.day)===0&&s.day>1,from:"Your bank app",t:"A money resolution",b:"The bank app shows what you spent on takeaways last year. You go pale.",c:[
+  {t:"Set a budget and stick to it",p:.6,win:{fx:{gbp:1500,stress:-2},o:"By March you've saved more than you thought possible."},lose:{fx:{stress:2},o:"The budget survives until the first Friday."}},{t:"Delete the takeaway apps",fx:{gbp:600,home:-1},o:"You learn to make a curry. It's fine."},{t:"Life's for living",fx:{home:2},o:"Pass the menu."}]},
+ {id:"se_ny6",group:"newyear",life:1,season:1,again:11,cond:s=>monthOf(s.day)===0&&s.day>1,from:"Your conscience",t:"Learn something new this year?",b:"This year's resolution: a language, an instrument, or finally learning to swim properly?",c:[
+  {t:"A language app every morning",p:.5,win:{fx:{skill:1,stress:-1},o:"A 200-day streak. You can order coffee in Italian."},lose:{fx:{},o:"The owl keeps sending you sad notifications."}},{t:"Guitar lessons (£250)",fx:{gbp:-250,stress:-3,home:1},o:"Three chords and a lot of enthusiasm."},{t:"No resolutions this year",fx:{},o:"Bold. Honest."}]},
+ /* Valentine's */
+ {id:"se_val2",group:"val",life:1,season:1,again:11,cond:s=>monthOf(s.day)===1&&coupled(s)&&s.day-(s.rel.since||0)<14,from:"Your calendar",t:"Your first Valentine's together",b:"First Valentine's with {p}. Too much, too little, or just right?",c:[
+  {t:"Something thoughtful and small",fx:{home:7},o:"{p} keeps the card on the fridge for months."},{t:"Go big: flowers, dinner, the lot (£400)",p:.6,win:{fx:{gbp:-400,home:9},o:"{p} is swept off their feet."},lose:{fx:{gbp:-400,home:2},o:"A bit much, says {p}, smiling. A bit."}},{t:"Play it cool",fx:{home:-4},o:"Too cool. {p} notices."}]},
+ {id:"se_val3",group:"val",life:1,season:1,again:11,cond:s=>monthOf(s.day)===1&&coupled(s)&&kidsU(s,0,10),from:"{p}",t:"Valentine's: who's babysitting?",b:"You'd both love a night out. The kids would love you to stay in.",c:[
+  {t:"Book a babysitter (£80) and go out",fx:{gbp:-120,home:8,stress:-4},o:"You talk about the kids all evening. It's still lovely."},{t:"Takeaway after bedtime",fx:{home:5,stress:-2},o:"Asleep on the sofa by ten, holding hands."}]},
+ {id:"se_val4",group:"val",life:1,season:1,again:11,cond:s=>monthOf(s.day)===1&&s.rel.st==="married"&&s.day-(s.rel.since||0)>=60,from:"{p}",t:"Do we still do Valentine's?",b:"After all these years, is Valentine's still a thing for you and {p}?",c:[
+  {t:"Recreate your first date",fx:{home:9,gbp:-150},o:"Same restaurant, different menu, same feeling."},{t:"'We don't need a special day'",p:.5,win:{fx:{home:2},o:"{p} agrees. Tea and toast in bed."},lose:{fx:{home:-6},o:"{p} did want a special day, it turns out."}}]},
+ {id:"se_val5",group:"val",life:1,season:1,again:11,cond:s=>monthOf(s.day)===1&&s.rel.st==="single"&&ageNow(s)>=30,from:"Your friends",t:"Galentine's / Palentine's",b:"Your single friends are planning an anti-Valentine's night out.",c:[
+  {t:"Go, and enjoy it",fx:{home:5,stress:-5,gbp:-60},o:"Cocktails, karaoke and a lot of honesty."},{t:"A quiet night in",fx:{stress:-3},o:"A face mask, a film and absolutely no regrets."}]},
+ /* Summer */
+ {id:"se_sum2",group:"summer",life:1,season:1,again:11,cond:s=>monthOf(s.day)===6&&kidsU(s,4,16),from:"The school calendar",t:"Six weeks of school holidays",b:"The summer holidays start next week. Six weeks. What's the plan?",c:[
+  {t:"Holiday clubs (£900)",fx:{gbp:-900,stress:-3},o:"They come home exhausted and covered in glitter."},{t:"Grandparents for a fortnight",fx:{home:4,stress:-4},o:"They come back spoilt rotten and very happy."},{t:"Take time off and do days out",fx:{home:9,stress:4,pnl:-.5},o:"Beaches, zoos and a lot of sandwiches. Exhausting. Wonderful."}]},
+ {id:"se_sum3",group:"summer",life:1,season:1,again:11,cond:s=>monthOf(s.day)===6&&ageNow(s)<35,from:"The group chat",t:"Festival tickets are on sale",b:"Everyone's going to the big summer festival. Tickets are £280.",c:[
+  {t:"Buy a ticket",fx:{gbp:-280,stress:-8,health:-2,home:3},o:"Mud, music and the best weekend of the year."},{t:"Skip it and save",fx:{gbp:0},o:"You watch everyone's videos from your bed."}]},
+ {id:"se_sum4",group:"summer",life:1,season:1,again:11,cond:s=>monthOf(s.day)===6&&s.home.value>0,from:"The weather forecast",t:"Heatwave weekend",b:"It's 31 degrees and the whole street is in their gardens.",c:[
+  {t:"Throw a barbecue (£150)",fx:{gbp:-150,home:6,stress:-4},o:"Burnt sausages, warm beer and the neighbours staying till midnight."},{t:"Head for the coast",fx:{stress:-5,gbp:-60},o:"Three hours in traffic, twenty minutes in the sea. Worth it."},{t:"Stay inside with the curtains shut",fx:{stress:-1},o:"Like a vampire, but cool."}]},
+ {id:"se_sum5",group:"summer",life:1,season:1,again:11,cond:s=>monthOf(s.day)===6&&ageNow(s)>=58,from:"A glossy brochure",t:"A summer cruise?",b:"The brochure promises 'seven countries in ten days'.",c:[
+  {t:"Book it (£3,500)",fx:{gbp:-3500,stress:-12,home:6},o:"Buffets, sunsets and a quiz team called 'The Old Sea Dogs'."},{t:"A week in the Cotswolds instead (£900)",fx:{gbp:-900,stress:-8,home:4},o:"Honey-coloured villages and very good scones."}]}
+);
+{const GROUP={},GROUP_EV={};for(const e of EV)if(e.group){(GROUP[e.group]=GROUP[e.group]||[]).push(e.id);(GROUP_EV[e.group]=GROUP_EV[e.group]||[]).push(e)}window.__evGroups=GROUP;
+ const _el=eligible;eligible=function(e){if(e&&e.base&&rnd()<.75){const alt=(GROUP_EV[e.group]||[]).some(x=>!x.base&&eligible(x));if(alt)return false}if(e&&e.group){const ids=GROUP[e.group]||[];for(const id of ids){const u=S.used[id];if(u!=null&&S.day-u<10)return false}if(S.inbox.some(m=>!m.done&&ids.includes(m.id)))return false}return _el.apply(this,arguments)}}
+
+/* The home side of the diary: entries for every stage of life */
+DIARY_POOL.push(
+ {k:"lh_flatwarm",kind:"life",t:"A mate's flat-warming",ok:()=>ageInt()<35,hit:{home:2,stress:-2},miss:{}},
+ {k:"lh_fivea",kind:"life",t:"Five-a-side with the old crowd",ok:()=>ageInt()<45,hit:{health:2,stress:-2},miss:{}},
+ {k:"lh_gig2",kind:"life",t:"Your little cousin's first gig",ok:()=>ageInt()<40,hit:{home:2},miss:{home:-1}},
+ {k:"lh_hen",kind:"life",t:"A hen or stag weekend in Prague",ok:()=>ageInt()>=24&&ageInt()<40,hit:{stress:-4,health:-2,gbp:-400},miss:{home:-2}},
+ {k:"lh_uni",kind:"life",t:"A university reunion",ok:()=>ageInt()>=28&&ageInt()<55,hit:{home:2,stress:-2},miss:{}},
+ {k:"lh_dentist2",kind:"life",t:"An eye test, finally",ok:()=>ageInt()>=35,hit:{health:1},miss:{health:-1}},
+ {k:"lh_nursery",kind:"life",t:"{kid}'s nursery nativity",ok:()=>S.children.some(k=>kidAge(k)>=2&&kidAge(k)<5),hit:{home:4},miss:{home:-5}},
+ {k:"lh_swim",kind:"life",t:"{kid}'s swimming gala",ok:()=>S.children.some(k=>kidAge(k)>=6&&kidAge(k)<14),hit:{home:3},miss:{home:-4}},
+ {k:"lh_concert",kind:"life",t:"{kid}'s school concert (recorder solo)",ok:()=>S.children.some(k=>kidAge(k)>=6&&kidAge(k)<12),hit:{home:3},miss:{home:-4}},
+ {k:"lh_parentsev",kind:"life",t:"Parents' evening for {kid}",ok:()=>S.children.some(k=>kidAge(k)>=5&&kidAge(k)<17),hit:{home:2},miss:{home:-3}},
+ {k:"lh_driving",kind:"life",t:"{kid}'s driving test",ok:()=>S.children.some(k=>kidAge(k)>=17&&kidAge(k)<20),hit:{home:4},miss:{home:-3}},
+ {k:"lh_uniopen",kind:"life",t:"A university open day with {kid}",ok:()=>S.children.some(k=>kidAge(k)>=16&&kidAge(k)<19),hit:{home:4},miss:{home:-4}},
+ {k:"lh_graduation",kind:"life",t:"{kid}'s graduation",ok:()=>S.children.some(k=>kidAge(k)>=21&&kidAge(k)<24),hit:{home:6},miss:{home:-8}},
+ {k:"lh_grandkid",kind:"life",t:"Babysitting the grandchildren",ok:()=>(S.grandkids||0)>0,hit:{home:4,stress:1},miss:{home:-2}},
+ {k:"lh_movekid",kind:"life",t:"Helping {kid} move into their first flat",ok:()=>S.children.some(k=>kidAge(k)>=19&&kidAge(k)<28),hit:{home:4},miss:{home:-3}},
+ {k:"lh_annivpar",kind:"life",t:"Your parents' anniversary lunch",ok:()=>(S.folks||[]).filter(f=>f.alive).length>=2,hit:{home:3},miss:{home:-3}},
+ {k:"lh_carehome",kind:"life",t:"Visiting your mum in the care home",ok:()=>(S.folks||[]).some(f=>f.alive&&folkAge(f)>=82),hit:{home:3,karma:1},miss:{home:-3}},
+ {k:"lh_partnerbday",kind:"life",t:"{p}'s parents for Sunday lunch",ok:()=>inLove(),hit:{home:3},miss:{home:-3}},
+ {k:"lh_dinnerparty",kind:"life",t:"A dinner party at the neighbours'",ok:()=>S.home.value>0,hit:{home:2},miss:{}},
+ {k:"lh_retire",kind:"life",t:"An old friend's retirement do",ok:()=>ageInt()>=55,hit:{home:2},miss:{}},
+ {k:"lh_golfday",kind:"life",t:"A charity golf day",ok:()=>ageInt()>=40,hit:{stress:-2},miss:{}},
+ {k:"lh_bowls",kind:"life",t:"The bowls club final",ok:()=>ageInt()>=60,hit:{home:2,stress:-2},miss:{}},
+ {k:"lh_choir",kind:"life",t:"The community choir's concert",ok:()=>ageInt()>=45,hit:{home:2,stress:-3},miss:{}},
+ {k:"lh_allot",kind:"life",t:"Allotment open day",ok:()=>ageInt()>=50,hit:{health:1,stress:-2},miss:{}},
+ {k:"lh_funeral",kind:"life",t:"An old school friend's funeral",ok:()=>ageInt()>=55,hit:{karma:2,home:1},miss:{home:-2}},
+ {k:"lh_marathon",kind:"life",t:"Cheering a friend at the marathon",ok:()=>!!S.friend,hit:{act:"frbond",d:4},miss:{act:"frbond",d:-2}},
+ {k:"lh_friendbaby",kind:"life",t:"Meeting {f}'s new baby",ok:()=>!!S.friend&&ageInt()>=27&&ageInt()<45,hit:{act:"frbond",d:5},miss:{act:"frbond",d:-3}},
+ {k:"lh_wedding3",kind:"life",t:"Your best friend's wedding",ok:()=>!!S.friend&&ageInt()>=25&&ageInt()<50,hit:{act:"frbond",d:8,home:2},miss:{act:"frbond",d:-10}},
+ {k:"lh_birthdayown",kind:"life",t:"Your own birthday drinks",ok:()=>true,hit:{home:3,stress:-2},miss:{home:-1}},
+ {k:"lh_vetcheck",kind:"life",t:"{pet}'s booster jabs",ok:()=>!!S.pet,hit:{},miss:{home:-1}},
+ {k:"lh_plumber",kind:"life",t:"Waiting in for the boiler engineer",ok:()=>S.home.value>0,hit:{},miss:{stress:2}},
+ {k:"lh_carmot",kind:"life",t:"The car's MOT",ok:()=>S.car&&S.car.id!=="none",hit:{},miss:{stress:2}},
+ {k:"lh_quiznight",kind:"life",t:"The pub quiz final",ok:()=>true,hit:{home:2,stress:-2},miss:{}},
+ {k:"lh_theatre",kind:"life",t:"Theatre tickets booked months ago",ok:()=>true,hit:{home:3,stress:-2},miss:{gbp:-120}},
+ {k:"lh_footy",kind:"life",t:"The derby, with season-ticket seats",ok:()=>ageInt()>=18,hit:{stress:-3,home:1},miss:{}},
+ {k:"lh_cousin",kind:"life",t:"A cousin's christening",ok:()=>true,hit:{home:2},miss:{home:-1}},
+ {k:"lh_volunteer",kind:"life",t:"Your shift at the food bank",ok:()=>true,hit:{karma:3},miss:{karma:-1}},
+ {k:"lh_hospital",kind:"life",t:"A hospital appointment you've waited months for",ok:()=>S.health<70,hit:{health:3},miss:{health:-3}},
+ {k:"lh_yoga",kind:"life",t:"A weekend yoga retreat",ok:()=>ageInt()>=30,hit:{stress:-5,gbp:-250},miss:{}},
+ {k:"lh_date",kind:"life",t:"A date you've been looking forward to all week",ok:()=>isSingle()&&ageInt()<65,hit:{home:4},miss:{home:-2}}
+);
+
+/* More things to do in your free time, some only in certain months */
+const GEN_ACTS=[
+ {k:"escape",g:"Out and about",n:"An escape room",d:"Sixty minutes, one locked room, and your friends arguing about a padlock.",cost:30,fx:{stress:-4,home:2},res:["You escape with 40 seconds to spare. Everyone is a genius.","You don't escape. The staff let you out, pityingly."],meet:.15},
+ {k:"parkrun",g:"Out and about",n:"A Saturday parkrun",d:"5k in the park, free, with a lot of people in neon.",cost:0,fx:{health:3,stress:-3},res:["A personal best. You buy the special running socks.","You walk the last kilometre. Nobody minds."],meet:.15},
+ {k:"pottery",g:"Out and about",n:"A pottery class",d:"Get your hands dirty. Make a bowl. Or something bowl-adjacent.",cost:40,fx:{stress:-5,home:1},res:["Your vase is wonky but beautiful.","It collapses on the wheel. Twice. Very relaxing."],meet:.25},
+ {k:"bowling",g:"Out and about",n:"Ten-pin bowling",d:"Hired shoes, bad nachos and fierce competition.",cost:25,fx:{stress:-3,home:2},res:["Three strikes in a row. You do a little dance.","You bowl a 47. The bumpers were up."],meet:.1},
+ {k:"comedy",g:"Out and about",n:"A comedy club",d:"Don't sit in the front row.",cost:25,fx:{stress:-5,home:2},res:["You laugh so much your face hurts.","You sat in the front row. You are now part of the act."],meet:.1},
+ {k:"museum",g:"Out and about",n:"A museum afternoon",d:"Dinosaurs, old masters and an expensive café.",cost:15,fx:{stress:-3,skill:1},res:["You learn something you'll bore people with for weeks.","You spend most of it in the gift shop."],meet:.05},
+ {k:"climb",g:"Out and about",n:"The climbing wall",d:"Harness on, fear of heights optional.",cost:20,fx:{health:2,stress:-3},res:["You reach the top and ring the bell.","Halfway up you decide you've seen enough."],meet:.2},
+ {k:"swim",g:"Out and about",n:"Wild swimming",d:"A lake, a wetsuit and a lot of shrieking. Summer only.",cost:0,fx:{health:3,stress:-6},res:["Freezing, then glorious. You feel brand new.","A swan takes against you. You leave quickly."],meet:.15,ok:()=>[5,6,7].includes(monthOf(S.day))},
+ {k:"skate",g:"Out and about",n:"Ice skating",d:"The winter rink is open. Hold the side if you must.",cost:15,fx:{stress:-3,home:2},res:["You glide round like a pro. Nearly.","You spend most of it on your bottom."],meet:.1,ok:()=>[10,11,0].includes(monthOf(S.day))},
+ {k:"bonfire",g:"Out and about",n:"Bonfire night fireworks",d:"Sparklers, toffee apples and 'ooh' on cue.",cost:10,fx:{home:3,stress:-2},res:["The finale is spectacular. Everyone goes 'ooh'.","It rains. The rockets fizzle. The toffee apple is still good."],meet:.05,ok:()=>monthOf(S.day)===10},
+ {k:"xmarket",g:"Out and about",n:"The Christmas market",d:"Mulled wine, wooden toys and a sausage the length of your arm.",cost:30,fx:{home:3,stress:-2},res:["You find the perfect present for everyone.","You buy a wooden reindeer nobody wanted."],meet:.05,ok:()=>monthOf(S.day)===11},
+ {k:"bookclub",g:"At home",n:"Host the book club",d:"Wine, crisps and some discussion of the book, eventually.",cost:20,fx:{stress:-3,home:2},res:["A brilliant evening. Nobody finished the book.","A heated row about the ending. Great fun."],meet:.2},
+ {k:"boardgames",g:"At home",n:"A board-game night",d:"Friends round, snacks out, rules disputed.",cost:15,fx:{stress:-3,home:3},res:["You win, and you're gracious about it. Mostly.","Someone flips the board. Friendships survive."],meet:0},
+ {k:"spa",g:"Together",n:"A spa day for two",d:"Robes, saunas and a very calm person with cucumbers.",cost:180,fx:{stress:-10,home:6},res:["You both float home.","You fall asleep in the relaxation room and snore."],meet:0,ok:()=>inLove()},
+ {k:"cinema",g:"Together",n:"Cinema and dinner",d:"A film, a pizza and an argument about the ending.",cost:60,fx:{stress:-3,home:5},res:["A lovely evening.","The film is terrible. You laugh about it all the way home."],meet:0,ok:()=>inLove()}
+];
+for(const a of GEN_ACTS)ACTIVITIES.push({k:a.k,g:a.g,n:a.n,d:a.d,cost:a.cost,ok:a.ok||(()=>true),gen:a});
+{const _da3=doActivity;doActivity=function(k){const a=ACTIVITIES.find(x=>x.k===k);if(!a||!a.gen)return _da3.apply(this,arguments);
+ if(!a.ok()||freeLeft()<=0||S.prison||S.front||S.sel||S.over)return;const cost=a.cost?Math.round(a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2))/10)*10:0;if(cost&&S.wealth<cost)return;S.wealth-=cost;useFree();try{mgCount("act")}catch(e){}
+ const G=a.gen;for(const [key,v] of Object.entries(G.fx)){if(key==="stress")S.stress=clamp(S.stress+v,0,100);else if(key==="home")S.homeLife=clamp(S.homeLife+v,0,100);else if(key==="health")S.health=clamp(S.health+v,0,100);else if(key==="skill")S.skill=clamp(S.skill+v,0,100)}
+ let t=pick(G.res);if(G.meet&&rnd()<G.meet){const p=meetSomeone(a.n);t+=` You get chatting to ${p.n}.`}
+ S.log.unshift({d:S.day,t:`${a.n}.`});save();render();actResult(a.n,esc(t+(cost?` It cost ${money(cost)}.`:"")))}}
+
+/* ============ Propose when you choose to ============ */
+const PROPOSE_PLACES=[["At your favourite restaurant","A candle, a nervous waiter and a ring in the dessert.",0],["On a beach at sunset","Sand, waves and you on one knee in the wet bit.",.05],["On top of a mountain","A long climb, a view for ever, and you can barely breathe.",.07],["With a flash mob","Forty dancers, a pop song, and absolutely nowhere to hide.",-.08]];
+function proposeModal(){
+ if(S.rel.st!=="dating")return;const p=S.rel.name;
+ if(S.propAt!=null&&S.day-S.propAt<6)return actResult("Not yet",esc(`It's only been a few months since you last asked ${p}. Give it time.`));
+ window.__prop={where:0,ring:0};
+ const opt=(k,list)=>list.map((x,i)=>`<button class="btn ${i===0?"primary":""}" data-act="propset" data-k="${k}" data-v="${i}">${esc(x)}</button>`).join("");
+ showModal(`<div class="label">The big question</div><h2 style="margin-top:4px">Propose to ${esc(p)}?</h2>
+  <p>You've been together ${Math.max(1,Math.round((S.day-(S.rel.since||S.day))/12*10)/10)} year${(S.day-(S.rel.since||S.day))>=24?"s":""}. Where will you ask?</p>
+  <div class="btn-col" id="propWhere">${opt("where",PROPOSE_PLACES.map(x=>x[0]))}</div>
+  <div class="label" style="margin-top:10px">The ring</div><div class="btn-col" id="propRing">${opt("ring",["A modest ring (£8,000)","A big diamond (£45,000)","Your grandmother's ring (free)"])}</div>
+  <div class="btn-row"><button class="btn primary" data-act="propgo">Ask the question</button><button class="btn" data-act="hide">Not yet</button></div>`);
+}
+function proposeGo(){
+ const P=window.__prop||{where:0,ring:0},p=S.rel.name,pl=PROPOSE_PLACES[P.where],cost=[8000,45000,0][P.ring];if(S.wealth<cost)return toastMsg("You can't afford that ring right now.");
+ const months=S.day-(S.rel.since||S.day),chance=clamp(.25+(S.homeLife-50)/90+Math.min(.3,months*.015)+pl[2]+(P.ring===1?.05:P.ring===2?.04:0),.08,.95);
+ S.propAt=S.day;hideModal();
+ if(rnd()<chance){S.wealth-=cost;ACTS.engage({},{vars:{}});S.homeLife=clamp(S.homeLife+(P.ring===1?20:15),0,100);S.log.unshift({d:S.day,t:`Proposed to ${p} ${pl[0].toLowerCase()}. They said yes.`});
+  try{moment({icon:"rings",kicker:"Engaged!",title:`${p} said yes`,sub:`${pl[1]} ${P.ring===2?"Your grandmother's ring fits perfectly.":"The ring is perfect."}`,big:true})}catch(e){}save();render()}
+ else if(rnd()<(S.homeLife<60?.6:.35)){S.stress=clamp(S.stress+12,0,100);S.log.unshift({d:S.day,t:`Proposed to ${p}. They said no, and ended it.`});try{ACTS.breakup()}catch(e){}save();render();
+  actResult("It's over",esc(`${pl[1]} ${p} goes very quiet. Then, gently: "I'm sorry. I think I've known for a while that you're not the one." By the weekend, they've moved out.`))}
+ else{S.homeLife=clamp(S.homeLife-10,0,100);S.stress=clamp(S.stress+8,0,100);S.log.unshift({d:S.day,t:`Proposed to ${p}. They said "not yet".`});save();render();
+  actResult("Not yet",esc(`${pl[1]} ${p} takes your hands and says, gently, "I love you, but I'm not ready." It stings. You can try again in a few months.`))}
+}
+
+/* ============ Buying outright and paying off the mortgage ============ */
+function buyHomeCash(id){const h=S.market.find(x=>x.id===id);if(!h)return;const q=homeQuote(h);if(!q.ok||S.wealth<q.need+q.loan)return;const extra=q.loan;
+ buyHome(id);if(!S.home||S.home.bought!==h.p)return;S.wealth-=extra;S.home.loan=0;S.home.pay=0;S.home.left=0;S.log.unshift({d:S.day,t:`Bought it outright, with no mortgage.`});save();render()}
+const payoffAmt=()=>Math.round((S.home.loan*1.02+300)/10)*10;
+const overpayAmt=()=>Math.round(Math.min(S.home.loan,S.home.loan*.1)/100)*100;
+function payOffMortgage(){const h=S.home;if(!(h.loan>0))return;const amt=payoffAmt();if(S.wealth<amt)return toastMsg("You don't have enough cash to clear it yet.");
+ S.wealth-=amt;h.loan=0;h.pay=0;h.left=0;S.stress=clamp(S.stress-6,0,100);S.homeLife=clamp(S.homeLife+4,0,100);try{ach("mortgagefree")}catch(e){}
+ S.log.unshift({d:S.day,t:`Paid off the mortgage early (${money(amt)}, including the early repayment fee).`});
+ try{moment({icon:"key",kicker:"Mortgage paid off",title:"Mortgage-free",sub:"You paid it off early. No more monthly payments on your home."})}catch(e){}save();render()}
+function overpayMortgage(){const h=S.home,amt=overpayAmt();if(!(h.loan>0)||S.wealth<amt||S.overpayYr===Math.floor(S.day/12))return;
+ S.wealth-=amt;h.loan=Math.max(0,h.loan-amt);S.overpayYr=Math.floor(S.day/12);h.pay=h.loan>0?mortPay(h.loan,Math.max(1,(h.left||12))/12,h.rate||MORT_RATE):0;if(!h.loan){h.left=0;h.pay=0}
+ S.log.unshift({d:S.day,t:`Overpaid the mortgage by ${money(amt)}. Monthly payments are now ${money(h.pay)}.`});toastMsg(`Overpaid ${money(amt)}. Your monthly payment is now ${money(h.pay)}.`);save();render()}
+/* ============ Floor plans: every home has rooms, and improvements go in rooms ============ */
+/* [id, name, kind, x, y, w, h] on a 300 x 220 plan. Outside kinds: garden, terrace, balcony, roof, drive */
+const FLOOR_PLANS={
+ studio:[["main","Studio room","living",10,10,180,200],["kit","Kitchenette","kitchen",190,10,100,100],["bath","Shower room","bath",190,110,100,100]],
+ newbuild:[["liv","Living room","living",10,10,150,120],["kit","Kitchen","kitchen",160,10,130,60],["bath","Bathroom","bath",160,70,60,60],["bed","Bedroom","bed",220,70,70,140],["hall","Hall","hall",160,130,60,80],["bal","Balcony","balcony",10,130,150,80]],
+ conv:[["liv","Living room","living",10,10,140,100],["kit","Kitchen","kitchen",150,10,140,60],["bath","Bathroom","bath",150,70,60,50],["bed","Bedroom","bed",210,70,80,140],["spare","Second bedroom","spare",10,110,140,100],["hall","Hall","hall",150,120,60,90]],
+ loft:[["liv","Open-plan living","living",10,10,180,120],["kit","Kitchen","kitchen",190,10,100,60],["bath","Bathroom","bath",190,70,50,60],["bed","Bedroom","bed",240,70,50,60],["mezz","Mezzanine","mezz",190,130,100,80],["ter","Roof terrace","terrace",10,130,180,80]],
+ terrace:[["roof","Roof","roof",10,5,280,22],["liv","Living room","living",10,32,120,80],["kit","Kitchen","kitchen",130,32,90,80],["hall","Hall","hall",220,32,70,80],["bed","Bedroom","bed",10,112,95,50],["spare","Bedroom 2","spare",105,112,90,50],["bath","Bathroom","bath",195,112,95,50],["gdn","Garden","garden",10,167,280,48]],
+ georgian:[["roof","Roof","roof",10,5,280,22],["liv","Drawing room","living",10,32,110,70],["kit","Kitchen","kitchen",120,32,90,70],["study","Study","study",210,32,80,70],["bed","Bedroom","bed",10,102,100,55],["spare","Bedroom 2","spare",110,102,90,55],["bath","Bathroom","bath",200,102,90,55],["base","Basement","basement",10,162,120,50],["gdn","Garden","garden",130,162,160,50]],
+ mews:[["ter","Roof terrace","terrace",10,5,280,32],["liv","Living room","living",10,42,140,78],["kit","Kitchen","kitchen",150,42,140,78],["gar","Garage","garage",10,120,110,90],["bath","Bathroom","bath",120,120,70,45],["bed","Bedroom","bed",190,120,100,45],["spare","Bedroom 2","spare",120,165,170,45]],
+ family:[["roof","Roof","roof",10,5,280,22],["liv","Living room","living",10,32,110,75],["kit","Kitchen","kitchen",120,32,100,75],["study","Study","study",220,32,70,75],["bed","Bedroom","bed",10,107,90,50],["spare","Playroom","spare",100,107,80,50],["bath","Bathroom","bath",180,107,50,50],["gar","Garage","garage",230,107,60,50],["gdn","Big garden","garden",10,162,200,53],["drive","Drive","drive",210,162,80,53]],
+ manor:[["roof","Roof","roof",10,5,280,22],["liv","Drawing room","living",10,32,90,60],["kit","Kitchen","kitchen",100,32,90,60],["study","Library","study",190,32,100,60],["bed","Bedroom","bed",10,92,90,50],["spare","Guest room","spare",100,92,90,50],["bath","Bathroom","bath",190,92,50,50],["hall","Great hall","hall",240,92,50,50],["base","Cellar","basement",10,142,120,30],["spare2","Games room","spare",130,142,80,30],["gar","Stables","garage",210,142,80,30],["gdn","Grounds","garden",10,175,200,40],["drive","Drive","drive",210,175,80,40]],
+ penthouse:[["ter","Roof terrace","terrace",10,5,280,40],["liv","Living room","living",10,50,150,80],["kit","Kitchen","kitchen",160,50,130,80],["bed","Bedroom","bed",10,130,90,80],["spare","Media room","spare",100,130,80,40],["study","Study","study",180,130,110,40],["bath","Bathroom","bath",100,170,80,40],["gar","Residents' garage","garage",180,170,110,40]],
+ mansion:[["roof","Roof","roof",10,5,280,22],["liv","Ballroom","living",10,32,100,55],["kit","Kitchen","kitchen",110,32,90,55],["study","Study","study",200,32,90,55],["bed","Bedroom","bed",10,87,100,45],["spare","Guest suite","spare",110,87,90,45],["bath","Bathroom","bath",200,87,90,45],["hall","Hall","hall",10,132,100,35],["spare2","Staff flat","spare",110,132,90,35],["gar","Garage","garage",200,132,90,35],["base","Basement","basement",10,167,140,45],["gdn","Garden","garden",150,167,140,45]]
+};
+const OUTSIDE_KINDS=["garden","terrace","balcony","roof","drive"];
+/* Where each improvement can go */
+const MOD_ROOMS={kitchen:["kitchen"],bathroom:["bath"],smart:["hall","living"],office:["study","spare","mezz"],cinema:["basement","spare"],gym:["garage","basement","spare","mezz"],art:["living","hall"],cellar:["basement"],garden:["garden","terrace","balcony"],solar:["roof"],ev:["drive","garage"],hottub:["garden","terrace"],extension:["garden"],pool:["garden","terrace"],nursery:["spare","bed"],annex:["garden"]};
+const MOD_ICON={kitchen:"🍳",bathroom:"🛁",smart:"📱",office:"💻",cinema:"🎬",gym:"🏋️",art:"🖼️",cellar:"🍷",garden:"🌷",solar:"☀️",ev:"🔌",hottub:"♨️",extension:"🧱",pool:"🏊",nursery:"🍼",annex:"🏡"};
+const ROOM_CAP={garden:3,terrace:2,living:2,hall:2};
+const KIND_WORD={basement:"a basement",garden:"a garden",roof:"a roof of your own",drive:"a drive or garage",garage:"a garage",study:"a study or spare room",spare:"a spare room",bath:"a bathroom",kitchen:"a kitchen",terrace:"outdoor space",balcony:"outdoor space",mezz:"a spare room",bed:"a bedroom",living:"a living room",hall:"a hall"};
+const planOf=()=>FLOOR_PLANS[S.home&&S.home.t]||[];
+function modAtFix(){const H=S.home;if(!H||!H.mods)return;H.modAt=H.modAt||{};for(const id of Object.keys(H.mods)){if(!H.mods[id]||H.modAt[id])continue;const r=freeRooms(id,true)[0];H.modAt[id]=r?r[0]:"elsewhere"}}
+function roomLoad(rid){const H=S.home;return Object.entries(H.modAt||{}).filter(([m,r])=>r===rid&&H.mods&&H.mods[m]).length}
+function freeRooms(id,ignoreFix){const kinds=MOD_ROOMS[id]||[];return planOf().filter(r=>kinds.includes(r[2])&&roomLoad(r[0])<(ROOM_CAP[r[2]]||1))}
+/* What a home can have depends on its rooms */
+{const _mo=modOk;modOk=function(m){if(S.home.mods&&S.home.mods[m.id])return"Done";if(!FLOOR_PLANS[S.home.t])return _mo.apply(this,arguments);
+ modAtFix();const kinds=MOD_ROOMS[m.id]||[];const has=planOf().some(r=>kinds.includes(r[2]));
+ if(!has)return`No room for it: needs ${KIND_WORD[kinds[0]]||"more space"}`;
+ if((m.id==="pool"||m.id==="annex")&&(S.home.tier||0)<3)return"Needs a bigger home";if(m.id==="art"&&(S.home.tier||0)<2)return"Needs a bigger home";
+ if(!freeRooms(m.id).length)return"No free room left for it";if(S.wealth<modCost(m))return`Needs ${money(modCost(m))}`;return""}}
+function floorPlanSVG(pickFor){
+ modAtFix();const P=planOf();if(!P.length)return"";const H=S.home,valid=pickFor?freeRooms(pickFor).map(r=>r[0]):[];
+ const icons={};for(const [m,r] of Object.entries(H.modAt||{}))if(H.mods&&H.mods[m])(icons[r]=icons[r]||[]).push(MOD_ICON[m]||"⭐");
+ return `<svg class="plan-svg" viewBox="0 0 300 220" role="img" aria-label="Floor plan"><rect width="300" height="220" rx="12" fill="var(--plan-bg,#F3EEE4)"/>
+  ${P.map(([id,n,k,x,y,w,h])=>{const out=OUTSIDE_KINDS.includes(k),ok=valid.includes(id),fill=k==="garden"?"#CFE5C0":k==="drive"?"#D8D4CC":k==="roof"?"#D9CFC4":out?"#DCE9F0":"#FFFDF8";
+   const ic=(icons[id]||[]).map((e,i)=>`<text x="${x+w/2+(i-((icons[id].length-1)/2))*20}" y="${y+h/2+8}" font-size="16" text-anchor="middle">${e}</text>`).join("");
+   return `<g ${ok?`class="plan-room ok" data-act="hplace" data-mod="${pickFor}" data-room="${id}"`:`class="plan-room"`}><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${ok?"#FFF1C9":fill}" stroke="${ok?"#B8862B":"#9A8F80"}" stroke-width="${ok?2.5:1.2}" ${out?'stroke-dasharray="4 3"':""}/><text x="${x+5}" y="${y+12}" font-size="8.5" fill="#6B6257" font-family="system-ui">${esc(n)}</text>${ic}${ok?`<text x="${x+w/2}" y="${y+h-6}" font-size="8" fill="#8A6A2E" text-anchor="middle" font-family="system-ui" font-weight="700">Tap to put it here</text>`:""}</g>`}).join("")}</svg>`;
+}
+function floorPlanSec(){const P=planOf();if(!P.length||!owns())return"";modAtFix();const n=Object.values(S.home.mods||{}).filter(Boolean).length;
+ return `<div class="plan-wrap"><div class="label" style="margin-top:10px">Floor plan</div>${floorPlanSVG()}<p class="hint" style="margin:4px 0 0">${n?`Your improvements are shown in their rooms.`:`Improvements you add will appear in their rooms.`} What you can add depends on the rooms you have.</p></div>`}
+function placeMod(id,room){const m=HOME_MODS.find(x=>x.id===id);if(!m||modOk(m))return;if(!freeRooms(id).some(r=>r[0]===room))return;
+ const c=modCost(m);S.wealth-=c;S.home.mods=Object.assign({},S.home.mods,{[m.id]:1});S.home.modAt=Object.assign({},S.home.modAt,{[m.id]:room});S.home.value+=c*m.val;S.homeLife=clamp(S.homeLife+3,0,100);
+ const rn=(planOf().find(r=>r[0]===room)||[])[1]||"";S.log.unshift({d:S.day,t:`Added a ${m.n.toLowerCase()}${rn?` in the ${rn.toLowerCase()}`:""} for ${money(c)}.`});save();render();homeCustomModal(`${m.n} added${rn?` in the ${rn.toLowerCase()}`:""}.`)}
+function pickRoomModal(id){const m=HOME_MODS.find(x=>x.id===id);if(!m)return;const rooms=freeRooms(id);if(rooms.length===1)return placeMod(id,rooms[0][0]);
+ showModal(`<div class="label">Where will it go?</div><h2 style="margin-top:4px">${esc(m.n)}</h2><p class="hint">Tap a highlighted room to put your ${esc(m.n.toLowerCase())} there.</p>${floorPlanSVG(id)}<div class="btn-row"><button class="btn" data-act="hcustom">Back</button></div>`)}
+/* The make-it-yours screen shows the plan at the top */
+{const _hcm=homeCustomModal;homeCustomModal=function(msg){_hcm.apply(this,arguments);try{const sh=document.getElementById("sheet"),h2=sh&&sh.querySelector("h2");if(h2&&FLOOR_PLANS[S.home.t]&&!sh.querySelector(".plan-svg"))h2.insertAdjacentHTML("afterend",`<div class="plan-wrap">${floorPlanSVG()}</div>`)}catch(e){}}}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -14086,7 +14295,7 @@ function renderLife(){
    <div class="meters">${meter(single?"Social life":"Home life",S.homeLife,"good")}</div>
    <p class="hint" style="margin:8px 0 0">Long hours and high stress wear this down. ${single?"":"Below 15 and your partner may leave. "}A good home life above 65 eases your stress.</p>
    ${loveSec()}
-   <div class="btn-row" style="margin-top:10px">${inLove()?`<button class="btn sm" data-act="endrel">${S.rel.st==="married"?"Ask for a divorce":"End the relationship"}</button>`:""}<button class="btn sm" data-act="prefcycle">Interested in: ${PREF_N[S.pref]||"not set"}</button></div>
+   <div class="btn-row" style="margin-top:10px">${S.rel.st==="dating"&&S.day-(S.rel.since||S.day)>=6?`<button class="btn sm primary" data-act="proposenow">Propose</button>`:""}${inLove()?`<button class="btn sm" data-act="endrel">${S.rel.st==="married"?"Ask for a divorce":"End the relationship"}</button>`:""}<button class="btn sm" data-act="prefcycle">Interested in: ${PREF_N[S.pref]||"not set"}</button></div>
   </div>
   ${friendSec()}
   <div class="pane-sec">
@@ -14593,6 +14802,9 @@ document.addEventListener("click",e=>{
  if(a==="albumall"){albumAll=true;render();return}
  if(a==="albummore"){albumN=(albumN||(window.innerWidth<520?12:24))+(window.innerWidth<520?12:24);render();return}
  if(a==="freegrp"){freeGrp=t.dataset.v;render();return}
+ if(a==="proposenow"){proposeModal();return}
+ if(a==="propset"){const P=window.__prop=window.__prop||{where:0,ring:0};P[t.dataset.k]=+t.dataset.v;t.parentElement.querySelectorAll("button").forEach(b=>b.classList.toggle("primary",b===t));return}
+ if(a==="propgo"){proposeGo();return}
  if(a==="petpat"){petPat(false);return}
  if(a==="pettreat"){petPat(true);return}
  if(a==="godating"){freeGrp="Dating";lifeTab="people";render();setTimeout(()=>{const c=document.querySelector(".free-chips");if(c){const y=c.getBoundingClientRect().top+window.scrollY-140;document.documentElement.scrollTop=y;document.body.scrollTop=y;window.scrollTo(0,y)}},250);return}
@@ -14681,8 +14893,12 @@ document.addEventListener("click",e=>{
   showModal(`<div class="label">Estate agent · ${esc(h.area)}</div><h2 style="margin-top:4px">${esc(ht.n)}</h2><div style="margin-top:10px">${houseArt(ht.art,h.v,"art art-big")}</div>
    <div class="feat" style="margin-top:8px">${h.feat.map(f=>`<span>${esc(f)}</span>`).join("")}</div>${ht.note?`<div class="note">${esc(ht.note)}</div>`:""}
    <table class="rep-table"><tr><td>Asking price</td><td>${money(h.p)}</td></tr><tr><td>Deposit (${Math.round(q.dep/h.p*100)}%)</td><td>${money(q.dep)}</td></tr><tr><td>Stamp duty${q.ftb&&h.p<=500e3?" (first-time buyer relief)":""}</td><td>${money(q.sd)}</td></tr><tr><td>Legal and survey fees</td><td>${money(q.fees)}</td></tr>${q.release?`<tr><td>Released from your current home</td><td class="up">${money(q.release,true)}</td></tr>`:""}<tr><td><b>${q.need<0?"Cash released to you":"Cash needed"}</b></td><td><b>${money(Math.abs(q.need))}</b></td></tr><tr><td>Mortgage</td><td>${money(q.loan)}</td></tr><tr><td>Rate and term: ${(q.rate*100).toFixed(1)}% over ${q.years} years</td><td></td></tr><tr><td>Monthly payment</td><td>${money(q.pay)}</td></tr><tr><td>Most you can borrow (4.5× your ${money(q.inc)} ${selfPaid()?"average earnings":"salary"})</td><td>${money(q.maxLoan)}</td></tr><tr><td>Your take-home pay a month</td><td>${money(q.takeHome)}</td></tr><tr><td>Upkeep</td><td>${money(ht.up)}/month</td></tr></table>
-   <div class="btn-row"><button class="btn primary big" data-act="buyhome" data-id="${h.id}">Buy it</button><button class="btn" data-act="hide">Not now</button></div>`)}
+   ${q.loan>0?`<p class="hint" style="margin:8px 0 0">${S.wealth>=q.need+q.loan?`Or buy it outright for ${money(q.need+q.loan)}: no mortgage, no monthly payments.`:`To buy it outright with no mortgage you'd need ${money(q.need+q.loan)}.`}</p>`:""}
+   <div class="btn-row"><button class="btn primary big" data-act="buyhome" data-id="${h.id}">${q.loan>0?"Buy with a mortgage":"Buy it"}</button>${q.loan>0&&S.wealth>=q.need+q.loan?`<button class="btn big" data-act="buyhomecash" data-id="${h.id}">Buy outright</button>`:""}<button class="btn" data-act="hide">Not now</button></div>`)}
  else if(a==="buyhome")buyHome(t.dataset.id);
+ else if(a==="buyhomecash")buyHomeCash(t.dataset.id);
+ else if(a==="payoffmort")payOffMortgage();
+ else if(a==="overpay")overpayMortgage();
  else if(a==="inv"){const id=t.dataset.id;if(t.dataset.m==="add"){const amt=Math.max(0,S.wealth)*.25;S.wealth-=amt;S.inv[id]+=amt}else{S.wealth+=S.inv[id];S.inv[id]=0}save();render()}
  else if(a==="penrate"){S.pension.rate=+t.dataset.v;save();render()}
  else if(a.startsWith("biz"))bizClick(a,t);
