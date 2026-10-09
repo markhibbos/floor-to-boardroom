@@ -493,6 +493,7 @@ a.btn.primary{color:var(--on-accent)}
 .menu-grid{grid-auto-rows:1fr}
 html,body{overflow-x:clip}
 .menu-grid .btn{display:flex;align-items:center;justify-content:center;text-align:center;min-height:52px;text-decoration:none;line-height:1.2}
+.jchance{font-size:10.5px;opacity:.85}.jchance.hi{color:var(--up)}.jchance.lo{color:var(--down)}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -6228,7 +6229,12 @@ function setJob(id,v){
 function mgrClose(off){const w=jobsClose(off);if(S.rank>=4||!inSeason(S.day))return w;
  if(!S.lg||!S.lg.teams.some(t=>t.n===S.bank))S.lg=newLeague([0,0,1,3][S.rank],S.bank,roundsSoFar(S.day));
  const me=lgMe();me.str=clamp(me.str+(w.tot/Math.max(1,rankK())-.9)*.15,0,6);const L=lgMonth(null);w.lines.push(...L.lines);return w}
-function jobsClose(off){
+/* The chance a job goes well with a given approach (the same sum the month-end uses) */
+function jobChance(cd,ap){apprCut();try{return clamp(.78+S.skill/300+ap.q-cd.d*.45+(isTeam()?(S.morale-55)/400:0)+jobMod(cd).p,.05,.97)}catch(e){return .7}}
+/* Taking less time pays less: the quickest approach earns at most 80% of the standard rate in every career */
+function apprCut(){if(window.__apprCut===Object.keys(CAREERS).length)return;for(const C of Object.values(CAREERS))if(C.appr&&C.appr[0]&&!C.appr[0].__cut){C.appr[0].pay=Math.min(C.appr[0].pay,.8);C.appr[0].__cut=1}window.__apprCut=Object.keys(CAREERS).length}
+apprCut();
+function jobsClose(off){apprCut();
  const c=CAR_(),rk=R(),a=c.appr,lines=[],notes=[];let tot=0,heat=0,repD=0;
  const mf=isTeam()?(.6+S.morale/125):1;
  for(const cd of S.cards){const ai=S.pick[cd.id];if(ai==null)continue;const ap=a[ai],tr=S.trends[cd.tag]||1;
@@ -13656,8 +13662,8 @@ function renderJobs(){
  const newsTags=S.news.filter(n=>n.tag).map(n=>n.tag);
  const cards=S.cards.map(cd=>{const sel=S.pick[cd.id],xb=1+expBonus(cd.tag);const diff=cd.d<.25?"Easy":cd.d<.45?"Steady":cd.d<.6?"Tricky":"Hard";
   const segs=[`<button data-act="job" data-id="${cd.id}" data-v="-1" class="${sel==null?"on":""}">Skip</button>`].concat(a.map((ap,i)=>{const room=rk.cap-(u-(sel!=null?cd.h*a[sel].h:0));const dis=cd.h*ap.h>room+.01&&sel!==i;
-   return `<button data-act="job" data-id="${cd.id}" data-v="${i}" class="${sel===i?"on":""}" ${dis?"disabled title=\"Not enough hours left in your day\"":""}>${esc(ap.n)}<small>${cd.h*ap.h>rk.cap+.01?`${(cd.h*ap.h).toFixed(1)}h · too long`:`${(cd.h*ap.h).toFixed(1)}h · ${fmtOut(cd.pay*ap.pay*xb)}`}</small></button>`})).join("");
-  const est=sel!=null?`<b>Taking it:</b> uses ${(cd.h*a[sel].h).toFixed(1)}h of your ${rk.cap}h day · ${c.fmt==="pts"?"worth":"pays"} about ${fmtOut(cd.pay*a[sel].pay*xb)}`:"";
+   return `<button data-act="job" data-id="${cd.id}" data-v="${i}" class="${sel===i?"on":""}" ${dis?"disabled title=\"Not enough hours left in your day\"":""}>${esc(ap.n)}<small>${cd.h*ap.h>rk.cap+.01?`${(cd.h*ap.h).toFixed(1)}h · too long`:`${(cd.h*ap.h).toFixed(1)}h · ${fmtOut(cd.pay*ap.pay*xb)}`}</small><small class="jchance ${jobChance(cd,ap)>=.75?"hi":jobChance(cd,ap)<.55?"lo":""}">✓${Math.round(jobChance(cd,ap)*100)}%</small></button>`})).join("");
+  const est=sel!=null?`<b>Taking it:</b> uses ${(cd.h*a[sel].h).toFixed(1)}h of your ${rk.cap}h day · ${c.fmt==="pts"?"worth":"pays"} about ${fmtOut(cd.pay*a[sel].pay*xb)} · ${Math.round(jobChance(cd,a[sel])*100)}% chance it goes well`:"";
   return `<div class="book"><div><div class="book-name">${esc(cd.n)}</div><div class="book-sub">${esc(c.trends[cd.tag]?c.trends[cd.tag].n:cd.tag)}${newsTags.includes(cd.tag)?' · <b style="color:var(--accent)">In the news</b>':""}${cd.risk?" · Safety-critical":""}${Math.round((xb-1)*100)?` · <b style="color:var(${xb>1?"--up":"--down"})">${xb>1?"+":""}${Math.round((xb-1)*100)}% ${xb>1?"experience":"outside your speciality"}</b>`:""}</div></div>
    <div class="book-px"><div class="mono">${fmtOut(cd.pay*xb)}</div><div class="book-sub">${diff}</div></div>
    <div class="seg seg-jobs" role="group" aria-label="${esc(cd.n)}">${segs}</div>
