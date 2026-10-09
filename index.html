@@ -477,6 +477,8 @@ a.btn.primary{color:var(--on-accent)}
 #sheet>.label:first-of-type,#sheet>h2:first-of-type{padding-right:40px}
 .wimp{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:13.5px}.wimp .label{flex-basis:100%;margin:0}.wimp span.down b,.wimp span.up b{font-weight:600}.wimp span.down{color:var(--down)}.wimp span.up{color:var(--up)}
 .wimp-sum{margin-top:6px;font-size:13.5px}.wimp-sum.down b{color:var(--down)}.wimp-sum.up b{color:var(--up)}
+.btn-short{opacity:.5}
+.bond-row{grid-column:1/-1;display:flex;align-items:center;gap:10px}.bond-row .bar{flex:1}.bond-n{font-size:12px;color:var(--muted);white-space:nowrap;min-width:84px;text-align:right}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -5209,7 +5211,7 @@ function tipOff(p){pp("tip",p,{from:p.n,t:`A tip from ${p.n.split(" ")[0]}`,b:`$
 function passing(p){const keep=rnd()<.5;pp("passing",p,{from:"A phone call",t:`Sad news about ${p.n.split(" ")[0]}`,b:`${p.n} has died suddenly. You met ${Math.max(1,Math.round((S.day-p.met)/12))} year${Math.round((S.day-p.met)/12)>1?"s":""} ago: ${p.how.toLowerCase()}.`,c:[
  {t:"Speak at the funeral",fx:{act:"ppdie",keep,home:2,stress:6,karma:2},o:keep?"You tell the story of how you met. Afterwards, their family hands you something they wanted you to have.":"You tell the story of how you met. The whole room laughs, then cries."},
  {t:"Send flowers",fx:{act:"ppdie",keep:false,stress:3},o:"You think about them often."}]})}
-function reconnect(p){pp("reconnect",p,{from:p.n,t:`${p.n.split(" ")[0]} gets in touch`,b:`It's been years. ${p.n} wants to meet up for a drink.`,c:[
+function reconnect(p){pp("reconnect",p,{from:p.n,t:`${/^(a|an|the|two) /i.test(p.n)?p.n:p.n.split(" ")[0]} gets in touch`,b:`It's been years. ${p.n} wants to meet up for a drink.`,c:[
  {t:"Meet up",fx:{act:"ppbond",d:15,home:4,stress:-3},o:"Like no time has passed at all."},
  {t:"Leave it in the past",fx:{act:"ppbond",d:-15},o:"Some friendships belong to a certain time."}]})}
 function fallout(p){pp("fallout",p,{from:p.n,t:`An argument with ${p.n.split(" ")[0]}`,b:`A silly disagreement with ${p.n} turns into a real row.`,c:[
@@ -5266,7 +5268,7 @@ function itemsSec(){
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Things you own</h2><span class="label">${its.length?money(itemsValue()):"Nothing special yet"}</span></div>
   ${its.length?`<div class="owned">${its.map(i=>`<div class="owned-row">${itemPic(i)}<div class="owned-main"><b>${esc(i.n)}</b><div class="hint">Since ${shortDate(i.bought)} · worth about ${money(i.value)}</div>${i.notes.length?`<ul class="owned-notes">${i.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}</div><div class="owned-btns"><button class="btn sm" data-act="itemgive" data-i="${i.id}">Give</button><button class="btn sm" data-act="itemsell" data-i="${i.id}">Sell</button></div></div>`).join("")}</div>`:`<p class="hint" style="margin:0">Things you buy can turn into stories: gifts for your children, valuations, race days, heirlooms.</p>`}</div>
   <div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Treat yourself</h2><span class="label">Cash ${money(S.wealth)}</span></div>
-  <div class="shop">${SHOP.map(d=>`<div class="shop-row">${itemPic(d)}<div style="flex:1"><b>${esc(d.n)}</b><div class="hint">${esc(d.d)}</div></div><button class="btn sm" data-act="itembuy" data-k="${d.k}" ${S.wealth<d.price||hasItem(d.k)?"disabled":""}>${hasItem(d.k)?"Owned":money(d.price)}</button></div>`).join("")}</div></div>`;
+  <div class="shop">${SHOP.map(d=>`<div class="shop-row">${itemPic(d)}<div style="flex:1"><b>${esc(d.n)}</b><div class="hint">${esc(d.d)}</div></div><button class="btn sm ${S.wealth<d.price&&!hasItem(d.k)?"btn-short":""}" data-act="itembuy" data-k="${d.k}" ${hasItem(d.k)?"disabled":""}>${hasItem(d.k)?"Owned":money(d.price)}</button></div>`).join("")}</div></div>`;
 }
 function peopleSec(){
  peopleSync();const ps=alivePeople().sort((a,b)=>b.bond-a.bond),gone=(S.people||[]).filter(p=>!p.alive).slice(-4);
@@ -5281,7 +5283,8 @@ function peopleSec(){
   ${!ps.length?`<p class="hint" style="margin:8px 0 0">Meet people through your free time below. Friends can lend a hand, ask for one, invite you to weddings, set you up on dates or tip you off about jobs.</p>`:""}
   ${gone.length?`<div class="label" style="margin-top:10px">Remembered</div><p class="hint" style="margin:2px 0 0">${gone.map(p=>esc(p.n)).join(", ")}</p>`:""}</div>`;
 }
-const meterMini=v=>`<div class="bar mini"><i style="width:${clamp(v,0,100)}%"></i></div>`;
+const bondWord=v=>v>=80?"Very close":v>=60?"Close":v>=40?"Friendly":v>=20?"Distant":"Cold";
+const meterMini=v=>`<div class="bond-row"><div class="bar mini"><i style="width:${clamp(v,0,100)}%"></i></div><span class="bond-n">${bondWord(v)} · ${Math.round(clamp(v,0,100))}</span></div>`;
 function freeSec(){
  if(S.prison||S.front||S.sel||S.over)return"";const left=freeLeft();const groups=[...new Set(ACTIVITIES.filter(a=>a.ok()).map(a=>a.g))];
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Free time</h2><span class="label">${left} of ${FREE_PER_MONTH} evenings left this month</span></div>
@@ -5824,7 +5827,7 @@ function inboxMorning(){
  const k=S.day===1?1:(rnd()<.2?0:(rnd()<.8?1:2));
  for(let i=0;i<k;i++){const e=drawEvent();if(e)S.inbox.push({id:e.id,done:false,vars:varsFor(e)})}
  if(!S.prison&&!S.front&&!S.sel&&!S.sabb&&S.path!=="foot"&&(S.rank<4||netWorth()>=8e6)){
-  if(S.day-S.lastOffer>=12&&S.rep>=58&&rnd()<.14&&!selfPaid()){const o=genOffer();S.lastOffer=S.day;S.inbox.push({id:o.id,dyn:o,done:false,vars:{}})}
+  if(S.day-S.lastOffer>=20&&S.rep>=58&&rnd()<.1&&!selfPaid()){const o=genOffer();S.lastOffer=S.day;S.inbox.push({id:o.id,dyn:o,done:false,vars:{}})}
  }
 }
 function varsFor(e){
@@ -6155,7 +6158,7 @@ function polMorning(){
  if(S.rank===3&&rnd()<.015&&!S.inbox.some(m=>!m.done&&/^lead_/.test(m.id)))pushDyn({id:"lead_"+S.day,from:"The party",t:"A leadership contest",b:"The Prime Minister has resigned. Colleagues are urging you to stand.",c:[
   {t:"Throw your hat in the ring",p:clamp(.25+(S.rep-60)/100,.1,.7),win:{fx:{act:"becomepm"},o:"You win the ballot of members."},lose:{fx:{rep:-4},o:"You come third. The winner remembers who backed whom."}},
   {t:"Back a colleague and wait",fx:{rep:3},o:"Loyalty is noted. Your time may come."}]});
- if(S.rank===4&&monthOf(S.day)%3===0&&!S.inbox.some(m=>!m.done&&/^pmq_/.test(m.id)))pushDyn({id:"pmq_"+S.day,from:"The House",t:"Prime Minister's Questions-ish",b:"The Leader of the Opposition is on their feet with a killer question about hospital waiting lists.",c:[
+ if(S.rank===4&&S.day-(S.pmqAt??-99)>=9&&rnd()<.4&&!S.inbox.some(m=>!m.done&&/^pmq_/.test(m.id))&&(S.pmqAt=S.day))pushDyn({id:"pmq_"+S.day,from:"The House",t:"Prime Minister's Questions-ish",b:"The Leader of the Opposition is on their feet with a killer question about hospital waiting lists.",c:[
   {t:"Answer with facts and figures",p:.65,win:{fx:{rep:4},o:"Solid. The sketch-writers call it 'dull but effective'."},lose:{fx:{rep:-4},o:"Your figures are out of date. Ouch."}},
   {t:"Hit back with a zinger",p:.5,win:{fx:{rep:7},o:"Your own benches roar. The clip goes viral."},lose:{fx:{rep:-7},o:"The zinger falls flat. Silence, then laughter from the other side."}}]});
 }
@@ -6913,7 +6916,7 @@ function caseMorning(){
   pushDyn({id:"case_r_"+S.day,from:p?p.n:"The outcome",t:good?`Good news about ${c.who}`:`Bad news about ${c.who}`,b:(good?tpl.win:tpl.lose).replace(/\{who\}/g,c.who),c:[{t:good?"Brilliant":"Learn from it",fx:good?{rep:5,pnl:2,home:2}:{rep:-4,stress:6},o:good?"A good month's work.":"It happens to everyone. It still hurts."}]});
   S.case=null;S.caseAt=S.day;return}
  if(c||S.day-(S.caseAt??-99)<5||rnd()>.3)return;
- const g=CASE_GROUP[S.path];if(!g)return;const list=CASES[g],ti=Math.floor(rnd()*list.length),tpl=list[ti],who=tpl.who();
+ const g=CASE_GROUP[S.path];if(!g)return;const list=CASES[g];S.caseUsed=S.caseUsed||{};let ti,tpl,who,tries=0;do{ti=Math.floor(rnd()*list.length);tpl=list[ti];who=tpl.who();tries++}while(S.caseUsed[g+ti+who]&&tries<30);if(S.caseUsed[g+ti+who])return;S.caseUsed[g+ti+who]=S.day;
  const p=addPerson(who.startsWith("a ")||who.startsWith("an ")||who.startsWith("the ")||who.startsWith("two ")?`${who[0].toUpperCase()}${who.slice(1)}`:who,"client",`Your ${tpl.role}: ${tpl.t.replace(/\{who\}/g,who)}`,45);
  p.caseDay=S.day;
  pushDyn({id:"case_"+S.day,from:`Your ${tpl.role}`,t:tpl.t.replace(/\{who\}/g,who),b:tpl.b.replace(/\{who\}/g,who)+" How you handle it will be remembered.",
@@ -6931,7 +6934,7 @@ function caseCallback(){
 /* ---- 2. The month reacts to your situation ---- */
 function situationMorning(){
  if(S.over||S.prison||S.front||rnd()>.35||S.inbox.some(m=>!m.done&&/^sit_/.test(m.id)))return;
- const cool=k=>S.day-((S.sitAt||{})[k]??-99)>=12,mark=k=>{S.sitAt=S.sitAt||{};S.sitAt[k]=S.day},ev=(k,e)=>{mark(k);pushDyn(Object.assign({id:`sit_${k}_${S.day}`},e))};
+ const cool=k=>S.day-((S.sitAt||{})[k]??-99)>=({star:36,ultimatum:30,rich:30,health:24,heat:24}[k]||18),mark=k=>{S.sitAt=S.sitAt||{};S.sitAt[k]=S.day},ev=(k,e)=>{mark(k);pushDyn(Object.assign({id:`sit_${k}_${S.day}`},e))};
  if(S.wealth<-2000&&cool("broke"))return ev("broke",{from:"A text from an unknown number",t:"Cash in minutes!",b:"'Short of money? Get £2,000 today. No credit checks.' Your account is in the red.",c:[{t:"Take the payday loan",fx:{gbp:2000,fixed:1,act:"paydayLoan"},o:"The money arrives instantly. So will the interest."},{t:"Sell some stuff and cut back",fx:{gbp:600,fixed:1,stress:4,home:-2},o:"Car boot sale on Sunday."},{t:"Ask family for help",fx:{gbp:1500,fixed:1,home:-3},o:"It's humbling. They help."}]});
  if(S.stress>=82&&cool("burnout"))return ev("burnout",{from:"Your body",t:"You can't sleep",b:"You're waking at 3am every night with your heart racing. Last week you had a panic attack in a meeting.",c:[{t:"See your GP and take time off",fx:{act:"sick",days:1,hp:4,stress:-25},o:"Signed off for a month. You sleep for three days."},{t:"Push through",fx:{health:-8,stress:5},o:"You're running on empty."},{t:"Start therapy",fx:{gbp:-800,fixed:1,stress:-15},o:"A safe hour a week. It helps more than you expected."}]});
  if(inLove()&&S.homeLife<25&&cool("ultimatum"))return ev("ultimatum",{from:S.rel.name,t:"An ultimatum",b:`${S.rel.name} is waiting up for you. "You're never here. Something has to change, or I'm leaving."`,c:[{t:"Promise to cut your hours",fx:{home:15,rep:-3,act:"raise2"},o:"You leave at six every day for a month. It makes a difference."},{t:"Book couples therapy",p:.65,win:{fx:{home:18,gbp:-600,fixed:1},o:"Slowly, you start talking again."},lose:{fx:{home:-5,gbp:-600,fixed:1},o:"The sessions turn into rows."}},{t:"Say work has to come first",p:.4,win:{fx:{home:-4},o:"They stay. For now."},lose:{fx:{act:S.rel.st==="married"?"divorce":"breakup"},o:"They pack a bag that night."}}]});
@@ -7020,7 +7023,7 @@ function callbackMorning(){
 function lifeNewsMorning(){
  if(S.over||S.prison||rnd()>.12||S.day-(S.newsAt??-99)<4||S.inbox.some(m=>!m.done&&/^ln_/.test(m.id)))return;
  const ps=[...alivePeople().filter(p=>["friend","exrival","exboss","acq","neighbour"].includes(p.role)),...(S.friend?[{n:S.friend.n,best:1}]:[]),...(S.rival?[{n:S.rival.name,rival:1}]:[])];if(!ps.length)return;
- const p=pick(ps),f=p.n.split(" ")[0],kind=pick(["promo","divorce","baby","rich","abroad","ill","engaged","startup"]);S.newsAt=S.day;
+ S.lnPer=S.lnPer||{};const ps2=ps.filter(x=>(S.lnPer[x.n]||0)<3&&S.day-((S.lnLast||{})[x.n]??-99)>=24);if(!ps2.length)return;const p=pick(ps2);S.lnPer[p.n]=(S.lnPer[p.n]||0)+1;S.lnLast=S.lnLast||{};S.lnLast[p.n]=S.day;const f=/^(a|an|the|two) /i.test(p.n)?p.n:p.n.split(" ")[0],kind=pick(["promo","divorce","baby","rich","abroad","ill","engaged","startup"]);S.newsAt=S.day;
  const txt={promo:`${f} has been promoted. Again.`,divorce:`${f} is getting divorced, and it's messy.`,baby:`${f} has had a baby!`,rich:`${f} sold their business for millions.`,abroad:`${f} is moving to Australia.`,ill:`${f} has been diagnosed with something serious.`,engaged:`${f} just got engaged.`,startup:`${f} has quit their job to start a business, and wants you to invest.`}[kind];
  const c={promo:[{t:"Send a sincere congratulations",fx:{karma:2},o:"They're touched you noticed."},{t:"Feel a stab of envy",fx:{stress:3,act:p.rival?"rivalboost":""},o:p.rival?"It lights a fire under you.":"You compare your lives at 2am."}],
   divorce:[{t:"Take them out for a drink",fx:{karma:3,home:-1},o:"A long night of listening."},{t:"Stay neutral",fx:{},o:"You like them both."}],
@@ -7035,7 +7038,7 @@ function lifeNewsMorning(){
 
 /* ---- 7. Group chats ---- */
 function chatMorning(){
- if(S.over||S.prison||rnd()>.09||S.day-(S.chatAt??-99)<3||S.inbox.some(m=>!m.done&&/^chat_/.test(m.id)))return;
+ if(S.over||S.prison||rnd()>.07||S.day-(S.chatAt??-99)<7||S.inbox.some(m=>!m.done&&/^chat_/.test(m.id)))return;
  const groups=[];
  if((S.parentsAlive??2)>0||S.children.length)groups.push("family");
  if(S.friend||alivePeople().some(p=>p.role==="friend"))groups.push("friends");
@@ -7531,14 +7534,14 @@ function xmasMorning(){
   const cap=S.front?"Christmas on the front line":lost?`The first Christmas without ${lost.r==="mum"?"Mum":lost.r==="dad"?"Dad":lost.n}`:n===1?"Christmas for one":n===2?"Christmas for two":n>=5?"The big family Christmas":"Christmas at home";
   snap({i:"tree",k:"Christmas",t:cap,s:S.front?"Tinned turkey and a carol over the radio.":pick(XMAS_LINES[n===1?"alone":n===2?"couple":n>=5?"big":"family"]),ph:{sc:S.front?"war":"xmas",c,o:S.front?"uniform":rnd()<.6?"xmas":undefined,h:S.front?"helmet":"santa",pr:S.front?"":"gift",sad:lost?1:0}});
  }
- if(mo===0&&S.resolY!==yr&&age()>=16&&rnd()<.5&&!S.front){S.resolY=yr;
+ if(mo===0&&S.resolY!==yr&&yr-(S.resolY??-9)>=2&&age()>=16&&rnd()<.35&&!S.front){S.resolY=yr;
   pushDyn({id:"resol_"+S.day,life:1,from:"Your conscience",t:"New Year's resolution",b:"It's January. Everyone at work is doing Dry January and talking about it.",c:[
    {t:"Get fit this year",fx:{act:"resol",k:"fit"},o:"New trainers, a gym app and a lot of hope."},
    {t:"Drink less",fx:{act:"resol",k:"dry"},o:"You pour the wine down the sink. Some of it."},
    {t:"Save more money",fx:{act:"resol",k:"save"},o:"A spreadsheet. Colour-coded."},
    {t:"Learn something new",fx:{act:"resol",k:"learn"},o:"You download a language app. The owl is watching."},
    {t:"No resolutions. You're perfect",fx:{stress:-1},o:"Honestly, fair."}]})}
- if(mo===1&&S.valY!==yr&&inLove()&&rnd()<.4&&!S.front){S.valY=yr;const p=S.rel.name.split(" ")[0];
+ if(mo===1&&S.valY!==yr&&yr-(S.valY??-9)>=2&&inLove()&&rnd()<.3&&!S.front){S.valY=yr;const p=S.rel.name.split(" ")[0];
   pushDyn({id:"val_"+S.day,life:1,from:"Your diary",t:"Valentine's Day",b:`It's the 14th. ${p} has been dropping hints for a week.`,c:[
    {t:"A fancy dinner (£180)",fx:{gbp:-180,home:6,act:"valsnap"},o:"Candles, a set menu and a violinist who won't leave."},
    {t:"A homemade card and breakfast in bed",p:.7,win:{fx:{home:5},o:"Burnt toast, perfect day."},lose:{fx:{home:1},o:"The card looks like a ransom note."}},
@@ -8399,6 +8402,57 @@ async function nativeShareBlob(blob,text){
  catch(e){return !!(e&&/cancel/i.test(e.message||""))}
 }
 async function nativeShareText(title,text,url){const Sh=capPlugin("Share");if(!Sh)return false;try{await Sh.share({title,text,url});return true}catch(e){return !!(e&&/cancel/i.test(e.message||""))}}
+
+function redundantModal(){
+ const L=(S.log.find(l=>/^Made redundant/.test(l.t))||{}).t||"You've been made redundant.",C=CAR_(),others=(C.employers||[]).filter(e=>e!==S.bank),a=ageInt();
+ switchModal(true);
+ const sh=document.getElementById("sheet");if(!sh)return;
+ const h=sh.querySelector("h2");if(h)h.textContent="Made redundant";
+ const lab=sh.querySelector(".label");if(lab)lab.textContent=`What next? · Age ${a}`;
+ const p=sh.querySelector("h2+p");if(p)p.innerHTML=`${esc(L)} It isn't the end: find a similar job somewhere else, or use it as the push to try something new. You keep your home, money, family and pension.`;
+ if(p&&others.length&&a<STATE_PENSION)p.insertAdjacentHTML("afterend",`<div class="btn-row" style="margin:4px 0 12px"><button class="btn primary big" data-act="redsame">Find a similar job: ${esc(R().t)} at another ${esc(C.mech==="markets"?"bank":"employer")}</button></div><div class="label">Or start a new career</div>`);
+ const back=sh.querySelector('[data-act="backtoend"]');if(back){back.textContent="Stop working";back.dataset.act="redretire"}
+}
+function redSame(){
+ const C=CAR_(),others=(C.employers||[]).filter(e=>e!==S.bank);if(!others.length)return;
+ S.past.push({path:S.path,rank:S.rank,from:S.careerStart,to:S.day,end:"redundant"});
+ Object.assign(S,{over:null,bank:pick(others),rankSince:S.day,reviewPnl:0,reviewStart:S.day,warnings:0,salMult:Math.max(1,(S.salMult||1)*.95),boss:{n:pick(BOSS_NAMES),mood:50},stress:Math.max(10,S.stress-10)});
+ S.log.unshift({d:S.day,t:`Started a new job at ${S.bank} as ${R().t.toLowerCase()}.`});
+ try{snap({i:"rocket",k:"A fresh start",t:`First day at ${S.bank}`,s:R().t,ph:{sc:PH_WORK[S.path]||"office",c:["me"]}})}catch(e){}
+ if(C.mech==="jobs")try{jobsMorning()}catch(e){}
+ save();hideModal();tab="desk";render();toastMsg(`New job: ${R().t} at ${S.bank}.`);
+}
+{const _em=endModal;endModal=function(){if(S&&S.over==="redundant"&&!S.redDone){redundantModal();return}return _em.apply(this,arguments)}}
+/* ============ Balance: milestone photos, a burnout warning before the end, fewer temptations, and day jobs for new artists ============ */
+{const _pf=photoFor;photoFor=function(m){
+ if(m&&m.k==="Milestone"){const t=m.t||"";
+  if(t==="Supercar")return{sc:"road",c:castNow({}),pr:"car",x:(S.car&&S.car.color)||"#C0453A",o:"smart"};
+  if(t==="You own a home")return{sc:"house",c:castNow({pt:1,kids:1,pet:1}),pr:"keys"};
+  if(/Millionaire|£10 million/.test(t))return{sc:"night",c:castNow({pt:1}),pr:"champ",o:"suit"};
+  if(t==="Business owner")return{sc:PH_WORK[S.path]||"office",c:["me"],pr:"champ",o:"suit"}}
+ return _pf(m)}}
+/* Burnout: the first time stress hits the top you're signed off; only a second time soon after ends the career */
+{const _co=checkOver;checkOver=function(fromClose){
+ try{if(S&&!S.over&&!S.daily&&S.stress>=100&&S.heat<100&&S.rep>0&&(S.burnWarn==null||S.day-S.burnWarn>18)){
+  S.burnWarn=S.day;S.stress=72;S.sick=Math.max(S.sick||0,2);S.homeLife=clamp(S.homeLife-4,0,100);
+  S.log.unshift({d:S.day,t:"Signed off work with stress for two months."});
+  pushDyn({id:"burnwarn_"+S.day,life:1,from:"Your GP",t:"Signed off with stress",b:"You couldn't get out of bed this morning. Your GP signs you off for two months and says, kindly but firmly, that next time it won't be a warning.",c:[
+   {t:"Take it seriously: rest, walks, early nights",fx:{stress:-12,home:4,health:4},o:"The first week you sleep fourteen hours a day. Slowly, you come back."},
+   {t:"Book a proper holiday (£1,500)",fx:{gbp:-1500,stress:-18,home:6},o:"Two weeks somewhere with no signal. You feel human again."},
+   {t:"Answer work emails from bed",fx:{stress:-2,rep:2},o:"Your boss is grateful. Your GP would not be."}]})}}catch(e){}
+ return _co.apply(this,arguments)}}
+/* Temptations: only some lives get offered the dodgy package, the cheap watch or the offshore scheme */
+for(const e of EV)if(["cr_package","cr_goods","cr_tax"].includes(e.id)){const c=e.cond;e.cond=s=>(s.bait??=rnd()<.45)&&(!c||c(s))}
+{const e=EV.find(x=>x.id==="cr_pkg2");if(e){const o=e.c.find(c=>/Say nothing/.test(c.t));if(o&&o.fx){const fx=o.fx;delete o.fx;o.p=.35;o.win={fx:{heat:12,stress:10,unflag:"cr_pkg"},o:"Your lawyer points out there's no evidence you knew. Released without charge."};o.lose={fx,o:"You're charged."}}}}
+/* New musicians and DJs pay the rent with a day job */
+function dayJobDay(notes){
+ if(S.over||S.prison||S.front||S.sabb||!isMusic()||S.rank>1)return;
+ const pay=S.rank===0?(S.path==="dj"?850:750):450;S.wealth+=pay;
+ if(!S.flags.dayjob){S.flags.dayjob=S.day;notes.push(`You pick up ${S.path==="dj"?"bar shifts at a club":"wedding gigs and bar shifts"} to pay the rent: about ${money(pay)} a month until the music pays.`)}
+}
+{const _ad=albumDay;albumDay=function(n){_ad(n);try{dayJobDay(n)}catch(e){}}}
+/* Footballers get proper recovery between games: physios, ice baths and days off */
+{const _ad2=albumDay;albumDay=function(n){_ad2(n);try{if(S.path==="foot"&&!S.over&&S.fb&&!S.fb.inj)S.stress=clamp(S.stress-2.5,0,100)}catch(e){}}}
 
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
@@ -9584,6 +9638,8 @@ document.addEventListener("click",e=>{
  if(a==="albumall"){albumAll=true;render();return}
  if(a==="addfriendrec"){const p=addFriendLife(window.__hashRec);save();render();toastMsg(p?`${p.n} is now in your game.`:"Start a game first.");t.disabled=true;return}
  if(a==="obit"){obitModal();return}
+ if(a==="redsame"){redSame();return}
+ if(a==="redretire"){S.redDone=1;endModal();return}
  if(a==="collection"){collModal();return}
  if(a==="menualbum"){hideModal();lifeTab="album";S.lifeSeen=S.lifeSeen||{};S.lifeSeen.album=S.day;setTab("life");render();return}
  if(a==="recphoto"){recPhotoModal(+t.dataset.i);return}
@@ -9610,7 +9666,7 @@ document.addEventListener("click",e=>{
  if(a==="copyfcode"){try{navigator.clipboard.writeText(myCode());t.textContent="Copied"}catch(e){}return}
  if(a==="addcode"){addFriendCode((document.getElementById("fcIn")||{}).value);return}
  if(a==="catchup2"){const p=personBy(t.dataset.p);if(p&&freeLeft()>0){useFree();const c=Math.round(40*Math.max(1,priceScale()*2)/10)*10;S.wealth-=c;p.bond=clamp(p.bond+12,0,100);p.last=S.day;mgCount("catch");S.homeLife=clamp(S.homeLife+2,0,100);S.stress=clamp(S.stress-3,0,100);save();render()}return}
- if(a==="itembuy"){const d=SHOP.find(x=>x.k===t.dataset.k);if(d&&S.wealth>=d.price&&!hasItem(d.k)){S.wealth-=d.price;addItem(d.k,d.n,d.price,"Bought it.");S.log.unshift({d:S.day,t:`Bought ${d.n.replace(/^An? /,"").toLowerCase()}.`});sfx.coin();save();render()}return}
+ if(a==="itembuy"){const d=SHOP.find(x=>x.k===t.dataset.k);if(!d)return;if(hasItem(d.k)){toastMsg("You already own one.");return}if(S.wealth<d.price){toastMsg(`You need ${money(d.price)} in cash. You have ${money(Math.max(0,S.wealth))}.`);return}S.wealth-=d.price;const it=addItem(d.k,d.n,d.price,"Bought it.");S.log.unshift({d:S.day,t:`Bought ${d.n.replace(/^An? /,"").toLowerCase()}.`});sfx.coin();save();render();showModal(`<div class="label">Shopping</div><h2 style="margin-top:4px">Bought it!</h2><div style="display:flex;justify-content:center;margin:6px 0">${itemPic(it).replace('class="item-pic"','class="item-pic" style="width:72px;height:72px"')}</div><p>${esc(d.n)} is yours. You'll find it under <b>Things you own</b>, where you can give it away or sell it later.</p><div class="btn-row"><button class="btn primary" data-act="hide">Lovely</button></div>`);return}
  if(a==="itemsell"){const it=(S.items||[]).find(i=>i.id===t.dataset.i);if(it){S.wealth+=it.value;S.items.splice(S.items.indexOf(it),1);S.log.unshift({d:S.day,t:`Sold ${it.n.replace(/^An? /,"").toLowerCase()} for ${money(it.value)}.`});save();render()}return}
  if(a==="itemgive"){giveModal(t.dataset.i);return}
  if(a==="itemgiveto"){giveTo(t.dataset.i,t.dataset.to);return}
