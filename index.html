@@ -6119,7 +6119,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();try{friendMoveMorning()}catch(e){}try{petMorning()}catch(e){}wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();try{apprenticeMorning()}catch(e){}try{friendMoveMorning()}catch(e){}try{petMorning()}catch(e){}wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -13627,6 +13627,28 @@ function makeMoveGo(){const f=S.friend;if(!f)return;hideModal();const n=frFirst(
  else{f.bond=clamp(f.bond-40,0,100);S.stress=clamp(S.stress+6,0,100);f.hist=(f.hist||[]).concat({d:S.day,t:"You made a move",c:"They said no"}).slice(-8);
   if(f.bond<15){S.log.unshift({d:S.day,t:`Made a move on ${n}. It ended the friendship.`});ACTS.friendcut();save();render();actResult("It's over",esc(`${n} pulls away. "I can't do this." They stop answering your messages. You've lost your best friend.`))}
   else{S.log.unshift({d:S.day,t:`Made a move on ${n}. They said no.`});save();render();actResult("They say no",esc(`${n} steps back. "I don't feel that way. I'm sorry." It's horribly awkward, and things between you are badly damaged.`))}}}
+
+/* ============ Winning The Apprentice-ish: a real business partner ============ */
+const TV_MOGUL="Lord Sterling-ish";
+/* The win now leads to a choice instead of just cash */
+{const s=SCENES.apprentice.steps[2].c[0];s.win.fx={fame:10,act:"tvwin",show:"The Apprentice-ish",act2:"apprenticeWin"};s.win.o="'You're hired!' £250,000 of investment, and a very loud business partner.";}
+SCENES.apprentice.end=sc=>sc>=6?"You've won the investment. Your new business partner will be in touch on Monday. Early.":"A memorable run. People still quote your catchphrase.";
+{const _tw=ACTS.tvwin;ACTS.tvwin=function(fx,m){_tw.apply(this,arguments);if(fx&&fx.act2&&ACTS[fx.act2])ACTS[fx.act2](fx,m)}}
+ACTS.apprenticeWin=()=>{setTimeout(()=>{try{pushDyn({id:"app_win_"+S.day,life:1,from:TV_MOGUL,t:"Your £250,000",b:`"Right. You're hired. Now, what are we doing with my money?"`,c:[
+ ...(S.biz?[{t:`Put it into ${S.biz.name}`,fx:{act:"appInvest"},o:`${TV_MOGUL} joins the board. The business expands, and half the profits are now theirs.`}]:BIZ[S.path]?[{t:`Launch your own ${BIZ[S.path].n.toLowerCase()} together`,fx:{act:"appLaunch"},o:`Your business opens with a TV crew outside. ${TV_MOGUL} takes half the profits, and gives every customer your phone number.`}]:[]),
+ {t:"Take the £250,000 and go it alone",fx:{gbp:250000,fixed:1,rep:-2},o:`"Your choice," says ${TV_MOGUL}, in a voice that says it's the wrong one.`}]});save();render()}catch(e){}},400)};
+ACTS.appLaunch=()=>{const d=BIZ[S.path];if(!d||S.biz)return;S.biz={kind:S.path,name:d.n,lvl:1,mom:75,avg:d.profit*.6,last:0,manager:false,invested:250000,since:S.day,partner:TV_MOGUL,partnerSince:S.day};
+ try{ach("founder")}catch(e){}S.fame=clamp((S.fame||0)+4,0,100);S.log.unshift({d:S.day,t:`Launched ${d.n} with ${TV_MOGUL}'s £250,000.`})};
+ACTS.appInvest=()=>{const b=S.biz;if(!b)return;b.invested+=250000;b.lvl=Math.min((typeof BIZ_LV!=="undefined"?BIZ_LV.length-1:5),b.lvl+1);b.mom=clamp((b.mom||50)+15,0,100);b.partner=TV_MOGUL;b.partnerSince=S.day;S.log.unshift({d:S.day,t:`${TV_MOGUL} invested £250,000 in ${b.name}.`})};
+/* The partner takes half of any profit */
+{const _bd=bizDay;bizDay=function(notes){const b=S.biz,w0=S.wealth;_bd.apply(this,arguments);try{if(b&&b.partner&&S.biz===b){const gain=S.wealth-w0;if(gain>0){const cut=Math.round(gain/2);S.wealth-=cut;b.partnerTook=(b.partnerTook||0)+cut}}}catch(e){}}}
+/* After a couple of years, a chance to buy them out */
+function apprenticeMorning(){const b=S.biz;if(!b||!b.partner||S.over||S.day-(b.partnerSince||S.day)<24||S.day-(S.appBuyAt??-99)<18||rnd()>.08||S.inbox.some(m=>!m.done&&/^app_buy_/.test(m.id)))return;
+ S.appBuyAt=S.day;const price=Math.max(150000,Math.round(bizValue()*.5/1000)*1000);
+ pushDyn({id:"app_buy_"+S.day,life:1,from:b.partner,t:"Buy me out?",b:`"I've had my fun. You can have my half of ${b.name} for ${money(price)}. Final offer. Possibly."`,c:[
+  {t:`Buy them out (${money(price)})`,fx:{act:"appBuyout",price},o:`It's all yours. ${b.partner} sends a card that just says 'Don't mess it up'.`},
+  {t:"Keep them on board",fx:{rep:2},o:"Their name still opens doors. And their voice still opens windows."}]})}
+ACTS.appBuyout=fx=>{const b=S.biz;if(!b||!b.partner)return;if(S.wealth<fx.price){toastMsg("You can't afford it yet.");return}S.wealth-=fx.price;S.log.unshift({d:S.day,t:`Bought ${b.partner} out of ${b.name} for ${money(fx.price)}.`});b.partner=null};
 
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
