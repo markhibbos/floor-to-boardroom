@@ -429,6 +429,11 @@ a.btn.primary{color:var(--on-accent)}
 .scene-art{margin:0 0 12px!important;border-radius:14px!important;border:0}
 .paper-photo{position:relative}.paper-av{position:absolute;right:6px;top:6px;filter:grayscale(1) sepia(.25);border:2px solid #F6F1E4;border-radius:50%}
 .subtabs button{position:relative}.dot-badge{position:absolute;top:4px;right:6px;width:8px;height:8px;border-radius:50%;background:#E5484D;box-shadow:0 0 0 2px var(--surface,#fff)}
+.life-rec .lr-head{display:flex;gap:14px;align-items:center;margin:8px 0}.life-rec .lr-head .avatar{box-shadow:0 0 0 3px var(--accent)}
+.lr-end{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--note-bg,rgba(240,227,198,.55))}.lr-end b{display:block}.lr-end span{display:block;font-size:14px;font-style:italic;margin-top:2px}
+.lr-end.died{background:rgba(120,130,140,.18)}
+.lr-list{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:6px}.lr-list li{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;font-size:14px}.lr-list svg{width:22px;height:22px}.lr-list em{font-style:normal;font-size:12px;color:var(--muted)}.lr-list li.sad{color:var(--muted)}
+.toast-msg{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink,#13212A);color:var(--bg,#fff);padding:10px 16px;border-radius:999px;font-size:14px;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -6639,6 +6644,75 @@ ACTIVITIES.push(
 /* A big enough home means the wedding party is at home */
 {const _w=ACTS.wed;ACTS.wed=(fx,m)=>{_w(fx,m);if(ownsHome()&&(S.home.tier||0)>=3&&!isFlat()){S.wealth+=15000;S.homeLife=clamp(S.homeLife+4,0,100);S.log.unshift({d:S.day,t:"You held the wedding party in your own garden and saved £15,000."})}}}
 
+/* ============ Your life record: a card to share, and a link friends can open ============ */
+const HL_RANK={trophy:6,medal:5,star:4,rings:4,baby:3,rocket:3,heart:2,home:2,key:2,shield:2,candle:1,dove:1,dagger:5,mask:3};
+function lifeRecord(title){
+ const ms=(S.memories||[]),role=bestRole(),careers=[...(S.past||[]).map(p=>CAREERS[p.path].n),CAR_().n].filter((x,i,a)=>a.indexOf(x)===i);
+ const hi=ms.filter(m=>!m.turn&&m.t&&!/^(New trophy|Goal streak)$/.test(m.k||"")).map((m,i)=>({m,i,r:(HL_RANK[m.i]||1)+(m.tone==="sad"?0:.5)})).sort((a,b)=>b.r-a.r||a.i-b.i).slice(0,6).sort((a,b)=>a.m.d-b.m.d)
+  .map(({m})=>({t:`${m.t}${m.k?` · ${m.k.toLowerCase()}`:""}`,a:Math.floor(ageAt(S,m.d)),i:m.i||"star",sad:m.tone==="sad"||m.tone==="solemn"?1:0}));
+ const tp=ms.filter(m=>m.turn).slice(-5).map(m=>({t:m.s||m.t,a:Math.floor(ageAt(S,m.d))}));
+ const ending=title||(ENDINGS[S.over]||["Life story"])[0];
+ const how=S.over==="died"?(S.deathCause||"They died."):(ENDINGS[S.over]||["",""])[1]||"";
+ return{v:1,n:S.name+((S.gen||1)>1?` (generation ${S.gen})`:""),t:ending,r:role.n,c:careers.join(", "),a:ageInt(),l:legacy().total,nw:Math.round(netWorth()),
+  h:S.home.n,car:carOf(S.car.id).n,f:`${LIFE_STATUS[S.rel.st]}${S.rel.kids?`, ${S.rel.kids} child${S.rel.kids>1?"ren":""}`:""}${S.grandkids?`, ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}`,
+  e:S.over||"",d:how,ep:typeof epitaph==="function"?epitaph():"",av:S.av||null,p:S.path,fame:Math.round(S.fame||0),hi,tp,
+  ch:typeof chOf==="function"&&chOf()&&S.challenge&&S.challenge.state==="won"?chOf().n:"",when:Date.now()};
+}
+const recAvatar=(rec,size)=>{try{return avatarSVG(size,{av:rec.av||avDefault(),path:rec.p,over:rec.e,day:1,age0:rec.a,stress:40,health:rec.e==="died"?55:70,homeLife:60,prison:null})}catch(e){return""}};
+const recLink=rec=>{const r=Object.assign({},rec);delete r.when;return location.origin+location.pathname+"#life="+b64e(JSON.stringify(r))};
+function recordHTML(rec,viewer){
+ const died=rec.e==="died";
+ return `<div class="life-rec"><div class="label">${viewer?"A life in Floor to Boardroom":"Your life record"}</div>
+  <div class="lr-head">${recAvatar(rec,92)}<div><h2 style="margin:0">${esc(rec.n)}</h2><div class="hint" style="margin:2px 0 0">${died?esc(rec.r):`${esc(rec.t)} at ${rec.a} · ${esc(rec.r)}`}</div></div></div>
+  <div class="lr-end ${died?"died":""}"><b>${died?`Died aged ${rec.a}`:esc(rec.t)}</b>${rec.d?`<span>${esc(rec.d)}</span>`:""}</div>
+  ${rec.ep?`<p class="epitaph" style="margin:10px 0">“${esc(rec.ep)}”</p>`:""}
+  <div class="target-sum"><div><span class="label">Legacy</span><b class="mono">${(rec.l||0).toLocaleString("en-GB")}</b></div><div><span class="label">Net worth</span><b class="mono">${money(rec.nw)}</b></div><div><span class="label">Fame</span><b class="mono">${rec.fame||0}</b></div></div>
+  <div class="kv" style="margin-top:10px"><span>Careers</span><span>${esc(rec.c)}</span><span>Family</span><span>${esc(rec.f)}</span><span>Home</span><span>${esc(rec.h)}</span><span>Car</span><span>${esc(rec.car)}</span>${rec.ch?`<span>Challenge</span><span>${esc(rec.ch)} ✓</span>`:""}</div>
+  ${rec.hi&&rec.hi.length?`<div class="label" style="margin-top:12px">Life highlights</div><ul class="lr-list">${rec.hi.map(h=>`<li class="${h.sad?"sad":""}"><svg viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS[h.i]||MOMENT_ICONS.star}</svg><span>${esc(h.t)}</span><em>age ${h.a}</em></li>`).join("")}</ul>`:""}
+  ${rec.tp&&rec.tp.length?`<div class="label" style="margin-top:12px">Turning points</div><ul class="lr-list tp">${rec.tp.map(h=>`<li><svg viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS.sign}</svg><span>${esc(h.t)}</span><em>age ${h.a}</em></li>`).join("")}</ul>`:""}</div>`;
+}
+function recordModal(rec,back){
+ window.__rec=rec;
+ showModal(`${recordHTML(rec,false)}<div class="btn-row"><button class="btn primary" data-act="recimg">Share as a picture</button><button class="btn" data-act="reclink">Share a link</button><button class="btn" data-act="${back||"hide"}">Back</button></div>`);
+}
+async function shareRecLink(rec){
+ const url=recLink(rec),text=`${rec.n}: ${rec.t} at ${rec.a}. Legacy ${(rec.l||0).toLocaleString("en-GB")}. Can you live a better life?`;
+ try{if(navigator.share){await navigator.share({title:"My life in Floor to Boardroom",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+ try{await navigator.clipboard.writeText(url);toastMsg("Link copied. Paste it to your friends.")}catch(e){prompt("Copy this link:",url)}
+}
+function toastMsg(t){const el=document.createElement("div");el.className="toast-msg";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
+async function shareRecImage(rec){
+ try{if(document.fonts&&document.fonts.ready)await document.fonts.ready}catch(err){}
+ const W=1080,H=1500,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+ const disp='"Big Shoulders Display","Arial Narrow",Impact,sans-serif',body='"IBM Plex Sans",system-ui,sans-serif',died=rec.e==="died";
+ x.fillStyle="#13212A";x.fillRect(0,0,W,H);x.fillStyle="#D7A744";x.fillRect(0,0,W,14);x.fillRect(0,H-14,W,14);
+ x.fillStyle="#D7A744";x.font=`700 30px ${body}`;x.fillText("FLOOR TO BOARDROOM",80,90);
+ try{const img=new Image(),svg=recAvatar(rec,240).replace("var(--accent-soft, #F3E2BD)",died?"#C9CED1":"#F3E2BD").replace("<svg ","<svg xmlns=\"http://www.w3.org/2000/svg\" ");img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);await new Promise((ok,bad)=>{img.onload=ok;img.onerror=bad});x.drawImage(img,80,130,240,240)}catch(e){}
+ x.fillStyle="#E3E9E7";x.font=`800 78px ${disp}`;let y=200;for(const l of wrapText(x,rec.n.toUpperCase(),640).slice(0,2)){x.fillText(l,360,y);y+=78}
+ x.fillStyle="#8A99A1";x.font=`500 34px ${body}`;for(const l of wrapText(x,died?rec.r:`${rec.t} at ${rec.a} · ${rec.r}`,640).slice(0,2)){x.fillText(l,360,y+6);y+=42}
+ y=420;x.fillStyle=died?"#2A2F36":"#1E3240";x.fillRect(80,y,920,10);
+ x.fillStyle=died?"#C9CDD1":"#D7A744";x.font=`700 40px ${body}`;x.fillText(died?`Died aged ${rec.a}`:rec.t,80,y+64);
+ x.fillStyle="#C9CDD1";x.font=`italic 32px ${body}`;let y2=y+108;for(const l of wrapText(x,rec.d||"",920).slice(0,2)){x.fillText(l,80,y2);y2+=42}
+ if(rec.ep){x.fillStyle="#E3E9E7";x.font=`italic 34px ${body}`;for(const l of wrapText(x,`“${rec.ep}”`,920).slice(0,2)){x.fillText(l,80,y2+10);y2+=44}}
+ y=y2+40;x.fillStyle="#8A99A1";x.font=`600 28px ${body}`;x.fillText("LEGACY",80,y);x.fillText("NET WORTH",440,y);x.fillText("FAME",800,y);
+ x.fillStyle="#D7A744";x.font=`800 84px ${disp}`;x.fillText((rec.l||0).toLocaleString("en-GB"),76,y+84);x.fillStyle="#E3E9E7";x.font=`800 60px ${disp}`;x.fillText(money(rec.nw),440,y+78);x.fillText(String(rec.fame||0),800,y+78);
+ y+=130;x.fillStyle="#8A99A1";x.font=`500 30px ${body}`;for(const l of wrapText(x,`${rec.c} · ${rec.f}`,920).slice(0,2)){x.fillText(l,80,y);y+=40}
+ const list=(lab,items)=>{if(!items||!items.length||y>H-200)return;y+=56;x.fillStyle="#D7A744";x.font=`700 28px ${body}`;x.fillText(lab,80,y);y+=14;
+  for(const h of items){if(y>H-150)break;y+=48;x.fillStyle=h.sad?"#8A99A1":"#D7A744";x.beginPath();x.arc(92,y-11,7,0,7);x.fill();x.fillStyle="#E3E9E7";x.font=`500 32px ${body}`;const t=wrapText(x,h.t,760)[0]||"";x.fillText(t,116,y);x.fillStyle="#8A99A1";x.textAlign="right";x.fillText(`age ${h.a}`,1000,y);x.textAlign="left"}};
+ list("LIFE HIGHLIGHTS",rec.hi);list("TURNING POINTS",(rec.tp||[]).slice(-3));
+ x.fillStyle="#8A99A1";x.font=`500 28px ${body}`;x.fillText("Can you live a better life? markhibbos.github.io/floor-to-boardroom",80,H-50);
+ const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;const file=new File([blob],"my-life.png",{type:"image/png"});
+ try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in Floor to Boardroom",text:`${rec.n}: ${rec.t}. Can you beat my legacy of ${(rec.l||0).toLocaleString("en-GB")}?`});return}}catch(err){if(err&&err.name==="AbortError")return}
+ const url=URL.createObjectURL(blob);
+ showModal(`<div class="label">Share my life</div><h2 style="margin-top:4px">Your life card</h2><p class="hint">Press and hold the image to save or share it, or download it below.</p><img src="${url}" alt="A card summarising ${esc(rec.n)}'s life" style="width:100%;border-radius:10px;margin:8px 0"><div class="btn-row"><a class="btn primary" href="${url}" download="my-life.png">Download</a><button class="btn" data-act="reclink">Share a link instead</button><button class="btn" data-act="hide">Close</button></div>`);
+}
+/* Opening a shared link shows that life, then invites the friend to play */
+function showRecordFromHash(){
+ const m=location.hash.match(/^#life=([A-Za-z0-9_-]+)/);if(!m)return;let rec;
+ try{rec=JSON.parse(b64d(m[1]))}catch(e){return}if(!rec||!rec.n)return;
+ showModal(`${recordHTML(rec,true)}<div class="btn-row"><button class="btn primary" data-act="playown">Live your own life</button></div>`);
+}
+
 /* ============ Inbox illustrations: a scene at the top of each message, picked from what it's about ============ */
 const IA_W=320,IA_H=84;
 const iaSky=(c)=>rc(0,0,IA_W,IA_H,c||"var(--sky)");
@@ -7725,6 +7799,7 @@ function recordHof(title,force){
  const e={id:Math.random().toString(36).slice(2,10)+Date.now().toString(36),name:S.name+((S.gen||1)>1?` (generation ${S.gen})`:""),title:title||(ENDINGS[S.over]||["Life over"])[0],role:role.n,careers:careers.join(", "),ending:S.over,
   age:ageInt(),legacy:legacy().total,nw:Math.round(netWorth()),pension:Math.round(S.pension.pot),home:S.home.n,car:carOf(S.car.id).n,
   family:`${LIFE_STATUS[S.rel.st]}${S.rel.kids?`, ${S.rel.kids} child${S.rel.kids>1?"ren":""}`:""}${S.grandkids?`, ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}`,years:Math.round((S.day-1)/YEAR),when:Date.now()};
+ try{e.rec=lifeRecord(e.title)}catch(x){}
  S.hofId=e.id;save();
  const list=hofLocal().filter(x=>x.id!==e.id);list.push(e);list.sort((a,b)=>b.legacy-a.legacy);
  try{localStorage.setItem(HOF_KEY,JSON.stringify(list.slice(0,100)))}catch(x){}
@@ -7915,8 +7990,11 @@ document.addEventListener("click",e=>{
  if(a==="dailyboard"){dailyBoardModal(S&&S.daily);return}
  if(a==="catchup"){if(S.friend&&S.friendLast!==S.day){const c=Math.round(80*Math.max(1,priceScale()*2)/10)*10;S.wealth-=c;S.friend.bond=clamp(S.friend.bond+12,0,100);mgCount("catch");S.stress=clamp(S.stress-4,0,100);S.homeLife=clamp(S.homeLife+2,0,100);S.friendLast=S.day;save();render()}return}
  if(a==="sound"){soundOn=!soundOn;try{localStorage.setItem("ftb-sound",soundOn?"1":"0")}catch(e){}if(soundOn)sfx.good();menuModal();return}
- if(a==="sharelife"){shareLife(lifeEntry(window.__endTitle));return}
- if(a==="sharehof"){const e=hofLocal().find(x=>x.id===t.dataset.id);if(e)shareLife(e);return}
+ if(a==="sharelife"){recordModal(lifeRecord(window.__endTitle),"backtoend");return}
+ if(a==="recimg"){if(window.__rec)shareRecImage(window.__rec);return}
+ if(a==="reclink"){if(window.__rec)shareRecLink(window.__rec);return}
+ if(a==="playown"){history.replaceState(null,"",location.pathname);hideModal();return}
+ if(a==="sharehof"){const e=hofLocal().find(x=>x.id===t.dataset.id);if(e){if(e.rec)recordModal(e.rec,"hof");else shareLife(e)}return}
  if(a==="heirs"){heirModal();return}
  if(a==="heir"){heirCareerModal(+t.dataset.k);return}
  if(a==="heircareer"){startHeir(t.dataset.k);return}
@@ -7990,6 +8068,7 @@ function start(data){
  render();
  if(hot&&!S.placeholder){if(S.over)endModal();return}
  showHome();
+ if(/^#life=/.test(location.hash))setTimeout(showRecordFromHash,150);
 }
 try{window.claude?.hot?.snapshot?.(()=>({S}))}catch(e){}
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
