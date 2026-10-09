@@ -483,7 +483,11 @@ a.btn.primary{color:var(--on-accent)}
 .ops .sec-head{margin-top:0}.op-brief{display:grid;grid-template-columns:1fr 1fr;gap:8px}.op-brief>div{display:flex;flex-direction:column;gap:3px;padding:8px 10px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}.op-brief b{font-size:15px}.op-brief .pill{align-self:flex-start}
 .op-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-top:4px}.op-opts button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;padding:8px 10px;border-radius:12px;border:1px solid var(--glass-line,var(--line));background:var(--glass,var(--surface));color:inherit;cursor:pointer}.op-opts button span{font-size:12.5px;color:var(--muted)}.op-opts button.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .op-est{margin-top:10px;font-size:14px}
-@media (max-width:480px){.op-brief{grid-template-columns:1fr}}
+@media (max-width:480px){.ops{padding:10px}.op-brief b{font-size:13.5px}.op-brief>div{padding:6px 8px}.op-opts{grid-template-columns:1fr 1fr}.op-opts button{padding:7px 9px;font-size:14px}.op-opts button span{font-size:11.5px;line-height:1.3}.op-opts button:only-child,.op-opts button:last-child:nth-child(odd){grid-column:1/-1}}
+.dec-card .target-sum b{white-space:normal;overflow-wrap:anywhere}
+.op-pills{display:flex;flex-wrap:wrap;gap:6px}
+.free-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:4px 0 2px;padding-bottom:2px}.free-chips button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface2);color:inherit;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;white-space:nowrap;min-height:36px;cursor:pointer}.free-chips button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+@media (max-width:480px){.album{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}.album .pola{padding:4px 4px 5px}.album .pola .cap{font-size:13px;margin-top:3px}.album .pola .ag{display:none}.acts{grid-template-columns:1fr 1fr}.act-card{padding:8px 10px}.act-card span{font-size:12px}}
 .arc-stage{position:relative;height:300px;border-radius:16px;overflow:hidden;margin:8px 0;touch-action:none;user-select:none;-webkit-user-select:none}
 .arc-go{position:absolute;inset:0;margin:auto;width:70%;height:64px;border-radius:999px;border:none;background:var(--accent);color:#fff;font:700 20px var(--f-display,system-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
 .arc-hud{display:flex;justify-content:space-between;font:600 14px var(--f-mono,monospace);color:var(--muted)}
@@ -515,6 +519,10 @@ details.tip>summary::-webkit-details-marker{display:none}
 .tip-i{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font:700 11px/1 Georgia,serif;font-style:italic;color:var(--accent)}
 details.tip[open]>summary .tip-l{display:none}details.tip[open]>summary::after{content:"Hide";font-size:12px}details.tip>.hint{margin-top:4px}
 .fold summary::before{content:"i";display:inline-grid;place-items:center;width:16px;height:16px;margin-right:6px;border-radius:50%;border:1.5px solid currentColor;font:700 10px/1 Georgia,serif;font-style:italic;vertical-align:-2px}
+.duel-res{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}.duel-res.won{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.duel-row{display:flex;align-items:center;justify-content:space-around;text-align:center}.duel-row b{display:block}.duel-row .mono{font-size:22px;font-weight:700}.duel-row .vs{color:var(--muted);font-style:italic}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.quiz-opts .btn{white-space:normal;min-height:52px}
+.tree-svg{display:block;max-width:420px;margin:8px auto}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -5148,7 +5156,7 @@ const ACTIVITIES=[
  {k:"blind",g:"Dating",n:"Let a friend set you up",d:"A blind date, arranged by someone who thinks they know your type.",cost:60,ok:()=>isSingle()&&(!!S.friend||alivePeople().some(p=>p.role==="friend"))},
  {k:"singles",g:"Dating",n:"Singles holiday",d:"A week in the sun with forty other single people and a lot of sangria.",cost:1200,ok:()=>isSingle()},
  {k:"openask",g:"Together",n:"Suggest an open relationship",d:"A big conversation. It could go either way.",cost:0,ok:()=>inLove()&&!S.open&&S.day-(S.rel.since||0)>=12},
- {k:"holiday",g:"Getaways",n:"Book a holiday",d:"Uses both evenings. Ten destinations, a story and a souvenir.",cost:0,ok:()=>freeLeft()>=2&&S.day-(S.lastTrip??-99)>=6},
+ {k:"holiday",g:"Getaways",n:"Book a holiday",d:"Uses both evenings. A different choice of places every year, a story and a souvenir.",cost:0,ok:()=>freeLeft()>=2&&S.day-(S.lastTrip??-99)>=6},
  {k:"weekend",g:"Together",n:"Weekend away together",d:"Two nights somewhere with a nice bath and no phone signal.",cost:400,ok:()=>inLove()},
  {k:"dayout",g:"Together",n:"Family day out",d:"A theme park, a picnic, or a long walk that ends in chips.",cost:120,ok:()=>S.children.some(k=>kidAge(k)<18)},
  {k:"quiz",g:"Out and about",n:"Pub quiz",d:"Fight for a £50 bar tab and eternal glory.",cost:20,ok:()=>true},
@@ -5306,6 +5314,7 @@ function itemsSec(){
   <div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Treat yourself</h2><span class="label">Cash ${money(S.wealth)}</span></div>
   <div class="shop">${SHOP.map(d=>`<div class="shop-row">${itemPic(d)}<div style="flex:1"><b>${esc(d.n)}</b><div class="hint">${esc(d.d)}</div></div><button class="btn sm ${S.wealth<d.price&&!hasItem(d.k)?"btn-short":""}" data-act="itembuy" data-k="${d.k}" ${hasItem(d.k)?"disabled":""}>${hasItem(d.k)?"Owned":money(d.price)}</button></div>`).join("")}</div></div>`;
 }
+let peopleAll=false;
 function peopleSec(){
  peopleSync();const ps=alivePeople().sort((a,b)=>b.bond-a.bond),gone=(S.people||[]).filter(p=>!p.alive).slice(-4);
  const core=[];
@@ -5315,16 +5324,18 @@ function peopleSec(){
  if(S.rival)core.push(`<div class="person"><div><b>${esc(S.rival.name)}</b><span class="role">Rival at work</span></div>${meterMini(S.rival.bond||20)}</div>`);
  for(const x of (S.exes||[]).slice(-2))core.push(`<div class="person"><div><b>${esc(x.n)}</b><span class="role">Ex</span></div></div>`);
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">People in your life</h2><span class="label">${ps.length+core.length}</span></div>
-  <div class="people">${core.join("")}${ps.map(p=>`<div class="person"><div><b>${esc(p.n)}</b><span class="role">${esc(ROLE_N[p.role]||"Friend")} · ${esc(p.how)}${p.owed?` · owes you ${money(p.owed)}`:""}</span></div>${meterMini(p.bond)}${p.role==="lover"||p.role==="openlover"?`<button class="btn sm" data-act="endlover" data-p="${p.id}">End it</button>`:""}${p.role!=="lover"&&p.role!=="openlover"?`<button class="btn sm" data-act="catchup2" data-p="${p.id}" ${freeLeft()<=0?"disabled":""}>Catch up</button>`:""}</div>`).join("")}</div>
+  <div class="people">${core.join("")}${(peopleAll?ps:ps.slice(0,6)).map(p=>`<div class="person"><div><b>${esc(p.n)}</b><span class="role">${esc(ROLE_N[p.role]||"Friend")} · ${esc(p.how)}${p.owed?` · owes you ${money(p.owed)}`:""}</span></div>${meterMini(p.bond)}${p.role==="lover"||p.role==="openlover"?`<button class="btn sm" data-act="endlover" data-p="${p.id}">End it</button>`:""}${p.role!=="lover"&&p.role!=="openlover"?`<button class="btn sm" data-act="catchup2" data-p="${p.id}" ${freeLeft()<=0?"disabled":""}>Catch up</button>`:""}</div>`).join("")}</div>
+  ${!peopleAll&&ps.length>6?`<div class="btn-row"><button class="btn sm" data-act="peopleall">Show all ${ps.length} people</button></div>`:""}
   ${!ps.length?`<p class="hint" style="margin:8px 0 0">Meet people through your free time below. Friends can lend a hand, ask for one, invite you to weddings, set you up on dates or tip you off about jobs.</p>`:""}
   ${gone.length?`<div class="label" style="margin-top:10px">Remembered</div><p class="hint" style="margin:2px 0 0">${gone.map(p=>esc(p.n)).join(", ")}</p>`:""}</div>`;
 }
 const bondWord=v=>v>=80?"Very close":v>=60?"Close":v>=40?"Friendly":v>=20?"Distant":"Cold";
 const meterMini=v=>`<div class="bond-row"><div class="bar mini"><i style="width:${clamp(v,0,100)}%"></i></div><span class="bond-n">${bondWord(v)} · ${Math.round(clamp(v,0,100))}</span></div>`;
+let freeGrp="";const FREE_ORDER=["Out and about","At home","Together","Getaways","Dating"];
 function freeSec(){
  if(S.prison||S.front||S.sel||S.over)return"";const left=freeLeft();const groups=[...new Set(ACTIVITIES.filter(a=>a.ok()).map(a=>a.g))];
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Free time</h2><span class="label">${left} of ${FREE_PER_MONTH} evenings left this month</span></div>
-  ${groups.map(g=>`<div class="label" style="margin-top:8px">${esc(g)}${g==="Dating"&&inLove()?(S.open?" · open relationship":` · behind ${esc(S.rel.name)}'s back`):""}</div><div class="acts">${ACTIVITIES.filter(a=>a.g===g&&a.ok()).map(a=>`<button class="act-card" data-act="doact" data-k="${a.k}" ${left<=0||(a.cost&&S.wealth<a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2)))?"disabled":""}><b>${esc(a.n)}</b><span>${esc(a.d)}</span><em>${a.cost?money(a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2))):"Free"}</em></button>`).join("")}</div>`).join("")}</div>`;
+  ${(()=>{groups.sort((x,y)=>FREE_ORDER.indexOf(x)-FREE_ORDER.indexOf(y));if(!groups.includes(freeGrp))freeGrp=groups[0];return `<div class="chips free-chips" role="tablist">${groups.map(g=>`<button role="tab" class="${g===freeGrp?"on":""}" aria-selected="${g===freeGrp}" data-act="freegrp" data-v="${esc(g)}">${esc(g)}</button>`).join("")}</div>`})()}${groups.filter(g=>g===freeGrp).map(g=>`<div class="label" style="margin-top:8px">${esc(g)}${g==="Dating"&&inLove()?(S.open?" · open relationship":` · behind ${esc(S.rel.name)}'s back`):""}</div><div class="acts">${ACTIVITIES.filter(a=>a.g===g&&a.ok()).map(a=>`<button class="act-card" data-act="doact" data-k="${a.k}" ${left<=0||(a.cost&&S.wealth<a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2)))?"disabled":""}><b>${esc(a.n)}</b><span>${esc(a.d)}</span><em>${a.cost?money(a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2))):"Free"}</em></button>`).join("")}</div>`).join("")}</div>`;
 }
 function giveModal(iid){
  const it=(S.items||[]).find(i=>i.id===iid);if(!it)return;
@@ -6021,7 +6032,7 @@ function closeDay(off){
  }
  if(S.prison&&S.day>=S.prison.until&&!S.over){S.record=S.prison.cleared?null:S.prison.crime;S.prison=null;S.over="released";S.log.unshift({d:S.day,t:"Released from prison."})}
  if(S.daily&&S.day>DAILY_MONTHS&&!S.over){S.over="dailydone";S.log.unshift({d:S.day,t:"Ten years are up."})}
- if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();wildMorning();takeoverMorning();postingMorning();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
+ if(!S.over){morning();clPoach();warMorning();sfMorning();courseMorning();tourneyMorning();jobStories();secondActMorning();polMorning();trackMorning();prefMorning();mgMorning();midlifeMorning();tvMorning();storyMorning();fameWeave();homeCarWeave();voteMorning();caseMorning();caseCallback();situationMorning();diaryMorning();callbackMorning();lifeNewsMorning();chatMorning();quarterMorning();albumMorning();folksMorning();xmasMorning();willMorning();friendLifeMorning();kidStory();natMorning();deskPrompts();arcadeMorning();wildMorning();takeoverMorning();postingMorning();nemMorning();quizInvite();notifOffer();inboxDedupe();forkMorning();kidWeave();neighbourWeave();petWeave();friendWeave();returnWeave()}
  if(S._ill){if(!S.over)S.inbox.unshift({id:S._ill.id,dyn:S._ill,done:false,vars:{}});delete S._ill}
  save();render();nextModal();
 }
@@ -6286,7 +6297,7 @@ const PREF_N={m:"Men",f:"Women",any:"Anyone"};
 const partnerPool=()=>S.pref==="m"?NAMES_M:S.pref==="f"?NAMES_F:[...NAMES_M,...NAMES_F];
 const partnerFirst=()=>pick(partnerPool());
 const partnerFull=()=>`${partnerFirst()} ${pick(SURNAMES)}`;
-const genderOf=n=>{const f=String(n||"").split(" ")[0];return NAMES_F.includes(f)||["Priya","Elena","Aisha","Hannah","Grace","Zara","Becca","Fiona","Leah","Nadia","Steph","Jess"].includes(f)?"f":NAMES_M.includes(f)?"m":"x"};
+const genderOf=n=>{const f=String(n||"").split(" ")[0];return NAMES_F.includes(f)||["Priya","Elena","Aisha","Hannah","Grace","Zara","Becca","Fiona","Leah","Nadia","Steph","Jess","Maya","Isla","Ava","Freya","Rosie","Ivy","Esme","Nia"].includes(f)?"f":NAMES_M.includes(f)||["Oliver","Noah","Arlo","Theo","Jude","Kai","Felix","Rafi"].includes(f)?"m":"x"};
 const fitsPref=n=>!S.pref||S.pref==="any"||genderOf(n)===S.pref||genderOf(n)==="x";
 function prefMorning(){
  if(S.pref||S.over||ageAt(S)<16||S.day<2||S.inbox.some(m=>!m.done&&/^pref_/.test(m.id)))return;
@@ -7473,16 +7484,17 @@ function polaroid(ph,cap,sub,attrs,now,tiny){
 }
 const DECADES=a=>a<20?"Your teens":a<30?"Your twenties":a<40?"Your thirties":a<50?"Your forties":a<60?"Your fifties":a<70?"Your sixties":a<80?"Your seventies":a<90?"Your eighties":"Your nineties and beyond";
 let albumAll=false;
+let albumN=0;
 function albumSec(){
  const ps=albumPhotos(),now=Math.floor(age());
  if(!ps.length)return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Photo album</h2></div><p class="hint">Your first photos will appear here: birthdays, holidays, Christmas, weddings and every big moment of your life.</p></div>`;
- const list=ps.slice().reverse(),shown=albumAll?list:list.slice(0,36);let html="",last="";
+ const list=ps.slice().reverse(),albumCap=window.innerWidth<520?12:24,shown=albumAll?list:list.slice(0,albumN||albumCap);let html="",last="";
  shown.forEach(p=>{const g=DECADES(p.ph.a);if(g!==last){if(last)html+="</div>";html+=`<div class="label album-dec">${g}</div><div class="album">`;last=g}
   html+=polaroid(Object.assign({},p.ph,{av:S.av}),p.m.t,`Age ${p.ph.a} · ${shortDate(p.m.d)}`,`data-act="photo" data-i="${p.idx}"`,now)});
  html+="</div>";
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Photo album</h2><span class="label">${ps.length} photo${ps.length>1?"s":""}</span></div>
   <p class="hint" style="margin-top:0">Every birthday, holiday, Christmas and big moment, with you at the age you were. Your best photos go on your life record when you share it.</p>
-  ${html}${!albumAll&&list.length>36?`<div class="btn-row"><button class="btn sm" data-act="albumall">Show all ${list.length}</button></div>`:""}
+  ${html}${!albumAll&&list.length>shown.length?`<div class="btn-row"><button class="btn sm" data-act="albummore">Show more</button><button class="btn sm" data-act="albumall">Show all ${list.length}</button></div>`:""}
   <div class="btn-row"><button class="btn sm" data-act="sharelife">Share my life and album</button></div></div>`;
 }
 function photoModal(idx){
@@ -8623,7 +8635,7 @@ function opsSec(){
  const ready=o.plan!=null&&o.kit!=null,p=ready?opP(o,false):null,worth=o.base*OP_RISK[o.risk][3];
  const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}</button>`).join("")}</div>`;
  return `<div class="ops ${o.on?"on":""}"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.h}h of your month</span></div>
-  <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}. Confirmed intel is right about 9 times in 10; unconfirmed is barely better than a guess.</p>
+  <p class="hint" style="margin:0 0 8px">Pick a plan and your ${esc(T.kitN.toLowerCase())}. Confirmed intel is right 9 times in 10; unconfirmed is barely better than a guess.</p>
   <div class="op-brief">${T.brief.map(([k,n,vals,srcs],i)=>{const c=o.conds[i];return `<div><span class="label">${esc(n)}</span><b>${esc(vals[c.shown])}</b><span class="pill ${c.conf?"":"rum"}">${esc(srcs[c.conf?0:1])}: ${c.conf?"confirmed":"unconfirmed"}</span></div>`}).join("")}</div>
   <div class="label" style="margin-top:10px">1. The plan</div>${opt("plan",T.plans)}
   <div class="label" style="margin-top:10px">2. ${esc(T.kitN)}</div>${opt("kit",T.kits)}
@@ -8631,6 +8643,14 @@ function opsSec(){
   <div class="op-est">${ready?`Your estimate: <b>${Math.round(p*100)}% chance of success</b> · worth about <b>${fmtOut(worth)}</b> if it works`:"Choose a plan and your "+esc(T.kitN.toLowerCase())+" to see your chances."}</div>
   <div class="btn-row"><button class="btn ${o.on?"":"primary"}" data-act="opset" data-k="on">${o.on?"Drop it this month":`Take it on (${o.h}h)`}</button></div></div>`;
 }
+/* Once you've committed, the operation shrinks to a summary so the desk is shorter */
+{const _os=opsSec;opsSec=function(){const o=S.op,T=OPS[S.path];if(!o||!T||o.d!==S.day||!o.on)return _os.apply(this,arguments);if(o.edit)return _os.apply(this,arguments).replace('<div class="btn-row"><button','<div class="btn-row"><button class="btn primary" data-act="opset" data-k="done">Done</button><button');
+ const p=opP(o,false),worth=o.base*OP_RISK[o.risk][3];
+ return `<div class="ops on"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.h}h · on</span></div>
+  <div class="op-pills"><span class="pill">${esc(T.plans[o.plan][0])}</span><span class="pill">${esc(T.kits[o.kit][0])}</span><span class="pill">${esc(OP_RISK[o.risk][0])}</span></div>
+  <div class="op-est" style="margin-top:6px"><b>${Math.round(p*100)}% chance</b> · worth about <b>${fmtOut(worth)}</b></div>
+  <div class="btn-row"><button class="btn sm" data-act="opset" data-k="edit" data-v="1">Change the plan</button><button class="btn sm" data-act="opset" data-k="on">Drop it</button></div></div>`}}
+{const _ost=opSet;opSet=function(k,v){if(k==="edit"||k==="done"){if(S.op)S.op.edit=k==="edit"?1:0;save();render();return}const was=S.op&&S.op.on;_ost.apply(this,arguments);if(S.op&&k==="on"&&S.op.on&&!was)S.op.edit=0}}
 function opResolve(W){
  const o=S.op,T=OPS[S.path];if(!o||!T||!o.on||o.d!==S.day)return;
  const p=opP(o,true),roll=rnd(),ok=roll<p,great=ok&&roll<p*.25,safe=!!(T.kits[o.kit]||[])[3],mult=OP_RISK[o.risk][3];
@@ -9042,6 +9062,268 @@ async function decShare(){
 
 Object.assign(ITEM_PICS,{castle:'<text x="24" y="37" font-size="34" text-anchor="middle">🏰</text>',island:'<text x="24" y="37" font-size="34" text-anchor="middle">🏝️</text>'});ITEM_RULES.unshift([/castle/i,"castle"],[/island/i,"island"]);
 
+/* ============ A nemesis, the "beat my life" challenge, the pub quiz and the family tree ============ */
+
+/* ---- A nemesis: someone from school who keeps turning up ---- */
+const NEM_NAMES=["Tarquin","Jemima","Darren","Chantelle","Rupert","Kayleigh","Spencer","Portia","Dean","Saffron","Giles","Tiffany"];
+const NEM_SUR=["Hollingsworth","Pratt","Featherstone","Smythe","Crabtree","Pemberton","Gallagher","Thorne"];
+const NEM_EV=[
+ {k:"promo",ok:()=>!S.over&&S.rank<4&&!selfPaid(),t:N=>`${N} got the job`,b:N=>`${N} has just been given the promotion you'd been told was yours. They've already changed their LinkedIn-ish.`,c:N=>[{t:"Congratulate them through gritted teeth",fx:{act:"nem",w:0,karma:3},o:"They say 'no hard feelings'. There are hard feelings."},{t:"Work twice as hard to beat them next time",p:.55,win:{fx:{act:"nem",w:1,rep:4,stress:4},o:"Six months later you're a level above them. Sweet."},lose:{fx:{act:"nem",w:-1,stress:6},o:"They get another promotion. You get a cold."}}]},
+ {k:"house",ok:()=>!S.over,t:N=>`${N} outbid you`,b:N=>`You'd set your heart on a house. ${N} has just offered £20,000 over the asking price, in cash.`,c:N=>[{t:"Let it go",fx:{act:"nem",w:-1,home:-2},o:"They invite you to the housewarming. You don't go."},{t:"Go £30,000 over",p:.5,win:{fx:{act:"nem",w:1,gbp:-30000},o:"You win. It costs a fortune, but their face."},lose:{fx:{act:"nem",w:-1},o:"They go £40,000 over. Of course they do."}}]},
+ {k:"ex",ok:()=>!!(S.exes&&S.exes.length),t:N=>`${N} is dating your ex`,b:N=>`${N} is going out with ${S.exes&&S.exes.length?S.exes[S.exes.length-1].n.split(" ")[0]:"your ex"}. The photos are everywhere.`,c:N=>[{t:"Like the photo. Be the bigger person",fx:{act:"nem",w:1,karma:4},o:"It drives them mad that you don't care."},{t:"Post a better holiday photo",fx:{act:"nem",w:0,gbp:-1500,stress:-2},o:"A sunset, a cocktail, a caption about 'peace'. Petty. Perfect."}]},
+ {k:"neighbour",ok:()=>ownsHome(),t:N=>`${N} has moved in next door`,b:N=>`Of all the houses in the country, ${N} has bought the one next to yours. They've already complained about your bins.`,c:N=>[{t:"Build a taller fence",fx:{act:"nem",w:0,gbp:-2000,stress:-2},o:"It's a very nice fence."},{t:"Win the street's Best Garden prize",p:.5,win:{fx:{act:"nem",w:1,home:3},o:"The rosette goes in your front window, facing their house."},lose:{fx:{act:"nem",w:-1},o:"They win. With plastic flowers."}}]},
+ {k:"boss",ok:()=>!S.over&&S.rank<3&&!selfPaid(),t:N=>`Your new boss: ${N}`,b:N=>`The restructure is announced. Your new line manager is... ${N}.`,c:N=>[{t:"Keep it professional",fx:{act:"nem",w:0,stress:4},o:"Your one-to-ones are very, very short."},{t:"Request a transfer",p:.6,win:{fx:{act:"nem",w:1},o:"You move teams. They tell everyone it was their idea."},lose:{fx:{act:"nem",w:-1,rep:-2},o:"Transfer refused. By them."}}]},
+ {k:"reunion",ok:()=>age()>=28,t:N=>`${N} at the reunion`,b:N=>`At the school reunion, ${N} turns up in a convertible and asks everyone how much they earn.`,c:N=>[{t:"Tell a better story",p:.5,win:{fx:{act:"nem",w:1,home:2},o:"The whole table is laughing at your story. Not theirs."},lose:{fx:{act:"nem",w:-1},o:"They top it. With photos."}},{t:"Leave early with the fun people",fx:{act:"nem",w:0,home:3},o:"The best night is the one in the kebab shop afterwards."}]},
+ {k:"kids",ok:()=>S.children.some(k=>kidAge(k)>=5&&kidAge(k)<12),t:N=>`Sports day versus ${N}`,b:N=>`It's the parents' race at sports day. ${N} is limbering up in professional running spikes.`,c:N=>[{t:"Race them",p:.45,win:{fx:{act:"nem",w:1,home:4},o:"You win by a nose. Your child has never been prouder."},lose:{fx:{act:"nem",w:-1,health:-2},o:"You pull a hamstring at the first bend."}},{t:"Film it from the side instead",fx:{act:"nem",w:0},o:"They trip at the finish. You have it in 4K."}]},
+ {k:"book",ok:()=>age()>=35,t:N=>`${N} has written a book`,b:N=>`${N} has written a memoir. Chapter 3 is about school. You are the villain.`,c:N=>[{t:"Write a one-star review",fx:{act:"nem",w:0,karma:-3},o:"'Mostly fiction.' 412 people found this helpful."},{t:"Rise above it",fx:{act:"nem",w:1,karma:3},o:"It sells eleven copies. You buy none."}]}
+];
+function nemMorning(){
+ if(S.over||S.prison||S.front||S.sel||S.sabb||S.daily)return;
+ if(!S.nem){if(S.day<10||rnd()>.03)return;const sx=rnd()<.5?"f":"m";S.nem={n:`${pick(NEM_NAMES)} ${pick(NEM_SUR)}`,sx,you:0,them:0,met:S.day,seen:{},at:S.day};
+  pushDyn({id:"nem_0",life:1,from:"A text from an old school friend",t:"Guess who's back",b:`"Remember ${S.nem.n} from school? The one who stole your lunch money and then your best friend? They've just been on the news looking very pleased with themselves." Something tells you this isn't the last you'll hear of them.`,c:[{t:"Oh no. Not them",fx:{},o:"A rivalry for the ages begins."}]});return}
+ const N=S.nem;if(N.done||S.day-N.at<30||rnd()>.04||S.inbox.some(m=>!m.done&&/^nem_/.test(m.id)))return;
+ if(age()>=62&&N.you+N.them>=3)return nemFinal();
+ const opts=NEM_EV.filter(e=>!N.seen[e.k]&&e.ok());if(!opts.length)return;const e=pick(opts),nm=N.n.split(" ")[0];N.seen[e.k]=S.day;N.at=S.day;
+ pushDyn({id:"nem_"+S.day,life:1,from:"Your nemesis",t:e.t(nm),b:e.b(N.n),c:e.c(nm)});
+}
+ACTS.nem=fx=>{const N=S.nem;if(!N)return;if(fx.w>0)N.you++;else if(fx.w<0)N.them++};
+function nemFinal(){
+ const N=S.nem,nm=N.n.split(" ")[0];N.done=1;
+ pushDyn({id:"nem_final",life:1,from:"The bowls club",t:`The final showdown: you versus ${nm}`,b:`Decades of rivalry come down to this: the final of the bowls club championship. You lead ${N.you}–${N.them}${N.you<N.them?" ...no, you trail":""}. The whole village has turned out.`,c:[
+  {t:"Play it straight",p:.5+(N.you-N.them)*.05,win:{fx:{act:"nemend",w:1},o:"Your last bowl kisses the jack. The crowd goes wild, slowly."},lose:{fx:{act:"nemend",w:-1},o:`${nm} wins by an inch. Then, to your surprise, buys you a pint.`}},
+  {t:`Call a truce and buy ${nm} a drink`,fx:{act:"nemend",w:0,karma:6},o:"Fifty years of rivalry end over a half of bitter. You both admit you'd have been bored without each other."}]});
+}
+ACTS.nemend=fx=>{const N=S.nem;if(!N)return;if(fx.w>0)N.you++;else if(fx.w<0)N.them++;const won=N.you>N.them,draw=N.you===N.them;
+ moment({icon:won?"trophy":"heart",kicker:"The rivalry",title:fx.w===0?`A truce with ${N.n.split(" ")[0]}`:won?`You beat ${N.n.split(" ")[0]}`:`${N.n.split(" ")[0]} wins`,sub:`Final score: you ${N.you}, ${N.n.split(" ")[0]} ${N.them}.${fx.w===0?" Friends, at last. Sort of.":won?" Decades of waiting, and it was worth it.":" They'll never let you forget it."}`,big:true})};
+/* In the People list */
+{const _ps=peopleSec;peopleSec=function(){let h=_ps.apply(this,arguments);const N=S.nem;if(!N)return h;
+ const row=`<div class="person"><div>${faceSVG(N.n+"nem",N.sx,Math.max(18,Math.floor(age())),36)}<b>${esc(N.n)}</b><span class="role">Your nemesis · you ${N.you}, them ${N.them}${N.done?" · settled":""}</span></div></div>`;
+ return h.replace('<div class="people">','<div class="people">'+row)}}
+
+/* ---- "Beat my life": send a mate your exact start and the score to beat ---- */
+function duelLink(rec){
+ const st=rec.st||{p:S.path,bg:S.bg,dk:S.desk,tr:S.traits||[],a:S.age0||22},by={n:rec.n,l:rec.l,e:rec.e,a:rec.a,d:String(rec.d||"").slice(0,120),r:rec.r};
+ return PUBLIC_URL+"#duel="+b64e(JSON.stringify({st,by}));
+}
+async function shareDuel(rec){
+ const url=duelLink(rec),text=`I scored a legacy of ${(rec.l||0).toLocaleString("en-GB")} in Floor to Boardroom. Same start, same career: can you beat my life?`;
+ if(await nativeShareText("Beat my life",text,url))return;
+ try{if(navigator.share){await navigator.share({title:"Beat my life",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+ try{await navigator.clipboard.writeText(text+" "+url);toastMsg("Challenge link copied. Send it to a mate.")}catch(e){prompt("Copy this link:",url)}
+}
+{const _lr=lifeRecord;lifeRecord=function(){const r=_lr.apply(this,arguments);try{const P=(S.past&&S.past[0])||null;r.st={p:P?P.path:S.path,bg:S.bg,dk:P&&P.desk||S.desk,tr:S.traits||[],a:S.st0age||AGE0[P?P.path:S.path]||22}}catch(e){}return r}}
+function showDuelFromHash(){
+ const m=location.hash.match(/^#duel=([A-Za-z0-9_-]+)/);if(!m)return false;let d;try{d=JSON.parse(b64d(m[1]))}catch(e){return false}if(!d||!d.st||!d.by||!CAREERS[d.st.p])return false;
+ window.__duel=d;const b=d.by,first=String(b.n).split(" ")[0];
+ showModal(`<div class="label">A challenge</div><h2 style="margin-top:4px">${esc(first)} challenges you</h2>
+  <p>${esc(b.n)} lived a life as ${esc(String(b.r||CAREERS[d.st.p].n).toLowerCase())} and finished with a legacy of <b>${(b.l||0).toLocaleString("en-GB")}</b>${b.e==="died"?`, dying aged ${b.a}. ${esc(toThey(b.d))}`:`, at ${b.a}.`}</p>
+  <p>You get exactly the same start: ${esc(CAREERS[d.st.p].n)}, the same background and personality, aged ${d.st.a}. Live it your way and beat their legacy.</p>
+  <div class="field"><label class="label" for="duelName">Your name</label><input id="duelName" maxlength="28" placeholder="Alex Morgan" autocomplete="off"></div>
+  <div class="btn-row"><button class="btn primary big" data-act="duelgo">Accept the challenge</button><button class="btn" data-act="duelno">Not now</button></div>`);
+ return true;
+}
+function duelStart(){
+ const d=window.__duel;if(!d)return;const ni=document.getElementById("duelName"),n=((ni&&ni.value)||"").trim();
+ if(S&&!S.placeholder&&!S.over)recordHof(null,true);
+ newGame(n||"Alex Morgan",d.st.p,d.st.dk||"fx",d.st.bg);S.traits=(d.st.tr||[]).filter(t=>TRAITS[t]);S.age0=+d.st.a||S.age0;S.duel={by:d.by};
+ history.replaceState(null,"",location.pathname);tab="desk";hideHome();save();render();hideModal();
+}
+{const _st=start;start=function(data){_st(data);try{if(/^#duel=/.test(location.hash))setTimeout(showDuelFromHash,700)}catch(e){}}}
+window.addEventListener("hashchange",()=>{try{if(/^#duel=/.test(location.hash))showDuelFromHash()}catch(e){}});
+function duelResultHTML(){
+ const d=S.duel;if(!d||!d.by)return"";const me=legacy().total,them=d.by.l||0,first=String(d.by.n).split(" ")[0],won=me>them;
+ return `<div class="duel-res ${won?"won":"lost"}"><div class="label">The challenge</div><div class="duel-row"><div><b>You</b><span class="mono">${me.toLocaleString("en-GB")}</span></div><div class="vs">vs</div><div><b>${esc(first)}</b><span class="mono">${them.toLocaleString("en-GB")}</span></div></div>
+  <p style="margin:6px 0 0"><b>${won?`You beat ${esc(first)}'s life by ${(me-them).toLocaleString("en-GB")}!`:me===them?"A dead heat!":`${esc(first)} wins by ${(them-me).toLocaleString("en-GB")}.`}</b></p>
+  <div class="btn-row"><button class="btn sm" data-act="duelshare">Tell ${esc(first)}</button></div></div>`;
+}
+async function duelShareResult(){
+ const d=S.duel;if(!d)return;const me=legacy().total,them=d.by.l||0,first=String(d.by.n).split(" ")[0];
+ const text=me>them?`I beat your life, ${first}! My legacy: ${me.toLocaleString("en-GB")} vs your ${them.toLocaleString("en-GB")}.`:`You win, ${first}. My legacy: ${me.toLocaleString("en-GB")} vs your ${them.toLocaleString("en-GB")}. Rematch?`;
+ const url=recLink(lifeRecord());if(await nativeShareText("Beat my life",text,url))return;
+ try{if(navigator.share){await navigator.share({title:"Beat my life",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+ try{await navigator.clipboard.writeText(text+" "+url);toastMsg("Copied. Send it to them.")}catch(e){}
+}
+{const _em=endModal;endModal=function(){_em.apply(this,arguments);try{if(!S.duel)return;const sh=document.getElementById("sheet");if(sh&&!sh.querySelector(".duel-res")){const h2=sh.querySelector("h2");(h2||sh.firstChild).insertAdjacentHTML("afterend",duelResultHTML())}}catch(e){}}}
+{const _rm=recordModal;recordModal=function(rec,back){_rm.apply(this,arguments);try{const row=document.querySelector("#sheet .btn-row:last-child");if(row&&!row.querySelector('[data-act="duelmake"]'))row.insertAdjacentHTML("afterbegin",'<button class="btn" data-act="duelmake">Challenge a mate</button>')}catch(e){}}}
+
+/* ---- The pub quiz ---- */
+const QUIZ=[["What is the capital of Australia?","Canberra",["Sydney","Melbourne","Perth"]],["How many players are in a rugby union team?","15",["11","13","18"]],["Which planet is known as the Red Planet?","Mars",["Venus","Jupiter","Mercury"]],["What is the chemical symbol for gold?","Au",["Ag","Gd","Go"]],["How many sides does a hexagon have?","6",["5","7","8"]],["In which year did the Titanic sink?","1912",["1905","1921","1898"]],["What is the largest ocean on Earth?","The Pacific",["The Atlantic","The Indian","The Arctic"]],["Who painted the Mona Lisa?","Leonardo da Vinci",["Michelangelo","Raphael","Van Gogh"]],["How many minutes are there in a day?","1,440",["1,240","1,640","960"]],["What is the longest river in the UK?","The Severn",["The Thames","The Trent","The Tay"]],["In which country is the Taj Mahal?","India",["Pakistan","Nepal","Bangladesh"]],["How many hearts does an octopus have?","3",["1","2","8"]],["What is the hardest natural substance?","Diamond",["Granite","Quartz","Iron"]],["In which year did the Berlin Wall fall?","1989",["1979","1991","1985"]],["Which gas do plants take in from the air?","Carbon dioxide",["Oxygen","Nitrogen","Helium"]],["What is the currency of Japan?","The yen",["The won","The yuan","The ringgit"]],["How many strings does a standard guitar have?","6",["4","5","8"]],["At what temperature does water boil at sea level?","100°C",["90°C","110°C","212°C"]],["Who wrote Romeo and Juliet?","William Shakespeare",["Charles Dickens","Jane Austen","Christopher Marlowe"]],["How many continents are there?","7",["5","6","8"]],["What is the largest planet in our solar system?","Jupiter",["Saturn","Neptune","Earth"]],["What is the capital of Canada?","Ottawa",["Toronto","Vancouver","Montreal"]],["How many bones are in the adult human body?","206",["186","226","306"]],["What is the square root of 144?","12",["11","14","16"]],["How many legs does a spider have?","8",["6","10","12"]],["Which fruit is dried to make a prune?","A plum",["A grape","A fig","An apricot"]],["What is the tallest mountain in the UK?","Ben Nevis",["Snowdon","Scafell Pike","Ben Macdui"]],["Who composed The Four Seasons?","Vivaldi",["Mozart","Bach","Handel"]],["In which city is the Colosseum?","Rome",["Athens","Naples","Milan"]],["How many pints are in a UK gallon?","8",["4","6","10"]],["Who developed the theory of relativity?","Albert Einstein",["Isaac Newton","Stephen Hawking","Niels Bohr"]],["What is the main ingredient of guacamole?","Avocado",["Pea","Lime","Cucumber"]],["In darts, what's the highest score with three darts?","180",["150","170","200"]],["What is the longest bone in the human body?","The femur",["The tibia","The humerus","The spine"]],["Which country gave the Statue of Liberty to the USA?","France",["Britain","Spain","Italy"]],["How many sides does a 50p coin have?","7",["6","8","9"]],["What is the capital of Scotland?","Edinburgh",["Glasgow","Aberdeen","Inverness"]],["Which planet is closest to the Sun?","Mercury",["Venus","Mars","Earth"]],["What is 15% of 200?","30",["15","20","35"]],["Who was the first person to walk on the Moon?","Neil Armstrong",["Buzz Aldrin","Yuri Gagarin","John Glenn"]],["Which animal is called the ship of the desert?","The camel",["The horse","The donkey","The llama"]],["In which year did the Second World War end?","1945",["1944","1946","1939"]],["How many cards are in a standard deck, without jokers?","52",["48","54","56"]],["What colour do you get by mixing blue and yellow?","Green",["Purple","Orange","Brown"]],["What is the largest mammal on Earth?","The blue whale",["The elephant","The giraffe","The sperm whale"]],["Which instrument has 88 keys?","The piano",["The organ","The accordion","The harpsichord"]],["How many points is the black ball worth in snooker?","7",["5","6","10"]],["What's the national flower of Wales?","The daffodil",["The rose","The thistle","The shamrock"]],["How many weeks are in a year?","52",["48","50","54"]],["Which language has the most native speakers?","Mandarin Chinese",["English","Spanish","Hindi"]],["What freezes at 32°F?","Water",["Milk","Petrol","Mercury"]],["Which bird is famous for copying human speech?","The parrot",["The crow","The owl","The robin"]],["What do bees make?","Honey",["Wax only","Jam","Pollen bread"]],["How many players are on a football team on the pitch?","11",["10","12","9"]],["Which country is home to the kangaroo?","Australia",["New Zealand","South Africa","Argentina"]],["What is H₂O better known as?","Water",["Salt","Hydrogen","Oxygen"]],["What is the capital of Ireland?","Dublin",["Cork","Belfast","Galway"]],["How many days are in a leap year?","366",["365","364","367"]]];
+const QUIZ_TEAMS=["Quiz Team Aguilera","Les Quizerables","Universally Challenged","The Smarty Pints","Quizteama Aguilera","Agatha Quiztie","The Quizzly Bears","Tequila Mockingbird","Lord of the Pints","Spaced Invaders","Quiz Khalifa","The Know-It-Ales"];
+function quizMine(){
+ const Q=[],first=(S.name||"").split(" ")[0];
+ const mix=(right,pool)=>{const o=[...new Set(pool.filter(x=>x&&x!==right))].sort(()=>rnd()-.5).slice(0,3);return o.length>=2?[right,o]:null};
+ const firstCar=(S.log.slice().reverse().find(l=>/^Bought a .* for /.test(l.t)&&CARS.some(c=>l.t.includes(c.n))));
+ if(firstCar){const c=CARS.find(x=>firstCar.t.includes(x.n));const r=mix(c.n,CARS.filter(x=>x.id!=="none").map(x=>x.n));if(r)Q.push([`Round about you: what was ${first}'s first car?`,r[0],r[1]])}
+ if(S.pet){const r=mix(S.pet.n,[...(PET_NAMES.dog||[]),...(PET_NAMES.cat||[])]);if(r)Q.push([`Round about you: what's your ${S.pet.kind} called?`,r[0],r[1]])}
+ if(S.children.length){const k=pick(S.children),r=mix(k.n,KID_NAMES);if(r)Q.push([`Round about you: which of these is one of your children?`,r[0],r[1]])}
+ const firstJob=(S.past&&S.past[0]&&CAREERS[S.past[0].path])?CAREERS[S.past[0].path].n:null;if(firstJob){const r=mix(firstJob,Object.values(CAREERS).map(c=>c.n));if(r)Q.push(["Round about you: what was your first career?",r[0],r[1]])}
+ if(S.friend){const r=mix(S.friend.n.split(" ")[0],[...NAMES_M,...NAMES_F]);if(r)Q.push(["Round about you: who's your best friend?",r[0],r[1]])}
+ return Q.sort(()=>rnd()-.5).slice(0,2);
+}
+let quizSt=null;
+function quizOpen(){
+ let mine=[];try{mine=quizMine()}catch(e){}const gen=QUIZ.slice().sort(()=>rnd()-.5).slice(0,5-mine.length),qs=[...gen,...mine].sort(()=>rnd()-.5);
+ const nem=S.nem&&!S.nem.done&&rnd()<.5;
+ quizSt={qs,i:0,score:0,team:pick(QUIZ_TEAMS),rival:nem?`${S.nem.n.split(" ")[0]}'s team`:pick(["The Retired Teachers","Last Week's Winners","The Know-It-Alls","Four Blokes Called Steve"]),nem};
+ quizQ();
+}
+function quizQ(){
+ const st=quizSt;if(!st)return;if(st.i>=st.qs.length)return quizEnd();
+ const [q,a,w]=st.qs[st.i],opts=[a,...w].sort(()=>rnd()-.5);
+ showModal(`<div class="label">Pub quiz · ${esc(st.team)} · question ${st.i+1} of ${st.qs.length}</div><h2 style="margin-top:4px">${esc(q)}</h2>
+  <div class="quiz-opts">${opts.map(o=>`<button class="btn" data-act="quizans" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+  <p class="hint">Score so far: ${st.score}. Tonight's team to beat: ${esc(st.rival)}.</p>`);
+}
+function quizAns(v){
+ const st=quizSt;if(!st)return;const [q,a]=st.qs[st.i],ok=v===a;if(ok)st.score++;st.i++;
+ try{ok?sfx.coin():sfx.bad()}catch(e){}
+ toastMsg(ok?pick(["Correct!","Yes! High fives all round.","Nailed it."]):`Wrong: it was ${a}.`);
+ setTimeout(quizQ,350);
+}
+function quizEnd(){
+ const st=quizSt;quizSt=null;const sc=st.score,n=st.qs.length,win=sc>=5||(sc===4&&rnd()<.5),mid=!win&&sc>=3;
+ let res;
+ if(win){S.wealth+=50;S.homeLife=clamp(S.homeLife+3,0,100);S.stress=clamp(S.stress-3,0,100);if(st.nem&&S.nem)S.nem.you++;res=`${st.team} win the quiz! A £50 bar tab and a bottle of something blue.${st.nem?` ${S.nem.n.split(" ")[0]} storms out.`:""}`;
+  try{snap({i:"trophy",k:"The pub quiz",t:`${st.team}: quiz champions`,s:`${sc} out of ${n}.`,ph:{sc:"pub",c:castNow({pt:1,fr:1}),pr:"pint"}})}catch(e){}}
+ else if(mid){S.homeLife=clamp(S.homeLife+2,0,100);S.stress=clamp(S.stress-2,0,100);res=`Second place to ${st.rival}. Respectable. You argue about question three all the way home.`}
+ else{S.stress=clamp(S.stress-1,0,100);if(st.nem&&S.nem)S.nem.them++;res=`Last place. ${st.rival} win${st.nem?", and wave at you on the way out":""}. You still had a lovely time.`}
+ if(S.friend)S.friend.bond=clamp(S.friend.bond+4,0,100);
+ S.log.unshift({d:S.day,t:`Pub quiz: ${sc}/${n} as ${st.team}.`});save();render();
+ showModal(`<div class="label">Pub quiz</div><h2 style="margin-top:4px">${win?"Champions!":mid?"So close!":"Last place"}</h2><div class="arc-score">${sc}/${n}</div><p>${esc(res)}</p><div class="btn-row"><button class="btn primary" data-act="hide">Home time</button></div>`);
+}
+ACTIVITIES.push({k:"quiz",g:"Out and about",n:"Pub quiz night",d:"Five questions, a pint and a team name you'll regret. Win the bar tab.",cost:10,ok:()=>true});
+{const _da=doActivity;doActivity=function(k){if(k!=="quiz")return _da.apply(this,arguments);if(freeLeft()<=0||S.prison||S.front||S.sel||S.over)return;if(S.wealth<10)return;S.wealth-=10;useFree();try{mgCount("act")}catch(e){}quizOpen()}}
+function quizInvite(){
+ if(S.over||S.prison||S.front||S.sel||S.sabb||S.day-(S.quizAt??-99)<14||rnd()>.05||S.inbox.some(m=>!m.done&&/^quiz_/.test(m.id)))return;S.quizAt=S.day;
+ const who=S.friend?S.friend.n.split(" ")[0]:"Your mates";
+ pushDyn({id:"quiz_"+S.day,life:1,from:who,t:"Pub quiz on Thursday?",b:`${who} needs a fourth for the pub quiz. "We're rubbish without you. Well, we're rubbish with you, but it's more fun."`,c:[{t:"I'm in",fx:{act:"quizgo"},o:"You get the first round in."},{t:"Can't make it",fx:{},o:"They come last. They blame your absence."}]});
+}
+ACTS.quizgo=()=>{setTimeout(()=>{try{quizOpen()}catch(e){}},350)};
+
+/* ---- The family tree ---- */
+function treeData(){
+ const gens=[],yr=d=>START_YEAR+(S.yo||0)+Math.floor((d-1)/12);
+ const nowY=yr(S.day);
+ const dyn=(S.dynasty&&S.dynasty.lives)||[];
+ for(const l of dyn)gens.push([{n:l.name,sub:l.role||"",av:l.av,age:l.age,died:l.diedY?`${l.diedY-(l.age||0)}–${l.diedY}`:(l.ending==="died"?"Died":""),cause:l.cause||"",me:0}]);
+ const folks=(S.folks||[]).filter(f=>!dyn.length||f.alive);
+ if(folks.length)gens.push(folks.map(f=>{const a=f.alive?Math.floor(folkAge(f)):(f.da||70);return{n:`${folkName(f)} · ${f.n}`,sub:f.alive?`${a}`:(f.da?`Died aged ${f.da}`:"Died"),code:`${f.r==="mum"||f.r==="dad"?f.r:"pt"}:${f.n}:${f.r==="mum"||f.r==="dad"?a:(f.r==="mum"?"f":"m")+":"+a}`,age:a,alive:f.alive}}));
+ const meRow=[{n:S.name,sub:S.over==="died"?`Died aged ${ageInt()}`:`${ageInt()} · ${R().t}`,av:S.av,age:ageInt(),me:1}];
+ if(inLove()||S.rel.st==="married")meRow.push({n:S.rel.name,sub:LIFE_STATUS[S.rel.st]||"Partner",code:`pt:${S.rel.name}:${genderOf(S.rel.name)}:${Math.floor(partnerAge())}`,age:partnerAge()});
+ gens.push(meRow);
+ if(S.children.length)gens.push(S.children.map(k=>({n:k.n,sub:`${Math.max(0,Math.floor(kidAge(k)))}${k.job&&k.job!=="still finding their way"?" · "+k.job.replace(/^an? /,""):""}`,code:`kid:${k.n}:${genderOf(k.n)}:${Math.max(1,Math.floor(kidAge(k)))}`,age:Math.max(1,Math.floor(kidAge(k)))})));
+ return{gens,nowY,grand:S.grandkids||0};
+}
+const treeCut=(t,n)=>{t=String(t||"");return t.length>n?t.slice(0,n-1).trim()+"…":t};
+const treeWrap=(t,n)=>{const w=String(t||"").split(/s+/);let a="",b="";for(const x of w){if(!b&&(a+" "+x).trim().length<=n)a=(a+" "+x).trim();else b=(b+" "+x).trim()}return[a,treeCut(b,n)]};
+function treeSVG(){
+ const T=treeData(),W=360,cardW=104,cardH=118,gapY=34;let y=10,out="",links="";
+ T.gens.forEach((row,gi)=>{
+  const n=row.length,per=Math.min(cardW+8,(W-10)/n),x0=(W-per*n)/2+per/2;
+  row.forEach((p,i)=>{const cx=x0+i*per,face=p.av?avatarInner({av:Object.assign({},p.av),ageOver:p.age||40,photo:1,outfit:"casual",nw:0,smile:true}):avatarInner(Object.assign(phPerson(p.code||("pt:"+p.n+"::"+(p.age||40)),{}).st,{smile:true}));
+   const dead=p.alive===false||/^Died/.test(p.sub)||p.died;
+   out+=`<g transform="translate(${(cx-cardW/2+4).toFixed(1)} ${y})"><rect width="${cardW-8}" height="${cardH}" rx="12" fill="${p.me?"#F6E7C1":"#F7F4EC"}" stroke="${p.me?"#B8862B":"#D9D3C7"}" stroke-width="${p.me?2:1}"/>
+    <svg x="${(cardW-8)/2-26}" y="6" width="52" height="52" viewBox="12 6 76 76"><circle cx="50" cy="44" r="38" fill="#E9DCC6"/>${face}</svg>${dead?`<text x="${cardW-24}" y="20" font-size="11">🕯️</text>`:""}
+    <text x="${(cardW-8)/2}" y="74" font-size="10.5" font-weight="700" fill="#2B2B2B" text-anchor="middle" font-family="system-ui">${esc(treeCut(p.n,18))}</text>
+    <text x="${(cardW-8)/2}" y="88" font-size="9" fill="#6B6B6B" text-anchor="middle" font-family="system-ui">${esc(treeCut(p.died||p.sub,21))}</text>
+    ${p.cause?`<text x="${(cardW-8)/2}" y="101" font-size="8" fill="#8A6A2E" text-anchor="middle" font-family="system-ui">${esc(treeWrap(p.cause,24)[0])}</text><text x="${(cardW-8)/2}" y="111" font-size="8" fill="#8A6A2E" text-anchor="middle" font-family="system-ui">${esc(treeWrap(p.cause,24)[1])}</text>`:p.sub&&p.died?`<text x="${(cardW-8)/2}" y="101" font-size="8.5" fill="#6B6B6B" text-anchor="middle" font-family="system-ui">${esc(String(p.sub).slice(0,24))}</text>`:""}</g>`});
+  if(gi<T.gens.length-1)links+=`<path d="M${W/2} ${y+cardH} V${y+cardH+gapY}" stroke="#B8862B" stroke-width="2"/>`;
+  y+=cardH+gapY});
+ const H=y-gapY+10+(T.grand?24:0);
+ return `<svg viewBox="0 0 ${W} ${H}" width="100%" class="tree-svg" role="img" aria-label="Family tree"><rect width="${W}" height="${H}" fill="#FBF8F1" rx="14"/>${links}${out}${T.grand?`<text x="${W/2}" y="${H-12}" font-size="11" fill="#6B6B6B" text-anchor="middle" font-family="system-ui">+ ${T.grand} grandchild${T.grand>1?"ren":""}</text>`:""}</svg>`;
+}
+function treeModal(){
+ showModal(`<div class="label">The ${esc(surnameOf(S.name)||"family")} family</div><h2 style="margin-top:4px">Family tree</h2>${treeSVG()}
+  <div class="btn-row"><button class="btn primary" data-act="treeshare">Share the tree</button><button class="btn" data-act="hide">Close</button></div>`);
+}
+async function treeShare(){
+ try{const svg=treeSVG().replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" ').replace('width="100%"','width="720"');const img=new Image();img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);await new Promise((ok,bad)=>{img.onload=ok;img.onerror=bad});
+  const c=document.createElement("canvas");c.width=img.width||720;c.height=img.height||900;c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob,"Our family tree, from Floor to Boardroom"))return;
+  const file=new File([blob],"family-tree.png",{type:"image/png"});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Our family tree"});return}}catch(e){if(e&&e.name==="AbortError")return}
+  const url=URL.createObjectURL(blob);showModal(`<div class="label">Family tree</div><h2 style="margin-top:4px">Save your tree</h2><img src="${url}" alt="Family tree" style="width:100%;border-radius:10px"><div class="btn-row"><a class="btn primary" href="${url}" download="family-tree.png">Download</a><button class="btn" data-act="hide">Close</button></div>`)}catch(e){toastMsg("Couldn't make the picture.")}
+}
+/* Past generations keep their face, career and how they died */
+{const _sh=startHeir;startHeir=function(id){const prev=S;const keep={av:prev.av,cause:prev.over==="died"?(prev.deathCause||""):(ENDINGS[prev.over]||[""])[0],diedY:START_YEAR+(prev.yo||0)+Math.floor((prev.day-1)/12)};_sh.apply(this,arguments);try{const L=S.dynasty&&S.dynasty.lives;if(L&&L.length)Object.assign(L[L.length-1],keep)}catch(e){}}}
+{const _fs=folksSec;folksSec=function(){return _fs.apply(this,arguments).replace(/(<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Your parents<\/h2>)/,'$1').replace(/<\/ul>/,'</ul><div class="btn-row" style="margin-top:4px"><button class="btn sm" data-act="tree">Family tree</button></div>')}}
+
+/* ============ More places for photos, weather and time of day, and more holidays ============ */
+const pArch=(x,y,w,h,c)=>pP(`M${x} ${y+h} V${y+w/2} A${w/2} ${w/2} 0 0 1 ${x+w} ${y+w/2} V${y+h}Z`,c);
+const pFlake=(x,y,r)=>pC(x,y,r,"#fff",'stroke="#C8D4E0" stroke-width=".4"');
+Object.assign(PH_BG,{
+ rome:()=>pR(0,0,200,150,"#F7E3C4")+pC(30,24,11,"#F6C14A")+pP("M86 108 V44 Q140 30 196 44 V108Z","#D9B48A")+pR(86,40,110,6,"#C49A6C")+[0,1,2].map(r=>[...Array(7)].map((_,i)=>pArch(92+i*15,50+r*19,9,14,"#8A6440")).join("")).join("")+pP("M190 44 L200 52 V108 H190Z","#C49A6C")+pTree(30,82,.9,"#4E7A3A")+pTree(60,86,.7,"#4E7A3A")+pGround(108,"#E5D3B3"),
+ greece:()=>pR(0,0,200,150,"#A8D8F0")+pC(170,22,11,"#F6D44A")+pR(0,74,200,30,"#2E86C1")+AVL("M20 84 q5 -3 10 0 M90 90 q5 -3 10 0","#fff",1)+pP("M0 104 V60 Q40 52 70 70 L70 104Z","#EFE6D2")+[[6,66,20,16],[30,72,18,14],[48,80,18,12]].map(([x,y,w,h])=>pR(x,y,w,h,"#fff")+pR(x+w/2-3,y+h-8,6,8,"#2E86C1")).join("")+pP("M14 66 Q22 52 30 66Z","#2266B0")+pR(21,48,2,8,"#fff")+pP("M140 104 V78 H172 V104Z","#fff")+pP("M146 78 Q156 62 166 78Z","#2266B0")+pGround(104,"#F2E8D5"),
+ venice:()=>pR(0,0,200,150,"#F4D9C2")+[["#C8553D",0,30],["#E9A23B",34,40],["#B5693F",78,24],["#D98C6A",106,44],["#C8553D",154,34],["#E9C46A",192,20]].map(([c,x,y])=>pR(x,y,36,86-y,c)+[0,1].map(r=>[0,1].map(k=>pArch(x+6+k*14,y+8+r*20,8,12,"#5A3A2A")).join("")).join("")).join("")+pR(0,86,200,22,"#3E8C8C")+AVL("M10 94 q6 -3 12 0 M100 100 q6 -3 12 0 M160 92 q6 -3 12 0","#BFE6E6",1.2)+pP("M120 96 Q150 104 186 92 L182 98 Q150 108 124 100Z","#1C1C24")+AVL("M176 92 L184 70","#7A5B3A",1.5)+pGround(108,"#BFB3A3"),
+ egypt:()=>pR(0,0,200,150,"#F8DDA0")+pC(40,26,13,"#F6B14A")+pP("M90 104 L136 40 L182 104Z","#D9A85C")+pP("M136 40 L182 104 H150Z","#C08C44")+pP("M150 104 L172 74 L194 104Z","#D9A85C")+pP("M46 104 L74 66 L102 104Z","#E0B26A")+pGround(104,"#ECCB8A")+AVL("M10 116 q20 -4 40 0 M120 122 q20 -4 40 0","#D9B06A",1.5),
+ dubai:()=>pR(0,0,200,150,"#F4C9A0")+pR(0,0,200,40,"#EDB58A",'opacity=".6"')+pC(36,30,12,"#F6D44A")+pP("M120 104 L124 30 L126 6 L128 30 L132 104Z","#9FB8C8")+pR(118,60,16,44,"#8EA8BA")+[[60,50,18],[80,64,14],[146,46,20],[168,58,16],[186,70,14],[40,70,16]].map(([x,y,w])=>pR(x,y,w,104-y,"#B7C7D3")+pR(x+3,y+4,w-6,2,"#E0EAF0")).join("")+pGround(104,"#E8D4B0")+pR(0,98,200,6,"#5AA6C8"),
+ rio:()=>pR(0,0,200,150,"#9ED3F0")+pCloud(30,24,.8)+pP("M100 96 Q120 30 140 40 Q160 56 170 96Z","#5E8A5A")+pP("M150 96 Q170 52 186 58 Q198 70 200 96Z","#6E9A62")+pR(128,22,2,12,"#F2F4F5")+pR(124,25,10,2,"#F2F4F5")+pP("M0 96 Q40 70 80 96Z","#4E7A4A")+pR(0,92,200,14,"#2E86C1")+pGround(106,"#F0D49A")+AVL("M20 112 q4 -3 8 0 M150 118 q4 -3 8 0","#D9B06A",1),
+ festival:()=>pR(0,0,200,150,"#4A2C6A")+pR(0,0,200,30,"#6B3FA0",'opacity=".6"')+pP("M50 30 H150 L160 92 H40Z","#1C1C24")+pR(56,36,88,46,"#2B1B3A")+[[70,"#F6D44A"],[100,"#E86A7A"],[130,"#7FB2E5"]].map(([x,c])=>pP(`M${x} 30 L${x-18} 92 H${x+18}Z`,c,'opacity=".22"')).join("")+[...Array(9)].map((_,i)=>pP(`M${i*24} 6 L${i*24+12} 6 L${i*24+6} 16Z`,["#E86A7A","#F6D44A","#7FB2E5","#4BBA85"][i%4])).join("")+AVL("M0 6 H200","#ddd",.8)+pGround(100,"#3E5A2E")+[...Array(14)].map((_,i)=>pC(6+i*14,98,6,"#2A1E30")).join(""),
+ highlands:()=>pR(0,0,200,150,"#C9D6E0")+pCloud(140,22,1)+pP("M0 84 L40 36 L80 72 L120 30 L170 70 L200 50 V90 H0Z","#7B6A8A")+pP("M0 90 L50 60 L100 86 L150 58 L200 80 V96 H0Z","#5E7A54")+pR(0,92,200,12,"#6E8FA6")+pR(140,60,30,32,"#8E8A80")+pR(136,52,8,40,"#7E7A70")+pR(166,52,8,40,"#7E7A70")+[140,148,156,164].map(x=>pR(x,56,4,4,"#8E8A80")).join("")+pArch(150,74,10,18,"#3A3A3A")+pGround(104,"#7AA35A"),
+ lake:()=>pR(0,0,200,150,"#BFE0F2")+pCloud(40,24,.9)+pP("M0 80 Q40 40 90 74 Q130 46 200 70 V92 H0Z","#6E9A5A")+pP("M0 88 Q60 70 120 86 Q160 76 200 86 V96 H0Z","#5A8A4A")+pR(0,90,200,16,"#5E9CC0")+pP("M140 96 Q154 102 170 96 L168 100 Q154 104 142 100Z","#B8862B")+pGround(106,"#8CC46E")+pTree(14,78,.9)+pTree(186,80,.8),
+ garden:()=>pR(0,0,200,150,"#BFE0F2")+pC(166,22,11,"#F6D44A")+pR(0,58,200,42,"#C8A26A")+[...Array(20)].map((_,i)=>pR(i*10+1,56,7,44,"#B48E58")).join("")+pR(140,36,46,64,"#8A6440")+pP("M136 38 L163 20 L190 38Z","#6E4A2E")+pR(156,64,14,36,"#5A3A22")+pGround(100,"#8CC46E")+[10,24,40,58,76].map((x,i)=>AVL(`M${x} 112 V98`,"#3E8E5E",1.5)+pC(x,96,4,["#E86A7A","#F6D44A","#B07FE5","#F2F4F5","#E86A7A"][i])).join(""),
+ restaurant:()=>pR(0,0,200,150,"#5A2E2A")+pR(0,0,200,8,"#3E1E1A")+pR(20,18,50,40,"#2B1B1A")+pR(23,21,44,34,"#1F2A44")+pC(56,30,4,"#F6E7A8")+[90,120,150].map(x=>pC(x,14,7,"#F6D44A",'opacity=".35"')+AVL(`M${x} 0 V10`,"#222",1)).join("")+pR(130,22,50,34,"#B8862B")+pR(133,25,44,28,"#7A1F2B")+pR(0,98,200,52,"#3E2016")+pR(10,96,180,6,"#F2F4F5")+[40,100,160].map(x=>pR(x,84,3,12,"#F2F4F5")+pC(x+1.5,82,2,"#F6C14A")).join(""),
+ cafe:()=>pR(0,0,200,150,"#EADBC8")+pR(10,14,60,40,"#2B2B2B")+AVL("M18 26 H58 M18 34 H50 M18 42 H54","#F2F4F5",1.2)+pR(110,16,80,20,"#A86A3E")+[118,136,154,172].map(x=>pC(x,26,5,"#F2F4F5")).join("")+pR(0,80,200,70,"#8A5A3A")+pR(0,80,200,6,"#6E4428")+pR(140,60,24,20,"#5A5A5A")+pR(144,54,16,8,"#7A7A7A")+pP("M20 80 q10 -14 20 0Z","#4E8A4A"),
+ forest:()=>pR(0,0,200,150,"#CFE6D2")+[...Array(9)].map((_,i)=>pTree(10+i*23,52+(i%3)*10,1.2+(i%2)*.3,["#3E6E3A","#4E8A4A","#2E5E2E"][i%3])).join("")+pGround(100,"#6E8A4A")+AVL("M0 110 Q60 104 120 112 T200 108","#8A7A5A",4),
+ bowls:()=>pR(0,0,200,150,"#BFE0F2")+pCloud(40,22,.8)+pR(120,44,72,50,"#F2EBDD")+pP("M114 46 L156 24 L198 46Z","#7A1F2B")+pR(130,62,14,14,"#9FD0EE")+pR(168,62,14,14,"#9FD0EE")+pR(150,70,12,24,"#6E4428")+pGround(94,"#5FA84E")+[...Array(6)].map((_,i)=>pR(i*34,94,17,56,"#6AB858",'opacity=".6"')).join("")+pC(30,124,4,"#F2F4F5")+pC(60,130,6,"#2B2B2B")+pC(160,128,6,"#2B2B2B"),
+ london:()=>pR(0,0,200,150,"#C9D6E0")+pCloud(60,24,.9)+pR(150,18,22,86,"#C9A86A")+pP("M148 18 L161 0 L174 18Z","#5A5A5A")+pC(161,34,7,"#F2EBDD")+AVL("M161 34 V30 M161 34 L164 36","#2B2B2B",1)+pR(0,62,140,42,"#9A8A7A")+[...Array(9)].map((_,i)=>pR(6+i*15,68,6,12,"#6E6458")).join("")+pGround(104,"#8A8A8A")+pR(14,82,64,26,"#C8102E",'rx="3"')+pR(18,86,56,8,"#9FD0EE")+pC(26,110,5,"#2B2B2B")+pC(66,110,5,"#2B2B2B"),
+ camping:()=>pR(0,0,200,150,"#1F2A44")+[...Array(22)].map((_,i)=>pC((i*47)%200,(i*23)%60,1,"#fff")).join("")+pC(36,24,9,"#F6E7A8")+pP("M0 90 L60 56 L110 84 L160 50 L200 78 V100 H0Z","#2E3A4A")+pGround(100,"#2E4A2A")+pP("M120 104 L150 62 L180 104Z","#E9A23B")+pP("M150 62 L150 104 L140 104Z","#B5793B")+pP("M86 112 L94 98 L102 112Z","#F6B14A")+pP("M90 112 L94 104 L98 112Z","#F6E7A8")+AVL("M82 114 L106 110 M82 110 L106 114","#6E4428",3)
+});
+/* More holidays, and a different selection on offer each year */
+TRIPS.push(
+ {k:"rome",n:"City break in Rome",cost:900,sv:"A tiny Colosseum",st:["Gelato three times a day. Nobody judges you.","You throw a coin in the Trevi Fountain and make a wish."],bad:"A moped clips your elbow. The driver blows you a kiss and carries on."},
+ {k:"greece",n:"Island hopping in Greece",cost:1400,sv:"A string of worry beads",st:["White houses, blue doors and the best tomatoes of your life.","You dance at a taverna until the owner asks you to stop."],bad:"The ferry strike strands you on an island with no cash machine."},
+ {k:"venice",n:"Gondolas in Venice",cost:1100,sv:"A carnival mask",st:["A gondolier sings to you. Badly, but with feeling.","You get gloriously lost and find the perfect little bar."],bad:"The coffee in St Mark's Square costs more than your flight."},
+ {k:"egypt",n:"The pyramids of Egypt",cost:1700,sv:"A little sphinx",st:["You stand in front of the Great Pyramid and feel very small.","A sunrise felucca ride down the Nile."],bad:"A camel takes against you. Personally."},
+ {k:"dubai",n:"Luxury week in Dubai",cost:3800,sv:"A snow globe with a skyscraper in it",st:["A pool on the 50th floor and a brunch that lasts six hours.","Dune bashing in the desert at sunset."],bad:"It's 47 degrees. You don't leave the hotel."},
+ {k:"rio",n:"Carnival in Rio",cost:3200,sv:"A feathered headdress",st:["Samba all night and Copacabana all day.","You make it to the top of Sugarloaf Mountain by cable car."],bad:"You lose your shoes in the parade and walk back barefoot."},
+ {k:"festival",n:"A music festival",cost:350,sv:"A wristband you never cut off",st:["Your favourite band plays the song. Everyone sings.","You find your mates by the flag, at 4am, against all odds."],bad:"It rains for four days. Your tent is now a pond."},
+ {k:"highlands",n:"Road trip round the Highlands",cost:700,sv:"A tin of shortbread",st:["Lochs, castles and a sunset that goes on for hours.","You spot a stag on the road at dawn."],bad:"The midges. Dear God, the midges."},
+ {k:"lake",n:"Cottage in the Lake District",cost:500,sv:"A Kendal Mint Cake",st:["Long walks, roaring fires and a pub with a dog asleep by the bar.","You row across the lake at sunrise."],bad:"It rains every day. You complete a 1,000-piece jigsaw."},
+ {k:"london",n:"A weekend in London",cost:450,sv:"A tiny red bus",st:["A West End show and a very late dinner in Soho.","You see the changing of the guard and a fox on the Tube."],bad:"You pay £9 for a pint and cry a little."}
+);
+Object.assign(TRIP_PH,{rome:["rome",""],greece:["greece","sombrero"],venice:["venice",""],egypt:["egypt",""],dubai:["dubai",""],rio:["rio","party"],festival:["festival",""],highlands:["highlands","beanie"],lake:["lake",""],london:["london",""]});
+Object.assign(ITEM_PICS,{rome:'<text x="24" y="37" font-size="34" text-anchor="middle">🏛️</text>',mask:'<text x="24" y="37" font-size="34" text-anchor="middle">🎭</text>',bus:'<text x="24" y="37" font-size="34" text-anchor="middle">🚌</text>',feather:'<text x="24" y="37" font-size="34" text-anchor="middle">🪶</text>',globe:'<text x="24" y="37" font-size="34" text-anchor="middle">🔮</text>',band:'<text x="24" y="37" font-size="34" text-anchor="middle">🎟️</text>',sphinx:'<text x="24" y="37" font-size="34" text-anchor="middle">🗿</text>',mint:'<text x="24" y="37" font-size="34" text-anchor="middle">🍬</text>',beads:'<text x="24" y="37" font-size="34" text-anchor="middle">📿</text>',shortbread:'<text x="24" y="37" font-size="34" text-anchor="middle">🍪</text>'});
+ITEM_RULES.unshift([/colosseum/i,"rome"],[/carnival mask/i,"mask"],[/red bus/i,"bus"],[/headdress/i,"feather"],[/snow globe/i,"globe"],[/wristband/i,"band"],[/sphinx/i,"sphinx"],[/mint cake/i,"mint"],[/worry beads/i,"beads"],[/shortbread/i,"shortbread"]);
+const tripOffer=()=>{const y=Math.floor((S.day-1)/12),seed=h32((S.name||"")+":"+y);const L=TRIPS.map((t,i)=>({t,r:h32(seed+":"+t.k)})).sort((a,b)=>a.r-b.r).map(x=>x.t);const pickd=L.slice(0,6);if(!pickd.some(t=>t.cost<=600)){const c=L.find(t=>t.cost<=600);if(c)pickd[5]=c}return pickd.map(t=>t.k)};
+{const _hm=holidayModal;holidayModal=function(){_hm.apply(this,arguments);try{const ok=tripOffer();document.querySelectorAll('#sheet [data-act="trip"]').forEach(b=>{if(!ok.includes(b.dataset.k)){const r=b.closest(".shop-row");if(r)r.remove()}});const sh=document.querySelector("#sheet .shop");if(sh)sh.insertAdjacentHTML("afterend",'<p class="hint keep" style="margin-top:8px">Different destinations are on offer each year.</p>')}catch(e){}}}
+
+/* The same moment can happen in different places, at different times of day, in different weather */
+const PH_OUT=["park","beach","city","paris","nyc","safari","thai","cruise","wales","japan","road","seaside","house","church","stadium","runway","site","rome","greece","venice","egypt","dubai","rio","festival","highlands","lake","garden","forest","bowls","london","palace","grad","parliament"];
+const PH_WARM=["beach","thai","safari","egypt","dubai","rio","greece","cruise"];
+const PH_ALT={park:["park","park","garden","lake","forest"],city:["city","city","london"],party:["party","party","garden","restaurant"]};
+function phVary(ph){
+ if(!ph||ph.v)return ph;ph.v=1;const r=Math.random,mo=S?(S.day-1)%12:5;
+ if(PH_ALT[ph.sc]&&!ph.sad)ph.sc=PH_ALT[ph.sc][Math.floor(r()*PH_ALT[ph.sc].length)];
+ if(ph.sc==="park"&&ph.a>=62&&r()<.25)ph.sc="bowls";
+ if(ph.sc==="lounge"&&!ph.sad&&(!ph.pr||ph.pr==="gift")&&r()<.45)ph.sc=pick(["restaurant","cafe","garden"]);
+ if(ph.sc==="church"&&ph.o==="wedding"&&r()<.3)ph.sc=pick(["garden","highlands","greece","lake"]);
+ if(PH_OUT.includes(ph.sc)&&!ph.sad){const x=r(),warm=PH_WARM.includes(ph.sc);
+  if((mo===11||mo<=1)&&!warm&&x<.4)ph.wx="snow";
+  else if(mo>=8&&mo<=10&&!warm&&x<.35)ph.wx="autumn";
+  else if(!warm&&x<.12)ph.wx="rain";
+  else if(x<.6&&x>=.42)ph.wx=pick(["gold","dusk","night"]);}
+ if(ph.sad&&PH_OUT.includes(ph.sc)&&r()<.5)ph.wx="rain";
+ return ph;
+}
+function phSky(wx){
+ if(wx==="gold")return pR(0,0,200,150,"#FF9A3C",'opacity=".2"')+pC(30,70,18,"#FFD27A",'opacity=".5"');
+ if(wx==="dusk")return pR(0,0,200,150,"#6B3FA0",'opacity=".24"')+pR(0,0,200,40,"#E86A7A",'opacity=".18"');
+ if(wx==="night")return pR(0,0,200,150,"#0B1530",'opacity=".5"')+[...Array(14)].map((_,i)=>pC((i*53+7)%200,(i*17)%44,.9,"#fff")).join("")+pC(172,20,7,"#F6E7A8");
+ if(wx==="rain")return pR(0,0,200,150,"#5A6A7A",'opacity=".25"');
+ if(wx==="snow")return pR(0,0,200,150,"#9AAABB",'opacity=".3"')+pP("M0 128 Q50 122 100 127 T200 124 V150 H0Z","#F7FAFC");
+ return "";
+}
+function phFront(wx){
+ if(wx==="snow")return [...Array(26)].map((_,i)=>pFlake((i*41+9)%200,(i*29+5)%150,1.4+(i%3)*.6)).join("");
+ if(wx==="rain")return `<g stroke="#DDE8F2" stroke-width=".8" opacity=".7">${[...Array(28)].map((_,i)=>{const x=(i*37+3)%210,y=(i*23+2)%150;return`<path d="M${x} ${y} l-4 9"/>`}).join("")}</g>`;
+ if(wx==="autumn")return [...Array(12)].map((_,i)=>{const x=(i*47+13)%200,y=(i*31+9)%140;return pP(`M${x} ${y} q4 -5 8 0 q-4 5 -8 0Z`,["#D9822B","#B5452B","#E9C46A"][i%3],`transform="rotate(${(i*53)%180} ${x+4} ${y})"`)}).join("");
+ return "";
+}
+{const _ps=photoSVG;photoSVG=function(ph,av,cls){const h=_ps.apply(this,arguments);if(!ph||!ph.wx)return h;const bgEnd=h.indexOf("<svg x=");const sky=phSky(ph.wx),front=phFront(ph.wx);
+ let out=bgEnd>0?h.slice(0,bgEnd)+sky+h.slice(bgEnd):h.replace(/<\/svg>$/,sky+"</svg>");return out.replace(/<\/svg>$/,front+"</svg>")}}
+{const _sn=snap;snap=function(o){if(o&&o.ph)phVary(o.ph);return _sn.apply(this,arguments)}}
+{const _pf=photoFor;photoFor=function(m){if(/rivalry/i.test((m&&m.k)||""))return phVary({sc:"bowls",c:["me"],pr:m.i==="trophy"?"trophy":"",o:"casual"});const p=_pf.apply(this,arguments);return p?phVary(p):p}}
+
 function renderJobs(){
  const c=CAR_(),rk=R(),u=jobsUsed(),a=c.appr;
  const news=S.news.map(n=>n.tag?`<li><span class="dot sig"></span><span class="t">${esc(n.t)}</span><span class="meta"><span class="pill">${esc(c.trends[n.tag].n)}</span><span class="pill ${n.dir>0?"read-up":"read-dn"}">${c.fmt==="pts"?(n.dir>0?"▲ Counts for more":"▼ Counts for less"):(n.dir>0?"▲ Demand and prices up":"▼ Demand and prices down")}</span>${n.rum?'<span class="pill rum">Unconfirmed</span>':'<span class="pill">Confirmed</span>'}</span></li>`:`<li><span class="dot"></span><span class="t">${esc(n.t)}</span><span class="meta">Just news: no effect on work</span></li>`).join("");
@@ -9049,11 +9331,11 @@ function renderJobs(){
  const cards=S.cards.map(cd=>{const sel=S.pick[cd.id],xb=1+expBonus(cd.tag);const diff=cd.d<.25?"Easy":cd.d<.45?"Steady":cd.d<.6?"Tricky":"Hard";
   const segs=[`<button data-act="job" data-id="${cd.id}" data-v="-1" class="${sel==null?"on":""}">Skip</button>`].concat(a.map((ap,i)=>{const room=rk.cap-(u-(sel!=null?cd.h*a[sel].h:0));const dis=cd.h*ap.h>room+.01&&sel!==i;
    return `<button data-act="job" data-id="${cd.id}" data-v="${i}" class="${sel===i?"on":""}" ${dis?"disabled title=\"Not enough hours left in your day\"":""}>${esc(ap.n)}<small>${cd.h*ap.h>rk.cap+.01?`${(cd.h*ap.h).toFixed(1)}h · too long`:`${(cd.h*ap.h).toFixed(1)}h · ${fmtOut(cd.pay*ap.pay*xb)}`}</small></button>`})).join("");
-  const est=sel!=null?`<b>Taking it:</b> uses ${(cd.h*a[sel].h).toFixed(1)}h of your ${rk.cap}h day · ${c.fmt==="pts"?"worth":"pays"} about ${fmtOut(cd.pay*a[sel].pay*xb)}`:`Not taking this job. Pick a way to do it to add it to your day.`;
+  const est=sel!=null?`<b>Taking it:</b> uses ${(cd.h*a[sel].h).toFixed(1)}h of your ${rk.cap}h day · ${c.fmt==="pts"?"worth":"pays"} about ${fmtOut(cd.pay*a[sel].pay*xb)}`:"";
   return `<div class="book"><div><div class="book-name">${esc(cd.n)}</div><div class="book-sub">${esc(c.trends[cd.tag]?c.trends[cd.tag].n:cd.tag)}${newsTags.includes(cd.tag)?' · <b style="color:var(--accent)">In the news</b>':""}${cd.risk?" · Safety-critical":""}${Math.round((xb-1)*100)?` · <b style="color:var(${xb>1?"--up":"--down"})">${xb>1?"+":""}${Math.round((xb-1)*100)}% ${xb>1?"experience":"outside your speciality"}</b>`:""}</div></div>
    <div class="book-px"><div class="mono">${fmtOut(cd.pay*xb)}</div><div class="book-sub">${diff}</div></div>
    <div class="seg seg-jobs" role="group" aria-label="${esc(cd.n)}">${segs}</div>
-   <div class="book-foot"><span>${est}</span></div></div>`}).join("");
+   ${est?`<div class="book-foot"><span>${est}</span></div>`:""}</div>`}).join("");
  return {news,body:`
    ${opsSec()}
    <div class="sec-head" id="workBoard"><h2>This month's work</h2><span class="label">${esc(S.bank)}</span></div>
@@ -10258,12 +10540,22 @@ document.addEventListener("click",e=>{
  if(a==="avtab"){avTab=t.dataset.v;avatarModal();return}
  if(a==="photo"){if(t.dataset.i!=="")photoModal(+t.dataset.i);return}
  if(a==="albumall"){albumAll=true;render();return}
+ if(a==="albummore"){albumN=(albumN||(window.innerWidth<520?12:24))+(window.innerWidth<520?12:24);render();return}
+ if(a==="freegrp"){freeGrp=t.dataset.v;render();return}
+ if(a==="peopleall"){peopleAll=true;render();return}
  if(a==="addfriendrec"){const p=addFriendLife(window.__hashRec);save();render();toastMsg(p?`${p.n} is now in your game.`:"Start a game first.");t.disabled=true;return}
  if(a==="obit"){obitModal();return}
  if(a==="redsame"){redSame();return}
  if(a==="opset"){opSet(t.dataset.k,t.dataset.v);return}
  if(a==="arcgo"){arcStart();return}
  if(a==="decshare"){decShare();return}
+ if(a==="duelgo"){duelStart();return}
+ if(a==="duelno"){window.__duel=null;history.replaceState(null,"",location.pathname);hideModal();return}
+ if(a==="duelshare"){duelShareResult();return}
+ if(a==="duelmake"){if(window.__rec)shareDuel(window.__rec);return}
+ if(a==="quizans"){quizAns(t.dataset.v);return}
+ if(a==="tree"){treeModal();return}
+ if(a==="treeshare"){treeShare();return}
  if(a==="desktab"){setDeskTab(t.dataset.v);return}
  if(a==="deskgo"){setTab("desk");setDeskTab(t.dataset.v);return}
  if(a==="arcquit"){if(arcRun){arcEnd(arcRun.score)}else hideModal();return}
