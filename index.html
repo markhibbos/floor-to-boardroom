@@ -509,6 +509,7 @@ a.btn.primary{color:var(--on-accent)}
 .arc-up{position:absolute;transform:translate(-50%,-50%);font-size:40px;cursor:pointer}.arc-up.hit{transform:translate(-50%,-50%) scale(1.5);opacity:0;transition:all .12s}.arc-up.oops{filter:drop-shadow(0 0 8px #EA6B5D)}
 .arc-hold{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}.arc-gauge{position:relative;width:82%;height:22px;border-radius:11px;background:rgba(255,255,255,.15);overflow:hidden}.arc-gauge i{position:absolute;left:0;top:0;bottom:0;background:#fff;opacity:.8}.arc-zone{position:absolute;top:0;bottom:0;background:#2F9E5E}
 .dec-card .target-sum b{font-size:15px}.dec-card .album-strip{margin-top:10px}
+.desk-tabs{margin:0}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -5968,7 +5969,7 @@ function toastLimit(msg){const el=document.getElementById("limitMsg");if(!el)ret
 function closeDay(off){
  const pending=S.inbox.filter(m=>!m.done).length;
  if(pending){setTab("inbox");(document.querySelector("#pane-inbox .mail.pending")||document.getElementById("pane-inbox")).scrollIntoView({behavior:"smooth",block:"center"});return}
- if(!off&&needWork()){setTab("desk");const wb=document.getElementById("workBoard");if(wb)wb.scrollIntoView({behavior:"smooth",block:"start"});toastLimit("Pick at least one job for this month, or take a break.");return}
+ if(!off&&needWork()){deskTab="work";setTab("desk");render();const wb=document.getElementById("workBoard");if(wb)wb.scrollIntoView({behavior:"smooth",block:"start"});toastLimit("Pick at least one job for this month, or take a break.");return}
  const rk=R(), K=rankK();
  const W=S.prison?prisonClose():S.front?frontClose():S.sel?selClose():S.sabb?sabbClose():CAR_().mech==="markets"?marketsClose(off):CAR_().mech==="jobs"?(S.path==="manager"?mgrClose(off):jobsClose(off)):fbClose(off);
  if(!S.prison&&!S.front&&!S.sel&&!S.sabb)runMoves(W);
@@ -8648,7 +8649,7 @@ function inboxDedupe(){
   if(seen[th]){S.inbox=S.inbox.filter(x=>x!==m)}else seen[th]=1}
 }
 /* ============ Prompts that point you at the desk: market alerts, rush jobs, intel updates and a nudge when you've left it alone ============ */
-ACTS.godesk=()=>{setTimeout(()=>{try{setTab("desk");const el=document.querySelector(".ops")||document.getElementById("workBoard");if(el)el.scrollIntoView({block:"start"});else window.scrollTo(0,0)}catch(e){}},350)};
+ACTS.godesk=()=>{setTimeout(()=>{try{deskTab="work";setTab("desk");const el=document.querySelector(".ops")||document.getElementById("workBoard");if(el)el.scrollIntoView({block:"start"});else window.scrollTo(0,0)}catch(e){}},350)};
 ACTS.deskpos=fx=>{const id=fx.id;if(!B[id])return;const cur=S.pos[id]||0,room=R().lim-(used()-Math.abs(cur)),v=fx.dir*Math.max(0,Math.min(2,room));if(!v){S.log.unshift({d:S.day,t:`No room in your risk limit for ${B[id].n}.`});return}S.pos[id]=v;S.log.unshift({d:S.day,t:`Went ${v>0?"long":"short"} ${B[id].n}.`})};
 ACTS.deskauto=()=>{for(const n of S.news){if(!n.id||!B[n.id])continue;ACTS.deskpos({id:n.id,dir:n.dir})}};
 ACTS.deskrush=fx=>{const cd=S.cards&&S.cards.find(c=>c.id===fx.cid);if(!cd)return;const a=CAR_().appr,i=Math.min(1,a.length-1);if(jobsUsed()+cd.h*a[i].h<=R().cap+.01){S.pick[cd.id]=i;S.log.unshift({d:S.day,t:`Took on a rush job: ${cd.n}.`})}else S.log.unshift({d:S.day,t:`No hours left for the rush job: drop something on your desk to fit it in.`})};
@@ -9376,7 +9377,7 @@ function stageSec(compact){
  if(compact)return `<div class="stage-mini"><div><span class="label">Next stage</span><b>${esc(next.t)}</b></div><div class="stage-dots">${gs.map(g=>`<i class="${goalDone(g)?"on":""}"></i>`).join("")}</div><button class="btn sm" data-tab="career">${d}/${n} goals</button></div>`;
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Next stage: ${esc(next.t)}</h2><span class="label">${d} of ${n} done</span></div>
   <ul class="goals">${gs.map(g=>{const[v,need,l]=goalVal(g),ok=v>=need,p=clamp(v/need*100,0,100);
-   return `<li class="${ok?"ok":""}"><span class="tick">${ok?"✓":""}</span><span class="gl"><b>${esc(l)}</b>${g.k==="qual"&&!ok?`<small>Study for it in Career moves on your <button class="linkbtn" data-tab="desk">Desk</button>.</small>`:""}${need>1&&!ok?`<span class="bar mini"><i style="width:${p}%"></i></span><small class="mono">${g.k==="earn"?fmtOut(v):g.k==="fans"?fmtNum(v):Math.floor(v)} / ${g.k==="earn"?fmtOut(need):g.k==="fans"?fmtNum(need):need}</small>`:""}</span></li>`}).join("")}</ul>
+   return `<li class="${ok?"ok":""}"><span class="tick">${ok?"✓":""}</span><span class="gl"><b>${esc(l)}</b>${g.k==="qual"&&!ok?`<small>Study for it in <button class="linkbtn" data-act="deskgo" data-v="moves">Career moves</button> on your Desk.</small>`:""}${need>1&&!ok?`<span class="bar mini"><i style="width:${p}%"></i></span><small class="mono">${g.k==="earn"?fmtOut(v):g.k==="fans"?fmtNum(v):Math.floor(v)} / ${g.k==="earn"?fmtOut(need):g.k==="fans"?fmtNum(need):need}</small>`:""}</span></li>`}).join("")}</ul>
   <p class="hint" style="margin:8px 0 0">Finish every goal and you step up straight away. ${CAR_().mech!=="football"?"Career moves on your work tab help with many of these. ":""}Reviews every ${REVIEW_DAYS} months still pay your bonus and can bring warnings.</p></div>`;
 }
 
@@ -9844,6 +9845,27 @@ function renderTop(){
  document.getElementById("tape").innerHTML=one+one;
 }
 function bookTitle(){return["Your book","Your book","Desk book","Desk allocation","Group businesses"][S.rank]}
+/* The desk is split into three: the work itself, this month's plans, and career moves */
+let deskTab="work";try{const v=localStorage.getItem("ftb-desktab");if(["work","month","moves"].includes(v))deskTab=v}catch(e){}
+const deskLocked=()=>!!(S.prison||S.front||S.sel||S.sabb||S.over);
+const deskTabNow=()=>deskLocked()?"work":deskTab;
+function deskTodo(){
+ const o={work:0,month:0,moves:0};if(deskLocked())return o;
+ const D=S.diary;if(D&&D.items){const c=D.items.filter(x=>x.clash);if(c.length&&!c.some(x=>x.go===true||x.go===false))o.month=1}
+ try{const L=careerMoves();if(L.some(m=>m.id==="study")&&!mvPicked().includes("study"))o.moves=1}catch(e){}
+ if(CAR_().mech==="jobs"&&S.cards&&!Object.keys(S.pick||{}).length&&!(S.op&&S.op.on))o.work=1;
+ return o;
+}
+function deskTabsBar(){
+ if(deskLocked())return"";const t=deskTodo(),T=[["work","Work"],["month","This month"],["moves","Career moves"]];
+ return `<div class="pane-sec subtabs-wrap"><div class="subtabs desk-tabs" role="tablist" aria-label="Desk sections">${T.map(([k,n])=>`<button role="tab" data-act="desktab" data-v="${k}" class="${deskTab===k?"on":""}" aria-selected="${deskTab===k}">${n}${t[k]&&deskTab!==k?'<span class="dot-badge" aria-label="Something to do"></span>':""}</button>`).join("")}</div></div>`;
+}
+function deskMonthSec(){
+ const stage=!S.prison&&!S.front&&!S.sel&&!S.sabb&&!S.over&&stagesOn()?`<div class="pane-sec stage-wrap">${stageSec(true)}</div>`:"";
+ const h=`${mgCard()}${diarySec()}${quarterSec()}${courseCard()}${stage}`;
+ return h.trim()?h:`<div class="pane-sec"><p class="hint">Nothing planned for this month. Enjoy the quiet.</p></div>`;
+}
+function setDeskTab(v){deskTab=v;try{localStorage.setItem("ftb-desktab",v)}catch(e){}render();window.scrollTo(0,0)}
 function renderDesk(){
  const mech=CAR_().mech, cal=calEvent(S.day);
  const part=S.prison?prisonPart():S.front?frontPart():S.sel?selPart():S.sabb?sabbPart():mech==="markets"?renderMarkets():mech==="jobs"?renderJobs():renderFootball();
@@ -9851,13 +9873,13 @@ function renderDesk(){
  const closeLab=closeLabel();
  document.getElementById("pane-desk").innerHTML=`
   <div class="pane-sec work-banner">${workArt()}<div class="wb-cap"><b>${S.prison?"HMP Thameside":S.front?"Forward Operating Base":S.sel?"Selection":S.sabb?(S.sabb.kind==="travel"?"Around the world":"University"):esc(S.bank)}</b><span>${S.prison?`Prisoner · ${esc(S.prison.crime)}`:S.front?`${S.front.conscript?"Private":esc(R().t)} · ${esc(S.front.unit)}`:S.sel?`${esc(R().t)} · Special forces selection`:S.sabb?(S.sabb.kind==="travel"?"Taking a year out":"Mature student"):`${esc(specTitle())} · ${esc(specPlace())}`}</span></div></div>
-  <div class="pane-sec"><div class="sec-head"><h2>${mech==="football"?"Club news":"Morning brief"}</h2><span class="brief-r">${S.day>1&&!S.over?`<button class="paper-chip" data-act="paper">Read the paper</button>`:""}<span class="label">${fmtDate(S.day)}</span></span></div>
+  ${deskTabsBar()}
+  ${deskTabNow()==="work"?`  <div class="pane-sec"><div class="sec-head"><h2>${mech==="football"?"Club news":"Morning brief"}</h2><span class="brief-r">${S.day>1&&!S.over?`<button class="paper-chip" data-act="paper">Read the paper</button>`:""}<span class="label">${fmtDate(S.day)}</span></span></div>
    ${worldBanner()}${cal&&part.calNote?part.calNote:""}
-   <ul class="news">${part.news}</ul></div>
-  ${mgCard()}${diarySec()}${quarterSec()}${courseCard()}${miniCard()}
-  ${!S.prison&&!S.front&&!S.sel&&!S.sabb&&!S.over&&stagesOn()?`<div class="pane-sec stage-wrap">${stageSec(true)}</div>`:""}${musicSec()}
-  <div class="pane-sec">${part.body}</div>${movesSec()}
-  ${(S.path==="foot"||(S.path==="manager"&&S.rank<4&&S.lg))&&!S.prison&&!S.over?footballLeagueSec():clSec()}
+   <ul class="news">${part.news}</ul></div>${musicSec()}
+  <div class="pane-sec">${part.body}</div>${(S.path==="foot"||(S.path==="manager"&&S.rank<4&&S.lg))&&!S.prison&&!S.over?footballLeagueSec():""}`:""}
+  ${deskTabNow()==="month"?`${deskMonthSec()}`:""}
+  ${deskTabNow()==="moves"?`${movesSec()}${(S.path==="foot"||(S.path==="manager"&&S.rank<4&&S.lg))&&!S.prison&&!S.over?"":clSec()}${movesSec()||clSec()?"":`<div class="pane-sec"><p class="hint">No career moves available right now.</p></div>`}`:""}
   <div class="pane-sec desk-close"><div class="close-row">
    <button class="btn primary big" data-act="close">${closeLab}</button>
    <button class="btn" data-act="dayoff" ${offOk&&!S.prison&&!S.front&&!S.sel&&!S.sabb?"":"disabled"}>${offOk?"Take a break":`Break in ${8-(S.day-S.lastOff)} months`}</button>
@@ -10205,7 +10227,7 @@ document.addEventListener("click",e=>{
  if(a==="momentok"){nextMoment();return}
  if(customClick(a,t))return;
  if(a==="lifetab"){lifeTab=t.dataset.v;S.lifeSeen=S.lifeSeen||{};S.lifeSeen[lifeTab]=S.day;try{localStorage.setItem("ftb-lifetab",lifeTab)}catch(e){}renderLife();return}
- if(a==="pointshelp"){if(CAR_().mech==="jobs"&&!S.prison&&!S.front){setTab("desk");const el=document.getElementById("pointsHelp");if(el){el.open=true;el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}}else showModal(`<h2>${CAR_().fmt==="pts"?"Points":"Your numbers"} explained</h2><p>${pointsHelpText()}</p><div class="btn-row"><button class="btn primary" data-act="hide">Got it</button></div>`);return}
+ if(a==="pointshelp"){if(CAR_().mech==="jobs"&&!S.prison&&!S.front){deskTab="work";setTab("desk");const el=document.getElementById("pointsHelp");if(el){el.open=true;el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}}else showModal(`<h2>${CAR_().fmt==="pts"?"Points":"Your numbers"} explained</h2><p>${pointsHelpText()}</p><div class="btn-row"><button class="btn primary" data-act="hide">Got it</button></div>`);return}
  if(a==="lovego"){loveGo(t.dataset.k);return}
  if(a==="endrel"){endRelModal();return}
  if(a==="endrelgo"){endRel();return}
@@ -10225,6 +10247,8 @@ document.addEventListener("click",e=>{
  if(a==="opset"){opSet(t.dataset.k,t.dataset.v);return}
  if(a==="arcgo"){arcStart();return}
  if(a==="decshare"){decShare();return}
+ if(a==="desktab"){setDeskTab(t.dataset.v);return}
+ if(a==="deskgo"){setTab("desk");setDeskTab(t.dataset.v);return}
  if(a==="arcquit"){if(arcRun){arcEnd(arcRun.score)}else hideModal();return}
  if(a==="arcagain"){arcOpen(arcCur&&arcCur.kind,false);return}
  if(a==="notiftoggle"){notifEnable(!notifOn()).then(()=>menuModal());return}
