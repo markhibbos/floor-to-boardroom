@@ -203,7 +203,7 @@ details.shop summary{cursor:pointer;font-weight:600;font-size:14px;padding:6px 0
 /* Log */
 .pchart{width:100%;height:90px;display:block}
 .loglist{list-style:none;margin:10px 0 0;padding:0;font-size:13px;max-height:340px;overflow:auto}
-.loglist li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:5px 0;border-top:1px solid var(--line)}
+.loglist li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;padding:5px 0;border-top:1px solid var(--line)}
 .loglist li span:first-child{color:var(--muted)}
 
 /* Modal */
@@ -357,7 +357,7 @@ a.btn.primary{color:var(--on-accent)}
 .moment-icon{width:116px;height:116px;margin:12px auto 6px;display:block;filter:drop-shadow(0 8px 18px rgba(215,167,68,.45));animation:mbob 2.4s ease-in-out infinite}
 .moment.sad .moment-icon{filter:drop-shadow(0 0 22px rgba(246,212,74,.5));animation:mflick 2.8s ease-in-out infinite}
 .moment-card h2{font-size:28px;margin:6px 0 6px;line-height:1.1}
-.moment.joy .moment-card h2{background:linear-gradient(90deg,#B8862B,#E9C46A,#B8862B);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:mshine 2.5s linear infinite}
+.moment.joy .moment-card h2{background:linear-gradient(90deg,#8A5F12,#B8862B,#8A5F12);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:mshine 2.5s linear infinite}
 .moment-card p{margin:0 0 16px;color:var(--ink2,var(--ink));font-size:15px;line-height:1.45}
 .moment-card .btn{width:100%}
 @keyframes mfade{from{opacity:0}}
@@ -458,6 +458,10 @@ a.btn.primary{color:var(--on-accent)}
 .adm-bars{list-style:none;padding:0;margin:6px 0 16px;display:grid;gap:6px}.adm-bars li{display:grid;grid-template-columns:minmax(120px,38%) 1fr 48px;gap:10px;align-items:center;font-size:14px}.adm-bars .bar{height:10px;border-radius:5px;background:var(--glass-soft,rgba(127,127,127,.15));overflow:hidden}.adm-bars .bar i{display:block;height:100%;background:var(--accent)}.adm-bars b{text-align:right}
 .desk-inline{grid-column:1/-1;padding:10px 12px;border-radius:14px;border:1px dashed var(--accent);background:var(--glass-soft,transparent)}.desk-inline[hidden]{display:none}.desk-inline .desk-pick{margin-top:6px}
 .wiz-bar{display:flex;gap:4px;margin:8px 0 2px}.wiz-bar i{flex:1;height:4px;border-radius:2px;background:var(--line)}.wiz-bar i.on{background:var(--accent)}
+.loglist li span:first-child{white-space:nowrap}
+@media (max-width:480px){.town-key{grid-template-columns:1fr}}
+.goals small .linkbtn{font-size:inherit}
+.folk-face{width:30px;height:30px;border-radius:50%;overflow:hidden;display:block}
 /* Hall of fame */
 .hof-list{list-style:none;margin:0;padding:0}
 .hof-card{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:start}
@@ -984,8 +988,8 @@ const INV=[
  {id:"crypto",n:"Crypto",sub:"Huge swings either way",mu:.05,vol:3.8}
 ];
 const LIFESTYLE=[
- {id:"gym",n:"Gym membership",c:220,d:"Eases stress a little every day"},
- {id:"nanny",n:"Cleaner and nanny",c:1800,d:"Lifts home life every day"},
+ {id:"gym",n:"Gym membership",c:220,d:"Eases stress a little every month"},
+ {id:"nanny",n:"Cleaner and nanny",c:1800,d:"Lifts home life every month"},
  {id:"club",n:"Private members' club",c:450,d:"Networking lifts your reputation"},
  {id:"hins",n:"Private health insurance",c:160,d:"Covers private treatment if you fall seriously ill: faster, safer and free"},
  {id:"lins",n:"Life insurance",c:45,d:"Pays your family 10× your salary (at least £500k) if you die"}
@@ -1019,9 +1023,9 @@ const HT={
  georgian:{n:"Georgian townhouse",art:"georgian",tier:3,base:2.4e6,up:1100,areas:[["Islington",1],["Canonbury",1.05],["Kennington",.85],["Greenwich",.9]]},
  mews:{n:"Mews house",art:"mews",tier:3,base:2.9e6,up:1200,areas:[["Notting Hill",1.05],["South Kensington",1.1],["Marylebone",1],["Belgravia",1.25]]},
  family:{n:"Detached family house",art:"detached",tier:4,base:3.2e6,up:1500,areas:[["Cobham",1],["Esher",1.05],["Sevenoaks",.85],["Weybridge",.95],["Beaconsfield",.9]]},
- manor:{n:"Cotswold manor house",art:"manor",tier:4,base:5.5e6,up:2600,areas:[["Chipping Campden",1],["Burford",.95],["Broadway",1.05],["Bibury",.9]],note:"A long commute: home life rises a little each day, but so does stress."},
+ manor:{n:"Cotswold manor house",art:"manor",tier:4,base:5.5e6,up:2600,areas:[["Chipping Campden",1],["Burford",.95],["Broadway",1.05],["Bibury",.9]],note:"A long commute: home life rises a little each month, but so does stress."},
  penthouse:{n:"Penthouse",art:"penthouse",tier:5,base:9e6,up:3500,areas:[["Mayfair",1],["Knightsbridge",1.1],["Battersea",.7],["Bankside",.8]]},
- mansion:{n:"Stucco mansion",art:"mansion",tier:5,base:16e6,up:6000,areas:[["Kensington",1],["Holland Park",.95],["Hampstead",.85],["Belgravia",1.2]],note:"Hosting dinners here lifts your reputation a little each day."}
+ mansion:{n:"Stucco mansion",art:"mansion",tier:5,base:16e6,up:6000,areas:[["Kensington",1],["Holland Park",.95],["Hampstead",.85],["Belgravia",1.2]],note:"Hosting dinners here lifts your reputation a little each month."}
 };
 const FEATS=[["South-facing garden",.04],["Needs modernising",-.1],["Off-street parking",.03],["Chain-free",0],["Period features",.03],["Next to a noisy pub",-.06],["River views",.08],["Recently renovated",.06],["Short lease",-.12],["Great schools nearby",.05],["Roof terrace",.05],["On a busy main road",-.05]];
 function genMarket(){
@@ -5022,7 +5026,7 @@ ACTS.cap=()=>{S.caps=(S.caps||0)+2};
 /* ============ People, possessions and free time: side stories that weave through a life ============ */
 const SURNAMES=["Okafor","Hughes","Patel","Reid","Kowalski","Byrne","Shah","Morgan","Lindqvist","Adeyemi","Fraser","Costa","Doyle","Nakamura","Price","Quinn"];
 const fullName=()=>`${pick([...NAMES,...FRIEND_NAMES])} ${pick(SURNAMES)}`;
-const ROLE_N={openlover:"Open relationship",friend:"Friend",acq:"Acquaintance",contact:"Work contact",exboss:"Former boss",exrival:"Old rival",lover:"Secret affair",exlover:"Former affair",mentor:"Mentor",neighbour:"Neighbour"};
+const ROLE_N={client:"From work",openlover:"Open relationship",friend:"Friend",acq:"Acquaintance",contact:"Work contact",exboss:"Former boss",exrival:"Old rival",lover:"Secret affair",exlover:"Former affair",mentor:"Mentor",neighbour:"Neighbour"};
 function addPerson(n,role,how,bond){S.people=S.people||[];let p=S.people.find(x=>x.n===n&&x.alive);
  if(p){p.bond=clamp(p.bond+8,0,100);return p}
  p={id:"p"+S.day+"_"+Math.floor(rnd()*1e4),n,role,how,bond:bond??40,met:S.day,last:S.day,alive:true,age:Math.round(ageAt(S)+(rnd()-.3)*20)};S.people.push(p);
@@ -6060,8 +6064,8 @@ function jobsClose(off){
 }
 /* Review target maths, shared by the jobs board and the career tab */
 function targetInfo(){const t=rankTarget(),left=Math.max(1,REVIEW_DAYS-(S.day-S.reviewStart)),need=Math.max(0,t-S.reviewPnl);return{t,left,need,per:need/left,base:t/REVIEW_DAYS,unit:CAR_().fmt==="pts"?"points":"amounts"}}
-function pointsHelpText(){const x=targetInfo();return `Everything you do at work adds to your ${esc(CAR_().outName.toLowerCase())}. Your review target is <b>${fmtOut(x.t)}</b> and you have ${fmtOut(S.reviewPnl)} so far, with ${x.left} month${x.left>1?"s":""} until your review: aim for about <b>${fmtOut(x.per)} a month</b>. Figures are "about" because skill, difficulty, luck and the news change the result.`}
-const foldOpen=id=>{try{return localStorage.getItem("ftb-fold-"+id)!=="0"}catch(e){return true}};
+function pointsHelpText(){const x=targetInfo();return `Everything you do at work adds to your ${esc(CAR_().outName.toLowerCase())}. Your review target is <b>${fmtOut(x.t)}</b> and you have ${fmtOut(S.reviewPnl)} so far, with ${x.left} month${x.left>1?"s":""} until your review: ${x.need>0?`aim for about <b>${fmtOut(x.per)} a month</b>.`:"<b>you've already hit it</b>. Anything extra helps you beat your rival and earns a bigger bonus."} Figures are "about" because skill, difficulty, luck and the news change the result.`}
+const foldOpen=id=>{try{const v=localStorage.getItem("ftb-fold-"+id);return v==null?!!(S&&S.day<=3):v==="1"}catch(e){return true}};
 const fold=(id,title,html,attr="")=>`<details class="fold" data-fold="${id}" ${attr} ${foldOpen(id)?"open":""}><summary>${title}</summary>${html}</details>`;
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.matches&&d.matches("details[data-fold]"))try{localStorage.setItem("ftb-fold-"+d.dataset.fold,d.open?"1":"0")}catch(x){}},true);
 /* ============ Authentic careers: qualifications, elections, specialties, more events, second acts and a calendar ============ */
@@ -6864,7 +6868,7 @@ function caseMorning(){
   S.case=null;S.caseAt=S.day;return}
  if(c||S.day-(S.caseAt??-99)<5||rnd()>.3)return;
  const g=CASE_GROUP[S.path];if(!g)return;const list=CASES[g],ti=Math.floor(rnd()*list.length),tpl=list[ti],who=tpl.who();
- const p=addPerson(who.startsWith("a ")||who.startsWith("an ")||who.startsWith("the ")||who.startsWith("two ")?`${who[0].toUpperCase()}${who.slice(1)}`:who,"client",`Your ${tpl.role}: ${tpl.t.replace(/\{who\}/g,who).toLowerCase()}`,45);
+ const p=addPerson(who.startsWith("a ")||who.startsWith("an ")||who.startsWith("the ")||who.startsWith("two ")?`${who[0].toUpperCase()}${who.slice(1)}`:who,"client",`Your ${tpl.role}: ${tpl.t.replace(/\{who\}/g,who)}`,45);
  p.caseDay=S.day;
  pushDyn({id:"case_"+S.day,from:`Your ${tpl.role}`,t:tpl.t.replace(/\{who\}/g,who),b:tpl.b.replace(/\{who\}/g,who)+" How you handle it will be remembered.",
   c:tpl.c.map((x,i)=>({t:x.t,fx:{act:"caseSet",g,ti,i,pid:p.id,who,karma:x.kind?4:x.shady?-3:0,stress:2},o:x.o+" You'll find out next month how it went."}))});
@@ -7577,7 +7581,7 @@ for(const e of EV)if(["par_death","par_care","ls_parents"].includes(e.id))e.cond
 function folksSec(){
  ensureFolks();const al=S.folks.filter(f=>f.alive);
  const row=f=>{const a=Math.floor(f.alive?folkAge(f):f.da||0),st=!f.alive?(f.died>=0?`Died ${shortDate(f.died)}, aged ${a}`:"Died before you left home"):[f.ret?"retired":"",f.frail?"frail":"",S.care&&f.r==="mum"&&f.frail?"has care":"",f.newp?`with ${f.newp}`:""].filter(Boolean).join(", ");
-  return `<li class="${f.alive?"":"gone"}"><span>${f.r==="mum"?"👩":f.r==="dad"?"👨":"🧑"}</span><span><b>${esc(folkName(f))}</b> · ${esc(f.n)}${f.alive?`, ${a}`:""}<small>${esc(st)}${f.lw&&!f.alive?` · Last words: '${esc(f.lw)}'`:""}</small></span></li>`};
+  return `<li class="${f.alive?"":"gone"}"><svg class="folk-face" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="var(--accent-soft, #F3E2BD)"/>${avatarInner({av:avDefault(f.n+f.r,f.r==="mum"?"f":f.r==="dad"?"m":undefined),ageOver:a,photo:1,outfit:"casual",nw:0,smile:true})}</svg><span><b>${esc(folkName(f))}</b> · ${esc(f.n)}${f.alive?`, ${a}`:""}<small>${esc(st)}${f.lw&&!f.alive?` · Last words: '${esc(f.lw)}'`:""}</small></span></li>`};
  const since=S.day-(S.folkSeen??S.day);
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Your parents</h2>${al.length?`<span class="label">${since<=1?"Seen this month":since>=12?`Not seen for ${Math.floor(since/12)} year${since>=24?"s":""}`:`Last visit ${since} months ago`}</span>`:""}</div>
   <ul class="folks">${S.folks.map(row).join("")}</ul>
@@ -7956,8 +7960,13 @@ function iaKey(m,e){
  if(/^pp_(favour|repay)/.test(id))return"money";if(/^pp_(passing)/.test(id))return"storm";if(/^pp_(reconnect|fallout|setup)/.test(id))return"party";if(/^(fork|sa_)/.test(id))return"plane";
  return IA_CAREER[S.path]||null;
 }
+function iaKey2(m,e){
+ const id=m.id||"";
+ if(/^fk_die/.test(id))return"storm";if(/^fk_/.test(id))return"family";if(/^xs_|^se_xmas/.test(id))return"xmas";if(/^(bds_|kbd5|kbd16)/.test(id))return"party";if(/^val_/.test(id))return"love";if(/^resol_/.test(id))return"run";if(/^will_/.test(id))return"money";if(/^look1/.test(id))return"phone";
+ const k=iaKey(m,e);if(k==="office"&&IA_CAREER[S.path]&&!["tech","bank"].includes(S.path)&&(e.career||!e.life))return IA_CAREER[S.path];return k;
+}
 function inboxArt(m,e){
- const k=iaKey(m,e);if(!k||!IA[k])return"";
+ const k=iaKey2(m,e);if(!k||!IA[k])return"";
  let svg="";try{svg=IA[k]()}catch(x){return""}
  return `<div class="mail-art" aria-hidden="true"><svg viewBox="0 0 ${IA_W} ${IA_H}" preserveAspectRatio="xMidYMid slice">${svg}</svg></div>`;
 }
@@ -7968,7 +7977,7 @@ function renderJobs(){
  const newsTags=S.news.filter(n=>n.tag).map(n=>n.tag);
  const cards=S.cards.map(cd=>{const sel=S.pick[cd.id],xb=1+expBonus(cd.tag);const diff=cd.d<.25?"Easy":cd.d<.45?"Steady":cd.d<.6?"Tricky":"Hard";
   const segs=[`<button data-act="job" data-id="${cd.id}" data-v="-1" class="${sel==null?"on":""}">Skip</button>`].concat(a.map((ap,i)=>{const room=rk.cap-(u-(sel!=null?cd.h*a[sel].h:0));const dis=cd.h*ap.h>room+.01&&sel!==i;
-   return `<button data-act="job" data-id="${cd.id}" data-v="${i}" class="${sel===i?"on":""}" ${dis?"disabled title=\"Not enough hours left in your day\"":""}>${esc(ap.n)}<small>${(cd.h*ap.h).toFixed(1)}h · ${fmtOut(cd.pay*ap.pay*xb)}</small></button>`})).join("");
+   return `<button data-act="job" data-id="${cd.id}" data-v="${i}" class="${sel===i?"on":""}" ${dis?"disabled title=\"Not enough hours left in your day\"":""}>${esc(ap.n)}<small>${cd.h*ap.h>rk.cap+.01?`${(cd.h*ap.h).toFixed(1)}h · too long`:`${(cd.h*ap.h).toFixed(1)}h · ${fmtOut(cd.pay*ap.pay*xb)}`}</small></button>`})).join("");
   const est=sel!=null?`<b>Taking it:</b> uses ${(cd.h*a[sel].h).toFixed(1)}h of your ${rk.cap}h day · ${c.fmt==="pts"?"worth":"pays"} about ${fmtOut(cd.pay*a[sel].pay*xb)}`:`Not taking this job. Pick a way to do it to add it to your day.`;
   return `<div class="book"><div><div class="book-name">${esc(cd.n)}</div><div class="book-sub">${esc(c.trends[cd.tag]?c.trends[cd.tag].n:cd.tag)}${newsTags.includes(cd.tag)?' · <b style="color:var(--accent)">In the news</b>':""}${cd.risk?" · Safety-critical":""}${Math.round((xb-1)*100)?` · <b style="color:var(${xb>1?"--up":"--down"})">${xb>1?"+":""}${Math.round((xb-1)*100)}% ${xb>1?"experience":"outside your speciality"}</b>`:""}</div></div>
    <div class="book-px"><div class="mono">${fmtOut(cd.pay*xb)}</div><div class="book-sub">${diff}</div></div>
@@ -8301,7 +8310,7 @@ function stageSec(compact){
  if(compact)return `<div class="stage-mini"><div><span class="label">Next stage</span><b>${esc(next.t)}</b></div><div class="stage-dots">${gs.map(g=>`<i class="${goalDone(g)?"on":""}"></i>`).join("")}</div><button class="btn sm" data-tab="career">${d}/${n} goals</button></div>`;
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Next stage: ${esc(next.t)}</h2><span class="label">${d} of ${n} done</span></div>
   <ul class="goals">${gs.map(g=>{const[v,need,l]=goalVal(g),ok=v>=need,p=clamp(v/need*100,0,100);
-   return `<li class="${ok?"ok":""}"><span class="tick">${ok?"✓":""}</span><span class="gl"><b>${esc(l)}</b>${need>1&&!ok?`<span class="bar mini"><i style="width:${p}%"></i></span><small class="mono">${g.k==="earn"?fmtOut(v):g.k==="fans"?fmtNum(v):Math.floor(v)} / ${g.k==="earn"?fmtOut(need):g.k==="fans"?fmtNum(need):need}</small>`:""}</span></li>`}).join("")}</ul>
+   return `<li class="${ok?"ok":""}"><span class="tick">${ok?"✓":""}</span><span class="gl"><b>${esc(l)}</b>${g.k==="qual"&&!ok?`<small>Study for it in Career moves on your <button class="linkbtn" data-tab="desk">Desk</button>.</small>`:""}${need>1&&!ok?`<span class="bar mini"><i style="width:${p}%"></i></span><small class="mono">${g.k==="earn"?fmtOut(v):g.k==="fans"?fmtNum(v):Math.floor(v)} / ${g.k==="earn"?fmtOut(need):g.k==="fans"?fmtNum(need):need}</small>`:""}</span></li>`}).join("")}</ul>
   <p class="hint" style="margin:8px 0 0">Finish every goal and you step up straight away. ${CAR_().mech!=="football"?"Career moves on your work tab help with many of these. ":""}Reviews every ${REVIEW_DAYS} months still pay your bonus and can bring warnings.</p></div>`;
 }
 
@@ -8654,7 +8663,7 @@ function renderLife(){
    <div class="sec-head"><h2>Life</h2><span class="label">Net worth</span></div>
    <div class="nw ${nw<0?"down":""}">${money(nw)}</div>
    ${S.nwh.length>2?`<div style="color:var(--muted)">${spark(S.nwh)}</div><div class="hint">Net worth over the last ${Math.round(S.nwh.length/12)} years</div>`:""}
-   <div class="kv"><span>Cash</span><span class="${S.wealth<0?"down":""}">${money(S.wealth)}</span><span>Investments</span><span>${money(invTotal())}</span><span>Pension</span><span>${money(S.pension.pot)}</span><span>Home equity</span><span>${money(equity())}</span><span>Car</span><span>${money(S.car.value)}</span><span>${selfPaid()?"Earnings (12-month average)":"Salary"}</span><span>${money(salary())} a year</span><span>Take-home after tax</span><span>${money((salary()-ukTax(salary()))/YEAR)} a month</span><span>Outgoings</span><span class="down">${money(monthly())} a month</span></div>
+   ${lifeTab==="money"?"":`<div class="hint">Cash ${money(S.wealth)} · outgoings ${money(monthly())} a month</div>`}<div class="kv" ${lifeTab==="money"?"":"hidden"}><span>Cash</span><span class="${S.wealth<0?"down":""}">${money(S.wealth)}</span><span>Investments</span><span>${money(invTotal())}</span><span>Pension</span><span>${money(S.pension.pot)}</span><span>Home equity</span><span>${money(equity())}</span><span>Car</span><span>${money(S.car.value)}</span><span>${selfPaid()?"Earnings (12-month average)":"Salary"}</span><span>${money(salary())} a year</span><span>Take-home after tax</span><span>${money((salary()-ukTax(salary()))/YEAR)} a month</span><span>Outgoings</span><span class="down">${money(monthly())} a month</span></div>
   </div>
   ${lifeTabsBar()}
   ${lifeTab==="family"?`
@@ -8744,7 +8753,7 @@ function pensionSec(){
 function buyHome(id){const h=S.market.find(x=>x.id===id);if(!h)return;const q=homeQuote(h),ht=HT[h.t];if(!q.ok)return;
  S.pendingScene="newhome";S.wealth-=q.need;S.home={t:h.t,n:`${ht.n}, ${h.area}`,area:h.area,value:h.p,loan:q.loan,up:ht.up,rent:0,tier:ht.tier,v:h.v,feat:h.feat,rate:q.rate,left:q.years*12,pay:q.pay,bought:h.p};
  S.market=S.market.filter(x=>x.id!==id);S.stress=clamp(S.stress-5,0,100);S.homeLife=clamp(S.homeLife+8+ht.tier*2,0,100);ach("homeowner");
- S.log.unshift({d:S.day,t:`Bought a ${ht.n.toLowerCase()} in ${h.area} for ${money(h.p)}.`});save();render();hideModal()}
+ S.log.unshift({d:S.day,t:`Bought a ${ht.n.toLowerCase().replace(/\b(georgian|victorian|edwardian|tudor|cotswold|regency)\b/g,w=>w[0].toUpperCase()+w.slice(1))} in ${h.area} for ${money(h.p)}.`});save();render();hideModal()}
 function sellHome(){const v=S.home.value*.98-S.home.loan;S.log.unshift({d:S.day,t:`Sold your home in ${S.home.area||"London"}. ${money(v)} released.`});S.wealth+=v;S.home=roomHome();S.homeLife=clamp(S.homeLife-6,0,100);save();render();hideModal()}
 let pickColor=COLORS[1][1];
 function carModal(id){const c=carOf(id),q=carQuote(c);
@@ -8759,7 +8768,7 @@ function renderTop(){
  const rk=R();
  document.getElementById("topstats").innerHTML=`
   <div class="ts"><span class="label">Age ${ageInt()}</span><strong>${shortDate(S.day)}</strong></div>
-  <div class="ts"><span class="label">${esc(rk.t)}</span><strong class="${S.ytd>=0?"up":"down"}">${fmtOut(S.ytd,true)}</strong></div>
+  <div class="ts"><span class="label">This year</span><strong class="${S.ytd>=0?"up":"down"}">${fmtOut(S.ytd,true)}</strong></div>
   <div class="ts"><span class="label">Net worth</span><strong>${money(netWorth())}</strong></div>`;
  document.getElementById("bankName").textContent=S.bank;
  if(CAR_().mech!=="markets"){const items=[...S.news.map(n=>n.t),`Skill ${Math.round(S.skill)}`,`${R().repName} ${Math.round(S.rep)}`,...(S.fb?[`Form ${Math.round(S.fb.form)}`,`Fitness ${Math.round(S.fb.fit)}`,`Goals ${S.fb.goals}`]:[])];
@@ -8861,8 +8870,8 @@ function renderLog(){
  const p=S.pnls.slice(-30),mx=Math.max(1,...p.map(Math.abs)),w=300/Math.max(p.length,1);
  const bars=p.map((v,i)=>{const h=Math.abs(v)/mx*40;return `<rect x="${(i*w+1).toFixed(1)}" y="${(v>=0?45-h:45).toFixed(1)}" width="${Math.max(1,w-2).toFixed(1)}" height="${Math.max(.5,h).toFixed(1)}" fill="${v>=0?"var(--up)":"var(--down)"}"/>`}).join("");
  const list=S.log.slice(0,60).map(l=>`<li><span class="mono">${shortDate(l.d)}</span><span>${esc(l.t)}</span></li>`).join("");
- document.getElementById("pane-log").innerHTML=`<div class="pane-sec"><div class="sec-head"><h2>${CAR_().mech==="markets"?"Trading log":"Diary"}</h2><span class="label">Career ${fmtOut(S.career,true)}</span></div>
-  ${p.length?`<svg class="pchart" viewBox="0 0 300 90" preserveAspectRatio="none" role="img" aria-label="Daily P&L, last ${p.length} days"><line x1="0" x2="300" y1="45" y2="45" stroke="var(--line)"/>${bars}</svg><div class="hint">Daily ${esc(CAR_().outName)}, last ${p.length} days</div>`:'<p class="empty">Your daily results appear here after your first day.</p>'}
+ document.getElementById("pane-log").innerHTML=`<div class="pane-sec"><div class="sec-head"><h2>${CAR_().mech==="markets"?"Trading log":"Your log"}</h2><span class="label">Career ${fmtOut(S.career,true)}</span></div>
+  ${p.length?`<svg class="pchart" viewBox="0 0 300 90" preserveAspectRatio="none" role="img" aria-label="Monthly results, last ${p.length} months"><line x1="0" x2="300" y1="45" y2="45" stroke="var(--line)"/>${bars}</svg><div class="hint">${esc(CAR_().outName)} each month, last ${p.length} months</div>`:'<p class="empty">Your monthly results appear here after your first month.</p>'}
   <ul class="loglist">${list}</ul></div>`;
 }
 function renderNav(){
@@ -9101,7 +9110,7 @@ function startModal0(){
 }
 function menuModal(){
  showModal(`<h2>Menu</h2><p>${esc(S.name)}, ${esc(R().t)}, age ${ageInt()}. Your game saves automatically on this device${cloudCode?" and in the cloud":""}.</p>
-  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
+  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
  markets:`<tr><td><b>1. Read the brief</b><br>Each month's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
@@ -9144,6 +9153,7 @@ document.addEventListener("click",e=>{
  if(a==="avtab"){avTab=t.dataset.v;avatarModal();return}
  if(a==="photo"){if(t.dataset.i!=="")photoModal(+t.dataset.i);return}
  if(a==="albumall"){albumAll=true;render();return}
+ if(a==="menualbum"){hideModal();lifeTab="album";S.lifeSeen=S.lifeSeen||{};S.lifeSeen.album=S.day;setTab("life");render();return}
  if(a==="recphoto"){recPhotoModal(+t.dataset.i);return}
  if(a==="recback"){if(window.__albumViewer)showRecordFromHash();else recordModal(window.__albumRec);return}
  if(a==="folkvisit"){folksVisit();return}
