@@ -646,6 +646,15 @@ html,body{overflow-x:clip}
 .gone-row .role{display:block}
 .gone-line{font-style:italic}
 .g2-tip{margin:6px 0 0;font-size:12.5px;line-height:1.4}.g2-tip b{font-weight:600}
+.lb-list{list-style:none;margin:0;padding:0}
+.lb-list li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:13.5px;min-width:0}
+.lb-list li>span{min-width:0}.lb-list li small{display:block;color:var(--muted);font-size:12px}
+.lb-list li>b{white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}.lb-list b.up{color:var(--up)}.lb-list b.down{color:var(--down)}
+.lb-tt.lots{color:var(--up)}.lb-tt.little{color:var(--warn)}
+.lb-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.lb-row.off .en-who b{color:var(--muted)}.lb-row .btn{min-width:52px}
+.lb-lt .label.up{color:var(--up)}.lb-lt .label.down{color:var(--down)}
+.buy-house{position:relative;max-width:300px;margin:4px auto 34px}.buy-house>svg{width:100%;height:auto;border-radius:14px}.buy-faces{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%);display:flex;gap:4px}.buy-faces svg{width:62px;height:62px;border-radius:50%;border:3px solid var(--surface,#fff);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -4101,7 +4110,8 @@ function paperFor(day){
   [/scandal breaks|A story that isn't true|Expenses scandal|Hidden advertising/,()=>[`QUESTIONS FOR ${whoU}`,`${first} has declined to comment. A neighbour said they "always seemed nice".`]],
   [/Sentenced|Your trial/,t=>[`${whoU} IN COURT`,t]],
   [/Released from prison/,()=>[`${whoU} WALKS FREE`,`${first} left prison this month and says they want "a fresh start".`]],
-  [/^Bought a /,t=>[`${whoU} SNAPS UP NEW HOME`,t.replace(/^Bought a /,"Bought a ")]],
+  [/^Bought a .+ in .+ for /,t=>[`${whoU} SNAPS UP NEW HOME`,t]],
+  [/^Bought a /,t=>[`${whoU} SHOWS OFF NEW WHEELS`,t.replace(/^Bought a (.+) for (.+?)\.?$/,(m,v,p)=>`${first} was spotted in a brand-new ${v} this month. Price tag: ${p}.`)]],
   [/^Accident:/,t=>[`${whoU} IN ACCIDENT DRAMA`,t.replace(/^Accident: /,"")]],
   [/Started a business|Expanded /,t=>[`LOCAL BUSINESS BOOM`,t]],
   [/^Sold .* for /,t=>[`${whoU} CASHES IN`,t]],
@@ -45777,7 +45787,7 @@ function enPlan(){
  }
  if(S.life&&S.life.gym)add("fitness","Gym sessions",5);
  const E=S.en||{};if(E.ther&&E.ther.until>S.day)add("fitness","Therapy sessions",6);
- if(!S.prison&&!S.over)for(const r of enPeople()){if(!r.lv)continue;add(r.cat,"Time for "+r.name,enPersonCost(r));const g=enPersonGive(r);if(g)add("rest",g>0?`${r.name.split(" ")[0]} recharges you`:`${r.name.split(" ")[0]} wears you out`,-g)}
+ if(!S.prison&&!S.over)for(const r of enPeople()){if(!r.lv)continue;add(r.cat,"Time for "+r.name,enPersonCost(r));const g=enPersonGive(r);if(g)add("rest",g>0?`${/^the /i.test(r.name)?r.name:r.name.split(" ")[0]} recharge${/^the /i.test(r.name)?"":"s"} you`:`${/^the /i.test(r.name)?r.name:r.name.split(" ")[0]} wear${/^the /i.test(r.name)?"":"s"} you out`,-g)}
  return L;
 }
 function enUsed(){const E=enS();if(!E)return 0;let t=0;for(const p of enPlan())t+=p.e;for(const k in E.sp)t+=E.sp[k];return Math.round(t)}
@@ -46263,6 +46273,232 @@ Object.assign(ACTS,{
  g2kid:fx=>{const k=(S.children||[]).find(x=>x.n===fx.kid);if(!k)return;for(const f of["bond","rel","close","closeness"])if(typeof k[f]==="number"){k[f]=clamp(k[f]+5,0,100);break}},
  g2club:()=>{try{const p=addPerson(fullName(),"friend","Met through a club in later life",50);if(p)S.log.unshift({d:S.day,t:`Made a new friend: ${p.n}.`})}catch(e){}g2charge("friends",6,"A new club")}
 });
+
+/* LB: life balance module. Builds on the energy module (S.en).
+   1. The commute and looking after your home cost energy every month.
+   2. Money buys energy back: paid help at home (S.svc = {id:{since}}); cancelling after a year stings for a while (S.svcCreep).
+   3. Long-term health: rolling wear and tear (S.lt = {w, src}) from energy debt, stress, no exercise and age.
+   4. Time with your children (child.tt, 0-100) shapes their grades, their teens and how close they stay. */
+const lbOk=()=>typeof enHas==="function"&&enHas()&&!!S.en;
+if(!EN_CATS.includes("home")){EN_CATS.splice(EN_CATS.indexOf("rest"),0,"home");EN_CAT_N.home="Home and commute"}
+const lbKids=max=>(S.children||[]).filter(k=>{const a=kidAge(k);return a>=0&&a<max});
+const lbDog=()=>!!(S.pet&&S.pet.kind==="dog");
+const lbTier=()=>clamp((S.home&&S.home.tier)||0,0,5);
+/* ---- 1. Chores and the commute ---- */
+function lbChores(){
+ const o={cook:0,clean:0,garden:0,kids:0,dog:0};if(!S.home||!HT[S.home.t])return o;const t=S.home.t,k18=lbKids(18).length;
+ if(t!=="parents"){
+  /* A partner shares the cooking and cleaning */
+  const share=inLove()&&S.rel.st!=="dating"?.75:1;
+  o.cook=k18?1+(k18>=3?1:0):0;
+  let c=[0,0,0,1,1,2][lbTier()]+(k18?1:0);if(!ownsHome()&&lbTier()>=2)c=Math.round(c*.6);o.clean=c?Math.max(1,Math.round(c*share)):0;
+  let flat=true;try{flat=isFlat()}catch(e){}
+  if(!flat&&t!=="room"&&(lbTier()>=3||hasMod("garden")))o.garden=1+(hasMod("garden")?1:0)+(hasMod("pool")?1:0)+(t==="manor"?1:0)}
+ o.kids=Math.min(3,lbKids(12).length);
+ /* Group 2 already charges dog walks as fitness: only count them here when it is not installed */
+ if(lbDog()&&typeof g2Pet!=="function")o.dog=2;
+ const f=lbAgeF();for(const k in o)if(o[k])o[k]=Math.max(1,Math.round(o[k]*f));
+ return o}
+/* Older hands have routines: chores and the commute take a little less out of a smaller allowance */
+const lbAgeF=()=>clamp(enBase(age())/100,.7,1);
+const LB_CM_N=["A short commute","Your commute","A long commute","A very long commute"];
+function lbCommute(){
+ if(!S.home||S.over||S.prison||S.front||S.sel||S.sabb)return null;const E=S.en||{};
+ if(S.path==="influencer")return{e:-2,n:"No commute: you work from home",how:""};
+ const c=S.home.t==="manor"?3:commute(),v=vKind(),car=carOf(S.car.id);let e=[-3,0,2,3][c]||0,how="by bus and train";
+ if(e>0){if(v==="car"){e*=.8;how="by "+vWord()}else if(v==="moto"){e*=.85;how="by motorbike"}else if(v==="cycle"){e*=c>=2?1.25:car.ev?.9:1;how="by "+vWord()}
+  if(hasMod("office")&&typeof DESKY!=="undefined"&&DESKY.includes(S.path)){e*=.6;how+=", working from home some days"}}
+ else{if(v==="cycle"){e-=1;how="by "+vWord()}else how=v==="none"?(c?"by bus and train":"on foot or by bus"):"by "+vWord()}
+ if(e>0)e*=lbAgeF();if(S.lastOff===S.day)e*=.3;if(E.bsab&&E.bsab.until>S.day)e*=.25;if(E.pt&&E.pt.until>S.day)e*=.7;if(S.sick>0)e*=.4;
+ const lv=E.mo&&E.mo.d===S.day?E.mo:null;if(lv&&!lv.oncall)e*=1-Math.min(1,lv.days/21);
+ e=Math.round(e);return{e,n:e===0?`An average commute ${how}`:e<0?`${c===0?"Living near work":"Your commute"} ${how}: time back`:`${LB_CM_N[c]} ${how}`,how,c}}
+/* ---- 2. Paying for help ---- */
+const LB_SVC=[
+ {id:"clean",n:"Cleaner",d:"Two mornings a week: floors, bathrooms and the ironing pile.",cost:()=>110+60*lbTier(),back:ch=>Math.max(1,Math.round(ch.clean*.8)),why:()=>S.home.t==="parents"?"Your mum would be offended.":"",cov:1},
+ {id:"meals",n:"Meal kits and takeaways",d:"Boxes of ingredients on the doorstep, and a takeaway when it's all too much.",cost:()=>180+60*lbKids(18).length+(inLove()?60:0),back:ch=>ch.cook+1,why:()=>S.home.t==="parents"?"Your mum does the cooking.":""},
+ {id:"garden",n:"Gardener",d:"Mowing, hedges and leaves, done before you notice.",cost:()=>90+35*lbTier()+(hasMod("pool")?120:0),back:ch=>ch.garden,why:()=>lbChores().garden?"":"You need a garden first."},
+ {id:"child",n:"Childminder and after-school club",d:"Someone kind and reliable for the school runs and the hours you're at work.",cost:()=>lbKids(12).reduce((t,k)=>t+(kidAge(k)<5?650:300),0),back:ch=>ch.kids+Math.min(3,2*lbKids(5).length),why:()=>lbKids(12).length?"":"For children under 12.",cov:1},
+ {id:"dogw",n:"Dog walker",d:"Two long walks a day, rain or shine.",cost:()=>220,back:ch=>typeof g2Pet==="function"&&lbDog()?4:ch.dog,why:()=>lbDog()?"":"You need a dog first."},
+ {id:"pt",n:"Personal trainer",d:"Two sessions a week. Fitter and stronger, with more energy, once you can walk again.",cost:()=>280,back:()=>0,al:5,fit:3,why:()=>""},
+ {id:"pa",n:"Personal assistant",d:"Your diary, your emails and your travel, all handled.",cost:()=>2200,back:()=>8,cat:"work",why:()=>S.rank>=3?"":"Only once you're senior."},
+ {id:"biz",n:"Business class on long-haul",d:"Lie-flat seats: long-haul holidays without the jet lag.",cost:()=>0,back:()=>0,trip:1,why:()=>""}];
+const lbSvc=id=>LB_SVC.find(s=>s.id===id);
+const lbCovered=s=>!!(s&&s.cov&&S.life&&S.life.nanny);
+const lbPaid=id=>!!(S.svc&&S.svc[id]);
+const lbOn=id=>{const s=lbSvc(id);return !!s&&(lbPaid(id)||lbCovered(s))&&!s.why()};
+const lbSvcCost=()=>{if(!S||!S.svc)return 0;let t=0;for(const s of LB_SVC)if(lbPaid(s.id)&&!lbCovered(s)&&!s.why())t+=Math.round(s.cost()/10)*10;return t};
+const lbBizCost=t=>Math.max(1200,Math.round(tripCost(t)*.8/100)*100);
+{const _mo=monthly;monthly=function(){const m=_mo.apply(this,arguments);try{return m+lbSvcCost()}catch(e){return m}}}
+{const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(!S||S.over||S.prison||!S.home)return L;
+ const add=(cat,n,e)=>{e=Math.round(e);if(e)L.push({cat,n,e})};
+ const cm=lbCommute();if(cm)add(cm.e<0?"rest":"home",cm.n,cm.e);
+ const ch=lbChores(),dogLine=L.some(p=>/\b(dog|pet)\b/i.test(p.n));
+ add("home","Family meals and the weekly shop",ch.cook);add("home","Housework and odd jobs",ch.clean);add("home","The garden",ch.garden);add("home","School runs and laundry",ch.kids);if(!dogLine)add("home","Walking the dog",ch.dog);
+ for(const s of LB_SVC){if(!lbOn(s.id))continue;const b=s.back(ch);if(b)add(s.cat||"home",lbCovered(s)?s.n+" (your nanny covers it)":s.n,-b);if(s.fit)add("fitness","Sessions with your trainer",s.fit)}
+}catch(e){}return L}}
+{const _ea=enAllowance;enAllowance=function(E,o){const r=_ea.apply(this,arguments);try{if(!r||!S||S.placeholder)return r;const a=age();let v=r.v;const add=(n,x)=>{x=Math.round(x);if(x){r.parts.push([n,x]);v+=x}};
+ if(lbOn("pt"))add("Personal trainer",5);
+ if(lbFit().on&&a>35)add("Fit for your age",Math.min(6,(a-35)*.2));
+ add("Wear and tear",-lbWearAl());
+ r.v=Math.max(Math.round(enBase(a)*.6),v)}catch(e){}return r}}
+/* Business class takes the jet lag out of long-haul trips, for a price */
+{const _ti=enTripInfo;enTripInfo=function(t,oncall){const r=_ti.apply(this,arguments);try{const x=EN_TRIP[t.k];if(r&&x&&x[2]&&lbOn("biz")){r.e-=Math.round(6*(age()>50?1.5:1));r.why=r.why.filter(w=>w!=="jet lag").concat("business class")}}catch(e){}return r}}
+{const _tt=takeTrip;takeTrip=function(k){let t=null;try{t=TRIPS.find(x=>x.k===k)}catch(e){}
+ if(!t||!lbOk()||!(EN_TRIP[k]&&EN_TRIP[k][2])||!lbOn("biz"))return _tt.apply(this,arguments);
+ const extra=lbBizCost(t);if(S.wealth<tripCost(t)+extra){try{toastMsg(`Business class adds ${money(extra)}. Not enough cash for that.`)}catch(e){}return}
+ const was=S.lastTrip;const r=_tt.apply(this,arguments);if(S.lastTrip===S.day&&was!==S.day){S.wealth-=extra;S.log.unshift({d:S.day,t:`Flew business class: ${money(extra)} extra.`});try{save();render()}catch(e){}}return r}}
+XCLICK.lbsvc=t=>{if(!lbOk())return;const s=lbSvc(t.dataset.id);if(!s)return;S.svc=S.svc||{};
+ if(S.svc[s.id]){const since=S.svc[s.id].since;delete S.svc[s.id];
+  if(S.day-since>=12&&!s.trip){S.svcCreep={until:S.day+4,n:s.n};S.log.unshift({d:S.day,t:`Cancelled the ${s.n.toLowerCase()}.`});try{toastMsg("You'd got used to it. Doing it all yourselves again will sting for a few months.")}catch(e){}}}
+ else{if(s.why()||lbCovered(s))return;S.svc[s.id]={since:S.day}}
+ save();render()};
+/* ---- 3. Long-term health ---- */
+function lbFit(){const why=[];try{
+ if(S.life&&S.life.gym)why.push("the gym");if(hasMod("gym"))why.push("your home gym");if(S.hobby&&S.hobby.k==="run")why.push("running");
+ if(lbOn("pt"))why.push("your trainer");if(vKind()==="cycle"&&!S.over)why.push("cycling");if(perkN("fitness"))why.push("your fitness course");
+ if(lbDog()&&!lbOn("dogw"))why.push("dog walks");
+ const E=S.en,h=E&&E.hist&&E.hist[E.hist.length-1];if(h&&(h.c.fitness||0)>=8&&!why.length)why.push("regular exercise")}catch(e){}
+ return{on:why.length>0,why}}
+const LB_SRC={debt:"months running on empty",stress:"high stress",unfit:"not much exercise",age:"the years",habits:"smoking or drinking",ill:"poor health"};
+function lbWear(){
+ const E=S.en;if(!E||S.over)return;const a=age(),h=(E.hist||[]).find(x=>x.d===S.day);
+ const L=S.lt=S.lt||{w:Math.max(0,Math.round((a-40)*.4)),src:{}};L.src=L.src||{};
+ const s={debt:0,stress:0,unfit:0,age:0,habits:0,ill:0};
+ if(h&&h.over>0)s.debt=.5+.15*Math.min(5,E.streak||1);
+ s.stress=S.stress>70?.6:S.stress>55?.25:0;
+ const fit=lbFit().on;if(!fit)s.unfit=.2;
+ if(a>45)s.age=(a-45)*.012;
+ const H=S.habit||{};s.habits=(H.smoke?.3:0)+(H.drink>=2?.2:0);
+ if(S.health<40)s.ill=.3;
+ let add=0;for(const k in s){add+=s[k];L.src[k]=(L.src[k]||0)*.92+s[k]*.08}
+ const rec=(.3+(fit?.25:0)+(h&&!h.over&&h.used<=h.al*.8?.15:0))*enRecov(a);
+ L.w=clamp(L.w+add-rec,0,100);L.fitM=fit?Math.min(24,(L.fitM||0)+1):0}
+const lbWearAl=()=>{const w=(S&&S.lt&&S.lt.w)||0;return w>=30?Math.round((w-20)/15):0};
+const lbWearFx=()=>1+((S&&S.lt&&S.lt.w)||0)/70;
+{const _ic=illChance;illChance=function(){const p=_ic.apply(this,arguments);try{return p*lbWearFx()}catch(e){return p}}}
+{const _hd=healthDay;healthDay=function(notes){const r=_hd.apply(this,arguments);try{if(S.over||!lbOk())return r;const a=age();
+ if(a>45&&lbFit().on)S.health=clamp(S.health+Math.min(.1,(a-45)*.0025),0,100);
+ if(lbOn("pt"))S.health=clamp(S.health+.12,0,100)}catch(e){}return r}}
+function lbVerdict(w){return w<10?["In great shape for your age","up"]:w<25?["In decent shape",""]:w<45?["Some wear and tear",""]:w<65?["Running yourself down","down"]:["Storing up serious trouble","down"]}
+function ltSec(){if(!lbOk()||S.over||!S.lt)return"";const L=S.lt,w=Math.round(L.w),[v,cls]=lbVerdict(w),fit=lbFit(),a=age();
+ const top=Object.entries(L.src||{}).filter(([k,x])=>x>.05).sort((x,y)=>y[1]-x[1]).slice(0,2).map(([k])=>LB_SRC[k]);
+ const al=lbWearAl(),ill=lbWearFx();
+ return `<div class="pane-sec lb-lt"><div class="sec-head"><h2 style="font-size:18px">Long-term health</h2><span class="label ${cls}">${esc(v)}</span></div>
+  <div class="meters">${meter("Wear and tear",w,"bad")}</div>
+  <ul class="lb-list"><li><span>Serious illness risk</span><b class="${ill>=1.3?"down":""}">${ill<1.05?"Normal for your age":`About ${ill.toFixed(1)}× normal`}</b></li>
+  <li><span>Energy each month</span><b class="${al?"down":""}">${al?`−${al} from wear`:"No effect yet"}</b></li>
+  <li><span>Keeping fit</span><b class="${fit.on?"up":""}">${fit.on?esc(cap1(fit.why.slice(0,2).join(" and "))):"Not really"}</b></li></ul>
+  <p class="hint keep" style="margin:6px 0 0">${top.length?`What's wearing you down: ${esc(top.join(" and "))}. `:""}Months of running on empty, high stress and no exercise add up over the years, and the body keeps the score. ${fit.on?(a>45?"Staying active is slowing the years down.":"Staying active keeps it in check."):"A gym habit, running, cycling to work or a trainer would slow it down."} Quiet, well-rested months help it recover.</p></div>`}
+{const _hs=healthSec;healthSec=function(){const h=_hs.apply(this,arguments)||"";try{return ltSec()+h}catch(e){return h}}}
+/* ---- 4. Time with your children ---- */
+function lbKidsMonth(){
+ const E=S.en,kids=lbKids(18);if(!E)return;
+ if(kids.length){let lv=1;try{const row=enPeople("family").find(r=>r.k==="kids");if(row)lv=row.lv}catch(e){}
+  let x=[12,55,85][lv]||55,fam=0;for(const l of E.log||[])if(l.cat==="family"&&l.e>0&&!/parent|brother|sister|Mum|Dad/i.test(l.n))fam+=l.e;x+=Math.min(20,fam);
+  if(S.lastTrip===S.day)x+=10;const d=enDial();if(d===3)x-=10;else if(d===2)x-=4;if(S.prison||S.abroad&&S.abroad.alone)x=0;x=clamp(x,0,100);
+  for(const k of kids){if(k.tt==null)k.tt=50;k.tt=k.tt*.94+x*.06;if(kidAge(k)>=1)k.kb=clamp((k.kb||0)+(k.tt-50)/50*.15,-50,50);if(kidAge(k)>=17.9&&k.tt18==null)k.tt18=Math.round(k.tt)}}
+ if(age()>=55){let hl=0;for(const k of S.children||[]){if(kidAge(k)<21||k.gone)continue;const kb=k.kb||0;if(kb>=20)hl+=k.abroad?.04:.1;else if(kb<=-20)hl-=.06}
+  S.homeLife=clamp(S.homeLife+clamp(hl,-.2,.3),0,100)}}
+{const _kb=ACTS.kb;ACTS.kb=function(fx){const r=_kb.apply(this,arguments);try{const c=(S.children||[]).find(x=>x.n===fx.n);if(c&&kidAge(c)<18&&fx.d>0)c.tt=clamp((c.tt??50)+fx.d*.4,0,100)}catch(e){}return r}}
+/* Time together nudges exam results and how teenage rows go */
+{const _ks=kidStory;kidStory=function(){const adj=[];try{for(const c of S.children||[]){const a=kidAge(c);if(a>=16&&a<17.5&&!(c.ks&&c.ks.gcse)&&c.tt!=null){const d=(c.tt-50)*.4;c.kb=(c.kb||0)+d;adj.push([c,d])}}}catch(e){}
+ let r;try{r=_ks.apply(this,arguments)}finally{for(const[c,d]of adj)c.kb-=d}
+ try{for(const m of S.inbox){if(m.done||!m.dyn||m.dyn.lbAdj||!/^ks_teen_/.test(m.id))continue;m.dyn.lbAdj=1;const N=m.id.split("_")[2],c=(S.children||[]).find(x=>x.n===N);const ch=m.dyn.c&&m.dyn.c[1];if(c&&ch&&ch.p!=null)ch.p=clamp(.3+(c.tt??50)/250,.3,.7)}}catch(e){}return r}}
+const lbTT=k=>{const t=k.tt??50;return t>=65?["Lots","lots"]:t>=40?["Some",""]:["Little","little"]};
+function kidsTimeSec(){const L=(S.children||[]).filter(k=>kidAge(k)>=0);if(!L.length||!lbOk())return"";
+ const row=k=>{const a=Math.floor(kidAge(k)),N=esc(k.n);
+  if(a<18){const[t,c]=lbTT(k);return `<li><span><b>${N}</b> (${a})</span><b class="lb-tt ${c}">Time together: ${t}</b></li>`}
+  const kb=k.kb||0,rel=kb>=20?["Close to you","lots"]:kb>=-10?["You get on fine",""]:["Distant","little"],g=k.tt18!=null?(k.tt18>=65?"lots":k.tt18>=40?"some":"little"):"";
+  return `<li><span><b>${N}</b> (${a})${g?`<small>Time together growing up: ${g}</small>`:""}</span><b class="lb-tt ${rel[1]}">${rel[0]}</b></li>`};
+ return `<div class="pane-sec lb-kids"><div class="sec-head"><h2 style="font-size:18px">Your children</h2><span class="label">${L.length}</span></div><ul class="lb-list">${L.map(row).join("")}</ul>
+  <p class="hint keep" style="margin:6px 0 0">Time counts: the time you set aside for them above, days out and holidays together, and turning up to plays and matches. Children who get lots of you tend to do better at school, fight less as teenagers and stay close when they're grown.</p></div>`}
+{const _ets=enTimeSec;enTimeSec=function(scope){const h=_ets.apply(this,arguments)||"";try{if(scope==="family")return h+kidsTimeSec()}catch(e){}return h}}
+/* ---- Month end ---- */
+function lbMonth(notes){if(!lbOk()||S.over)return;
+ try{lbWear()}catch(e){}
+ try{lbKidsMonth()}catch(e){}
+ try{if(S.svc)for(const id of Object.keys(S.svc)){const s=lbSvc(id);if(!s){delete S.svc[id];continue}const w=s.why();if(w&&S.day-S.svc[id].since>=1){delete S.svc[id];S.log.unshift({d:S.day,t:`Stopped the ${s.n.toLowerCase()}: no longer needed.`})}}}catch(e){}
+ try{const c=S.svcCreep;if(c&&c.until>S.day){S.homeLife=clamp(S.homeLife-.5,0,100);S.stress=clamp(S.stress+.4,0,100)}else if(c)S.svcCreep=null}catch(e){}}
+{const _ld=lifeDay;lifeDay=function(notes){const r=_ld.apply(this,arguments);try{lbMonth(notes)}catch(e){try{window.__hbErr&&window.__hbErr(e,"lbMonth")}catch(x){}}return r}}
+/* ---- Morning: the GP's warning, school plays, teenagers and grown-up children ---- */
+function lbMorning(){
+ if(!lbOk()||S.over||S.prison||S.front||S.sel||S.inbox.some(m=>!m.done&&/^lb_/.test(m.id)))return;
+ const L=S.lt;
+ if(L&&L.w>=45&&S.day-(L.gp??-99)>=36&&rnd()<.15){L.gp=S.day;pushDyn({id:"lb_gp_"+S.day,life:1,from:"Your GP",t:"Wear and tear",b:`Your blood pressure is up, your sleep is poor and your GP has the look of someone who has seen this before. "You're running yourself down. Not today, not tomorrow, but it adds up."`,c:[
+  {t:"Join a gym, and actually go",fx:{act:"lb_gym",stress:-2},o:"Week one is agony. By week six you're the person who says 'I love a leg day'."},
+  {t:"Book a week off to rest",fx:{act:"lb_rest",stress:-6},o:"Seven days of nothing. You sleep eleven hours on the first night."},
+  {t:"\"I'm fine, honestly\"",fx:{stress:1},o:"Your GP writes something down and doesn't show you."}]});return}
+ if(S.day-(S.lbKidAt??-99)<8||rnd()>.06)return;
+ const seen=S.lbK=S.lbK||{},opts=[],ev=(k,e)=>{if(S.day-(seen[k]??-99)<24)return;opts.push(()=>{S.lbKidAt=S.day;seen[k]=S.day;pushDyn(Object.assign({id:`lb_${k}_${S.day}`,life:1},e))})};
+ const young=lbKids(12).filter(k=>kidAge(k)>=4),sport=lbKids(17).filter(k=>kidAge(k)>=8),teen=(S.children||[]).filter(k=>{const a=kidAge(k);return a>=13&&a<18});
+ const pk=a=>a[Math.floor(rnd()*a.length)];
+ if(young.length){const k=pk(young),N=k.n;ev("play",{from:"The school",t:`${N}'s school play`,b:`${N} is ${pick(["a sheep","the third king","a talking carrot","the narrator","a tree with one line"])} in the school play. It's at two o'clock on a Thursday.`,c:[
+  {t:"Leave work early and go (⚡ 6)",fx:Object.assign({act:"lb_kid",n:N,e:6,tt:8,kb:4,home:2},selfPaid()?{}:{rep:-1}),o:"You film the whole thing, badly. They wave at you from the stage, mid-line."},
+  {t:"Watch the video later",fx:{act:"lb_kid",n:N,tt:-4,kb:-4},o:`${N} says it's fine. They scanned the crowd for you anyway.`}]})}
+ if(sport.length){const k=pk(sport),N=k.n;ev("match",{from:N,t:`${N}'s big match`,b:`${N}'s team is in the final on Saturday morning. "You don't have to come. But you can."`,c:[
+  {t:"Be on the touchline (⚡ 8)",fx:{act:"lb_kid",n:N,e:8,tt:8,kb:5,stress:-2},o:"You shout far too much. They pretend to be embarrassed, and they aren't."},
+  {t:"Ask for the score afterwards",fx:{act:"lb_kid",n:N,tt:-3,kb:-3},o:`"We won." That's all you get.`}]})}
+ const lo=teen.filter(k=>(k.tt??50)<35),hi=teen.filter(k=>(k.tt??50)>=65);
+ if(lo.length){const k=pk(lo),N=k.n;ev("skip",{from:"The school",t:`${N} has been skipping school`,b:`The school rings: ${N} has missed four days this month. When you ask, ${N} shrugs. "Like you'd notice."`,c:[
+  {t:"Clear a weekend for just the two of you (⚡ 12)",fx:{act:"lb_kid",n:N,e:12,tt:12,kb:8,home:2},o:"Burgers, a long drive and, eventually, a proper talk. They go back on Monday."},
+  {t:"Ground them",p:.45,win:{fx:{act:"lb_kid",n:N,kb:-1},o:"A week of sulking, then back to school."},lose:{fx:{act:"lb_kid",n:N,kb:-8,home:-3},o:"They climb out of the window. Twice."}},
+  {t:"Leave it to the school",fx:{act:"lb_kid",n:N,kb:-4,stress:2},o:"The school does its best. It isn't you."}]})}
+ if(hi.length){const k=pk(hi),N=k.n;ev("advice",{from:N,t:`${N} wants to talk`,b:`${N} knocks on your door at eleven at night. "Can I ask you something? It's about ${pick(["a friend","university","someone I like","a row at school"])}."`,c:[
+  {t:"Talk it through over toast",fx:{act:"lb_kid",n:N,kb:6,home:3},o:"An hour later you're both laughing. You'll remember this one."},
+  {t:"\"Can it wait till the morning?\"",fx:{act:"lb_kid",n:N,kb:-2},o:"It can. They don't bring it up again."}]})}
+ if(age()>=55){const ad=(S.children||[]).filter(k=>kidAge(k)>=25&&!k.gone);const cl=ad.filter(k=>(k.kb||0)>=20&&!k.abroad),di=ad.filter(k=>(k.kb||0)<=-15);
+  if(cl.length){const k=pk(cl),N=k.n;ev("help",{from:N,t:`${N} comes round to help`,b:`${N} turns up with a toolbox and a bag of shopping. "You looked tired last time. Sit down."`,c:[
+   {t:"Let them (⚡ +8 this month)",fx:{act:"lb_help",home:4},o:"They fix the gutter and the wobbly shelf, then stay for tea."},
+   {t:"Insist you're fine",fx:{home:1},o:"You both do the gutter. It takes twice as long and you enjoy every minute."}]})}
+  if(di.length){const k=pk(di),N=k.n;ev("call",{from:"You",t:`${N} hasn't called`,b:`It's been months since you heard from ${N}. Their birthday is next week.`,c:[
+   {t:"Call and say sorry for the times you weren't there",p:.55,win:{fx:{act:"lb_kid",n:N,kb:10,home:4},o:"A long silence, then: \"Thanks for saying that.\" Lunch next Sunday."},lose:{fx:{act:"lb_kid",n:N,kb:2,stress:3},o:"It's stiff and short. But it's a start."}},
+   {t:"Send a card",fx:{act:"lb_kid",n:N,kb:1},o:"A card with a cheque in it. They text a thumbs-up."},
+   {t:"Wait for them to call",fx:{act:"lb_kid",n:N,kb:-3,home:-2},o:"They don't."}]})}}
+ if(opts.length)pick(opts)()}
+Object.assign(ACTS,{
+ lb_kid:fx=>{const c=(S.children||[]).find(x=>x.n===fx.n);if(fx.e)try{enCharge("family",fx.e,"Time with "+fx.n)}catch(e){}if(!c)return;if(fx.tt)c.tt=clamp((c.tt??50)+fx.tt,0,100);if(fx.kb)c.kb=clamp((c.kb||0)+fx.kb,-50,50)},
+ lb_help:()=>{const E=enS();if(E)E.al+=8},
+ lb_gym:()=>{S.life.gym=true;if(S.lt)S.lt.w=Math.max(0,S.lt.w-4);S.log.unshift({d:S.day,t:"Joined a gym."})},
+ lb_rest:()=>{if(S.lt)S.lt.w=Math.max(0,S.lt.w-6);try{enUseLeave(5,false,"A week off to rest")}catch(e){}}});
+{const _wm=willMorning;willMorning=function(){const r=_wm.apply(this,arguments);try{lbMorning()}catch(e){}return r}}
+/* ---- Life → Home: commute and chores, and paying for help ---- */
+function lbHomeSec(){if(!lbOk()||S.over||S.prison||!S.home)return"";const ch=lbChores(),cm=lbCommute();
+ const rows=[];if(cm)rows.push([cm.n,cm.e]);for(const[k,n]of[["cook","Family meals and the weekly shop"],["clean","Housework and odd jobs"],["garden","The garden"],["kids","School runs and laundry"],["dog","Walking the dog"]])if(ch[k])rows.push([n,ch[k]]);
+ let help=0;for(const s of LB_SVC)if(lbOn(s.id)&&!s.cat)help+=s.back(ch);const tot=rows.reduce((t,r)=>t+r[1],0)-help;
+ const fmt=e=>e<0?`<b class="up">⚡ +${-e}</b>`:`<b>⚡ ${e}</b>`;
+ const svc=LB_SVC.map(s=>{const why=s.why(),cov=lbCovered(s),on=lbPaid(s.id)||cov,cost=Math.round(s.cost()/10)*10;
+  const gain=s.trip?`${money(lbBizCost({cost:2500}))}+ extra per long-haul trip · no jet lag`:s.al?`⚡ +${s.al} a month · sessions ⚡ ${s.fit} · fitter`:`⚡ +${s.back(ch)} a month`;
+  return `<div class="lb-row${why?" off":""}"><div class="en-who"><b>${esc(s.n)}</b><span>${esc(s.d)}</span><span>${why?esc(why):`${s.trip?"":money(cost)+"/month · "}${gain}`}${cov&&!why?" · included with your cleaner and nanny":""}${on&&!cov&&S.svc[s.id]&&S.day-S.svc[s.id].since>=12&&!s.trip?" · you've got used to it":""}</span></div>
+   <button class="btn sm ${on&&!why?"primary":""}" data-act="lbsvc" data-id="${s.id}" aria-pressed="${on&&!why}" ${why||cov?"disabled":""}>${on&&!why?"On":"Off"}</button></div>`}).join("");
+ const cr=S.svcCreep&&S.svcCreep.until>S.day?`<p class="hint keep down" style="margin:6px 0 0">Life without the ${esc(S.svcCreep.n.toLowerCase())} feels harder: home life and stress will suffer for ${S.svcCreep.until-S.day} more month${S.svcCreep.until-S.day>1?"s":""}.</p>`:"";
+ return `<div class="pane-sec lb-home"><div class="sec-head"><h2 style="font-size:18px">Commute and chores</h2><span class="label">${tot<0?`⚡ +${-tot} back a month`:`⚡ ${tot} a month`}</span></div>
+  <ul class="lb-list">${rows.map(r=>`<li><span>${esc(r[0])}</span>${fmt(r[1])}</li>`).join("")}${help?`<li><span>Paid help</span>${fmt(-help)}</li>`:""}</ul>
+  <p class="hint keep" style="margin:6px 0 0">Living near work gives you time back, but homes there cost more. A car makes a long commute easier; a bike keeps you fit on a short one. Bigger homes and gardens take more looking after.</p></div>
+  <div class="pane-sec lb-help"><div class="sec-head"><h2 style="font-size:18px">Paying for help</h2><span class="label">${money(lbSvcCost())}/month</span></div>
+  <p class="hint keep" style="margin:0 0 4px">Money can buy some of your energy back.</p>${svc}${cr}
+  <p class="hint keep" style="margin:6px 0 0">Cancel something you've had for a year or more and life feels harder for a few months: you'd got used to it.</p></div>`}
+{const _hl=homeLifeSec;homeLifeSec=function(){const h=_hl.apply(this,arguments)||"";try{return h+lbHomeSec()}catch(e){return h}}}
+
+/* ANCHOR+BUY */
+/* ============ Lists stay put when you tap inside them, and buying a vehicle shows you with it ============ */
+let scrAnchor=null;
+document.addEventListener("click",e=>{try{const t=e.target&&e.target.closest?e.target:null;if(!t||t.closest("#modal"))return;
+ const a=t.closest("details[id]")||t.closest(".pane-sec")||t.closest("[id]");if(!a)return;
+ scrAnchor={id:a.id||null,el:a,idx:a.id?-1:[...document.querySelectorAll(".pane-sec")].indexOf(a),top:a.getBoundingClientRect().top,at:Date.now()}}catch(x){}},true);
+{const _r=render;render=function(){const A=scrAnchor&&Date.now()-scrAnchor.at<2500?scrAnchor:null;let before=null;
+ try{if(A){const el=A.id?document.getElementById(A.id):document.querySelectorAll(".pane-sec")[A.idx];if(el)before=el.getBoundingClientRect().top}}catch(x){}
+ const r=_r.apply(this,arguments);
+ try{if(A&&before!=null){const el=A.id?document.getElementById(A.id):document.querySelectorAll(".pane-sec")[A.idx];if(el){const d=el.getBoundingClientRect().top-before;if(Math.abs(d)>2)window.scrollBy(0,d)}}}catch(x){}
+ return r}}
+{const _hm=hideModal;hideModal=function(){if(scrAnchor)scrAnchor.at=Date.now();return _hm.apply(this,arguments)}}
+{const _bc2=buyCar;buyCar=function(id){const was=S.car&&S.car.id;const r=_bc2.apply(this,arguments);
+ try{if(S.car&&S.car.id===id&&id!==was&&!window.__noMoments){const c=carOf(id),w=typeof vWord==="function"?vWord(c):"car";
+  setTimeout(()=>{try{showModal('<div class="label">New wheels</div>'+momentPhoto({sc:"road",c:castNow({}),pr:"car",x:S.car.color,v:id},"key")+'<h2 style="margin-top:8px;text-align:center">Your new '+esc(c.n)+'</h2><p style="text-align:center">'+esc(pick(["You drive it round the block twice, just because.","You keep looking out of the window at it.","It still smells new. You never want that to end.","You take a photo of it. Then another one.","The neighbours definitely noticed."]))+'</p><div class="btn-row" style="justify-content:center"><button class="btn primary big" data-act="hide">Brilliant</button></div>')}catch(e){}},60)}}catch(e){}
+ return r}}
+{const _bh2=buyHome;buyHome=function(id){const was=S.home&&S.home.n;const r=_bh2.apply(this,arguments);
+ try{if(S.home&&S.home.n!==was&&!window.__noMoments){const H=S.home,ht=HT[H.t]||{};
+  setTimeout(()=>{try{showModal('<div class="label">Keys in hand</div>'+(typeof houseArt==="function"&&ht.art?'<div class="buy-house">'+houseArt(ht.art,H.v)+'<div class="buy-faces">'+avatarSVG(62)+(inLove()&&typeof partnerFace==="function"?partnerFace(62):"")+'</div></div>':momentPhoto({sc:"house",c:castNow({pt:1,kids:1,pet:1}),pr:"keys"},"home"))+'<h2 style="margin-top:8px;text-align:center">'+(inLove()?"Our":"My")+' new home</h2><p style="text-align:center"><b>'+esc(H.n)+'</b><br>'+esc(pick(["You stand in the empty living room and grin.","The keys feel heavier than they look.","You've already picked where the sofa goes.","You walk round every room twice. It's yours.","The first night, you can't sleep for excitement."]))+'</p><div class="btn-row" style="justify-content:center"><button class="btn primary big" data-act="hide">Brilliant</button></div>')}catch(e){}},60)}}catch(e){}
+ return r}}
 
 function start(data){
  S=(data&&data.S)||load();
