@@ -853,7 +853,7 @@ const DESKS={
  cmd:{n:"Commodities",ids:["brent","gold","copper","natgas"],blurb:"Oil, metals, gas. Big swings."}
 };
 const RISK_OFF={ftse:-1,spx:-1,nky:-1,stoxx:-1,brent:-1,copper:-1,audusd:-1,usdjpy:-1,gold:1,ukgilt:1,ust:1,bund:1,btp:-1,deq:-1,dcmd:-1,gm:-1,ib:-1,wm:-.5,dfx:.5,drates:.5};
-const NOISE=["Canary Wharf landlord reports occupancy uptick","Headhunters report brisk hiring for quant roles","Rival bank names a new chief executive","VIX at a two-year low; strategists warn of complacency","Bank of England publishes routine financial stability notes","City bonus season expected to be flat","Tube strike threatened for next week","Regulator consults on new operational resilience rules","Hedge fund launches hit a five-year high","Analysts split on the outlook for European banks"];
+const NOISE=["Canary Wharf landlord reports occupancy uptick","Headhunters report brisk hiring for quant roles","Rival bank names a new chief executive","VIX at a two-year low; strategists warn of complacency","Bank of England publishes routine financial stability notes","City bonus season expected to be flat","Tube strike threatened for next week","Regulator consults on new operational resilience rules","Hedge fund launches hit a five-year high","Analysts split on the outlook for European banks","Bond desk hires a former central banker","Trading floor coffee machine finally fixed","Regulator fines a rival for chat-app trading","Bank opens a new hub in Leeds","Graduate scheme applications hit a record","Rival desk loses its star trader to a hedge fund","Quarter-end window dressing spotted again","Algo glitch briefly sends a small-cap soaring","Bank announces a four-day week pilot for support staff","Hedge fund closes after a bad bet on rates","Bank of England speech moves the pound","Office move to a greener building approved","Compliance launches a new training module nobody wants","Rival bank's IT outage locks customers out","Sovereign wealth fund raises its stake in banks","Private credit boom pulls talent from trading floors","Merger arbitrage desk enjoys a busy month","Weekend working rules relaxed for juniors","Pension funds rebalance into bonds","Trading volumes thin ahead of the holidays","New rules on bonus clawbacks come into force","City pub reports record Friday takings","Market-maker reprices after a fat-finger trade","Insurer's bond sale draws huge demand","Junior analysts complain about 100-hour weeks","Bank trials AI to write morning research notes","Short sellers circle a struggling retailer","Commodities desk expands into carbon credits","Currency traders brace for the jobs report","Rival bank cuts its graduate intake","Chief economist warns of a slow year","Bond yields dip on softer inflation data","Investment bank sponsors a marathon team","Dealmakers report a busy pipeline for spring","Trading floor goes paperless, mostly","Senior partner retires after thirty years","Rating agency puts a big lender on watch","Bank launches a crypto custody service","Credit spreads tighten for a third week","Emerging market funds see fresh inflows","Rival trading desk fined over a market abuse case","Overnight markets quiet as Asia shuts for a holiday","Trade unions call for a bank levy","Analysts upgrade the sector on higher margins","Team drinks budget cut to one round each"];
 
 /* ============ Events ============ */
 /* r: rank range [min,max]; req: flag that must be set; fx keys: rep, stress, heat, morale, pnl (×K), cash (days of salary), flag, unflag */
@@ -8830,7 +8830,7 @@ function deskPrompts(){
  if(o&&T&&!o.on&&rnd()<.5){const i=o.conds.findIndex(c=>!c.conf);if(i>=0){const [k,nm,vals,srcs]=T.brief[i],c=o.conds[i];
   return E({from:srcs[0],t:`An update on ${o.name}`,b:`${nm}: it's definitely ${vals[c.truth]}. ${srcs[0]} has confirmed it${c.shown!==c.truth?", and the first report was wrong":""}.`,c:[{t:"Plan around it",fx:{act:"opintel",i},o:"You update the briefing."},{t:"Plan around it, and take me to the desk",fx:{act:"opintelgo",i},o:"Over to the desk."}]})}}
  /* A rush job worth more than usual */
- const src=pick(CAR_().jobs.filter(j=>(j.rmin||0)<=S.rank&&(j.rmax??9)>=S.rank&&!j.sf&&!j.spec));if(!src)return;
+ const _rl=CAR_().jobs.filter(j=>(j.rmin||0)<=S.rank&&(j.rmax??9)>=S.rank&&!j.sf&&!j.spec),_rf=_rl.filter(j=>!(S.rushSeen||[]).includes(j.n));const src=pick(_rf.length?_rf:_rl);if(!src)return;S.rushSeen=(S.rushSeen||[]).concat(src.n).slice(-8);
  const rk=R(),cid="rush"+S.day,cd={id:cid,n:"Rush: "+src.n,h:Math.round(src.h*rk.js*10)/10,pay:Math.round(src.pay*rk.pm*rk.js*1.6),d:clamp(src.d+.05,0,.9),tag:src.tag,risk:src.risk||0,f:0};
  S.cards.push(cd);
  return E({from:CAR_().offerFrom?CAR_().offerFrom.replace(/ for $/,""):"A regular client",t:`Rush job: ${src.n}`,b:`Someone needs this done this month and will pay over the odds: about ${fmtOut(cd.pay)} for ${cd.h}h. It's on your desk now.`,c:[{t:"Add it to this month's work",fx:{act:"deskrush",cid},o:"It's booked in."},go,{t:"Pass",fx:{},o:"Someone else gets it."}]});
@@ -42573,22 +42573,37 @@ function applyCountry(code){const c=COUNTRIES[code]||COUNTRIES.uk,uk=code==="uk"
  for(const[id,C]of Object.entries(CAREERS)){const L=!uk&&c.employers&&c.employers[id];if(L)C.employers=L.slice();else if(UK_ORIG.employers[id])C.employers=UK_ORIG.employers[id].slice()}
  /* Moves abroad never send you to your own country; non-UK players can be offered London */
  for(const[id,L]of Object.entries(UK_ORIG.abroad)){let out=L.filter(x=>uk||![c.city,c.capital].includes(x[0]));if(!uk&&L.length)out=out.concat([["London","city","at the London office"]]);CAREER_ABROAD[id]=out}
- /* The text swaps: the game's own spoof names first, then the country's list */
- const pairs=uk?[]:[[SF_UNIT,c.sf],["Vauxhall Cross-ish",c.spyAbroad],["Thames House",c.spyHome],["Premier Leek",c.league],...(c.swap||[])];
- LOC=uk?null:{c,re:pairs.length?new RegExp("(^|[^A-Za-z0-9])("+pairs.slice().sort((x,y)=>y[0].length-x[0].length).map(p=>p[0].replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")(?=[^A-Za-z0-9]|$)","g"):null,map:new Map(pairs.map(p=>[p[0],p[1]]))};
- if(LOC&&pairs.length){const vals=[...new Set(pairs.map(p=>p[1]).filter(v=>/^[A-Za-z]/.test(v)&&!/^(the|a|an) /i.test(v)))].sort((x,y)=>y.length-x.length).map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));LOC.aRe=vals.length?new RegExp("\\b(an|An|a|A) ("+vals.join("|")+")(?=[^A-Za-z0-9]|$)","g"):null}
- /* Russian surnames take a feminine ending for women */
- if(LOC&&code==="russia"){const fem=c.names.f.map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|"),sur=c.names.sur.filter(x=>/(ov|ev|in|sky)$/.test(x)).join("|");if(fem&&sur)LOC.femRe=new RegExp("\\b("+fem+") ("+sur+")(?![a-z])","g")}
+ LOC=buildLoc(code);
  try{localizeAll()}catch(e){}}
+/* Everything needed to translate text for one country */
+const reEsc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+const LOC_CACHE={};
+function buildLoc(code){if(!code||code==="uk"||!COUNTRIES[code])return null;if(LOC_CACHE[code])return LOC_CACHE[code];const c=COUNTRIES[code];
+ /* The text swaps: the game's own spoof names first, then the country's list */
+ const pairs=[[SF_UNIT,c.sf],["Vauxhall Cross-ish",c.spyAbroad],["Thames House",c.spyHome],["Premier Leek",c.league],...(c.swap||[])];
+ const L={c,re:new RegExp("(^|[^A-Za-z0-9])("+pairs.slice().sort((x,y)=>y[0].length-x[0].length).map(p=>reEsc(p[0])).join("|")+")(?=[^A-Za-z0-9]|$)","g"),map:new Map(pairs.map(p=>[p[0],p[1]]))};
+ const vals=[...new Set(pairs.map(p=>p[1]).filter(v=>/^[A-Za-z]/.test(v)&&!/^(the|a|an) /i.test(v)))].sort((x,y)=>y.length-x.length).map(reEsc);L.aRe=vals.length?new RegExp("\\b(an|An|a|A) ("+vals.join("|")+")(?=[^A-Za-z0-9]|$)","g"):null;
+ /* Russian surnames take a feminine ending for women */
+ if(code==="russia"){const fem=c.names.f.map(reEsc).join("|"),sur=c.names.sur.filter(x=>/(ov|ev|in|sky)$/.test(x)).join("|");if(fem&&sur)L.femRe=new RegExp("\\b("+fem+") ("+sur+")(?![a-z])","g")}
+ return LOC_CACHE[code]=L}
+/* Amounts written in words ("forty quid", "a grand", "a tenner") become real local amounts */
+const NUM_W={a:1,an:1,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+const NUM_ALT="a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand";
+const WORD_MONEY_RE=new RegExp("\\b((?:(?:"+NUM_ALT+"|and)[\\s-]+)*(?:"+NUM_ALT+"))\\s+(pounds|quid|grand)\\b","gi");
+function wordsToNum(w){let total=0,cur=0;for(const x of w.toLowerCase().split(/[\s-]+/)){if(x==="and")continue;if(x==="hundred")cur=(cur||1)*100;else if(x==="thousand"){total+=(cur||1)*1000;cur=0}else if(NUM_W[x]!=null)cur+=NUM_W[x];else return null}return total+cur}
 /* Money: shown in the local currency */
-function locMoney(n,unit){const c=LOC.c;let v=n*c.cur.rate;const u=(unit||"").toLowerCase();if(u==="k")v*=1e3;else if(u==="m"||u==="million")v*=1e6;else if(u==="bn"||u==="billion")v*=1e9;
+function locMoney(n,unit,L){const c=(L||LOC).c;let v=n*c.cur.rate;const u=(unit||"").toLowerCase();if(u==="k")v*=1e3;else if(u==="m"||u==="million")v*=1e6;else if(u==="bn"||u==="billion")v*=1e9;
  const a=Math.abs(v);const s=a>=1e9?(a/1e9).toFixed(a>=1e10?0:1).replace(/\.0$/,"")+"bn":a>=1e6?(a/1e6).toFixed(a>=1e7?0:1).replace(/\.0$/,"")+"m":a>=1e4?Math.round(a/1e3)+"k":Math.round(a).toLocaleString("en-GB");return c.cur.sym+s}
-function locText(t){if(!LOC||!t)return t;let s=t;
- if(s.indexOf("£")>=0)s=s.replace(/£\s?(\d[\d,]*(?:\.\d+)?)(\s?(?:k|m|bn|million|billion)\b)?/gi,(m,num,unit)=>locMoney(parseFloat(num.replace(/,/g,"")),(unit||"").trim()));
- if(LOC.femRe)s=s.replace(LOC.femRe,(m,f,su)=>f+" "+su.replace(/sky$/,"skaya").replace(/(ov|ev|in)$/,"$1a"));
- if(LOC.re){let hit=false;s=s.replace(LOC.re,(m,pre,w)=>{if(!LOC.map.has(w))return m;hit=true;return pre+LOC.map.get(w)});
+function locTextL(L,t){if(!L||!t)return t;let s=t;
+ if(/quid|pounds|grand|fiver|tenner/i.test(s)){s=s.replace(WORD_MONEY_RE,(m,num,unit,off,str)=>{const n=wordsToNum(num);if(n==null||!n)return m;
+  /* "a grand old house" isn't money: "grand" only counts when what follows reads like an amount */
+  if(unit.toLowerCase()==="grand"){const nx=(str.slice(off+m.length).match(/^\s+([A-Za-z]+)/)||[])[1];if(nx&&!["on","for","in","a","to","of","and","from","each","cash","plus","more","less","off","up","down","back","into","per","with","or","is","was","it","now","later","short","richer","poorer","better","worse"].includes(nx.toLowerCase()))return m}return locMoney(unit.toLowerCase()==="grand"?n*1000:n,"",L)});s=s.replace(/\b([Aa]) (fiver|tenner)\b/g,(m,a,w)=>locMoney(w==="fiver"?5:10,"",L))}
+ if(s.indexOf("£")>=0)s=s.replace(/£\s?(\d[\d,]*(?:\.\d+)?)(\s?(?:k|m|bn|million|billion)\b)?/gi,(m,num,unit)=>locMoney(parseFloat(num.replace(/,/g,"")),(unit||"").trim(),L));
+ if(L.femRe)s=s.replace(L.femRe,(m,f,su)=>f+" "+su.replace(/sky$/,"skaya").replace(/(ov|ev|in)$/,"$1a"));
+ if(L.re){let hit=false;s=s.replace(L.re,(m,pre,w)=>{if(!L.map.has(w))return m;hit=true;return pre+L.map.get(w)});
   /* Tidy up after swapping: no "the the", and the right "a" or "an" in front of a swapped name */
-  if(hit){s=s.replace(/\b(the|The) the\b/g,"$1");if(LOC.aRe)s=s.replace(LOC.aRe,(m,art,w)=>{const an=/^([aeiou]|[FHLMNRSX][A-Z])/i.test(w)&&!/^(uni|eu|one)/i.test(w);const want=an?"an":"a";return (art[0]==="A"?want[0].toUpperCase()+want.slice(1):want)+" "+w})}}return s}
+  if(hit){s=s.replace(/\b(the|The) the\b/g,"$1");if(L.aRe)s=s.replace(L.aRe,(m,art,w)=>{const an=/^([aeiouAEIOU]|[FHLMNRSX][A-Z])/.test(w)&&!/^(uni|eu|one)/i.test(w);const want=an?"an":"a";return (art[0]==="A"?want[0].toUpperCase()+want.slice(1):want)+" "+w})}}return s}
+const locText=t=>locTextL(LOC,t);
 /* Swap the words in everything on screen, including new things as they appear */
 const LOC_SKIP=new Set(["SCRIPT","STYLE","TEXTAREA","INPUT","CODE"]);let locBusy=false;
 function localizeNode(root){if(!LOC||!root)return;locBusy=true;try{if(root.nodeType===3){if(root.parentNode&&root.parentNode.closest&&root.parentNode.closest("[data-noloc]"))return;const v=root.nodeValue,w=locText(v);if(w!==v)root.nodeValue=w;return}
@@ -42599,7 +42614,11 @@ try{const mo=new MutationObserver(ms=>{if(locBusy||!LOC)return;for(const m of ms
 {const _csh=careerStartHome;careerStartHome=function(){const r=_csh.apply(this,arguments);try{if(LOC&&S.home){const M={"Catterick Garrison":"the garrison","Hounslow":"near the airport","Pimlico":pick(LOC.c.areas.mid)};if(M[S.home.area])S.home.area=M[S.home.area]}}catch(e){}return r}}
 /* The new-game wizard asks where you live */
 function countryPick(){return `<h2 style="margin-top:4px">Where do you live?</h2><p>Your country sets the money, the cities, the names and the institutions you'll deal with.</p><div class="desk-pick country-pick" data-noloc="1">${COUNTRY_ORDER.filter(k=>COUNTRIES[k]).map(k=>{const c=COUNTRIES[k];return `<button data-act="countrypick" data-k="${k}" class="${k===pickCountry?"on":""}"><b style="font-size:17px">${c.flag} ${esc(c.n)}</b><span>${esc(c.city)}${c.cur?` · ${esc(c.cur.sym)}`:""}</span></button>`}).join("")}</div>`}
-XCLICK.countrypick=t=>{pickCountry=t.dataset.k;try{localStorage.setItem("ftb-country",pickCountry)}catch(e){}document.querySelectorAll('[data-act="countrypick"]').forEach(b=>b.classList.toggle("on",b.dataset.k===pickCountry))};
+XCLICK.countrypick=t=>{pickCountry=t.dataset.k;try{localStorage.setItem("ftb-country",pickCountry)}catch(e){}startModal(wizStep)};
+/* The new-game wizard speaks the language of the country you're picking, not your last game's */
+function localizeWith(L,root){if(!root)return;locBusy=true;try{const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentNode&&(LOC_SKIP.has(n.parentNode.nodeName)||(n.parentNode.closest&&n.parentNode.closest(".country-pick")))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let n;while((n=tw.nextNode())){const v=n.nodeValue;if(!v||v.length<2)continue;const w=locTextL(L,v);if(w!==v)n.nodeValue=w}}finally{locBusy=false}}
+{const _shm=showModal;showModal=function(){try{const sh=document.getElementById("sheet");if(sh)sh.removeAttribute("data-noloc")}catch(e){}return _shm.apply(this,arguments)}}
+{const _stm=startModal;startModal=function(){locBusy=true;let r;try{r=_stm.apply(this,arguments)}finally{locBusy=false}try{const sh=document.getElementById("sheet");if(sh){sh.setAttribute("data-noloc","1");localizeWith(buildLoc(pickCountry),sh)}}catch(e){}return r}}
 /* A new game takes the chosen country; heirs and comebacks keep theirs */
 {const _ng5=newGame;newGame=function(){const keep=S&&!S.placeholder&&S.country&&window.__keepCountry;const wiz=window.__wizBegin;window.__wizBegin=0;const code=wiz?pickCountry:(keep||((S&&S.country)||pickCountry||"uk"));applyCountry(code);const r=_ng5.apply(this,arguments);try{S.country=code}catch(e){}return r}}
 {const _st3=start;start=function(){const r=_st3.apply(this,arguments);try{applyCountry((S&&S.country)||"uk");if(S&&!S.country)S.country="uk";render()}catch(e){}return r}}
@@ -44045,6 +44064,7 @@ function lifeMorning(){if(S.over||S.prison||S.front||S.wscene||S.inbox.some(m=>!
 {const _wm3=willMorning;willMorning=function(){const r=_wm3.apply(this,arguments);try{lifeMorning()}catch(e){}return r}}
 /* More stories that need a breather before they come round again */
 try{STORY_GAP.push([/^Paparazzi$/,10],[/ has news$/,14],[/^The hedge$/,12],[/^Recognised$/,12],[/^(Prices keep rising|Energy bills are up|Bin strike|Train strike|Airport strike|Teachers' strike)$/,18])}catch(e){}
+try{STORY_GAP.push([/^International call-up!$/,6],[/^Apply for silk\?$/,12])}catch(e){}
 
 
 function start(data){
