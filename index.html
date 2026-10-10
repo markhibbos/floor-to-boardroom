@@ -619,6 +619,20 @@ html,body{overflow-x:clip}
 
 @media (max-width:420px){.en-row{grid-template-columns:1fr}.en-fc{font-size:10.5px}}
 .en-seg button,#pane-life .seg button,#pane-desk .seg button:not(.seg-jobs button){font-family:var(--f-body);font-size:13px}
+/* End of month: fits a phone screen */
+#sheet .me-big{font-size:32px!important;line-height:1}
+#sheet .me-big + .hint{display:none}
+#sheet .me-strip{margin:6px 0 2px;gap:5px}
+#sheet .me-strip>div{padding:5px 6px}
+#sheet .me-strip b{font-size:15px}
+#sheet .me-more{margin:0 0 2px}
+#sheet .me-more summary{padding:2px 0}
+#sheet .mc-line{margin-top:6px;padding:6px 9px;font-size:12.5px;line-height:1.4}
+#sheet .mc-line .label{display:inline;margin:0 4px 0 0}
+#sheet .me-notes{margin-top:6px;padding:5px 10px;border-radius:10px;background:var(--accent-soft,#F3E2BD)}
+#sheet .me-notes .note{padding:2px 0 2px 13px;margin:0;font-size:12.5px;line-height:1.35;background:none!important;border:0!important;box-shadow:none!important;border-radius:0;position:relative}
+#sheet .me-notes .note::before{content:"•";position:absolute;left:0;top:2px;color:var(--accent)}
+#sheet .me-go{margin-top:8px}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -14840,15 +14854,15 @@ function nextModal(){
  if(!m){if(S&&S.over)return endModal();hideModal();return}
  const [kind,d]=m;
  if(kind==="report"){
-  const row1=([n,v])=>`<tr><td>${esc(n)}</td><td class="${v>0?"up":v<0?"down":""}">${v?fmtOut(v,true):"—"}</td></tr>`,rows=d.lines.slice(0,d.lines.length>4?3:4).map(row1).join("")+(d.lines.length>4?`</table><details class="me-more"><summary>${d.lines.length-3} more</summary><table class="rep-table">${d.lines.slice(3).map(row1).join("")}</table></details><table class="rep-table">`:"");
+  const row1=([n,v])=>`<tr><td>${esc(n)}</td><td class="${v>0?"up":v<0?"down":""}">${v?fmtOut(v,true):"—"}</td></tr>`,_mL=d.lines.filter(l=>l[1]).concat(d.lines.filter(l=>!l[1])),_mT=Math.min(2,d.lines.filter(l=>l[1]).length),rows=_mL.slice(0,_mT).map(row1).join("")+(_mL.length>_mT?`</table><details class="me-more"><summary>${_mT?`${_mL.length-_mT} more`:`Your work this month (${_mL.length})`}</summary><table class="rep-table">${_mL.slice(_mT).map(row1).join("")}</table></details><table class="rep-table">`:"");
   const dl=Object.entries(d.delta).filter(([k,v])=>v&&(k!=="morale"||isTeam())).map(([k,v])=>{const good=(k==="rep"||k==="morale")?v>0:v<0;const lab={rep:R().repName,stress:"Stress",heat:CAR_().heatShort,morale:"Morale"}[k];return `<span class="chip ${good?"g":"b"}">${v>0?"+":"−"}${Math.abs(v)} ${lab}</span>`}).join("");
   showModal(`<div class="label">Age ${Math.floor(ageAt(S,d.day))} · ${esc(d.date)}</div><h2 style="margin-top:4px">End of the month</h2>
    <div class="label" style="margin-top:6px">${d.self?"What you earned from your work":CAR_().fmt==="pts"?`Your ${esc(CAR_().outName.toLowerCase())} this month`:"Value of your work to your employer"}</div>
    <div class="big-num me-big ${d.tot>=0?"up":"down"}" style="margin-top:2px">${fmtOut(d.tot,true)}</div>
    ${!d.self&&d.gross!=null?`<p class="hint" style="margin:2px 0 0">${CAR_().fmt==="pts"?"Counts towards your review target.":"Counts towards your review target. You're paid your salary."}</p>`:""}
    <table class="rep-table">${rows}</table>
-   ${d.gross!=null?`<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Living costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div><details class="me-more"><summary>Pay breakdown</summary><table class="rep-table"><tr><td>${d.self?"Your earnings (self-employed)":"Salary this month"}</td><td>${moneyX(d.gross)}</td></tr><tr><td>Income tax and National Insurance</td><td class="down">${moneyX(-d.tax)}</td></tr>${d.you?`<tr><td>Your pension contribution</td><td class="down">${moneyX(-d.you)}</td></tr>`:""}<tr><td><b>Take-home pay</b></td><td><b>${moneyX(d.pay)}</b></td></tr>${d.pen?`<tr><td>Into your pension (with tax relief and employer)</td><td class="up">${moneyX(d.pen,true)}</td></tr>`:""}</table></details>`:
-   `<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Living costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div>`}
+   ${d.gross!=null?`<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div><details class="me-more"><summary>Pay breakdown</summary><table class="rep-table"><tr><td>${d.self?"Your earnings (self-employed)":"Salary this month"}</td><td>${moneyX(d.gross)}</td></tr><tr><td>Income tax and National Insurance</td><td class="down">${moneyX(-d.tax)}</td></tr>${d.you?`<tr><td>Your pension contribution</td><td class="down">${moneyX(-d.you)}</td></tr>`:""}<tr><td><b>Take-home pay</b></td><td><b>${moneyX(d.pay)}</b></td></tr>${d.pen?`<tr><td>Into your pension (with tax relief and employer)</td><td class="up">${moneyX(d.pen,true)}</td></tr>`:""}</table></details>`:
+   `<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div>`}
    ${dl?`<div class="chips">${dl}</div>`:""}${typeof monthChoicesLine==="function"?monthChoicesLine(d):""}${typeof enMonthLine==="function"?enMonthLine(d):""}
    ${d.notes.length?`<div class="me-notes">${d.notes.map(n=>`<div class="note">${esc(n)}</div>`).join("")}</div>`:""}
    <div class="btn-row me-go"><button class="btn primary big" data-act="next">${modalQueue.length?"Continue":"Next month"}</button></div>`);
