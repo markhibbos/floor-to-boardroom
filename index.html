@@ -504,6 +504,16 @@ html,body{overflow-x:clip}
 .dg-q p{margin:4px 0 10px;font-size:16px;line-height:1.4}.dg-ans{display:grid;gap:8px}.dg-ans .btn{text-align:left;white-space:normal;height:auto;min-height:44px;padding:11px 14px;justify-content:flex-start;line-height:1.35}
 .dg-react{border-radius:12px;padding:12px 14px;margin:8px 0 10px;background:var(--surface2)}.dg-react p{margin:0 0 6px}.dg-react p:last-child{margin:0}
 .dg-love{background:rgba(222,64,120,.13)}.dg-ok{background:rgba(52,150,96,.12)}.dg-hate,.dg-cringe{background:rgba(205,72,48,.13)}
+.tier-badge{font-style:normal;font-family:var(--f-body);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;vertical-align:middle;background:rgba(176,128,40,.16);color:var(--accent,#9A6A12)}.tier-badge.elite{background:rgba(90,60,160,.16);color:#6A4BC2}
+#tourLayer{position:fixed;inset:0;z-index:2147483000}#tourLayer[hidden]{display:none}
+.tour-dim{position:absolute;inset:0;background:rgba(8,16,22,.74)}
+.tour-hole{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(8,16,22,.74);outline:3px solid var(--accent,#C08A2E);outline-offset:2px;pointer-events:none;transition:all .25s ease}
+.tour-card{position:absolute;left:16px;right:16px;margin:0 auto;max-width:460px;display:flex;gap:12px;align-items:flex-start;background:var(--surface,#fff);color:var(--ink);border-radius:18px;padding:14px 16px;box-shadow:0 18px 50px rgba(0,0,0,.35);animation:tourPop .25s ease}
+@keyframes tourPop{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.tour-mags{flex:none;width:64px;height:64px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px var(--accent,#C08A2E)}.tour-mags svg{width:100%;height:100%;display:block}
+.tour-body{min-width:0;flex:1}.tour-body h3{margin:2px 0 4px;font-family:var(--f-display);font-size:21px;line-height:1.1}.tour-body p{margin:0 0 8px;font-size:15px;line-height:1.45}
+.tour-dots{display:flex;gap:5px;margin:0 0 10px}.tour-dots i{width:7px;height:7px;border-radius:50%;background:var(--line,#ccc)}.tour-dots i.on{background:var(--accent,#C08A2E);width:18px;border-radius:4px}
+.tour-btns{display:flex;flex-wrap:wrap;gap:8px}.tour-got{font-weight:800;letter-spacing:.03em}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -4197,7 +4207,7 @@ const isLocked=id=>!!(CAREERS[id]&&CAREERS[id].secret)&&!unlocked().includes(id)
 function checkUnlocks(notes){
  if(!S||S.placeholder)return;const u=unlocked();let changed=false;
  for(const[id,sc]of Object.entries(SECRETS))if(!u.includes(id)&&sc.ok()){u.push(id);changed=true;const n=CAREERS[id].n;
-  notes&&notes.unshift(`Secret career unlocked: ${n}! You can pick it for a new life, or switch to it from the Career tab.`);S.log.unshift({d:S.day,t:`Secret career unlocked: ${n}.`});
+  notes&&notes.unshift(`${tierName(id)} career unlocked: ${n}! You can pick it for a new life, or switch to it from the Career tab.`);S.log.unshift({d:S.day,t:`${tierName(id)} career unlocked: ${n}.`});
   if(window.celebrate){sfx.fanfare();celebrate("big")}}
  if(changed)try{localStorage.setItem(UNLOCK_KEY,JSON.stringify(u))}catch(e){}
 }
@@ -16602,6 +16612,341 @@ function sackNote(){const id=S.path,t=R().t,emp=S.bank,owner=/owner|founder|part
  S.sel=null;S.selTries=Math.max(0,(S.selTries||1)-1);S.selFail=S.day-6;S.reviewStart=S.day+1;S.reviewPnl=0;S.health=clamp(S.health-6,0,100);S.stress=clamp(S.stress+4,0,100);
  S.log.unshift({d:S.day,t:"Medically withdrawn from selection. It doesn't count as an attempt."});
  moment({tone:"solemn",icon:"shield",kicker:"Medically withdrawn",title:"Injured out",sub:"Injuries don't count against your two attempts. Get fit, and you can go again in six months.",big:false})}}
+
+/* ============ Football gets its own match-day stories instead of the showbiz "big night" ============ */
+CASES.sport=[
+ {who:()=>pick(["a scout from a Champions League club","a scout from a Spanish giant","a scout from a top Premier League side"]),role:"talent spotter",t:"Derby day: {who} is in the stands",b:"It's the biggest game of the month, and {who} is watching from the directors' box.",
+  c:[{t:"Keep it simple and do your job",good:.7,o:"Disciplined and tidy."},{t:"Try something special",good:.5,o:"You go for the spectacular."}],
+  win:"Man of the match. {who} files a glowing report.",lose:"A nightmare afternoon. {who} leaves at half-time."},
+ {who:()=>pick(["a lad called Leo, your biggest fan","a girl called Maisie, who's made a banner with your name on it","a fan called Kayla, who's been to every away game this season"]),role:"supporter",t:"Match day: {who} is behind the goal",b:"It's a big home game, and {who} is behind the goal, hoping you'll wave.",
+  c:[{t:"Focus on the game",good:.7,o:"Head down, job done."},{t:"Go over before kick-off and sign their shirt",good:.55,o:"You jog over and sign it. The crowd loves it."}],
+  win:"You win, and {who} gets your shirt at full time. They'll never wash it.",lose:"You lose badly. {who} still claps you off, which almost makes it worse."},
+ {who:()=>pick(["a pundit who said you were finished","a journalist who wrote you off last season","a pundit who called you overrated on live TV"]),role:"critic",t:"Prove them wrong: {who} is on commentary",b:"It's a televised game, and {who} is in the commentary box.",
+  c:[{t:"Let your football do the talking",good:.65,o:"No fuss, just quality."},{t:"Celebrate in front of the TV gantry",good:.5,o:"You point straight up at the commentary box."}],
+  win:"You're brilliant. {who} has to admit it, live on air.",lose:"You have a stinker. {who} enjoys saying 'I told you so'."}
+];
+CASE_GROUP.foot="sport";CASE_GROUP.manager="sport";
+
+/* ============ Career fit: stories that don't suit some careers are kept away from them ============ */
+const AUDIT_FIX=[{"id":"datenight","notFor":["clubowner"]},{"id":"pipe","notFor":["plumb"]},{"id":"carpress","notFor":["pol","actor","tvchef"],"set":{"b":"The Evening Standout photographed you arriving in your {car} on the day {bank} announced job cuts."}},{"id":"wr_redund","notFor":["clubowner","pol","actor","tvchef","manager"]},{"id":"wr_freeze","notFor":["clubowner","actor","tvchef","pol"]},{"id":"wr_hot","notFor":["clubowner","pol","soldier","spy","police","fire","teach","astronaut","actor","tvchef"]},{"id":"wr_wfh","notFor":["doc","nurse","police","fire","soldier","chef","hair","elec","plumb","vet","pilot","manager","astronaut","spy","dj","music","actor","tvchef","cardealer"]},{"id":"wr_ai","notFor":["manager","clubowner","soldier","fire","police","elec","plumb","hair","chef","nurse","doc","teach","vet","pilot","astronaut","actor","tvchef"]},{"id":"se_party","notFor":["clubowner","actor"]},{"id":"lk_bake","notFor":["chef","tvchef"]},{"id":"pet_vet","notFor":["vet"]},{"id":"fr_job","notFor":["astronaut","spy","soldier","actor","clubowner"]},{"id":"bs_favour","notFor":["clubowner","actor","tvchef","hair","chef"],"set":{"b":"{boss} has been called away and asks you to stand in for them at a big meeting. Tomorrow."}},{"id":"bs_blame","notFor":["clubowner"]},{"id":"bs_human","notFor":["clubowner"]},{"id":"st_return","set":{"from":"Your heart","b":"You've been in {city} a good while now. You could come home, or stay for good."}},{"id":"st_fraud","notFor":["clubowner"]},{"id":"ls_loan","notFor":["foot","elec","plumb","hair"]},{"id":"se_ny2","notFor":["dj"]},{"id":"se_sum3","notFor":["dj","music"]}];
+for(const f of AUDIT_FIX){const e=EV.find(x=>x.id===f.id);if(!e)continue;if(f.notFor&&f.notFor.length)e.notFor=[...new Set((e.notFor||[]).concat(f.notFor))];if(f.set)Object.assign(e,f.set)}
+/* Owners, founders and partners run the place, so employee stories (pay freezes, redundancy rounds, the boss) don't reach them */
+const OWNER_SKIP=["wr_redund","wr_freeze","wr_hot","wr_ai","bs_favour","bs_blame","bs_human","se_party","st_fraud","fr_job","datenight"];
+const ownerRank=()=>{try{return selfPaid()||/owner|founder|partner|CEO|chief executive|chairman/i.test(R().t)}catch(e){return false}};
+{const _el2=eligible;eligible=function(e){if(e&&OWNER_SKIP.includes(e.id)&&ownerRank())return false;return _el2.apply(this,arguments)}}
+
+/* ============ Career tiers: basic careers are open, premium ones are earned in basic careers, elite ones are secret ============ */
+const PREMIUM={
+ law:{hint:"Reach the third rung as a teacher or police officer",ok:()=>bestRankIn("teach")>=2||bestRankIn("police")>=2},
+ doc:{hint:"Reach the third rung as a nurse",ok:()=>bestRankIn("nurse")>=2},
+ vet:{hint:"Reach the third rung as a nurse",ok:()=>bestRankIn("nurse")>=2},
+ pilot:{hint:"Reach the third rung as a soldier or firefighter",ok:()=>bestRankIn("soldier")>=2||bestRankIn("fire")>=2},
+ arch:{hint:"Reach the third rung as a software developer, electrician or plumber",ok:()=>bestRankIn("tech")>=2||bestRankIn("elec")>=2||bestRankIn("plumb")>=2},
+ pol:{hint:"Reach the fourth rung as a lawyer, teacher or police officer",ok:()=>bestRankIn("law")>=3||bestRankIn("teach")>=3||bestRankIn("police")>=3}
+};
+for(const[id,p]of Object.entries(PREMIUM)){if(!CAREERS[id])continue;CAREERS[id].secret=1;CAREERS[id].tier="premium";SECRETS[id]=p}
+for(const id of Object.keys(SECRETS))if(CAREERS[id]&&!CAREERS[id].tier)CAREERS[id].tier="elite";
+const tierName=id=>CAREERS[id]&&CAREERS[id].tier==="premium"?"Premium":"Elite";
+/* Careers you've already played stay open */
+function tiersGrandfather(){try{if(localStorage.getItem("ftb-tiers1"))return;const u=unlocked(),hof=(typeof hofLocal==="function"?hofLocal():[]).map(e=>String(e.careers||"")).join(", ");
+ for(const id of Object.keys(PREMIUM)){const n=CAREERS[id].n;if(!u.includes(id)&&(hof.includes(n)||(S&&!S.placeholder&&(S.path===id||(S.past||[]).some(p=>p.path===id)))))u.push(id)}
+ localStorage.setItem(UNLOCK_KEY,JSON.stringify(u));localStorage.setItem("ftb-tiers1","1")}catch(e){}}
+{const _st=start;start=function(){const r=_st.apply(this,arguments);tiersGrandfather();return r}}
+/* A locked card says which tier it is */
+lockedCard=function(c){const prem=c.tier==="premium";return `<button class="locked" disabled aria-label="A ${prem?"premium":"elite"} career, still locked">${careerIcon("lock")}<span><b style="font-size:16px">${prem?`Premium: ${esc(c.n)}`:"Elite career"}</b><span>${esc(SECRETS[c.id].hint)} to unlock.</span></span></button>`};
+
+/* ============ Elite starts: once you've made it into the SAS, MI5 or MI6, you can start a new life there ============ */
+const ELITE_KEY="ftb-elite";
+const ELITE_STARTS={
+ sas:{career:"soldier",n:"SAS-ish trooper",d:`Start straight in the ${SF_UNIT}, on special forces pay.`,hint:"Pass special forces selection as a soldier",has:()=>!!S.sf},
+ mi5:{career:"spy",n:"MI5-ish officer",d:"Start at Thames House, catching spies and plotters at home.",hint:"Be recruited by MI5-ish",has:()=>S.flags&&S.flags.spec_mi5!=null},
+ mi6:{career:"spy",n:"MI6-ish officer",d:"Start at Vauxhall Cross as a field officer, working overseas.",hint:"Be recruited by MI6-ish",has:()=>!!S.mi6||(S.flags&&S.flags.spec_mi6!=null)}
+};
+const eliteGot=()=>{try{return JSON.parse(localStorage.getItem(ELITE_KEY)||"[]")}catch(e){return[]}};
+{const _cu=checkUnlocks;checkUnlocks=function(notes){const r=_cu.apply(this,arguments);try{if(!S||S.placeholder)return r;const g=eliteGot();let ch=false;
+ for(const[k,E]of Object.entries(ELITE_STARTS))if(!g.includes(k)&&E.has()){g.push(k);ch=true;notes&&notes.unshift(`Elite start unlocked: ${E.n}. You can start a new life there.`);S.log.unshift({d:S.day,t:`Elite start unlocked: ${E.n}.`})}
+ if(ch)localStorage.setItem(ELITE_KEY,JSON.stringify(g))}catch(e){}return r}}
+window.__elite="";
+function eliteSec(){const g=eliteGot();return `<div class="label" style="margin-top:14px">Elite starts</div><div class="desk-pick career-pick">${Object.entries(ELITE_STARTS).map(([k,E])=>g.includes(k)?`<button data-act="elitepick" data-k="${k}" class="${window.__elite===k?"on":""}">${careerIcon(E.career)}<span><b style="font-size:17px">${esc(E.n)} <i class="tier-badge elite">Elite</i></b><span>${esc(E.d)}</span></span></button>`:`<button class="locked" disabled>${careerIcon("lock")}<span><b style="font-size:16px">Elite: ${esc(E.n)}</b><span>${esc(E.hint)} to unlock.</span></span></button>`).join("")}</div>`}
+XCLICK.elitepick=t=>{const k=t.dataset.k,E=ELITE_STARTS[k];if(!E||!eliteGot().includes(k))return;window.__elite=k;pickCareer=E.career;pickFocus="";
+ document.querySelectorAll('[data-act="career"],[data-act="elitepick"]').forEach(b=>b.classList.toggle("on",b.dataset.act==="elitepick"?b.dataset.k===k:false));const cb=document.getElementById("careerBlurb");if(cb)cb.textContent=E.d};
+document.addEventListener("click",e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-act="career"]');if(b){window.__elite="";document.querySelectorAll('[data-act="elitepick"]').forEach(x=>x.classList.remove("on"))}},true);
+/* Badges on the career grid, and the elite starts underneath */
+function tierDecorate(withElite){try{const sh=document.getElementById("sheet");if(!sh)return;sh.querySelectorAll('[data-act="career"]').forEach(b=>{const C=CAREERS[b.dataset.k];if(C&&C.tier&&!b.querySelector(".tier-badge")){const t=b.querySelector("b");if(t)t.insertAdjacentHTML("beforeend",` <i class="tier-badge ${C.tier}">${C.tier==="premium"?"Premium":"Elite"}</i>`)}});
+ if(withElite&&!sh.querySelector('[data-act="elitepick"]')&&!sh.querySelector(".elite-sec")){const grid=sh.querySelector(".career-pick");if(grid)grid.insertAdjacentHTML("afterend",`<div class="elite-sec">${eliteSec()}</div>`)}}catch(e){}}
+{const _sm=startModal;startModal=function(step){const r=_sm.apply(this,arguments);tierDecorate(true);return r}}
+{const _sw=switchModal;switchModal=function(){const r=_sw.apply(this,arguments);tierDecorate(false);return r}}
+/* Starting a new life in an elite role */
+{const _ng=newGame;newGame=function(name,career){const r=_ng.apply(this,arguments);try{const k=window.__elite,E=ELITE_STARTS[k];window.__elite="";if(E&&E.career===career&&eliteGot().includes(k)){
+ if(k==="sas"){S.age0=Math.max(S.age0||18,23);S.rank=1;S.rankSince=1;S.sf=1;S.bank=SF_UNIT;S.salMult=(S.salMult||1)*1.25;S.skill=Math.max(S.skill,50);S.rep=Math.max(S.rep,65)}
+ if(k==="mi5"){S.bank="Thames House";S.flags.spec_mi5=1}
+ if(k==="mi6"){S.age0=Math.max(S.age0||18,24);S.bank="Vauxhall Cross-ish";S.mi6=1;S.flags.spec_mi6=1;S.rank=1;S.rankSince=1}
+ S.log=S.log.filter(l=>!/^Started at /.test(l.t)); S.log.unshift({d:1,t:`Started as ${(/^([aeiou]|MI|SAS)/i.test(E.n)?"an ":"a ")+E.n}.`})}}catch(e){}return r}}
+
+/* ============ Audit 3: case stories and monthly stories that didn't fit every career ============ */
+/* --- New case groups, so nobody gets a story written for a different job --- */
+CASES.pol=[
+ {who:()=>pick(["a pensioner called Edna","a young mum called Shannon","a shopkeeper called Mr Okafor","a bus driver called Tony"]),role:"constituent",t:"{who} comes to your surgery",b:"{who} has come to your Friday surgery. The council has been ignoring their problem for months.",
+  c:[{t:"Take it up personally",good:.7,kind:1,o:"You write to the council, then ring them, then ring them again."},{t:"Raise it in Parliament",good:.5,o:"You get a question in, and a minister looks blank."}],
+  win:"{who} gets sorted, and tells the local paper you're the only one who listened.",lose:"Nothing changes. {who} tells the local paper you're all the same."},
+ {who:()=>pick(["the local hospice","a youth club called The Hut","the village library"]),role:"cause",t:"{who} needs a champion",b:"{who} is about to lose its funding and wants you to lead the campaign to save it.",
+  c:[{t:"Lead the campaign",good:.6,o:"Petitions, a march and a lot of photos in a hi-vis jacket."},{t:"Have a quiet word with the minister",good:.55,o:"A word in the right ear, over a cup of terrible tea."}],
+  win:"{who} is saved. You get a thank-you in their newsletter, and a lot of votes.",lose:"{who} closes anyway. Your opponents make sure everyone knows."}
+];
+CASES.owner=[
+ {who:()=>pick(["a sponsor called Mr Barrington","a sponsor called Mrs Achebe","a local builders' merchant"]),role:"sponsor",t:"{who} wants a deal",b:"{who} wants their name on the shirts next season, and wants an answer this month.",
+  c:[{t:"Drive a hard bargain",good:.55,o:"You ask for double, and keep a straight face."},{t:"Take the safe offer",good:.7,o:"You shake on it in the boardroom."}],
+  win:"{who} signs. The money pays for a new striker.",lose:"{who} walks away and sponsors your rivals instead."},
+ {who:()=>pick(["a striker called Marco","a winger called Danny","a young keeper called Kieran"]),role:"player",t:"{who} wants out",b:"{who} has handed in a transfer request, and the fans are furious.",
+  c:[{t:"Sit down and talk him round",good:.6,o:"Tea in the boardroom and a long chat."},{t:"Cash in while you can",good:.55,o:"You start taking calls from other clubs."}],
+  win:"It works out. {who} is happy, the fans are happy, and so is the bank manager.",lose:"It goes wrong. {who} ends up at your rivals, and the fans blame you."},
+ {who:()=>pick(["a fan called Big Steve","the supporters' trust","a season-ticket holder called Maureen"]),role:"supporter",t:"{who} wants a word about ticket prices",b:"{who} says season tickets are now too dear for ordinary families.",
+  c:[{t:"Freeze the prices",good:.7,kind:1,o:"It costs you, but it feels right."},{t:"Explain the finances",good:.5,o:"You bring a spreadsheet to a meeting in the pub."}],
+  win:"{who} backs you in the local paper. The ground is full every week.",lose:"{who} organises a protest. There are banners about you."}
+];
+CASES.dugout=[
+ {who:()=>pick(["a striker called Marco","a winger called Danny","a young striker called Kieran"]),role:"player",t:"{who} is out of form",b:"{who} hasn't played well in weeks, and the fans are on his back.",
+  c:[{t:"Drop him for a game",good:.6,o:"A hard conversation in your office."},{t:"Back him and keep picking him",good:.55,o:"You tell the press he's the first name on your teamsheet."}],
+  win:"{who} comes good and scores the winner. He thanks you in his interview.",lose:"{who} doesn't come good. The fans turn on you both."},
+ {who:()=>pick(["the chairman","the club's owner","a director of football called Graham"]),role:"boss",t:"Derby day: {who} is watching",b:"It's the biggest game of the month, and {who} is in the directors' box. Your job might depend on it.",
+  c:[{t:"Pick a safe team",good:.65,o:"Solid, organised and a bit dull."},{t:"Gamble on the youngsters",good:.5,o:"You throw in two teenagers."}],
+  win:"A famous win. {who} comes down to the dressing room to shake your hand.",lose:"A heavy defeat. {who} leaves before full time without a word."},
+ {who:()=>pick(["a pundit who said you were finished","a journalist who wrote you off last season","a pundit who called your tactics prehistoric"]),role:"critic",t:"Prove them wrong: {who} is on commentary",b:"It's a televised game, and {who} is in the commentary box.",
+  c:[{t:"Stick to your game plan",good:.65,o:"Tight, organised and patient."},{t:"Go all out to attack",good:.5,o:"You throw on three strikers."}],
+  win:"You win well. {who} has to admit it, live on air.",lose:"You're thrashed. {who} enjoys saying 'I told you so'."}
+];
+CASES.creator=[
+ {who:()=>pick(["a superfan called Kayla","a rival creator called Jaz","a teenage fan called Leo","a critic called Simon"]),role:"follower",t:"The big livestream: {who} is watching",b:"It's your biggest livestream of the month, and {who} is in the comments.",
+  c:[{t:"Keep it polished and on-brand",good:.7,o:"Good lighting, a script and no surprises."},{t:"Try something daring",good:.5,o:"You go off-script, live."}],
+  win:"A triumph. {who} clips it and it goes everywhere.",lose:"It flops. {who} clips that too."},
+ {who:()=>pick(["a skincare brand called Glowbar","a mattress company called Snoozo","a protein bar firm called Gainz"]),role:"sponsor",t:"{who} wants a sponsored post",b:"{who} wants you to tell your followers you love their product. You've never tried it.",
+  c:[{t:"Try it properly first",good:.7,kind:1,o:"A week of testing before you say a word."},{t:"Post it straight away",good:.45,o:"The money's good. You hit post."}],
+  win:"Your followers trust you, and {who} comes back with a bigger deal.",lose:"Your followers spot the fakery. {who} quietly drops you."}
+];
+CASES.air=[
+ {who:()=>pick(["a passenger called Mrs Patel","a young lad called Sam","a nervous flyer called Tony","a man in seat 14C"]),role:"passenger",t:"Trouble at 37,000 feet",b:"{who} has been taken ill mid-flight, two hours from the nearest big airport.",
+  c:[{t:"Divert to the nearest airport",good:.7,o:"You turn for the nearest runway and brief the cabin crew."},{t:"Carry on and get help waiting on the ground",good:.5,o:"A doctor on board thinks it might be all right."}],
+  win:"{who} is fine. The family writes to the airline to thank you by name.",lose:"{who} gets worse before you land. The inquiry clears you, but it stays with you."},
+ {who:()=>pick(["a stag party from Leeds","a man called Clive","a woman called Bev"]),role:"passenger",t:"{who} won't behave",b:"{who} has had far too much to drink and is causing trouble in the cabin. The crew want you to decide what happens.",
+  c:[{t:"Have a calm word yourself",good:.6,o:"You put your hat on and walk down the aisle."},{t:"Have the police meet the plane",good:.65,o:"You radio ahead."}],
+  win:"Calm returns. The crew buy you a drink in the hotel bar.",lose:"It gets worse before it gets better, and it ends up on the news."}
+];
+CASES.space=[
+ {who:()=>pick(["a crewmate called Yuri","a rookie astronaut called Mia","a flight engineer called Dev"]),role:"crewmate",t:"{who} is struggling",b:"{who} has been sleeping badly and making mistakes in training. The launch window is getting close.",
+  c:[{t:"Have a quiet word",good:.7,kind:1,o:"You find out what's going on at home."},{t:"Report it to the flight surgeon",good:.55,o:"By the book."}],
+  win:"{who} gets back on track and flies brilliantly. They say they owe you one.",lose:"{who} is pulled from the mission. They don't speak to you for a year."},
+ {who:()=>pick(["a girl called Ruby","a boy called Sam","a class from a school in Swindon"]),role:"fan",t:"{who} has a question",b:"{who} wants to know how to become an astronaut, and has asked you to visit their school.",
+  c:[{t:"Go in person, in the flight suit",good:.7,kind:1,o:"You bring a real space glove."},{t:"Send a signed photo and a long letter",good:.5,o:"You write four pages."}],
+  win:"{who} is over the moon. Years later, a letter arrives: they've been picked for astronaut training.",lose:"It falls a bit flat. {who} decides to be a vet instead."}
+];
+CASES.spy=[
+ {who:()=>pick(["an asset codenamed Kestrel","a nervous diplomat called Pavel","a defector called Irina"]),role:"asset",t:"{who} wants out",b:"{who} thinks they've been spotted and wants to be pulled out this month.",
+  c:[{t:"Get them out now",good:.6,o:"A safe house, a new passport and a very long drive."},{t:"Ask them to hold on for one more meeting",good:.45,o:"The intelligence could be priceless."}],
+  win:"{who} is safe, and the intelligence is gold. Nobody will ever know your name.",lose:"{who} vanishes. Officially, nothing happened. It stays with you."},
+ {who:()=>pick(["a junior officer called Tom","a new recruit called Asha","an analyst called Graham"]),role:"officer",t:"{who} has made a mistake",b:"{who} left a laptop on a train. It's encrypted. Probably.",
+  c:[{t:"Cover for them and fix it quietly",good:.5,o:"You make some calls you can't talk about."},{t:"Report it, by the book",good:.7,o:"Security takes over."}],
+  win:"The laptop turns up, untouched. {who} owes you for ever.",lose:"It goes to an inquiry. {who} is moved to a basement office with no windows."}
+];
+CASES.mil=[
+ {who:()=>pick(["a young private called Kyle","a recruit called Jess","a lance corporal called Deano"]),role:"soldier",t:"{who} is struggling",b:"{who} has gone quiet, missed a parade and hasn't been home on leave in months.",
+  c:[{t:"Take them for a brew and listen",good:.7,kind:1,o:"You find out what's going on at home."},{t:"Put them on a charge",good:.45,o:"Discipline first."}],
+  win:"{who} gets the help they need and makes sergeant one day. They never forget you.",lose:"{who} goes absent without leave. You wonder if you could have done more."},
+ {who:()=>pick(["a pensioner named Edna","a farmer called Bryn","a family called the Harrisons"]),role:"rescued",t:"Called out to the floods",b:"The army has been sent in after a week of storms, and {who} is cut off by the water.",
+  c:[{t:"Wade in yourself",good:.6,o:"You don't think, you act."},{t:"Wait for the boats",good:.7,o:"Calm, by the book."}],
+  win:"{who} is safe. The local paper prints a photo of you carrying them out.",lose:"It goes wrong. The inquiry clears you, but it stays with you."}
+];
+CASES.ward=[
+ {who:()=>pick(["Mrs Patel","Mr Hughes","Doreen","Arthur","Kofi","Grace"]),role:"patient",t:"{who} doesn't seem right",b:"{who}'s numbers look fine, but something about them worries you. The doctors are run off their feet.",
+  c:[{t:"Keep on at the doctors",good:.7,o:"You bleep the registrar three times."},{t:"Write it up and keep a close watch",good:.5,o:"You check on them every hour."}],
+  win:"{who} gets seen in time. The family says you saved their life.",lose:"{who} gets worse before anyone listens. A complaint arrives."},
+ CASES.med[1]
+];
+CASES.salon=[
+ {who:()=>pick(["Mrs Ainsworth","a woman called Clare","a very demanding influencer"]),role:"client",t:"{who}: the nightmare appointment",b:"{who} has changed their mind about the colour four times and is now threatening a one-star review.",
+  c:[{t:"Bend over backwards",good:.6,o:"You redo it, again."},{t:"Stand your ground politely",good:.55,o:"You explain what was agreed."}],
+  win:"{who} ends up recommending you to everyone they know.",lose:"{who} leaves a scathing review that follows you for months."},
+ {who:()=>pick(["a bride called Chloe","a bride called Priya","a bride called Gemma"]),role:"client",t:"{who}'s big day",b:"{who} wants hair for herself and six bridesmaids at 7am on Saturday, at a castle an hour away.",
+  c:[{t:"Do it all yourself",good:.55,o:"You set three alarms."},{t:"Bring in a colleague to help",good:.7,o:"Two pairs of hands, one very big bag of grips."}],
+  win:"{who} looks stunning. The photos go everywhere, with your name on them.",lose:"A bridesmaid's curls drop before the vows. {who} is not happy."}
+];
+CASES.kitchen=[
+ {who:()=>pick(["a food critic called Simon","a restaurant critic called Jaz","a famous food writer"]),role:"critic",t:"{who} is in tonight",b:"Word comes through: {who} has booked a table for tonight, under a fake name.",
+  c:[{t:"Stick to the dishes you know",good:.7,o:"Tight and polished."},{t:"Cook something daring",good:.5,o:"You take a risk."}],
+  win:"A glowing review. {who} calls it the best meal of the year.",lose:"{who} is not kind. The review is shared everywhere."},
+ {who:()=>pick(["a man called Clive","a very demanding influencer","a woman called Bev"]),role:"customer",t:"{who} sends it back",b:"{who} has sent the food back three times and is now threatening a one-star review.",
+  c:[{t:"Cook it again, with a smile",good:.6,o:"You make it a fourth time."},{t:"Go out and talk to them",good:.55,o:"You walk out in your whites."}],
+  win:"{who} ends up a regular, and tells everyone about you.",lose:"{who} leaves a scathing review that follows you for months."}
+];
+CASES.tv=[
+ {who:()=>pick(["a superfan called Kayla","a critic called Simon","a famous guest chef"]),role:"viewer",t:"Live TV: {who} is watching",b:"It's a live cookery slot this month, and {who} is watching every move.",
+  c:[{t:"Cook something you could do in your sleep",good:.7,o:"Tight and polished."},{t:"Try something daring, live",good:.5,o:"You flambé on live TV."}],
+  win:"A triumph. {who} becomes your biggest champion.",lose:"The soufflé collapses on air. {who} says so loudly."},
+ CASES.kitchen[0]
+];
+CASES.forecourt=[
+ {who:()=>pick(["a man called Clive","a young couple buying their first car","a very demanding influencer"]),role:"customer",t:"{who}: the nightmare customer",b:"{who} has test-driven six cars, haggled for three weekends and is now threatening a one-star review.",
+  c:[{t:"Throw in mats and a full tank",good:.6,o:"You sweeten the deal again."},{t:"Stand your ground politely",good:.55,o:"You explain what was agreed."}],
+  win:"{who} drives off happy and sends the whole family to you.",lose:"{who} leaves a scathing review that follows you for months."},
+ {who:()=>pick(["a pensioner called Arthur","a student called Jade","a nurse called Kemi"]),role:"customer",t:"{who} can't afford it",b:"{who} has fallen for a car they really can't afford. Your commission would be lovely.",
+  c:[{t:"Steer them to something cheaper",good:.7,kind:1,o:"You walk them over to a sensible hatchback."},{t:"Close the deal",good:.5,shady:1,o:"You find them some finance."}],
+  win:"{who} comes back years later to buy again, and brings friends.",lose:"The finance goes badly for {who}. A complaint lands on your desk."}
+];
+Object.assign(CASE_GROUP,{pol:"pol",clubowner:"owner",manager:"dugout",influencer:"creator",pilot:"air",astronaut:"space",spy:"spy",soldier:"mil",nurse:"ward",hair:"salon",chef:"kitchen",tvchef:"tv",cardealer:"forecourt"});
+
+/* --- Monthly stories: one filter on the way into the inbox --- */
+{
+ const DESK_JOBS=["bank","tech","law","arch","pol","spy","clubowner","cardealer"],MEET_JOBS=DESK_JOBS.concat(["teach","manager"]),
+  WFH_JOBS=["bank","tech","law","arch","pol","clubowner","influencer"],STRIKE_JOBS=["doc","nurse","teach","fire","pilot","elec","plumb","actor"],
+  PUBLIC_JOBS=["doc","nurse","teach","police","fire","soldier","spy","astronaut","pol"];
+ const noBoss=()=>soloJob()||S.rank>=4||S.path==="clubowner"||!S.boss||/^Independent/.test(S.bank||"");
+ const ww=()=>WORK_WORDS[S.path]||WORK_WORDS.tech;
+ const rep=(ev,pairs)=>{let s=JSON.stringify(ev);for(const[a,b]of pairs)s=s.replace(a,b);return JSON.parse(s)};
+ const CHATS={
+  influencer:{name:"Creators group chat 📱",lines:[["Mia","anyone else's views fallen off a cliff this week?"],["Tom","the algorithm hates us"],["Mia","@you how are yours SO good"]],
+   c:[{t:"Share your tips",fx:{rep:3,stress:1},o:"Mia suggests a collab. Both your numbers go up."},{t:"Stay quiet",fx:{},o:"Some secrets are worth keeping."}]},
+  gig:{name:"Gig mates 🎧",lines:[["Kev (promoter)","Headliner's pulled out of Saturday. Anyone free?"],["Dev","Can't, wedding gig"],["Priya","Can't, I'm in Leeds"],["Kev (promoter)","@you?"]],
+   c:[{t:"Volunteer",fx:{rep:3,stress:3},o:"You step in at a day's notice. Kev owes you one."},{t:"Stay quiet",fx:{},o:"Someone else steps up."}]},
+  trade:{name:"The trade lads 🔧",lines:[["Gaz","Anyone got a spare pair of hands Saturday? Big job, good money"],["Dev","Can't, wedding"],["Gaz","@you?"]],
+   c:[{t:"Volunteer",fx:{rep:3,stress:3},o:"Gaz sends a thumbs-up. High praise, from Gaz."},{t:"Stay quiet",fx:{},o:"Someone else steps up."}]},
+  squad:{name:"Squad chat ⚽",lines:[["Kit man","Whose boots are in the sauna?"],["Dev","not mine"],["Kit man","They're size 12 and they smell of Deep Heat"]],
+   c:[{t:"Reply with a joke",fx:{home:1,rep:1},o:"The whole squad replies with crying-laughing faces."},{t:"Stay quiet",fx:{},o:"You mute it until match day."}]},
+  cast:{name:"The cast 🎭",lines:[["Stage manager","Who left a sandwich in the props cupboard?"],["Dev","not me"],["Stage manager","It's been there since the read-through"]],
+   c:[{t:"Reply with a joke",fx:{home:1,rep:1},o:"Half the cast reply with sandwich emojis."},{t:"Stay quiet",fx:{},o:"You mute it until the next call sheet."}]},
+  staff:{name:"Coaching staff 📋",lines:[["Assistant manager","Training's moved to 10am. The pitch is frozen."],["Physio","I'll bring the kettle"],["Kit man","I'll bring the other kettle"]],
+   c:[{t:"Reply with a joke",fx:{home:1,rep:1},o:"Three kettles turn up. Morale is excellent."},{t:"Stay quiet",fx:{},o:"Someone else steps up."}]}
+ };
+ const fix=ev=>{
+  const id=ev.id,p=S.path,solo=soloJob(),W=ww();
+  /* The workplace stories: boss plots make no sense when you are the boss */
+  if(/^wp_/.test(id)){
+   if(noBoss()&&!["Gossip about you","An alliance","Office romance rumours"].includes(ev.t))return null;
+   if(!DESK_JOBS.includes(p))ev=rep(ev,[[/Office romance rumours/,"Rumours"],[/is landing on your desk/,"is landing on you"],[/ and a bigger desk/," and more say"]]);
+  }
+  /* Strikes, pay cuts and bonuses only where they really happen */
+  if(/^econ_/.test(id)){
+   if(ev.t==="Strike ballot"&&(!STRIKE_JOBS.includes(p)||S.rank>=4||selfPaid()))return null;
+   if(ev.t==="Saving jobs"&&(solo||S.rank>=4||p==="clubowner"))return null;
+   if(ev.t==="Boom time"&&(solo||PUBLIC_JOBS.includes(p)))return null;
+   if(ev.t==="Teachers' strike"&&p==="teach")return null;
+   if(ev.t==="Train strike"){
+    if(p==="influencer")return null;
+    if(p==="dj"||p==="music"){ev.b="The trains are on strike all week. Getting home from gigs just became a two-hour night-bus odyssey.";
+     ev.c=[{t:"Get a taxi home every night (£300)",fx:{gbp:-300,stress:-2},o:"Expensive, but you're in bed by three."},{t:"Brave the night buses",fx:{stress:6},o:"You learn the life stories of several bus drivers."}]}
+    else if(!WFH_JOBS.includes(p))ev.c=(ev.c||[]).map(c=>/^Work from home/.test(c.t)?{t:"Cadge lifts from people at work",fx:{stress:2},o:"You owe several people a lot of coffee."}:c);
+   }
+  }
+  if(/^sit_burnout/.test(id)&&!MEET_JOBS.includes(p))ev.b=ev.b.replace("in a meeting",p==="influencer"?"halfway through a livestream":(p==="dj"||p==="music")?"just before a gig":p==="foot"?"in the changing room":"at work");
+  if(/^sit_star/.test(id)){if(p==="spy")return null;
+   if(p==="foot"||p==="manager")ev=rep(ev,[[/You're asked to give the opening talk at your industry's biggest conference\./,"You're asked to give the main speech at a big football awards dinner."],[/Your clicker breaks\. You wing it, badly\./,"You lose your notes. You wing it, badly."]])}
+  if(/^resol_/.test(id)&&solo)ev.b=ev.b.replace("Everyone at work","Everyone you know");
+  /* The work group chat */
+  if(/^chat_/.test(id)&&ev.from===`${S.bank} team`){
+   if(p==="spy")return null;
+   const k=p==="influencer"?"influencer":(p==="dj"||p==="music")?"gig":p==="foot"?"squad":p==="manager"?"staff":p==="actor"?"cast":solo?"trade":null;
+   if(k){const C=CHATS[k];ev.from=ev.t=C.name;ev.chat=C.lines;ev.c=C.c}
+   else if(noBoss()){ev.chat=(ev.chat||[]).map(([w,t])=>[w==="Your boss"?"Your deputy":w,t]);ev=rep(ev,[[/The boss sends a thumbs-up\. High praise\./,"The team are quietly impressed."]])}
+  }
+  if(/^fk_social/.test(id)){
+   if(noBoss())ev.b=ev.b.replace("a photo of you and your boss",solo?"a photo of you and your agent":"a photo of you and a colleague");
+   if(!DESK_JOBS.includes(p))ev=rep(ev,[[/becomes the office's favourite commenter/,"becomes everyone's favourite commenter"]]);
+  }
+  /* Birthdays and Christmas at work */
+  if(/^bds_/.test(id)){
+   if(ev.from==="The office"){if(solo)return null;ev.from=cap1(W[0]);if(!DESK_JOBS.includes(p))ev.b=ev.b.replace("gathering round your desk","gathering round you")}
+   if(solo)ev=rep(ev,[[/Mention it loudly at work/,"Drop a hint online"],[/A panic dash to the shop\. A slightly squashed cake appears by lunchtime\./,"Your phone explodes. Most of the messages say 'sorry, sorry, sorry'."]]);
+  }
+  if(/^xs_santa/.test(id)){if(solo)return null;ev.from=cap1(W[0]);ev.b=ev.b.replace("in the whole office","at work")}
+  if(/^hc_smoke/.test(id)&&solo)ev.from=p==="influencer"?"A friend":"Someone backstage";
+  if(/^hc_impress/.test(id)&&p==="clubowner")ev=rep(ev,[[/"A client"/,'"A sponsor"'],[/A client notices your car/,"A sponsor notices your car"],[/A big client/,"A big sponsor"]]);
+  /* Job follow-ups: spies don't get thank-you cards or local press */
+  if(/^js_/.test(id)){
+   if(p==="spy"&&/^js_(press|thanks)/.test(id))return null;
+   if(noBoss())ev=rep(ev,[[/ [^."]* wants to know what happened\./," Questions are being asked."],[/A complaint lands on your boss's desk\./,"A complaint goes in, and it sticks."],[/[^"]* hears about it too\./,"Word gets around."]]);
+  }
+  /* The work games invitations */
+  if(/^arc_/.test(id)){
+   const occ=String(ev.t).split(":")[0],rest=String(ev.t).slice(occ.length);let nf=null,no=null;
+   if(solo||/^Independent/.test(S.bank||"")){[nf,no]=pick(p==="influencer"?[["Your followers","A live challenge"],["The charity committee","The charity challenge"],["The summer fete","The summer fete"]]:[["Your mates","Pub games night"],["The charity committee","The charity challenge"],["The summer fete","The summer fete"],["A local promoter","The backstage challenge"]])}
+   else{if(ev.from==="Your boss"&&noBoss()){nf="Your team"}
+    if(ev.from==="The office party planner"&&!DESK_JOBS.includes(p)){nf="The Christmas party planner"}}
+   if(nf){ev.from=nf;if(no)ev.t=no+rest}
+  }
+  if(/^fm_/.test(id)&&p==="spy")return null;
+  if(/^post_/.test(id)&&(solo||["actor","tvchef","influencer"].includes(p)))return null;
+  /* Takeovers of an agency, not an office */
+  if(/^to_/.test(id)&&["actor","influencer","music"].includes(p)){
+   if(/^Independent/.test(S.bank||""))return null;
+   ev.from="Your agent";ev=rep(ev,[[/New owners, new bosses, and everyone's talking about cuts\./,"New owners, and talk of dropping clients."],[/New bosses, new rules, and talk of cuts\./,"New owners, and talk of dropping clients."],[/Half your team doesn't\./,"Half the client list doesn't."]]);
+   ev.c=(ev.c||[]).filter(c=>!/voluntary redundancy/.test(c.t));
+  }
+  if(/^frl_/.test(id)){
+   ev=rep(ev,[[/has joined Independent( creator)?, in/,"has gone out on their own, in"]]);
+  }
+  /* Callbacks from old cases: pets have owners, and spies stay secret */
+  if(/^ccb_/.test(id)){
+   const n=ev.from,pp=(S.people||[]).find(x=>x.n===n&&x.caseOutcome),how=(pp&&pp.how)||"",good=pp?pp.caseOutcome==="good":/ again$/.test(ev.t);
+   if(/^Your client: .*(Labrador|cat|tortoise|pig)/.test(how))ev.b=good?`${n}'s owner tracks you down years later. ${n} is old and grey now, and still going strong. They want to thank you properly.`:`${n}'s owner has never forgiven you, and has posted a long review about you online. It's going viral.`;
+   if(/^Your (asset|officer):/.test(how)){
+    if(good){ev.b="A postcard arrives with no return address and no signature. Just two words: 'Thank you.' You know exactly who sent it.";ev.c=[{t:"Keep it in a drawer",fx:{home:2,karma:2},o:"It feels good to have made a difference. You can never tell anyone."}]}
+    else{ev.b=`Someone has been asking questions about what happened to ${n}. Quiet, careful questions.`;ev.c=[{t:"Report it to security",fx:{stress:4,heat:-3},o:"Security takes it from here. You don't sleep well for a week."},{t:"Look into it yourself",p:.5,win:{fx:{rep:3},o:"It's a journalist. They give up."},lose:{fx:{rep:-5,heat:6},o:"It ends up in front of a committee."}}]}
+   }
+  }
+  /* Nobody to impress when you are the boss */
+  if(noBoss()&&JSON.stringify(ev).includes("The boss notices."))ev=rep(ev,[[/The boss notices\./g,"People notice."]]);
+  return ev;
+ };
+ const _pd3=pushDyn;pushDyn=function(ev){
+  if(S&&ev&&typeof ev.id==="string"&&!S.over){let out=ev;try{out=fix(Object.assign({},ev))}catch(e){out=ev}if(!out)return;return _pd3.call(this,out)}
+  return _pd3.apply(this,arguments)};
+}
+/* --- Photo album captions for people without an employer --- */
+{const _sn3=snap;snap=function(o){try{if(o&&S){
+  if(typeof o.t==="string"&&/^First day at Independent/.test(o.t))o=Object.assign({},o,{t:S.path==="influencer"?"My first post as a creator":S.path==="actor"?"My first audition":"My first gig"});
+  if(o.s==="A card signed by the whole office, except your boss."&&(soloJob()||S.rank>=4||!["bank","tech","law","arch","pol","spy","cardealer"].includes(S.path)))o=Object.assign({},o,{s:soloJob()||S.rank>=4?"A card from your mum, with a tenner in it.":"A card signed by everyone at work, except your boss."});
+ }}catch(e){}return _sn3.apply(this,[o].concat([].slice.call(arguments,1)))}}
+
+
+/* ============ First-time guide: Mags the mentor shows you round ============ */
+const TOUR_KEY="ftb-tour";
+const tourSeen=()=>{try{return localStorage.getItem(TOUR_KEY)==="1"}catch(e){return false}};
+const navBtn=re=>[...document.querySelectorAll(".nav button,.nav a")].find(b=>re.test(b.textContent.trim()));
+const TOUR=[
+ {t:"Hi, I'm Mags",b:"I've watched a thousand careers start. Let me show you round. It takes thirty seconds.",el:null},
+ {t:"Your life at a glance",b:"Your age, what you've earned this year, the cash in your pocket and everything you own.",el:()=>document.querySelector(".top-stats")},
+ {t:"Your work",b:"This is your desk. Each month, pick the work you'll do. Bigger jobs pay more, but they take more hours.",el:()=>{const w=[...document.querySelectorAll("#pane-desk button")].find(b=>b.textContent.trim()==="Work");return w?w.parentElement:document.querySelector("#pane-desk")}},
+ {t:"Your inbox",b:"Life happens here. Read each message and choose what to do. There's no wrong answer, just a different life.",el:()=>navBtn(/^Inbox/)},
+ {t:"Your life",b:"Home, family, friends, money, dating and free time. It all lives in here.",el:()=>navBtn(/^Life/)},
+ {t:"The big button",b:"It always tells you what to do next. When everything's done, tap it to finish the month.",el:()=>document.getElementById("navClose")},
+ {t:"The menu",b:"Saved games, settings, the full guide and your trophies are in here.",el:()=>document.querySelector('[data-act="menu"]')},
+ {t:"That's it!",b:"Make good choices. Or at least interesting ones. I'll be cheering you on.",el:null}
+];
+let tourI=-1;
+function magsSVG(){const av=Object.assign(avDefault("Mags the mentor","f"),{glasses:true,hair:3});return `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="#F3E2BD"/>${avatarInner({av,ageOver:58,photo:1,outfit:"smart",nw:0,smile:true})}</svg>`}
+function tourShow(){let L=document.getElementById("tourLayer");if(!L){L=document.createElement("div");L.id="tourLayer";document.body.appendChild(L)}
+ const st=TOUR[tourI];if(!st){tourEnd(false);return}
+ let el=null;try{el=st.el&&st.el()}catch(e){}
+ if(el&&el.getBoundingClientRect().height===0)el=null;
+ if(el){const r0=el.getBoundingClientRect();if(r0.top<60||r0.bottom>innerHeight-20){el.scrollIntoView({block:"center"})}}
+ const r=el?el.getBoundingClientRect():null,pad=6;
+ const hole=r?`<div class="tour-hole" style="top:${r.top-pad}px;left:${r.left-pad}px;width:${r.width+pad*2}px;height:${r.height+pad*2}px"></div>`:`<div class="tour-dim"></div>`;
+ const below=r&&r.top<innerHeight/2;const pos=!r?"top:50%;transform:translateY(-50%)":below?`top:${Math.min(innerHeight-260,r.bottom+16)}px`:`bottom:${Math.max(16,innerHeight-r.top+16)}px`;
+ const dots=TOUR.map((x,i)=>`<i class="${i===tourI?"on":""}"></i>`).join("");
+ L.innerHTML=`${hole}<div class="tour-card" style="${pos}" role="dialog" aria-label="${esc(st.t)}">
+  <div class="tour-mags">${magsSVG()}</div>
+  <div class="tour-body"><div class="label">Mags, your mentor</div><h3>${esc(st.t)}</h3><p>${esc(st.b)}</p>
+   <div class="tour-dots">${dots}</div>
+   <div class="tour-btns">${tourI>0&&tourI<TOUR.length-1?`<button class="btn sm" data-tour="back">Back</button>`:""}${tourI<TOUR.length-1?`<button class="btn sm primary" data-tour="next">${tourI===0?"Show me":"Next"}</button>`:""}<button class="btn sm ${tourI===TOUR.length-1?"primary big":""} tour-got" data-tour="got">I GOT IT!</button></div></div></div>`;
+ L.hidden=false}
+function tourStart(force){if(!force&&tourSeen())return false;tourI=0;tourShow();return true}
+function tourEnd(save){const L=document.getElementById("tourLayer");if(L){L.hidden=true;L.innerHTML=""}tourI=-1;if(save)try{localStorage.setItem(TOUR_KEY,"1")}catch(e){}window.scrollTo(0,0);setTimeout(()=>{try{sceneCheck()}catch(e){}},150)}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-tour]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.tour;
+ if(a==="next"){tourI++;tourShow()}else if(a==="back"){tourI=Math.max(0,tourI-1);tourShow()}else if(a==="got"){tourEnd(true);try{sfx.good()}catch(e){}}},true);
+addEventListener("resize",()=>{if(tourI>=0)tourShow()});
+/* First game ever: the guide instead of the long help page. The full guide is still in the menu. */
+{const _hm=helpModal;helpModal=function(){if(!tourSeen()&&S&&!S.placeholder&&!window.__noMoments){setTimeout(()=>{if(!tourStart())_hm()},400);return}return _hm.apply(this,arguments)}}
+XCLICK.tourreplay=()=>{hideModal();setTimeout(()=>{tab="desk";render();tourStart(true)},250)};
+{const _set=settingsModal;settingsModal=function(){const r=_set.apply(this,arguments);try{const g=document.querySelector("#sheet .menu-grid");if(g&&!g.querySelector('[data-act="tourreplay"]'))g.insertAdjacentHTML("afterbegin",`<button class="btn" data-act="tourreplay">Show the guide again</button>`)}catch(e){}return r}}
+
 
 function start(data){
  S=(data&&data.S)||load();
