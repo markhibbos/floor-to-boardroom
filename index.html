@@ -656,6 +656,7 @@ html,body{overflow-x:clip}
 .lb-lt .label.up{color:var(--up)}.lb-lt .label.down{color:var(--down)}
 .buy-house{position:relative;max-width:300px;margin:4px auto 34px}.buy-house>svg{width:100%;height:auto;border-radius:14px}.buy-faces{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%);display:flex;gap:4px}.buy-faces svg{width:62px;height:62px;border-radius:50%;border:3px solid var(--surface,#fff);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .en-now{display:block;font-size:12px;color:var(--accent);font-weight:600;margin-top:1px}
+.help-quick{list-style:none;padding:0;margin:10px 0 6px;display:flex;flex-direction:column;gap:9px}.help-quick li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.35}.hq-i{font-size:20px;line-height:1;flex:none;width:26px;text-align:center}.help-more{margin:6px 0 4px}.help-more summary{cursor:pointer;color:var(--muted);font-size:13.5px;padding:4px 0}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -15095,7 +15096,11 @@ const HELP12={
  jobs:`<tr><td><b>1. Read the brief</b><br>Headlines tell you which kinds of work are in demand. Confirmed stories are right about 7 times in 10, and those jobs pay half as much again. Rumours are a coin flip.</td></tr><tr><td><b>2. Book your month</b><br>Pick jobs to fit your hours and choose how to do each one. Rushing is quick but goes wrong more, and can raise your risk score. The premium option pays more but takes longer. Your skill grows with every job.</td></tr>`,
  football:`<tr><td><b>1. Train well</b><br>On training days, balance fitness and form. Double sessions build you up but can injure you. Rest when you're tired. Below 35 fitness the manager rests you.</td></tr><tr><td><b>2. Win on match day</b><br>Two matches a week. Choose how to play: safe, team player or go for glory. Your rating, goals and assists earn performance points. Cards raise your discipline score.</td></tr>`};
 function helpModal(){
+ const workLine={markets:"Read the news, then take your positions on the Desk.",jobs:"Pick this month's work on the Desk.",football:"Train, then play the match on the Desk."}[CAR_().mech]||"Do this month's work on the Desk.";
+ const quick=[["💼","Work",workLine],["✉️","Inbox","Answer every message. Your choices are remembered."],["⚡","Energy","Everything uses it. Overspend and next month starts tired."],["❤️","People","Give them your time, or they drift away."],["🏁","Next month","Tap the big button at the bottom when you're done."],["🎯","Climb","Hit your targets to get promoted. Stress or trouble at 100 ends your career."]];
  showModal(`<div class="label">Guide</div><h2 style="margin-top:4px">How to play</h2>
+  <ul class="help-quick">${quick.map(([i,t,d])=>`<li><span class="hq-i" aria-hidden="true">${i}</span><span><b>${t}</b> ${d}</span></li>`).join("")}</ul>
+  <details class="help-more"><summary>Tell me more</summary>
   <table class="rep-table help">
    ${HELP12[CAR_().mech]}
    <tr><td><b>Energy</b><br>Each month you get a batch of energy (the ⚡ bar at the top). Work, operations, courses, dates, friends, family, the gym, hobbies and holidays all use it. Set your work hours on the Desk, from Coasting to All-in. You can overspend, but the overspend comes off next month with interest, and months of it lead to burnout. Rest, quiet months and the right holiday recharge you. You get less energy, and recover more slowly, as you get older.</td></tr>
@@ -15108,7 +15113,7 @@ function helpModal(){
    <tr><td><b>7. Expect the unexpected</b><br>The economy swings between booms, recessions, crashes and crises, changing house prices, bills and your work. The calendar brings Christmas, holidays and birthdays, and life throws in luck, pets and long-term ambitions. Every January you get a year in review.</td></tr>
    <tr><td><b>8. Make it yours</b><br>Pick traits and a challenge when you start, keep your best friend close, play the monthly bonus game, and when a life ends you can carry on as your child. Try the daily challenge to compete with everyone on the same life.</td></tr>
    <tr><td><b>How it ends</b><br>Pass three reviews in the top job, sell up, retire early at £15m, crash out through stress, your risk score, your boss or your bank balance, or die before your time.</td></tr>
-  </table>
+  </table></details>
   <div class="btn-row"><button class="btn primary big" data-act="${S&&S.over?"newcareer":"hide"}">Got it</button></div>`);
 }
 
