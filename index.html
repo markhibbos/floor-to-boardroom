@@ -16961,6 +16961,188 @@ function soloRename(){try{if(!S||!SOLO_BRAND[S.path])return;const C=CAREERS[S.pa
 {const _sc2=switchCareer;switchCareer=function(){const r=_sc2.apply(this,arguments);soloRename();try{save();render()}catch(e){}return r}}
 {const _st2=start;start=function(){const r=_st2.apply(this,arguments);try{soloRename();if(S&&!S.placeholder){save();render()}}catch(e){}return r}}
 
+/* ============ Operations that grow with your rank ============ */
+const OPS_TIERS={
+ bank:{kinds:["The trade","The deal","The big deal","The takeover","The mega-merger"],names:[
+  ["the gilt trade","the Friday-afternoon sterling punt","the client's oil hedge","the small-cap block sale","the overnight bond position"],
+  ["the pension fund rebalance","the euro bond issue","the hedge fund's big order","the retailer's share placing","the currency swap for the airline"],
+  ["the supermarket bond deal","the energy company's rights issue","the brewery buyout","the tech float","the property fund sale"],
+  ["the hostile bid for the builder","the water company takeover","the football club buyout","the takeover of the rival bank","the defence firm sale"],
+  ["the transatlantic bank merger","the national rail sell-off","the oil giants' merger","the sovereign wealth fund mandate","the government bailout"]]},
+ elec:{kinds:["The job","The contract","The big contract","The tender","The national contract"],names:[
+  ["the kitchen sockets","the garage rewire","the loft lights","the consumer unit swap","the shop's emergency lights"],
+  ["the terrace house rewire","the pub refit","the dentist's surgery","the barn conversion","the café's new kitchen"],
+  ["the hotel rewire","the stadium lights","the hospital wing","the new school","the shopping-centre refit"],
+  ["the business park tender","the new housing estate","the council's street lighting","the university campus","the airport terminal refit"],
+  ["the motorway lighting contract","the national hospital programme","the new nuclear station","the high-speed rail stations","the offshore wind connections"]]},
+ plumb:{kinds:["The job","The contract","The big contract","The tender","The national contract"],names:[
+  ["the leaking tap","the blocked kitchen sink","the radiator bleed","the new toilet","the burst pipe under the stairs"],
+  ["the bathroom refit","the combi boiler swap","the pub cellar pipework","the loft-conversion en suite","the heat pump install"],
+  ["the hotel bathrooms","the hospital boilers","the block of flats","the swimming-pool plant room","the stately home"],
+  ["the council housing tender","the new-build estate","the university halls","the leisure centre refit","the care home chain"],
+  ["the national boiler upgrade scheme","the government heat-pump rollout","the NHS estates contract","the social housing contract","the new town's heating network"]]},
+ hair:{kinds:["The appointment","The booking","The big booking","The show","The launch"],names:[
+  ["the Saturday blow-dry rush","the school-prom updos","the nervous first fringe","the regular's perm","the bridesmaid trial"],
+  ["the bridal party","the full head of highlights","the big chop for charity","the local news presenter","the colour correction"],
+  ["the celebrity wedding","the fashion-week show","the TV makeover","the hen party of twelve","the magazine cover shoot"],
+  ["the second salon opening","the London fashion week backstage","the hair awards night","the West End musical","the film premiere"],
+  ["the own-brand product launch","the national chain rollout","the New York flagship","the supermarket shampoo deal","the global franchise deal"]]},
+ chef:{kinds:["The prep","The service","The big service","The new menu","The opening"],names:[
+  ["the Sunday lunch rush","the veg prep for two hundred","the staff tea","the stock for the week","the dessert section on a Friday"],
+  ["the fish section on a Saturday","the hen party set menu","the Mother's Day lunch","the bank-holiday barbecue","the tasting for the regulars"],
+  ["the wedding banquet","the critic's visit","the charity gala","Valentine's night","the private party"],
+  ["the spring menu launch","the Michelin inspector's lunch","the royal visit","the pop-up in Mayfair","the food festival tent"],
+  ["the new flagship opening","the second Michelin star","the Paris restaurant opening","the hotel group deal","the state banquet"]]},
+ tech:{kinds:["The ticket","The feature","The big launch","The platform","The flotation"],names:[
+  ["the login bug","the broken button on Safari","the slow search page","the password reset email","the cookie banner"],
+  ["the payments update","the new app","the dark mode","the checkout redesign","the notifications rework"],
+  ["the database migration","the AI feature","the mobile relaunch","the move to the cloud","the security overhaul"],
+  ["the Series B pitch","the platform rebuild","the US launch","the bank partnership","the acquisition of the rival start-up"],
+  ["the stock market flotation","the government contract","the billion-user milestone","the global outage review","the AI lab acquisition"]]},
+ foot:{kinds:["The match","The big match","The cup tie","The final","The tournament"],names:[
+  ["the youth cup tie","the under-18s derby","the reserves friendly","the academy trial game","the pre-season kickabout"],
+  ["the reserves derby","the League Cup first round","the midweek away trip","the pre-season tour","the debut off the bench"],
+  ["the local derby","the cup quarter-final","the relegation six-pointer","the Boxing Day clash","the title decider"],
+  ["the cup final","the European away tie","the play-off final","the last day of the season","the Champions League night"],
+  ["the World Cup qualifier","the Euros semi-final","the World Cup final","the match against Germany","the penalty shootout in Rome"]]},
+ law:{kinds:["The file","The case","The big case","The landmark case","The case of the decade"],names:[
+  ["the parking appeal","Patel v Brown","the house purchase","the tenancy dispute","the will with three versions"],
+  ["Hale v Hale","the unfair dismissal claim","the boundary dispute","R v Okafor","the café's lease"],
+  ["the Brightwater merger","the Thames Water claim","the pension scandal","R v Ashdown","the builder's insolvency"],
+  ["the supermarket price-fixing case","the hospital negligence class action","the football club's sale","the oil spill claim","the newspaper libel trial"],
+  ["the Supreme Court appeal","the public inquiry","the government's Brexit case","the global bank fraud trial","the tech giant's privacy case"]]},
+ doc:{kinds:["The shift","The list","The theatre list","The service","The hospital"],names:[
+  ["the night on the wards","the A&E Friday","Monday's clinic","the discharge letters backlog","the cardiac arrest bleep"],
+  ["Monday's list","the emergency list","the weekend list","the trauma list","the fracture clinic"],
+  ["the complex bowel case","the twelve-hour operation","the kidney transplant","the conjoined twins","the teaching list"],
+  ["the new cancer centre","the winter bed crisis","the waiting-list blitz","the robotic surgery service","the department inspection"],
+  ["the pandemic response","the hospital merger","the national screening programme","the new hospital build","the regulator's review"]]},
+ teach:{kinds:["The lesson","The test","The big inspection","The school year","The trust"],names:[
+  ["the Year 7 spelling test","the lesson observation","the cover lesson for 9X","the school trip to the museum","the wet-play lunchtime"],
+  ["the mock exams","the parents' evening","the coursework deadline","the school play","the Year 9 options evening"],
+  ["the Ofsted-ish visit","the GCSE results day","the department review","the A-level moderation","the trust review"],
+  ["the new school building","the budget crisis","the results turnaround","the merger with the primary","the head's first Ofsted"],
+  ["the takeover of six schools","the national results tables","the new free school","the trust-wide inspection","the government white paper"]]},
+ police:{kinds:["The callout","The case","The investigation","The major inquiry","The national operation"],names:[
+  ["the shoplifter at the Co-op","the noisy neighbours","the stolen bike","the town-centre Saturday night","the missing dog"],
+  ["the car-wash fraud","the phone-shop gang","the burglaries on Elm Road","the stolen catalytic converters","the doorstep scam"],
+  ["the Harbour Street robberies","the missing courier","the warehouse fire","the canal-path attacks","the county lines network"],
+  ["the cold-case murder","the drugs empire","the kidnap inquiry","the people-smuggling ring","the corrupt councillor"],
+  ["the terror plot","the royal wedding security","the summit policing","the nationwide riots","the cyber-crime crackdown"]]},
+ pol:{kinds:["The briefing","The vote","The big vote","The bill","The election"],names:[
+  ["the MP's surgery notes","the constituency newsletter","the press release","the question for PMQs","the speech for the backbencher"],
+  ["the by-election","the local hospital campaign","the bypass consultation","the town-hall public meeting","the green-belt fight"],
+  ["the housing bill","the select committee grilling","the high-speed rail debate","the schools funding vote","the council-tax row"],
+  ["the budget vote","the party conference speech","the health service reforms","the defence review","the leadership hustings"],
+  ["the general election","the emergency budget","the international summit","the referendum","the vote of no confidence"]]},
+ pilot:{kinds:["The sim check","The rotation","The long-haul trip","The command","The operation"],names:[
+  ["the engine failure drill","the crosswind landing check","the night circuit","the first line training flight","the emergency evacuation drill"],
+  ["the Malaga shuttle","the Edinburgh early","the Tenerife turnaround","the Paris hop","the Dublin rotation"],
+  ["the New York trip","the Singapore trip","the Cape Town trip","the Delhi trip","the Tokyo trip"],
+  ["the first command check","the Sydney via Singapore","the volcanic ash diversion","the snowstorm at Heathrow","the transatlantic in a storm"],
+  ["the new long-haul fleet","the summer schedule","the air-traffic strike","the safety audit","the airline's new routes to Asia"]]},
+ nurse:{kinds:["The shift","The ward round","The ward this month","The hospital this month","The service"],names:[
+  ["the tea round","the night on Ward 7","the bed baths","the obs round","the Christmas Day shift"],
+  ["the drugs round","Ward 7","the medical admissions unit","the children's ward","the surgical ward"],
+  ["the ward inspection","the winter pressures","the staffing crisis","the new ward opening","the flu outbreak"],
+  ["the whole of medicine","the infection control drive","the agency staff ban","the new A&E","the regulator's visit"],
+  ["the trust-wide nursing review","the national nursing strategy","the pandemic surge","the recruitment drive abroad","the hospital merger"]]},
+ fire:{kinds:["The shout","The incident","Incident command","The major incident","The national emergency"],names:[
+  ["the chip-pan fire","the cat up a tree","the bin fire","the car in the ditch","the false alarm at the school"],
+  ["the house fire on Mill Lane","the barn fire","the lift rescue","the river rescue","the kitchen fire at the takeaway"],
+  ["the tower-block fire","the chemical works","the motorway pile-up","the warehouse blaze","the moorland fire"],
+  ["the flooded estate","the train derailment","the hospital fire","the factory explosion","the gas main blast"],
+  ["the summer wildfires","the national floods","the city-centre terror attack","the oil terminal fire","the collapse of the bridge"]]},
+ vet:{kinds:["The appointment","The case","The big case","The practice","The group"],names:[
+  ["the puppy jabs","the cat with fleas","the rabbit's teeth","the hamster that bit","the dog that ate a sock"],
+  ["the police dog","the lambing season","the guinea pig surgery","the pony with colic","the Labrador's broken leg"],
+  ["the racehorse","the farm outbreak","the zoo's tiger","the prize-winning cow","the dog that swallowed a ring"],
+  ["the new animal hospital","the out-of-hours service","the buyout of the rival practice","the TV vet series","the equine centre"],
+  ["the national practice chain","the bird flu outbreak","the foot-and-mouth scare","the pet insurance deal","the pet food brand"]]},
+ arch:{kinds:["The drawing","The project","The big pitch","The commission","The landmark"],names:[
+  ["the kitchen extension","the loft conversion","the window schedule","the garage drawings","the planning drawings for the shed"],
+  ["the village hall","the barn conversion","the new GP surgery","the eco house","the school rebuild"],
+  ["the riverside library","the new museum","the tower in Canary Wharf","the hospital extension","the station redevelopment"],
+  ["the Olympic stadium","the new concert hall","the airport terminal","the university campus","the waterfront masterplan"],
+  ["the new capital city masterplan","the world's tallest tower","the national gallery extension","the Gulf airport","the new town for fifty thousand"]]},
+ music:{kinds:["The pitch","The gig","The big gig","The tour","The world tour"],names:[
+  ["the Covent Garden Saturday","the open mic night","the busking spot by the tube","the wedding reception","the Christmas carols outside Boots"],
+  ["the battle of the bands final","the record-shop signing","the pub residency","the support slot at the Academy","the songwriting showcase"],
+  ["the album launch","the festival main stage","the sold-out homecoming","the live radio session","the late-night TV appearance"],
+  ["the arena tour","the Glastonbury headline slot","the American tour","the Wembley show","the awards night performance"],
+  ["the world stadium tour","the Super Bowl halftime show","the global charity concert","the Las Vegas residency","the greatest hits album"]]},
+ influencer:{kinds:["The post","The collab","The big campaign","The brand deal","The media empire"],names:[
+  ["the ring-light review","the morning routine video","the charity-shop haul","the first sponsored post","the dance trend"],
+  ["the local café collab","the skincare brand launch","the gadget unboxing series","the budget-travel series","the cooking series"],
+  ["the holiday resort collab","the fitness challenge","the charity livestream","the fashion drop","the festival vlog"],
+  ["the clothing range launch","the meet-and-greet tour","the podcast launch","the reality show appearance","the book deal"],
+  ["the own-brand empire","the streaming network launch","the global sportswear deal","the TV channel buyout","the creator agency"]]},
+ soldier:{kinds:["Patrol","Exercise","Operation","Campaign","The war"],names:[
+  ["a checkpoint on the bridge road","the village foot patrol","the sentry duty at the gate","the night guard on the stores","the kit inspection"],
+  ["Kestrel","Granite","Nightjar","Iron Gate","Red Kite"],
+  ["Tempest","Black Heath","Stone Wall","Long Shadow","Falcon Strike"],
+  ["the river crossing","the mountain campaign","the coastal landing","the relief of the garrison","the clearing of the valley"],
+  ["the northern offensive","the coalition invasion","the evacuation of the capital","the peacekeeping mission","the defence of the frontier"]]},
+ astronaut:{kinds:["The drill","The mission","The big mission","The expedition","The programme"],names:[
+  ["the centrifuge run","the underwater spacewalk drill","the survival training in the snow","the Russian exam","the zero-gravity flight"],
+  ["the docking","the science module","the satellite repair","the resupply mission","the crew rotation"],
+  ["the spacewalk","the lunar landing rehearsal","the telescope repair","the emergency return","the station's new airlock"],
+  ["the lunar landing","the moon base expedition","the six-month station command","the Mars rehearsal mission","the asteroid sample mission"],
+  ["the crewed Mars programme","the international moon base","the British launch site","the new space station","the space agency budget"]]},
+ spy:{kinds:["The task","The job","Operation","The network","The crisis"],names:[
+  ["Paper Lantern","Brown Envelope","Cold Coffee","Quiet Desk","Dusty File"],
+  ["Bluebell","Copper Fox","Silent Harbour","Winter Lamp","Grey Heron"],
+  ["Black Swan","Glass Bridge","Midnight Orchard","Iron Kettle","Pale Moon"],
+  ["Northern Lights","Red Citadel","Broken Compass","Sleeping Giant","Hollow Crown"],
+  ["Last Light","Storm Wall","Crown Jewel","Endgame","Shattered Sky"]]},
+ tvchef:{kinds:["The challenge","The segment","The big broadcast","The series","The empire"],names:[
+  ["the signature dish round","the technical challenge","the semi-final bake","the showstopper","the soggy-bottom rescue"],
+  ["the breakfast-TV segment","the student-budget episode","the seaside special","the outdoor barbecue episode","the festival cooking stage"],
+  ["the live Saturday-morning show","the Christmas special","the cook-off final","the celebrity guest episode","the charity telethon cook"],
+  ["the new prime-time series","the restaurant chain launch","the cookbook number one","the American TV debut","the street-food road trip"],
+  ["the supermarket range","the global cookware brand","the worldwide TV format","the school dinners campaign","the restaurant empire in Dubai"]]},
+ clubowner:{kinds:["The match day","The weekend","The big weekend","The season","The empire"],names:[
+  ["the muddy cup tie","the new stand appeal","the derby with the neighbours","the sponsor's day out","the fans' forum"],
+  ["the transfer deadline day","the promotion push","the stadium expansion","the new kit launch","the bank-holiday weekender"],
+  ["the Premier Leek opener","the record signing","the FA Cup run","the TV rights row","the title decider"],
+  ["the Champions League campaign","the new stadium","the superstar signing","the Asia pre-season tour","the European final"],
+  ["the multi-club takeover","the American franchise deal","the breakaway league talks","the global TV deal","the World Club Cup"]]},
+ manager:{kinds:["The session","The match","The big match","The cup run","The tournament"],names:[
+  ["the under-16s on Sunday","the cones and bibs session","the youth cup tie","the academy trial day","the set-piece drill"],
+  ["the season opener","the cup replay","the scouting trip to Belgium","the reserves derby","the Friday-night TV game"],
+  ["the local derby","the relegation six-pointer","the play-off final","the trip to the league leaders","the grudge match"],
+  ["the cup final","the European away tie","the title decider","the Boxing Day clash","the last day of the season"],
+  ["the World Cup qualifier","the Euros semi-final","the World Cup final","the friendly against Brazil","the penalty shootout at Wembley"]]},
+ actor:{kinds:["The audition","The episode","Opening night","The premiere","The awards"],names:[
+  ["the advert shoot","the radio play recording","the fringe show above a pub","the casting for the cereal advert","the corpse role in the detective show"],
+  ["the soap's live episode","the police-drama pilot","the Christmas episode","the panto at the Hippodrome","the one-man show at the festival"],
+  ["the West End revival","the period drama shoot","the new comedy at the Playhouse","the musical's press night","the regional tour of the thriller"],
+  ["the big-budget spy film","the costume epic","the superhero sequel","the Cannes premiere","the Broadway transfer"],
+  ["the Oscars night","the knighthood","the final Bond film","the farewell King Lear","the lifetime achievement award"]]},
+ dj:{kinds:["The mix","The set","The big night","The tour","The headline"],names:[
+  ["the bedroom livestream","the house party","the school disco","the pub's Friday night","the uploaded mixtape"],
+  ["the student union all-nighter","the boat party","the secret gig under the arches","the rooftop launch","the residency at the basement club"],
+  ["the warehouse party","the festival after-party","the end-of-season closing party","the Ibiza opening","the radio guest mix"],
+  ["the European club tour","the Ibiza residency","the festival main stage","the number one remix","the American tour"],
+  ["the Las Vegas residency","the stadium show","the New Year's Eve countdown","the world tour","the Olympic closing ceremony"]]},
+ cardealer:{kinds:["The valet","The sale","The big deal","The franchise","The group deal"],names:[
+  ["the forecourt wash","the part-exchange tidy-up","the courtesy car clean","the showroom shine","the new delivery prep"],
+  ["the family who want three cars","the dentist's sports car","the retired couple's motorhome","the open day","the first-time buyer"],
+  ["the fleet tender","the footballer's supercar","the month-end push","the new model launch weekend","the classic car auction"],
+  ["the taxi firm's new fleet","the council van contract","the new showroom opening","the electric brand franchise","the rental company order"],
+  ["the takeover of the rival group","the national fleet contract","the luxury brand franchise","the group's stock market float","the electric charging network"]]}
+};
+
+
+/* Operations grow with you: each rung has its own kind of operation and its own names. Some careers build their operations late, so this runs again whenever an operation is made. */
+function opScaleApply(){try{contentExtras()}catch(e){}for(const[id,TT]of Object.entries(OPS_TIERS)){const T=OPS[id];if(!T||!TT||T.__scaled)continue;T.__scaled=1;
+ const baseKind=T.kind,baseNames=T.names;
+ const tierOf=()=>{if(!S||S.path!==id)return-1;const o=S.op;const r=o&&o.d===S.day&&o.diff!=null?o.diff:S.rank;return clamp(r|0,0,4)};
+ Object.defineProperty(T,"kind",{configurable:true,get(){const r=tierOf();return r>=0&&TT.kinds&&TT.kinds[r]?TT.kinds[r]:baseKind},set(v){}});
+ Object.defineProperty(T,"names",{configurable:true,get(){const r=tierOf();if(r<0||!TT.names||!TT.names[r])return baseNames;const pool=r===0?TT.names[0].concat(TT.names[1].slice(0,2)):r===4?TT.names[4].concat(TT.names[3]):TT.names[r].concat(baseNames.filter(n=>!TT.names.some(L=>L!==TT.names[r]&&L.includes(n))));const seen=(S&&S.opSeen)||[];const fresh=pool.filter(n=>!seen.includes(n));return fresh.length>=2?fresh:pool},set(v){}});}}
+{const _og=opGen;opGen=function(){opScaleApply();const had=S&&S.op&&S.op.d===S.day;const r=_og.apply(this,arguments);try{if(!had&&S.op&&S.op.d===S.day){S.opSeen=(S.opSeen||[]).filter(n=>n!==S.op.name).concat(S.op.name).slice(-4)}}catch(e){}return r}}
+{const _osx=opsSec;opsSec=function(){opScaleApply();return _osx.apply(this,arguments)}}
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
