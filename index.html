@@ -549,6 +549,13 @@ html,body{overflow-x:clip}
 .me-notes .note{padding:8px 12px;margin:6px 0;font-size:14px}
 #sheet .rep-table td{padding-top:6px;padding-bottom:6px}
 #sheet .chips{margin:6px 0}
+#showroom{grid-template-columns:minmax(0,1fr)}#showroom>*{min-width:0;max-width:100%}
+.tp-cats{margin:8px 0 6px}.tp-cats .btn{flex:0 0 auto}.tp-n{opacity:.6;font-weight:500;font-size:11.5px}
+.tp-subs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0 6px;margin-bottom:2px}
+.tp-subs::-webkit-scrollbar{display:none}
+.tp-subs button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface2,var(--surface));color:inherit;border-radius:99px;padding:6px 11px;font-size:12.5px;font-weight:600;white-space:nowrap;min-height:34px}
+.tp-subs button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tp-ev{display:inline-block;margin-left:6px;padding:0 6px;border-radius:99px;font-size:10.5px;font-weight:700;line-height:16px;background:rgba(75,186,133,.16);color:var(--up);white-space:nowrap}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -2963,11 +2970,11 @@ function fatalCause(){
   astronaut:"Your capsule failed on re-entry. The whole nation mourned.",
   spy:"You were found dead in a hotel room abroad. The inquest was never made public."}[S.path];
  if(own&&rnd()<.5)return own;
- const road=S.car.id==="none"?"You were hit by a speeding car on a zebra crossing.":S.car.id==="brompton"?"A lorry turned left across your bike at a junction in Whitechapel.":`You lost control of your ${c.n} on a wet bend on the A3.`;
+ const road=S.car.id==="none"?"You were hit by a speeding car on a zebra crossing.":vKind()==="cycle"?"A lorry turned left across your bike at a junction in Whitechapel.":vKind()==="moto"?"A car pulled out of a side road straight into your motorbike.":`You lost control of your ${c.n} on a wet bend on the A3.`;
  return pick([road,road,"You drowned in a rip current on holiday in Cornwall.","You fell down the stairs at home and never woke up.","A falling sign struck you outside a station in a winter storm."]);
 }
 const ACCIDENTS=[
- {t:"You came off your bike in the rain and broke your wrist.",days:2,when:()=>S.car.id==="brompton"},
+ {t:"You came off your bike in the rain and broke your wrist.",days:2,when:()=>vKind()==="cycle"},
  {t:"A van rear-ended your {car} at the lights. Whiplash.",days:1,gbp:-1500,when:()=>carOf(S.car.id).lvl>=1},
  {t:"You slipped on ice outside the station and broke your ankle.",days:2},
  {t:"You tore a hamstring playing five-a-side.",days:1},
@@ -3176,7 +3183,7 @@ function homeCustomModal(msg){
 }
 function carCustomModal(msg){
  const c=carOf(S.car.id);if(S.car.id==="none")return;
- const bike=c.shape==="bike",m=S.car.mods||{},p=c.p;
+ const bike=vKind(c)!=="car",m=S.car.mods||{},p=c.p;
  const respray=Math.max(800,Math.round(p*.03/100)*100),plateCost=t=>t.replace(/\s/g,"").length<=3?25000:t.replace(/\s/g,"").length<=5?5000:400;
  const sw=(act,list,cur,lab)=>`<div class="swatches">${list.map(([n,h])=>`<button data-act="${act}" data-c="${h}" class="${cur===h?"on":""}" style="background:${h}" aria-label="${esc(n)} ${lab}"></button>`).join("")}${act==="cstripe"?`<button data-act="cstripe" data-c="" class="${!cur?"on":""} sw-none" aria-label="No stripes">✕</button>`:""}</div>`;
  showModal(`<div class="label">Make it yours</div><h2 style="margin-top:4px">${esc(c.n)}</h2>
@@ -4580,7 +4587,7 @@ const SECOND_ACTS={
  music:{why:"Touring is getting harder on the body",when:()=>age()>=45,opts:[["actor",()=>1,"Move into acting","Your stage presence translates."],["teach",()=>0,"Become a music teacher","Pass it on."],["influencer",()=>2,"TV talent-show judge","Sit in the big red chair and say 'it's a no from me'."]]},
  influencer:{why:"The algorithm has moved on",when:()=>age()>=40,opts:[["actor",()=>1,"Try acting","You've been performing for years anyway."],["tvchef",()=>0,"Front a TV cookery show","Your followers will tune in."],["pol",()=>0,"Go into politics","You know how to get attention."]]},
  police:{why:"Thirty years on the force",when:s=>age()>=55||(s.day-s.careerStart)>=30*12,opts:[["spy",()=>1,"Security and intelligence","Your contacts are gold."],["law",()=>0,"Retrain as a lawyer","You know how cases are won and lost."],["pol",()=>0,"Stand as a crime commissioner-ish MP","Tough on crime, with experience."]]},
- pilot:{why:"Mandatory retirement is coming for airline pilots",when:()=>age()>=60,opts:[["teach",()=>1,"Become a flight instructor-ish teacher","Teach the next generation."],["influencer",()=>1,"Aviation YouTube channel","Cockpit videos get millions of views."]]}
+ pilot:{why:"Mandatory retirement is coming for airline pilots",when:()=>age()>=60,opts:[["teach",()=>1,"Become a flight instructor-ish teacher","Teach the next generation."],["influencer",()=>1,"Aviation VidTube channel","Cockpit videos get millions of views."]]}
 };
 function secondActMorning(){
  const sa=SECOND_ACTS[S.path];if(!sa||!sa.when||S.over||S.prison||S.front||S.sel||S.sabb)return;
@@ -4637,7 +4644,7 @@ function mkIllness(){
 /* Rolled at the end of every day: fatal accidents, injuries and serious illness */
 function hazards(notes){
  if(S.over)return;
- const c=carOf(S.car.id),road=(c.lvl>=5?3:c.lvl>=3?1.6:S.car.id==="brompton"?2:1)*(1+.25*((S.car.mods&&S.car.mods.tune)||0)),job=(CAR_().acc||ACC_RISK[S.path]||1)*(hasT("reckless")?1.5:1),tired=S.stress>80||S.health<25?1.5:1;
+ const c=carOf(S.car.id),road=(c.lvl>=5?3:vKind(c)==="moto"?2.4:c.lvl>=3?1.6:vKind(c)==="cycle"?2:1)*(1+.25*((S.car.mods&&S.car.mods.tune)||0)),job=(CAR_().acc||ACC_RISK[S.path]||1)*(hasT("reckless")?1.5:1),tired=S.stress>80||S.health<25?1.5:1;
  if(rnd()<.00004*road*job*tired){const cause=fatalCause();notes.push(cause);die(cause);return}
  if(absurdDeath(notes))return;
  if(S.sick<=0&&rnd()<.003*job){const pool=ACCIDENTS.filter(a=>(!a.c||a.c===S.path)&&(!a.when||a.when())),a=pick(pool);
@@ -5506,19 +5513,19 @@ function jobStories(){
    {t:`Specialise in ${tagName(k).toLowerCase()}`,fx:{act:"focus",tag:k,rep:3},o:`${tagName(k)} work now counts 15% more for you. Other work counts a little less.`},
    {t:"Stay an all-rounder",fx:{skill:2},o:"Variety keeps you sharp."}]})();return}
  for(const j of done){
-  if(j.ai===0&&/Went wrong/.test(j.lab)&&rnd()<.35)opts.push(ev("inquiry",{from:role,t:j.risk||/safety/.test(j.lab)?`A safety inquiry: ${j.n.toLowerCase()}`:`Questions about the ${j.n.toLowerCase()}`,b:`Last month's ${j.n.toLowerCase()} went wrong, and it's come out that you cut corners. ${boss} wants to know what happened.`,c:[
+  if(j.ai===0&&/Went wrong/.test(j.lab)&&rnd()<.35)opts.push(ev("inquiry",{from:role,t:j.risk||/safety/.test(j.lab)?`A safety inquiry: ${jobLc(j.n)}`:`Questions about the ${jobLc(j.n)}`,b:`Last month's ${jobLc(j.n)} went wrong, and it's come out that you cut corners. ${boss} wants to know what happened.`,c:[
    {t:"Own up and put it right",fx:{rep:-2,karma:3,heat:-4,stress:3},o:"Honesty costs you a little face and earns you a lot of trust."},
    {t:"Blame the equipment",p:.55,win:{fx:{stress:2},o:"It goes away. For now."},lose:{fx:{heat:j.risk?18:10,rep:-6},o:"The records show otherwise. It goes on your file."}}]}));
-  else if(j.ai===0&&!/Went wrong/.test(j.lab)&&rnd()<.05)opts.push(ev("bite",{from:"A phone call",t:`The ${j.n.toLowerCase()} comes back to haunt you`,b:`Something you rushed on a ${j.n.toLowerCase()} a while ago has gone wrong.`,c:[
+  else if(j.ai===0&&!/Went wrong/.test(j.lab)&&rnd()<.05)opts.push(ev("bite",{from:"A phone call",t:`The ${jobLc(j.n)} comes back to haunt you`,b:`Something you rushed on a ${jobLc(j.n)} a while ago has gone wrong.`,c:[
    {t:"Go back and fix it for free",fx:{pnl:-1,rep:2,stress:4},o:"An evening lost, a reputation kept."},
    {t:"Say it isn't your problem",p:.5,win:{fx:{},o:"Nobody can prove anything."},lose:{fx:{rep:-6,heat:8},o:"A complaint lands on your boss's desk."}}]}));
-  if(j.ai===2&&!/Went wrong/.test(j.lab)&&S.day-(S.noticedAt??-99)>=24&&rnd()<.07)opts.push(ev("noticed",{from:role,t:"Your work has been noticed",b:`Someone senior saw how thoroughly you handled the ${j.n.toLowerCase()}.`,c:[
+  if(j.ai===2&&!/Went wrong/.test(j.lab)&&S.day-(S.noticedAt??-99)>=24&&rnd()<.07)opts.push(ev("noticed",{from:role,t:"Your work has been noticed",b:`Someone senior saw how thoroughly you handled the ${jobLc(j.n)}.`,c:[
    {t:"Ask them to mentor you",p:.6,win:{fx:{act:"mentor",rep:3,skill:2},o:"They agree. Coffee once a month, and doors start opening."},lose:{fx:{rep:2},o:"They're too busy, but they'll remember your name."}},
    {t:"Just say thank you",fx:{act:"mood",amt:6,rep:2},o:`${boss} hears about it too.`}]}));
-  if(/Delighted/.test(j.lab)&&rnd()<.04&&S.day-(S.thanksAt??-99)>=12&&(S.thanksAt=S.day))opts.push(ev("thanks",{from:"A card in the post",t:"A thank-you",b:`Someone you helped on a ${j.n.toLowerCase()} has written to say thank you. They'd like to buy you a drink.`,c:[
+  if(/Delighted/.test(j.lab)&&rnd()<.04&&S.day-(S.thanksAt??-99)>=12&&(S.thanksAt=S.day))opts.push(ev("thanks",{from:"A card in the post",t:"A thank-you",b:`Someone you helped on a ${jobLc(j.n)} has written to say thank you. They'd like to buy you a drink.`,c:[
    {t:"Meet them",fx:{act:"helped",job:j.n,home:3},o:"You get on brilliantly. They say to call if you ever need anything."},
    {t:"Send a polite reply",fx:{karma:1},o:"It's nice to be appreciated."}]}));
-  if(j.news&&!/Went wrong/.test(j.lab)&&rnd()<.06&&S.day-(S.pressAt??-99)>=12&&(S.pressAt=S.day))opts.push(ev("press",{from:"The local paper",t:"You're in the news",b:`A reporter covering the ${tagName(j.tag).toLowerCase()} story wants to feature your work on the ${j.n.toLowerCase()}.`,c:[
+  if(j.news&&!/Went wrong/.test(j.lab)&&rnd()<.06&&S.day-(S.pressAt??-99)>=12&&(S.pressAt=S.day))opts.push(ev("press",{from:"The local paper",t:"You're in the news",b:`A reporter covering the ${tagName(j.tag).toLowerCase()} story wants to feature your work on the ${jobLc(j.n)}.`,c:[
    {t:"Give an interview",p:.75,win:{fx:{rep:5},o:"A flattering article, with a photo you hate."},lose:{fx:{rep:-3},o:"They misquote you badly."}},
    {t:"Keep your head down",fx:{},o:"No news is good news."}]}));
  }
@@ -5552,7 +5559,7 @@ function tiylModal(i){
   <div class="tiyl-when">${shortDate(m.d)} · age ${Math.floor(ageAt(S,m.d))}</div>
   ${m.ph?momentPhoto(m.ph,m.i):`<svg class="moment-icon" viewBox="0 0 100 100" aria-hidden="true">${MOMENT_ICONS[m.i]||MOMENT_ICONS.star}</svg>`}
   <div class="moment-kicker">${esc(m.k||"")}</div><h2>${esc(m.t)}</h2>${m.s?`<p>${esc(m.s)}</p>`:""}
-  <div class="btn-row"><button class="btn" data-act="tiyl" data-i="${i-1}" ${i?"":"disabled"}>Back</button><button class="btn primary" data-act="tiyl" data-i="${i+1}">${i===n-1?"The end":"Next"}</button></div></div>`);
+  <div class="btn-row"><button class="btn" data-act="tiyl" data-i="${i-1}" ${i?"":"disabled"}>Back</button><button class="btn primary" data-act="tiyl" data-i="${i+1}">${i===n-1?"The end":"Next"}</button></div>${S.over?"":"<i data-xclose hidden></i>"}</div>`);
 }
 
 /* ---- Crossroads: every few years, a fork that shapes the next part of life ---- */
@@ -5666,7 +5673,7 @@ const HOBBIES={
  chess:{n:"Chess",icon:"trophy",tiers:["Club player","County team","National championship","International master","Grandmaster-ish"],fx:{skill:2,stress:-2}},
  paint:{n:"Painting",icon:"star",tiers:["Evening classes","The village art show","Your first sale","A gallery exhibition","The summer exhibition at the Royal Academy-ish"],fx:{home:3,stress:-5},cash:[0,0,400,4000,20000]},
  golf:{n:"Golf",icon:"trophy",tiers:["Handicap 28","Handicap 18","Handicap 10","Club champion","Scratch golfer"],fx:{stress:-3,rep:1}},
- bake:{n:"Baking",icon:"medal",tiers:["Bake sale hero","Village show winner","County fair champion","On TV: The Great Leek Bake Off-ish","Your own cookbook"],fx:{home:4,stress:-3},cash:[0,0,0,5000,30000]}};
+ bake:{n:"Baking",icon:"medal",tiers:["Bake sale hero","Village show winner","County fair champion","On TV: The Great Leek Bake-Off","Your own cookbook"],fx:{home:4,stress:-3},cash:[0,0,0,5000,30000]}};
 function hobbySec(){
  const h=S.hobby&&HOBBIES[S.hobby.k];if(S.over||S.prison)return"";
  if(!h)return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">A hobby</h2><span class="label">Level up over the years</span></div><p class="hint" style="margin:0 0 8px">Pick a hobby and practise in your free time. Each level you reach brings a moment to remember.</p><div class="acts">${Object.entries(HOBBIES).map(([k,x])=>`<button class="act-card" data-act="hobbypick" data-k="${k}"><b>${esc(x.n)}</b><span>${esc(x.tiers[0])} → ${esc(x.tiers[4])}</span></button>`).join("")}</div></div>`;
@@ -5965,7 +5972,7 @@ function newGame(name,career,desk,bg){
 function morning(){
  S.signals={};S.news=[];S.evPnl=0;
  if(CAR_().mech==="jobs")jobsMorning();else if(CAR_().mech==="football")fbMorning();else marketsMorning();
- if(S.world&&S.world.id!=="calm"&&wld().news&&rnd()<.7)S.news.unshift({t:pick(wld().news)});
+ if(S.world&&S.world.id!=="calm"&&wld().news&&rnd()<.7)S.news.unshift({t:newsPick(wld().news)});
  inboxMorning();
 }
 function marketsMorning(){
@@ -5974,9 +5981,9 @@ function marketsMorning(){
   let id=rnd()<.8?pick(vis):pick(ids); if(taken[id])continue; taken[id]=1;
   const dir=rnd()<.5?1:-1, rum=rnd()<.28, real=rnd()<(rum?.45:(S.bg==="quant"?.8:.72)+cx().gear*.02);
   S.signals[id]={dir,real};
-  S.news.push({id,dir,rum,t:pick(dir>0?B[id].up:B[id].dn)});
+  S.news.push({id,dir,rum,t:newsPick(dir>0?B[id].up:B[id].dn)});
  }
- S.news.push({t:pick(NOISE)});
+ S.news.push({t:newsPick(NOISE)});
 }
 function inboxMorning(){
  S.inbox=S.inbox.filter(m=>!m.done);
@@ -6261,8 +6268,8 @@ function jobsMorning(){
  for(let i=0;i<n;i++){const tag=pick(tags);if(taken[tag])continue;taken[tag]=1;
   const dir=rnd()<.5?1:-1,rum=rnd()<.28,real=rnd()<(rum?.45:(S.bg==="quant"?.8:.72));
   if(real)S.trends[tag]=dir>0?1.5:.65;
-  S.news.push({tag,dir,rum,t:pick(dir>0?c.trends[tag].up:c.trends[tag].dn)})}
- if(n===1)S.news.push({t:pick(c.noise)});
+  S.news.push({tag,dir,rum,t:newsPick(dir>0?c.trends[tag].up:c.trends[tag].dn)})}
+ if(n===1)S.news.push({t:newsPick(c.noise)});
  const pool=c.jobs.filter(j=>(j.rmin||0)<=S.rank&&(j.rmax??9)>=S.rank&&(!j.sf||S.sf)&&(!j.spec||S.spec===j.spec)&&!(S.spec&&S.path==="police"&&/Neighbourhood patrol/.test(j.n))&&!(S.sf&&/Guard duty|Ceremonial/.test(j.n))),cards=[];window.__jobPool=pool;
  const want=S.news.filter(x=>x.tag).map(x=>x.tag);
  for(const tg of want){const j=pool.filter(x=>x.tag===tg);if(j.length)cards.push(pick(j))}
@@ -6433,7 +6440,7 @@ Object.assign(SECOND_ACTS,{
  chef:{why:"Twenty years of hot kitchens have taken their toll",when:()=>age()>=50,opts:[["tvchef",()=>1,"Become a TV chef","The cameras love you."],["teach",()=>0,"Teach cookery","Run a catering course at the local college."]]},
  doc:{why:"After decades on the wards, you want a change",when:()=>age()>=58,opts:[["pol",()=>1,"Go into politics","A doctor in Parliament, fighting for the health service."],["influencer",()=>2,"Become a TV doctor","Daytime telly and a column in a magazine."]]},
  law:{why:"You've done it all in law",when:()=>age()>=60&&S.spec!=="judge",opts:[["pol",()=>1,"Stand for Parliament","Lawyers make good legislators. Allegedly."],["teach",()=>1,"Teach law","Pass on the craft."]]},
- tech:{why:"Burnout is real, and the industry has changed",when:()=>age()>=45,opts:[["influencer",()=>2,"Become a tech YouTuber","Gadget reviews and opinions."],["teach",()=>1,"Teach computing","Inspire the next generation of coders."],["pol",()=>0,"Go into politics","Somebody has to understand AI policy."]]},
+ tech:{why:"Burnout is real, and the industry has changed",when:()=>age()>=45,opts:[["influencer",()=>2,"Become a tech VidTuber","Gadget reviews and opinions."],["teach",()=>1,"Teach computing","Inspire the next generation of coders."],["pol",()=>0,"Go into politics","Somebody has to understand AI policy."]]},
  nurse:{why:"After years of night shifts, you want something new",when:()=>age()>=55,opts:[["doc",()=>0,"Train as a doctor","Graduate medicine, at last."],["teach",()=>1,"Teach nursing","Train the next generation of nurses."],["pol",()=>0,"Stand for Parliament","Fight for the NHS from the inside."]]},
  manager:{why:"The touchline has aged you",when:()=>age()>=60,opts:[["influencer",()=>2,"Become a pundit","Big opinions, nice suits."],["clubowner",()=>0,"Buy a club","Now you pick the manager.",()=>netWorth()>=5e6]]}
 });
@@ -6650,10 +6657,10 @@ const SCENES={
   {t:"Couple up",b:"The recoupling. Who do you choose?",c:[{t:"The one you actually like",p:.6,win:{fx:{fame:4},o:"A genuine spark.",s:2},lose:{fx:{},o:"They choose someone else.",s:0}},{t:"The one with the most screen time",fx:{fame:6,karma:-3},o:"Strategic. Viewers notice.",s:1}]},
   {t:"The final",b:"The public vote is in.",c:[{t:"Give a heartfelt speech",p:.5,win:{fx:{fame:10,cash:50,act:"tvwin",show:"Love Villa-ish"},o:"You win!",s:3},lose:{fx:{fame:5},o:"Runners-up.",s:0}}]}],
   end:sc=>{if(sc>=4&&isSingle()){const n=partnerFull();ACTS.date({},{vars:{p:n.split(" ")[0],job:"a reality TV star",full:n}});return `You leave the villa holding hands with ${n.split(" ")[0]}.`}return"You leave with a tan, a following and a lot of free teeth whitening."}},
- bake:{kicker:"Bake Off-ish",art:()=>"kitchen",title:()=>"In the tent",tv:1,steps:[
+ bake:{kicker:"Bake-Off-ish",art:()=>"kitchen",title:()=>"In the tent",tv:1,steps:[
   {t:"Signature bake",b:"Twenty-four perfect biscuits in two hours.",c:[{t:"A classic, done perfectly",p:.7,win:{fx:{fame:2},o:"'Lovely snap.'",s:2},lose:{fx:{},o:"Slightly underbaked.",s:0}},{t:"Something wild",p:.45,win:{fx:{fame:4},o:"'That's genius.'",s:3},lose:{fx:{},o:"'I don't get it.'",s:-1}}]},
   {t:"Technical",b:"A recipe with half the instructions missing.",c:[{t:"Follow your instincts",p:()=>.5+(S.hobby&&S.hobby.k==="bake"?.2:0),win:{fx:{fame:3},o:"Top of the technical.",s:2},lose:{fx:{},o:"Bottom of the pile.",s:0}}]},
-  {t:"Showstopper",b:"A three-tier cake that tells your life story.",c:[{t:"Go big",p:.5,win:{fx:{fame:10,act:"tvwin",show:"Bake Off-ish"},o:"You win, and cry into the flowers.",s:3},lose:{fx:{fame:4},o:"The middle tier collapses. You still get a handshake.",s:1}},{t:"Keep it elegant",p:.65,win:{fx:{fame:6},o:"Star baker for the week.",s:2},lose:{fx:{},o:"'A bit plain.'",s:0}}]}],
+  {t:"Showstopper",b:"A three-tier cake that tells your life story.",c:[{t:"Go big",p:.5,win:{fx:{fame:10,act:"tvwin",show:"Bake-Off-ish"},o:"You win, and cry into the flowers.",s:3},lose:{fx:{fame:4},o:"The middle tier collapses. You still get a handshake.",s:1}},{t:"Keep it elegant",p:.65,win:{fx:{fame:6},o:"Star baker for the week.",s:2},lose:{fx:{},o:"'A bit plain.'",s:0}}]}],
   end:sc=>sc>=6?"Champion baker. Your cookbook deal arrives a week later.":"You go home with a lot of new followers and a lifelong fear of soggy bottoms."},
  apprentice:{kicker:"The Apprentice-ish",art:()=>"office",title:()=>"You're hired?",tv:1,steps:[
   {t:"The sales task",b:"Sell a novelty product to strangers by 5pm.",c:[{t:"Lead the team",p:.5,win:{fx:{fame:4},o:"Your team wins by a mile.",s:2},lose:{fx:{fame:2},o:"Your team loses. You're in the boardroom.",s:0}},{t:"Keep your head down and sell",fx:{fame:1},o:"Safe. Forgettable.",s:1}]},
@@ -6693,7 +6700,7 @@ function scenePick(ci){
 }
 /* TV invitations: more likely the more famous you are */
 const SHOWS=[["villa",()=>isSingle()&&age()>=18&&age()<=32,"A reality TV producer","Love Villa-ish wants you","Eight weeks in a villa in the sun, looking for love on camera."],
- ["bake",()=>true,"A TV production company","Bake Off-ish wants you","A summer in a tent, baking against the clock."],
+ ["bake",()=>true,"A TV production company","Bake-Off-ish wants you","A summer in a tent, baking against the clock."],
  ["apprentice",()=>age()>=22&&age()<=45,"A TV production company","The Apprentice-ish wants you","Twelve weeks of tasks, a terrifying boardroom and a £250,000 prize."],
  ["jungle",()=>(S.fame||0)>=35,"A TV channel","I'm a Celebrity-ish wants you","Three weeks in the jungle, eating things nobody should eat."],
  ["quiz",()=>true,"A quiz show","The big quiz show wants you","Answer questions under hot studio lights for up to £100,000."]];
@@ -6870,7 +6877,7 @@ function remortgageAmt(){if(!ownsHome())return 0;return Math.max(0,Math.round((S
 function homeLifeSec(){
  if(!S.home)return"";const c=commute(),own=ownsHome(),rm=remortgageAmt(),canLet=own&&(S.home.tier||0)>=2&&!S.roomLet;
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Living here</h2><span class="label">${esc(S.home.area||"")}</span></div>
-  <div class="kv"><span>${S.path==="dj"||S.path==="music"?"Getting to gigs":"Commute"}</span><span>${S.path==="influencer"?"None: you work from home":COMMUTE_N[c]+(c>=1&&carOf(S.car.id).lvl>=1?" by car":"")}</span><span>Schools</span><span>${goodSchool()?"Good catchment area":"Average"}</span><span>Hosting</span><span>${["Cramped","Cosy","Comfortable","Great","Spectacular"][clamp(Math.floor(hostScore()/2),0,4)]}</span><span>Car</span><span>${S.car.id==="none"?"Public transport":carOld()?"Getting unreliable":carFlash()?"Turns heads":"Reliable"}</span></div>
+  <div class="kv"><span>${S.path==="dj"||S.path==="music"?"Getting to gigs":"Commute"}</span><span>${S.path==="influencer"?"None: you work from home":COMMUTE_N[c]+(c>=1&&carOf(S.car.id).lvl>=1?" by "+vWord():c>=1&&vKind()==="cycle"?" by bike":"")}</span><span>Schools</span><span>${goodSchool()?"Good catchment area":"Average"}</span><span>Hosting</span><span>${["Cramped","Cosy","Comfortable","Great","Spectacular"][clamp(Math.floor(hostScore()/2),0,4)]}</span><span>Car</span><span>${S.car.id==="none"?"Public transport":carOld()?"Getting unreliable":carFlash()?"Turns heads":"Reliable"}</span></div>
   <p class="hint" style="margin:8px 0 0">${S.path==="influencer"?"No commute: your work is wherever your phone is.":S.path==="dj"||S.path==="music"?(c===2?"Living out here means long late drives home from gigs. A car helps.":c===1?"Late-night journeys home from gigs add a little stress. A car helps.":"Most venues are close by. Easy nights home."):c===2?`A long commute adds stress every month. ${DESKY.includes(S.path)?"A home office or a car helps":"A car helps"}.`:c===1?`Your commute adds a little stress. ${DESKY.includes(S.path)?"A car or a home office helps":"A car helps"}.`:"A short commute keeps stress down."} ${goodSchool()?"Children here do better at school.":""} A nicer home makes parties and dinners go better.</p>
   ${own?floorPlanSec():""}${own&&S.home.loan>0?`<div class="mort-box"><div class="label">Mortgage</div><p class="hint" style="margin:2px 0 6px">${money(S.home.loan)} left · ${money(homePay())} a month · ${Math.ceil((S.home.left||0)/12)} years to go</p><div class="btn-row" style="margin:0"><button class="btn sm" data-act="payoffmort" ${S.wealth<payoffAmt()?"disabled":""}>Pay it all off: ${money(payoffAmt())}</button>${S.overpayYr!==Math.floor(S.day/12)&&S.wealth>=overpayAmt()&&overpayAmt()>=1000?`<button class="btn sm" data-act="overpay">Overpay ${money(overpayAmt())} (no fee)</button>`:""}</div>${S.wealth<payoffAmt()?`<p class="hint" style="margin:6px 0 0">Paying it off early costs the balance plus a 2% early repayment fee and £300.</p>`:""}</div>`:""}
   ${own?`<div class="btn-row" style="margin-top:10px">${rm>=10000?`<button class="btn sm" data-act="remortgage">Remortgage: release ${money(rm)}</button>`:""}${canLet?`<button class="btn sm" data-act="letroom">Rent out a room (${money(roomRent())}/month)</button>`:""}${S.roomLet?`<button class="btn sm" data-act="unletroom">Stop renting out the room</button>`:""}</div>`:""}</div>`;
@@ -6919,7 +6926,7 @@ ACTIVITIES.push(
  {k:"bbq",g:"At home",n:"Summer barbecue",d:"Burgers, sunshine and the neighbours. Needs a garden.",cost:120,ok:()=>!!S.home&&!isFlat()&&monthOf(S.day)>=4&&monthOf(S.day)<=7},
  {k:"xmas",g:"At home",n:"Host Christmas",d:"The whole family round your table.",cost:400,ok:()=>!!S.home&&monthOf(S.day)>=10},
  {k:"sleepover",g:"At home",n:"Kids' sleepover",d:"Their friends, your sofa, no sleep.",cost:60,ok:()=>S.children.some(k=>kidAge(k)>=6&&kidAge(k)<14)},
- {k:"roadtrip",g:"At home",n:"Road trip",d:"Pack the car and just drive.",cost:300,ok:()=>carOf(S.car.id).lvl>=1&&(inLove()||S.children.length>0)});
+ {k:"roadtrip",g:"At home",n:"Road trip",d:"Pack the car and just drive.",cost:300,ok:()=>carOf(S.car.id).lvl>=1&&vKind()==="car"&&(inLove()||S.children.length>0)});
 /* A big enough home means the wedding party is at home */
 {const _w=ACTS.wed;ACTS.wed=(fx,m)=>{_w(fx,m);if(ownsHome()&&(S.home.tier||0)>=3&&!isFlat()){S.wealth+=15000;S.homeLife=clamp(S.homeLife+4,0,100);S.log.unshift({d:S.day,t:"You held the wedding party in your own garden and saved £15,000."})}}}
 
@@ -7018,7 +7025,7 @@ const ABSURD=[
  ["You were felled by a celebratory confetti cannon at the office party.",()=>["bank","tech","law","arch"].includes(S.path)],
  ["A server rack toppled on you during an all-night outage.",()=>S.path==="tech"],
  ["You were struck by a wayward corner flag during a goal celebration.",()=>["foot","manager","clubowner"].includes(S.path)],
- ["You choked on a Haribo-ish sweet during a penalty shoot-out.",()=>["foot","manager","clubowner"].includes(S.path)],
+ ["You choked on a jelly sweet during a penalty shoot-out.",()=>["foot","manager","clubowner"].includes(S.path)],
  ["You fell into the orchestra pit during your curtain call.",()=>["actor","music"].includes(S.path)],
  ["You were electrocuted by a smoke machine at your own gig.",()=>["music","dj"].includes(S.path)],
  ["You walked backwards off a stage while filming a reaction video.",()=>S.path==="influencer"],
@@ -7159,7 +7166,7 @@ EV.push(
  {id:"ls_parents",life:1,again:24,cond:s=>ageIn(42,60)(s)&&(s.parentsAlive??2)>0,from:"Your mum",t:"A fall",b:"Your mum has had a fall at home. She's fine, but shaken.",c:[{t:"Drive over and stay the weekend",fx:{home:3,stress:3},o:"You fix the loose rug and stock the freezer."},{t:"Arrange a carer to visit",fx:{gbp:-400,fixed:1},o:"Someone pops in every morning."}]},
  {id:"ls_emptynest",life:1,again:999,cond:s=>ageIn(48,62)(s)&&s.children.length&&s.children.every(k=>kidAge(k)>=18),from:"A quiet house",t:"The empty nest",b:"The last child has moved out. The house is very quiet.",c:[{t:"Turn their room into a gym",fx:{home:2,health:2},o:"They're appalled when they visit."},{t:"Keep it exactly as it was",fx:{home:3},o:"Just in case."}]},
  {id:"ls_screening",life:1,again:999,cond:ageIn(50,58),from:"The NHS",t:"Your health check letter",b:"You're invited for your over-50s health check.",c:[{t:"Go",p:.9,win:{fx:{health:4},o:"All clear. Mostly."},lose:{fx:{health:2,act:"sick",days:1,hp:6},o:"They catch something early. Treatment goes well."}},{t:"Bin it",fx:{},o:"You'll go next year. You won't."}]},
- {id:"ls_reunion",life:1,again:999,cond:ageIn(48,56),from:"Facebook-ish",t:"The 30-year school reunion",b:"Everyone from school, thirty years on.",c:[{t:"Go, and enjoy the gossip",fx:{home:5},o:"The class bully is now a vicar. The class swot is a millionaire."},{t:"Look at the photos online instead",fx:{},o:"You zoom in on everyone's hairlines."}]},
+ {id:"ls_reunion",life:1,again:999,cond:ageIn(48,56),from:"Facebork",t:"The 30-year school reunion",b:"Everyone from school, thirty years on.",c:[{t:"Go, and enjoy the gossip",fx:{home:5},o:"The class bully is now a vicar. The class swot is a millionaire."},{t:"Look at the photos online instead",fx:{},o:"You zoom in on everyone's hairlines."}]},
  {id:"ls_grandkids",life:1,again:12,cond:s=>ageAt(s)>=55&&(s.grandkids||0)>0,from:"Your child",t:"Can you babysit?",b:"Your grandchildren need looking after this weekend. Again.",c:[{t:"Of course",fx:{home:6,stress:3},o:"Sugar, cartoons and a lot of 'don't tell Mum'."},{t:"You've got plans",fx:{home:-2},o:"Golf. Sorry."}]},
  {id:"ls_will",life:1,again:999,cond:ageIn(58,75),from:"A solicitor",t:"Writing your will",b:"It's time to put your affairs in order.",c:[{t:"Split everything equally",fx:{karma:2,home:2},o:"Fair and simple."},{t:"Leave a chunk to charity",fx:{karma:6},o:"Your legacy will help others."},{t:"Write in a few surprises",fx:{karma:-2},o:"You chuckle as you sign it."}]},
  {id:"ls_buspass",life:1,again:999,cond:ageIn(66,70),from:"The council",t:"Your free bus pass",b:"It's arrived. You're officially old.",c:[{t:"Use it with pride",fx:{home:2},o:"You go to the coast on a Tuesday, just because."},{t:"Hide it in a drawer",fx:{},o:"You're not old. You're 'experienced'."}]}
@@ -7183,14 +7190,14 @@ const DIARY_POOL=[
 ];
 function diaryMorning(){
  S.diary=null;if(S.over||S.prison||S.front||S.sel||S.sabb||rnd()>.65)return;
- const recent=S.diaryRecent||[],all=DIARY_POOL.filter(d=>d.ok()),fresh=all.filter(d=>!recent.includes(d.k)),pool=(fresh.some(d=>d.kind==="work")&&fresh.some(d=>d.kind!=="work")?fresh:all).sort(()=>rnd()-.5);
+ const recent=S.diaryRecent||[],all=DIARY_POOL.filter(d=>d.ok()),fresh=all.filter(d=>!recent.includes(d.k)),fw=fresh.filter(d=>d.kind==="work"),fl=fresh.filter(d=>d.kind!=="work"),pool=[...(fw.length?fw:all.filter(d=>d.kind==="work")),...(fl.length?fl:all.filter(d=>d.kind!=="work"))].sort(()=>rnd()-.5);
  const work=pool.filter(d=>d.kind==="work"),life=pool.filter(d=>d.kind!=="work");if(!work.length||!life.length)return;
  const clashA=work[0],clashB=life[0],extra=pool.filter(d=>d!==clashA&&d!==clashB).slice(0,1);
  const days=["Mon","Tue","Wed","Thu","Fri","Sat"],cd=pick(["Thu","Fri","Wed"]);
  const kid=(S.children.find(k=>kidAge(k)<14)||{}).n||"Your child";
  const fillT=t=>t.replace(/{kid}/g,kid).replace(/{p}/g,S.rel.name||"Your partner").replace(/{f}/g,S.friend?S.friend.n:"A friend").replace(/{pet}/g,S.pet?S.pet.n:"the dog");
  const items=[{k:clashA.k,t:fillT(clashA.t),day:cd,clash:1,go:null},{k:clashB.k,t:fillT(clashB.t),day:cd,clash:1,go:null},...extra.map(d=>({k:d.k,t:fillT(d.t),day:pick(days.filter(x=>x!==cd)),go:true}))];
- S.diary={d:S.day,items};S.diaryRecent=[...items.map(x=>x.k),...(S.diaryRecent||[])].slice(0,14);
+ S.diary={d:S.day,items};S.diaryRecent=[...items.map(x=>x.k),...(S.diaryRecent||[])].slice(0,45);
 }
 function diarySec(){
  const D=S.diary;if(!D||D.d!==S.day||S.over)return"";
@@ -7690,7 +7697,7 @@ async function drawAlbumRow(x,rec,y){
 
 /* ---- Birthdays: a photo every year, a party for the big ones, and the odd surprise ---- */
 const BDAY_BIG={18:["Old enough to vote, drink and make mistakes legally.","A party in the back room of the pub. Somebody cries in the toilets."],21:["The key of the door. You're still borrowing your parents' car.","A 21st with a slideshow of embarrassing baby photos."],30:["Thirty, flirty and slightly hungover.","Your knees make a noise getting off the dance floor."],40:["Life begins at forty, apparently.","Your friends got you a 'Lordy Lordy' banner. You can't take it down."],50:["Half a century. A card from the government about bowel screening.","Fifty candles. The smoke alarm goes off."],60:["Sixty, and you've finally worked out the remote.","A bus pass is coming. You're secretly thrilled."],70:["Seventy years young.","A cake, a card and an argument about who's driving home."],80:["Eighty. Everyone sings very slowly.","Four generations in one room, all on their phones."],90:["Ninety. You outlived the doctor who told you to give up bacon.","A party at the care home that goes on until 8pm."],100:["One hundred! A card from the King-ish.","The local paper sends a photographer."]};
-const BDAY_LINES=["The candles set off the smoke alarm.","Nobody sang in tune.","A card from the bank. Thoughtful.","Cake for breakfast. You're an adult.","Someone remembered on Facebook-ish.","Pizza, a film and an early night. Perfect.","A cake shaped like your car. It's not a good likeness.","You get socks. Again.","Your mum rings at 7am to sing.","A card signed by the whole office, except your boss."];
+const BDAY_LINES=["The candles set off the smoke alarm.","Nobody sang in tune.","A card from the bank. Thoughtful.","Cake for breakfast. You're an adult.","Someone remembered on Facebork.","Pizza, a film and an early night. Perfect.","A cake shaped like your car. It's not a good likeness.","You get socks. Again.","Your mum rings at 7am to sing.","A card signed by the whole office, except your boss."];
 function birthdayFor(n){
  if(BDAY_BIG[n]){moment({icon:"cake",kicker:"Happy birthday",title:`${n} today`,sub:pick(BDAY_BIG[n]),big:n>=80});return}
  snap({i:"cake",k:"Birthday",t:`My ${ord(n)} birthday`,s:pick(BDAY_LINES),ph:{sc:rnd()<.5?"lounge":rnd()<.5?"party":"pub",c:castNow({pt:1,kids:1,pet:1}),h:"party",pr:"cake",x:n}});
@@ -7716,7 +7723,7 @@ function kidBirthdays(){
 {const _ad=ageDay;ageDay=function(notes){const was=Math.floor(ageAt(S,S.day-1)+1e-9),n=Math.floor(age()+1e-9);_ad(notes);try{if(!S.over){if(n>was)birthdayFor(n);kidBirthdays()}}catch(e){}}}
 
 /* ---- Christmas, New Year and Valentine's ---- */
-const XMAS_LINES={alone:["Christmas for one: a turkey crown and the King's Speech-ish.","A Christmas jumper, a microwave pudding and a long phone call home.","Christmas with the telly. It was quite nice, honestly."],couple:["Christmas for two, still in pyjamas at 4pm.","You burnt the sprouts. Nobody minded.","A walk on Christmas morning, then a three-hour nap."],family:["Paper everywhere, a dog wearing antlers and a very loud board game.","Someone cried at Monopoly-ish. Classic.","The kids were up at 5am. You were up at 5:01am."],big:["Three generations, one turkey, and Grandad asleep by three.","Twelve round a table built for six.","Mum brought her famous trifle. Nobody had the heart to say."]};
+const XMAS_LINES={alone:["Christmas for one: a turkey crown and the King's Speech-ish.","A Christmas jumper, a microwave pudding and a long phone call home.","Christmas with the telly. It was quite nice, honestly."],couple:["Christmas for two, still in pyjamas at 4pm.","You burnt the sprouts. Nobody minded.","A walk on Christmas morning, then a three-hour nap."],family:["Paper everywhere, a dog wearing antlers and a very loud board game.","Someone cried at Moneyopoly. Classic.","The kids were up at 5am. You were up at 5:01am."],big:["Three generations, one turkey, and Grandad asleep by three.","Twelve round a table built for six.","Mum brought her famous trifle. Nobody had the heart to say."]};
 const XMAS_EV=[
  {ok:()=>!S.over&&!S.prison,id:"xs_santa",from:"The office",t:"Secret Santa",b:"You've drawn the person you like least in the whole office. £10 limit.",c:[{t:"Put real thought into it",fx:{rep:2,stress:2},o:"They're genuinely touched. You might have misjudged them."},{t:"A novelty mug from the garage",fx:{},o:"They got you a scented candle. Fair."},{t:"Something passive-aggressive",p:.5,win:{fx:{stress:-3},o:"Everyone laughs. Even them."},lose:{fx:{rep:-3},o:"HR is copied into an email."}}]},
  {ok:()=>inLove(),id:"xs_gift",from:"Your diary",t:"A present for {p}",b:"Christmas is ten days away and you still haven't bought {p} anything.",c:[{t:"Something big (£1,500)",fx:{gbp:-1500,home:7},o:"Their face on Christmas morning is worth every penny."},{t:"Something thoughtful and cheap",p:.6,win:{fx:{home:6},o:"A framed photo of your first date. They cry."},lose:{fx:{home:-2},o:"It looked better in your head."}},{t:"A garage-forecourt panic buy",fx:{home:-4},o:"De-icer and a box of chocolates. They know."}]},
@@ -7771,7 +7778,7 @@ function ensureFolks(){
  S.parentsAlive=S.folks.filter(f=>f.alive).length;
  S.folkSeen=S.day;
 }
-const VISIT_LINES=["Dad shows you his new shed. Then the shed's new shelves.","Mum has printed out photos from Facebook-ish to show you.","The telly is on so loud you watch the whole of Countdown-ish.","They ask when you're going to settle down. Twice.","Dad explains the route he took to the garden centre in full.","Mum sends you home with a week's worth of leftovers in old ice-cream tubs.","You fix their Wi-Fi. You are a hero.","A whole afternoon of old photo albums. You were a funny-looking baby.","Dad falls asleep in his chair at 3pm. Mum tells you all the gossip.","They've joined a choir. You get a full performance."];
+const VISIT_LINES=["Dad shows you his new shed. Then the shed's new shelves.","Mum has printed out photos from Facebork to show you.","The telly is on so loud you watch the whole of Countdown-ish.","They ask when you're going to settle down. Twice.","Dad explains the route he took to the garden centre in full.","Mum sends you home with a week's worth of leftovers in old ice-cream tubs.","You fix their Wi-Fi. You are a hero.","A whole afternoon of old photo albums. You were a funny-looking baby.","Dad falls asleep in his chair at 3pm. Mum tells you all the gossip.","They've joined a choir. You get a full performance."];
 function folksVisit(){
  ensureFolks();const al=S.folks.filter(f=>f.alive);if(!al.length||freeLeft()<1||S.folkSeen===S.day)return;
  useFree();S.folkSeen=S.day;S.homeLife=clamp(S.homeLife+3,0,100);S.stress=clamp(S.stress-2,0,100);for(const f of al)f.vis=(f.vis||0)+1;
@@ -7799,7 +7806,7 @@ function folksMorning(){
  const mum=S.folks.find(f=>f.r==="mum"),dad=S.folks.find(f=>f.r==="dad"),opts=[];
  for(const f of al){const a=folkAge(f),N=folkName(f),he=f.r==="mum"?"she":f.r==="dad"?"he":"they",his=f.r==="mum"?"her":f.r==="dad"?"his":"their";
   if(a>=63&&a<70&&!f.ret)opts.push(()=>{f.ret=1;return{id:"fk_ret",from:N,t:`${N} has retired`,b:`${N} has retired after forty years and is already driving everyone mad.`,c:[{t:"Buy golf lessons (£300)",fx:{gbp:-300,home:3},o:`${N} is now unbearable about golf.`},{t:"Help set up an online shop",p:.5,win:{fx:{home:4},o:`${N} sells old records online and makes £2,000. ${he[0].toUpperCase()+he.slice(1)} won't stop talking about 'the business'.`},lose:{fx:{home:1,stress:2},o:"Three hundred phone calls about passwords."}},{t:"Suggest volunteering",fx:{home:2,karma:2},o:`${N} joins the hospital radio. ${he[0].toUpperCase()+he.slice(1)}'s a natural.`}]}});
-  if(a>=60&&!S.flags.fk_social)opts.push(()=>{S.flags.fk_social=1;return{id:"fk_social",from:N,t:`${N} is on social media`,b:`${N} has joined Facebook-ish and commented 'IS THIS YOUR NEW GIRLFRIEND x' on a photo of you and your boss.`,c:[{t:"Teach them the privacy settings",fx:{home:3,stress:1},o:`An hour on the phone. ${N} now posts only Minion memes.`},{t:"Leave it. It's harmless",fx:{rep:-1,home:2},o:`${N} becomes the office's favourite commenter.`}]}});
+  if(a>=60&&!S.flags.fk_social)opts.push(()=>{S.flags.fk_social=1;return{id:"fk_social",from:N,t:`${N} is on social media`,b:`${N} has joined Facebork and commented 'IS THIS YOUR NEW GIRLFRIEND x' on a photo of you and your boss.`,c:[{t:"Teach them the privacy settings",fx:{home:3,stress:1},o:`An hour on the phone. ${N} now posts only Minion memes.`},{t:"Leave it. It's harmless",fx:{rep:-1,home:2},o:`${N} becomes the office's favourite commenter.`}]}});
   if(a>=78&&!f.frail)opts.push(()=>{f.frail=1;return{id:"fk_frail",from:"The hospital",t:`${N} has had a fall`,b:`${N} fell at home and was on the floor for an hour before a neighbour heard. ${he[0].toUpperCase()+he.slice(1)}'s home now, but shaken, and can't really manage alone.`,c:[
    ...(ownsHome()&&(S.home.tier||0)>=2||typeof hasMod==="function"&&hasMod("annex")?[{t:`Move ${N} in with you`,fx:{home:-3,stress:6,karma:5},o:`${N} moves into the spare room with forty years of stuff and opinions about your cooking.`}]:[]),
    {t:"Pay for a carer to visit daily (£900 a month)",fx:{act:"care",amt:900,home:2},o:"Someone pops in every morning. You ring every night."},
@@ -8426,7 +8433,7 @@ ACTS.frdate=fx=>{const p=(S.people||[]).find(x=>x.id===fx.pid);if(!p)return;p.da
 function epilogue(){
  if(S.epi)return S.epi;const L=[],yr=START_YEAR+Math.floor((S.day-1)/12)+10,k=S.karma||0;
  if(S.rel.st==="married"||inLove()){const p=S.rel.name.split(" ")[0],young=age()<55;
-  L.push(young&&rnd()<.55?`${p} remarried in ${yr-6}, to a ${pick(["dentist","quantity surveyor","retired DJ","widower from the choir","very tall Swede"])}. ${pick(["They still put flowers on your grave every birthday.","They named the dog after you.","They kept your photo on the fridge."])}`:k<-25?`${p} sold your things on eBay within the month and moved to Marbella.`:`${p} never remarried. ${pick(["They still set two cups out in the morning, out of habit.","They took up wild swimming and became a bit of a local legend.","They finally redecorated the spare room you'd argued about for years."])}`)}
+  L.push(young&&rnd()<.55?`${p} remarried in ${yr-6}, to a ${pick(["dentist","quantity surveyor","retired DJ","widower from the choir","very tall Swede"])}. ${pick(["They still put flowers on your grave every birthday.","They named the dog after you.","They kept your photo on the fridge."])}`:k<-25?`${p} sold your things on Flogbay within the month and moved to Marbella.`:`${p} never remarried. ${pick(["They still set two cups out in the morning, out of habit.","They took up wild swimming and became a bit of a local legend.","They finally redecorated the spare room you'd argued about for years."])}`)}
  for(const c of S.children.slice(0,3)){const a=Math.floor(kidAge(c))+10,kb=c.kb||0,j=c.job&&c.job!=="still finding their way"?c.job:pick((KID_JOBS[c.p||"kind"]||KID_JOBS.kind));
   L.push(`${c.n}, now ${a}, is ${j}. ${kb<-15?pick(["They don't talk about you much.","They still haven't forgiven you for missing the nativity."]):pick(["They tell your terrible jokes at every party.","They have your laugh, apparently.","They visit your grave every Christmas, with a mince pie.","They framed your old work badge."])}`)}
  if(S.pet)L.push(S.will&&S.will.k==="pet"?`${S.pet.n} the ${S.pet.kind} lived another nine years in great luxury, attended by staff.`:`${S.pet.n} the ${S.pet.kind} went to live with ${S.children[0]?S.children[0].n:"a neighbour"} and got noticeably fatter.`);
@@ -8716,7 +8723,7 @@ const OPS={
   win:["The inspectors call your lesson outstanding.","Your class gets the best results in the school.","The head asks you to train the other staff."],
   lose:["A pupil throws a chair in front of the inspector.","Results dip. The head wants a word.","The lesson falls apart in the first five minutes."]},
  tech:{kind:"The big launch",kitN:"Team",names:["the payments update","the new app","the database migration","the AI feature","the checkout redesign"],
-  brief:[["code","The codebase",["clean","a legacy mess"],["Code review","A contractor"]],["traffic","Launch traffic",["normal","a huge spike"],["Marketing's forecast","A rumour on Slack"]]],
+  brief:[["code","The codebase",["clean","a legacy mess"],["Code review","A contractor"]],["traffic","Launch traffic",["normal","a huge spike"],["Marketing's forecast","A rumour on the work chat"]]],
   plans:[["Ship it all at once","Fast. Fine on clean code and normal traffic.",{code:[.16,-.14],traffic:[.06,-.12]}],["Roll out slowly to a few users","Safe under a big spike.",{traffic:[-.04,.18]}],["Rewrite the risky parts first","Slow, but tames legacy code.",{code:[-.08,.18]}]],
   kits:[["Extra servers","Ready for a spike.",{traffic:[0,.16]}],["A senior engineer from another team","Knows the old code.",{code:[0,.14]}],["Feature flags and a rollback plan","Damage control if it goes wrong.",{},1]],
   win:["Zero downtime. The CEO tweets about it.","It just works. Nobody notices, which is the point.","Your team gets a shout-out at the all-hands."],
@@ -9125,7 +9132,7 @@ const SURNAMES2=["Smith","Jones","Taylor","Brown","Wilson","Evans","Thomas","Rob
 const WILDS={
  witness:{t:"You saw everything",b:"You witnessed a gangland shooting outside a kebab shop at 1am. The police want you to testify. It could be dangerous.",c:[{t:"Testify",fx:{act:"wildwit",karma:6,stress:8},o:"You give evidence from behind a screen. Then a man from the Home Office takes you aside."},{t:"Say you saw nothing",fx:{karma:-6,stress:4},o:"You look over your shoulder for years."}]},
  castle:{t:"You've inherited a castle",b:"A great-great-uncle you never knew about has left you a crumbling castle in the Highlands. It has a moat, a ghost and no central heating.",c:[{t:"Keep it and live the dream",fx:{act:"wildcastle",v:"keep",home:8,fame:4},o:"You're a laird now. The roof leaks in eleven places."},{t:"Turn it into a wedding venue",fx:{act:"wildcastle",v:"venue",stress:6},o:"Your first wedding is next month. The ghost is booked as a feature."},{t:"Sell it to an American billionaire",fx:{gbp:1200000,fixed:1},o:"£1.2 million. He seems delighted with the ghost."}]},
- meme:{t:"You're a meme",b:"Someone filmed you falling into a fountain while carrying a birthday cake. It has 40 million views and a remix.",c:[{t:"Lean in: merch, a TikTok-ish account, the lot",fx:{fame:15,gbp:25000,fixed:1,stress:4},o:"Fountain Cake Person hoodies sell out in a day."},{t:"Hide until it blows over",fx:{stress:6,fame:4},o:"It takes eight months. Strangers still shout 'cake!' at you."}]},
+ meme:{t:"You're a meme",b:"Someone filmed you falling into a fountain while carrying a birthday cake. It has 40 million views and a remix.",c:[{t:"Lean in: merch, a TikTak account, the lot",fx:{fame:15,gbp:25000,fixed:1,stress:4},o:"Fountain Cake Person hoodies sell out in a day."},{t:"Hide until it blows over",fx:{stress:6,fame:4},o:"It takes eight months. Strangers still shout 'cake!' at you."}]},
  syndicate:{t:"The syndicate's won the lottery",b:"The office lottery syndicate has won £3.6 million between ten of you. But Dave didn't pay his £2 that week.",c:[{t:"Share it with Dave anyway",fx:{gbp:327000,fixed:1,karma:8,home:3},o:"Dave cries. You're all a bit richer and still friends."},{t:"Cut Dave out: rules are rules",fx:{gbp:360000,fixed:1,karma:-10,rep:-4},o:"£360k each. Dave sues. The office is a war zone for a year."}]},
  lookalike:{t:"Mistaken identity",b:"Everyone thinks you're a famous film star. A hotel has just upgraded you to the penthouse and a fan has fainted.",c:[{t:"Play along for a month",p:.6,win:{fx:{fame:6,gbp:4000,home:3},o:"Free dinners, front-row seats and one very confusing interview."},lose:{fx:{rep:-5,fame:8},o:"You're unmasked on breakfast TV. The real star sends a cease-and-desist."}},{t:"Set the record straight",fx:{karma:3},o:"The hotel moves you back to a room by the lift."}]},
  ufo:{t:"Lights in the sky",b:"Driving home on a quiet road at 2am, you see three lights hover over a field, then vanish. Your dashcam caught it.",c:[{t:"Tell the world",fx:{fame:10,rep:-5},o:"A documentary crew follows you for a month. Your colleagues hum the X-Files-ish theme."},{t:"Send it to the Ministry of Defence-ish",fx:{stress:3},o:"Two men in grey suits visit. They take the dashcam. They don't give it back."},{t:"Delete it and never speak of it",fx:{stress:2},o:"Some nights you still look up."}]},
@@ -9227,7 +9234,7 @@ Object.assign(ITEM_PICS,{castle:'<text x="24" y="37" font-size="34" text-anchor=
 const NEM_NAMES=["Tarquin","Jemima","Darren","Chantelle","Rupert","Kayleigh","Spencer","Portia","Dean","Saffron","Giles","Tiffany"];
 const NEM_SUR=["Hollingsworth","Pratt","Featherstone","Smythe","Crabtree","Pemberton","Gallagher","Thorne"];
 const NEM_EV=[
- {k:"promo",ok:()=>!S.over&&S.rank<4&&!selfPaid(),t:N=>`${N} got the job`,b:N=>`${N} has just been given the promotion you'd been told was yours. They've already changed their LinkedIn-ish.`,c:N=>[{t:"Congratulate them through gritted teeth",fx:{act:"nem",w:0,karma:3},o:"They say 'no hard feelings'. There are hard feelings."},{t:"Work twice as hard to beat them next time",p:.55,win:{fx:{act:"nem",w:1,rep:4,stress:4},o:"Six months later you're a level above them. Sweet."},lose:{fx:{act:"nem",w:-1,stress:6},o:"They get another promotion. You get a cold."}}]},
+ {k:"promo",ok:()=>!S.over&&S.rank<4&&!selfPaid(),t:N=>`${N} got the job`,b:N=>`${N} has just been given the promotion you'd been told was yours. They've already changed their LinkedOut.`,c:N=>[{t:"Congratulate them through gritted teeth",fx:{act:"nem",w:0,karma:3},o:"They say 'no hard feelings'. There are hard feelings."},{t:"Work twice as hard to beat them next time",p:.55,win:{fx:{act:"nem",w:1,rep:4,stress:4},o:"Six months later you're a level above them. Sweet."},lose:{fx:{act:"nem",w:-1,stress:6},o:"They get another promotion. You get a cold."}}]},
  {k:"house",ok:()=>!S.over,t:N=>`${N} outbid you`,b:N=>`You'd set your heart on a house. ${N} has just offered £20,000 over the asking price, in cash.`,c:N=>[{t:"Let it go",fx:{act:"nem",w:-1,home:-2},o:"They invite you to the housewarming. You don't go."},{t:"Go £30,000 over",p:.5,win:{fx:{act:"nem",w:1,gbp:-30000},o:"You win. It costs a fortune, but their face."},lose:{fx:{act:"nem",w:-1},o:"They go £40,000 over. Of course they do."}}]},
  {k:"ex",ok:()=>!!(S.exes&&S.exes.length),t:N=>`${N} is dating your ex`,b:N=>`${N} is going out with ${S.exes&&S.exes.length?S.exes[S.exes.length-1].n.split(" ")[0]:"your ex"}. The photos are everywhere.`,c:N=>[{t:"Like the photo. Be the bigger person",fx:{act:"nem",w:1,karma:4},o:"It drives them mad that you don't care."},{t:"Post a better holiday photo",fx:{act:"nem",w:0,gbp:-1500,stress:-2},o:"A sunset, a cocktail, a caption about 'peace'. Petty. Perfect."}]},
  {k:"neighbour",ok:()=>ownsHome(),t:N=>`${N} has moved in next door`,b:N=>`Of all the houses in the country, ${N} has bought the one next to yours. They've already complained about your bins.`,c:N=>[{t:"Build a taller fence",fx:{act:"nem",w:0,gbp:-2000,stress:-2},o:"It's a very nice fence."},{t:"Win the street's Best Garden prize",p:.5,win:{fx:{act:"nem",w:1,home:3},o:"The rosette goes in your front window, facing their house."},lose:{fx:{act:"nem",w:-1},o:"They win. With plastic flowers."}}]},
@@ -9924,7 +9931,7 @@ EV.push(
 );
 EV.push(
  // ===== DJ (23) =====
- {id:"x2_dj_1",career:"dj",r:[0,1],from:"Your mate Kieran",t:"Play my 30th for free?",b:"An old schoolmate wants you to DJ his 30th in a pub function room. 'Exposure', he says. There will be a buffet.",c:[{t:"Do it for the sausage rolls",fx:{home:3,stress:3,rep:1},o:"His nan requests ABBA four times. You play it four times. Everyone loves you."},{t:"Quote him your proper rate",fx:{gbp:150,home:-3,karma:-1},o:"He pays, grumbling. The group chat goes quiet for a week."}],again:24},
+ {id:"x2_dj_1",career:"dj",r:[0,1],from:"Your mate Kieran",t:"Play my 30th for free?",b:"An old schoolmate wants you to DJ his 30th in a pub function room. 'Exposure', he says. There will be a buffet.",c:[{t:"Do it for the sausage rolls",fx:{home:3,stress:3,rep:1},o:"His nan requests the Swedish disco classic four times. You play it four times. Everyone loves you."},{t:"Quote him your proper rate",fx:{gbp:150,home:-3,karma:-1},o:"He pays, grumbling. The group chat goes quiet for a week."}],again:24},
  {id:"x2_dj_2",career:"dj",r:[0,1],from:"Promoter, Basement 9",t:"The 4am slot",b:"A promoter offers you the closing slot — 4am to 6am — at a big warehouse night. Barely anyone will be left.",c:[{t:"Take it and play for the diehards",p:0.6,win:{fx:{rep:5,skill:1,stress:4},o:"Forty sweaty survivors refuse to leave. The promoter books you again."},lose:{fx:{stress:6,health:-3},o:"You play to the cleaners and one man asleep on a speaker."}},{t:"Hold out for an earlier slot",fx:{rep:-1},o:"He shrugs and gives it to someone else."}]},
  {id:"x2_dj_3",career:"dj",from:"USB stick",t:"The corrupted USB",b:"Ten minutes before your set, your USB stick with every track on it shows as 'unreadable'.",c:[{t:"Wing it from your phone's streaming app",p:0.5,win:{fx:{rep:4,skill:1,stress:6},o:"Pure improvisation. People say it was your best set yet."},lose:{fx:{rep:-4,heat:4,stress:8},o:"The Wi-Fi drops mid-drop. Silence. Someone films it."}},{t:"Beg the warm-up DJ to lend you his",fx:{rep:-1,stress:3},o:"His library is all wedding classics. You make it work. Mostly."}],again:24},
  {id:"x2_dj_4",career:"dj",r:[0,2],from:"Neighbour, flat 4B",t:"Bass through the floor",b:"Your downstairs neighbour has slid a furious note under your door about 'the thumping' at 2am while you practise.",c:[{t:"Buy proper headphones and monitor isolation",fx:{gbp:-300,home:3,karma:2},o:"Peace returns. Your neighbour leaves you a cake."},{t:"Ignore it — you're an artist",p:0.4,win:{fx:{skill:1},o:"They give up complaining. You finish the track."},lose:{fx:{heat:6,home:-4,stress:5},o:"The council sends a noise-abatement letter."}}]},
@@ -10102,7 +10109,7 @@ EV.push(
  {id:"x2_manager_7",career:"manager",r:[1,4],from:"Your captain",t:"A players' night out",b:"The squad wants a night out after a big win. It's Tuesday and you play again on Saturday.",c:[{t:"Allow it with a curfew",p:0.6,win:{fx:{rep:2,stress:-2},o:"They're back by midnight, mostly. Spirits are high."},lose:{fx:{heat:7,pnl:-2},o:"Two players turn up in the papers dancing on a bar."}},{t:"Ban it",fx:{rep:-2,pnl:1},o:"They grumble, but train sharply all week."},{t:"Join them for one drink",fx:{rep:3,home:-1},o:"You do a terrible karaoke. The players love you."}]},
  {id:"x2_manager_8",career:"manager",from:"Your family",t:"The school play",b:"Your child's school play clashes with a Saturday cup tie. They have three whole lines and have rehearsed for weeks.",c:[{t:"Go to the play",fx:{home:8,rep:-3,pnl:-1},o:"Your assistant manages. You film every one of the three lines."},{t:"Manage the match",fx:{home:-6,pnl:2},o:"You win. You watch the play on video later. It's not the same."}],again:24},
  {id:"x2_manager_9",career:"manager",r:[2,4],from:"The data team",t:"The spreadsheet says no",b:"The new analytics team says your favourite midfielder is statistically 'the worst in the league'. You disagree.",c:[{t:"Trust the data and drop him",p:0.55,win:{fx:{pnl:3,skill:2},o:"The team improves. You hate admitting it."},lose:{fx:{pnl:-2,rep:-2},o:"His replacement is worse. The data team goes quiet."}},{t:"Trust your gut",fx:{rep:1,skill:1},o:"He plays well. The data team writes a long report on 'luck'."}]},
- {id:"x2_manager_10",career:"manager",r:[0,2],from:"Training ground",t:"The pitch is frozen",b:"Training ground's frozen solid. The groundsman suggests the car park. The players suggest a day off.",c:[{t:"Train indoors on the five-a-side courts",fx:{pnl:1,stress:2},o:"Fast, sharp and nobody breaks an ankle."},{t:"Give them the day off",fx:{rep:2,pnl:-1},o:"They love you. The chairman sees it on Instagran."},{t:"Car park it is",p:0.5,win:{fx:{rep:2,pnl:1},o:"It's a strangely brilliant session. Team spirit soars."},lose:{fx:{heat:6,health:-1},o:"A winger slips on ice and dents a Volvo."}}],again:12},
+ {id:"x2_manager_10",career:"manager",r:[0,2],from:"Training ground",t:"The pitch is frozen",b:"Training ground's frozen solid. The groundsman suggests the car park. The players suggest a day off.",c:[{t:"Train indoors on the five-a-side courts",fx:{pnl:1,stress:2},o:"Fast, sharp and nobody breaks an ankle."},{t:"Give them the day off",fx:{rep:2,pnl:-1},o:"They love you. The chairman sees it on Instagran."},{t:"Car park it is",p:0.5,win:{fx:{rep:2,pnl:1},o:"It's a strangely brilliant session. Team spirit soars."},lose:{fx:{heat:6,health:-1},o:"A winger slips on ice and dents a Volvoh."}}],again:12},
  {id:"x2_manager_11",career:"manager",r:[3,4],from:"The owner",t:"Sell your best player?",b:"A rich club has offered a fortune for your best player in the last hour of the transfer window.",c:[{t:"Sell and reinvest",p:0.55,win:{fx:{pnl:3,rep:2},o:"You pick up two bargains. The fans soon forget him."},lose:{fx:{pnl:-3,heat:8},o:"Your replacements flop. The fans sing his name at you."}},{t:"Refuse to sell",fx:{heat:5,rep:3},o:"The owner sulks about the money. The fans adore you."}]},
  {id:"x2_manager_12",career:"manager",r:[1,4],from:"Club welfare officer",t:"A player in trouble",b:"A young player's been missing training, and his teammates say he's gambling every penny he earns.",c:[{t:"Get him professional help",fx:{karma:5,pnl:-1,stress:2},o:"It takes months, but he gets well. He thanks you years later."},{t:"Fine him for missing training",fx:{pnl:1,karma:-3,heat:3},o:"He pays the fine with a loan. It gets worse."}]},
  {id:"x2_manager_13",career:"manager",r:[2,4],from:"Match officials",t:"A terrible refereeing call",b:"A goal is wrongly disallowed in the 90th minute. You lose. The cameras are waiting for you in the tunnel.",c:[{t:"Say 'no comment' and walk away",fx:{stress:4},o:"You're praised as 'dignified'. You punch a pillow at home."},{t:"Tell the cameras exactly what you think",p:0.5,win:{fx:{rep:4,stress:-3},o:"Fans love the honesty. A rule change follows."},lose:{fx:{heat:10,gbp:-500},o:"The FA fines you and bans you from the touchline."}}],again:18},
@@ -12967,7 +12974,7 @@ EV.push(
   {t:"See the parrot first to clear the room",fx:{rep:2,stress:1},o:"Problem solved. The parrot calls you something rude on the way out."},
   {t:"Cover the cage with a towel",fx:{rep:1},o:"Muffled swearing. The child is enthralled anyway."}]},
  {id:"x3_vet_5",career:"vet",r:[0,2],again:12,from:"Hill farms",t:"Lambing season overload",b:"It's lambing season. Six farms need you tonight and you've had four hours' sleep in two days.",c:[
-  {t:"Do every call yourself",p:0.5,win:{fx:{rep:5,skill:2,health:-3},o:"Forty lambs alive. You fall asleep in the Land Rover in a layby."},lose:{fx:{health:-5,stress:10,heat:4},o:"Exhausted, you misjudge a difficult birth. You'll replay it for weeks."}},
+  {t:"Do every call yourself",p:0.5,win:{fx:{rep:5,skill:2,health:-3},o:"Forty lambs alive. You fall asleep in the Landy in a layby."},lose:{fx:{health:-5,stress:10,heat:4},o:"Exhausted, you misjudge a difficult birth. You'll replay it for weeks."}},
   {t:"Hand two calls to a neighbouring practice",fx:{stress:-2,rep:-1,pnl:-1},o:"The farmers grumble, but the lambs are fine."}]},
  {id:"x3_vet_6",career:"vet",r:[0,2],from:"A Jack Russell",t:"Bitten badly by a terrier",b:"A Jack Russell has bitten through your hand. It's swelling. You've got twelve appointments left today.",c:[
   {t:"Go to minor injuries now",fx:{health:-1,stress:2,rep:-1},o:"Antibiotics and a stern nurse. Colleagues cover your list."},
@@ -13843,12 +13850,12 @@ const isMatchDay=()=>{const w=dateFor(S.day).getUTCDay();return w===2||w===5};
 function fbMorning(){
  const f=S.fb;S.news=[];f.opp=null;
  ensureLeague();transferMorning();
- if(inSeason(S.day)){const T=S.lg.teams,mi=T.findIndex(t=>t.n===S.bank);let ix;do{ix=Math.floor(rnd()*20)}while(ix===mi);const o=T[ix],str=clamp(Math.round(3+(o.str-T[mi].str)*1.5),1,5);f.opp={n:o.n,str,home:rnd()<.5,ix};
+ if(inSeason(S.day)){ensureLeague();const T=S.lg.teams,mi=T.findIndex(t=>t.n===S.bank);let ix;do{ix=Math.floor(rnd()*20)}while(ix===mi);const o=T[ix],str=clamp(Math.round(3+(o.str-T[mi].str)*1.5),1,5);f.opp={n:o.n,str,home:rnd()<.5,ix};
   f.sel=f.inj>0?"injured":f.ban>0?"banned":f.fit<35?"rested":f.form<34+S.rank*4?"bench":"start";
   S.news.push({t:`${f.opp.home?"Home":"Away"} match against ${f.opp.n} (${"★".repeat(str)}${"☆".repeat(5-str)})`});
-  if(rnd()<.35){const scout=rnd()<.5;f.scout=scout;S.news.push({t:scout?pick(FB_SCOUT):pick(FB_PREVIEW)})}else f.scout=false;
- }else S.news.push({t:pick(FB_OFF_NEWS)});
- S.news.push({t:pick(FB_MORE_NEWS)});
+  if(rnd()<.35){const scout=rnd()<.5;f.scout=scout;S.news.push({t:scout?newsPick(FB_SCOUT):newsPick(FB_PREVIEW)})}else f.scout=false;
+ }else S.news.push({t:newsPick(FB_OFF_NEWS)});
+ S.news.push({t:newsPick(FB_MORE_NEWS)});
 }
 function fbCloseCore(off){
  const f=S.fb,lines=[],notes=[];let tot=0,heat=0,repD=0,stressD=0;f._lm=null;
@@ -14060,7 +14067,7 @@ const KIT_MULT={music:.75,dj:.75,foot:2,bank:1.5,law:1.2,doc:1.2,soldier:.3,poli
 const NET={bank:"A client dinner in Mayfair",elec:"A builders' merchant trade breakfast",plumb:"A trade counter breakfast",hair:"A hair show in Birmingham",chef:"A chefs' night out",tech:"A tech meetup",
  law:"A law society dinner",doc:"A medical conference",nurse:"A nursing conference",teach:"An education conference",police:"A Police Federation dinner",pol:"Party conference",pilot:"An aviation expo",
  fire:"A fire service conference",vet:"A vet congress",arch:"An architecture festival",influencer:"A creator convention",soldier:"A regimental dinner",foot:"A charity golf day",music:"A music industry showcase",dj:"An industry night at a superclub"};
-const PROMO={elec:["Flyers through local doors","A van wrap and a website"],plumb:["Flyers through local doors","A van wrap and a website"],hair:["Instagram before-and-afters","A launch party and local press"],
+const PROMO={elec:["Flyers through local doors","A van wrap and a website"],plumb:["Flyers through local doors","A van wrap and a website"],hair:["Instaglam before-and-afters","A launch party and local press"],
  chef:["Social media food photos","A food critic tasting night"],tech:["A personal blog and GitHub","Conference talks"],law:["LinkedIn articles","A seminar for clients"],vet:["Social media pet stories","A free pet health day"],
  arch:["A portfolio website","Enter a design competition"],influencer:["Collab with a bigger creator","A paid ad campaign"],bank:["Volunteer for a client pitch","Lead a big client roadshow"],pol:["Knock on doors all weekend","A national media blitz"]};
 const PUBLIC_PROMO=["Volunteer for extra responsibility","Lead a high-profile project"];
@@ -14498,8 +14505,6 @@ function renderLife(){
  const relLine=single?(rel.kids?`${LIFE_STATUS[rel.st]} · ${rel.kids} child${rel.kids>1?"ren":""}`:LIFE_STATUS[rel.st]):`${LIFE_STATUS[rel.st]}${rel.st==="dating"?"":rel.st==="engaged"?" to":" to"} ${esc(rel.name)}${rel.st==="dating"?` (${esc(rel.job)})`:""}${rel.kids?` · ${rel.kids} child${rel.kids>1?"ren":""}`:""}`;
  const homes=S.market.map(x=>{const q=homeQuote(x),ht=HT[x.t];
   return `<li class="listing">${houseArt(ht.art,x.v)}<span class="nm">${esc(ht.n)}, ${esc(x.area)}</span><span class="sub"><span class="mono">${money(x.p)}</span>${q.ok?"":" · "+esc(q.why)}<span class="feat">${x.feat.map(f=>`<span>${esc(f)}</span>`).join("")}</span></span><button class="btn sm ${q.ok?"primary":""}" data-act="qhome" data-id="${x.id}" ${q.ok?"":"disabled"}>View</button></li>`}).join("");
- const cars=CARS.filter(x=>x.id!=="none"&&x.id!==S.car.id).map(x=>{const q=carQuote(x);
-  return `<li class="listing">${carArt(x.shape,COLORS[(x.p/1000|0)%COLORS.length][1])}<span class="nm">${esc(x.n)}</span><span class="sub"><span class="mono">${money(x.p)}</span> · ${money(x.run)}/month${x.dep<0?" · Classic: gains value":""}${q.ok?"":" · "+esc(q.why)}</span><button class="btn sm ${q.ok?"primary":""}" data-act="qcar" data-id="${x.id}" ${q.ok?"":"disabled"}>View</button></li>`}).join("");
  const nw=netWorth();
  document.getElementById("pane-life").innerHTML=`
   <div class="pane-sec">
@@ -14530,10 +14535,10 @@ function renderLife(){
    <div class="own-art">${S.home.value>0?homeArtNow():houseArt(hart,S.home.v||0,"art art-big")}
    <div class="own"><span class="nm">${esc(S.home.name?`${S.home.name} · ${S.home.n}`:S.home.n)}</span><span class="sub mono">${S.home.value<=0?money(S.home.rent)+"/month rent":`Worth ${money(S.home.value)} · ${S.home.loan>0?`mortgage ${money(S.home.loan)}, ${money(homePay())} a month, ${Math.ceil((S.home.left||0)/12)} years left`:"no mortgage"}`}${S.home.style?` · ${esc(S.home.style)} interior`:""}${Object.keys(S.home.mods||{}).length?` · ${Object.keys(S.home.mods).length} upgrade${Object.keys(S.home.mods).length>1?"s":""}`:""}</span>${(S.home.value>0)?'<span class="own-btns"><button class="btn sm primary" data-act="hcustom">Customise</button><button class="btn sm" data-act="sellhome">Sell</button></span>':""}</div></div>
    <details class="shop" id="estate"><summary>Estate agent · ${S.market.length} listings</summary><p class="hint" style="margin:4px 0">New listings every 10 months (next in ${10-(S.day-S.marketDay)}). 20% deposit, 1% fees, UK stamp duty, mortgage up to 5.5× salary. Your current home is sold as part of the move.</p><ul>${homes}</ul></details>
-   <div class="label" style="margin:16px 0 6px">Car</div>
+   <div class="label" style="margin:16px 0 6px">Transport</div>
    <div class="own-art">${carArt(c.shape,S.car.color,"art art-big",carOpts())}
    <div class="own"><span class="nm">${esc(c.n)}${S.car.mods&&S.car.mods.plate?` · ${esc(S.car.mods.plate)}`:""}</span><span class="sub mono">${S.car.id==="none"?"£180/month on the Tube and buses":`Worth ${money(S.car.value)} · ${money(c.run)}/month${S.car.mods&&S.car.mods.tune?` · Stage ${S.car.mods.tune} tune`:""}`}</span>${S.car.id!=="none"?'<span class="own-btns"><button class="btn sm primary" data-act="ccustom">Customise</button><button class="btn sm" data-act="sellcar">Sell</button></span>':""}</div></div>
-   <details class="shop" id="showroom"><summary>Car showroom · ${CARS.length-2} models</summary><p class="hint" style="margin:4px 0">Cash only. Pick your colour. Your current car is traded in at 90% of its value.</p><ul>${cars}</ul></details>
+   ${transportShop()}
   </div>
   `:""}
   ${lifeTab==="money"?`
@@ -14600,8 +14605,8 @@ function buyHome(id){const h=S.market.find(x=>x.id===id);if(!h)return;const q=ho
 function sellHome(){const v=S.home.value*.98-S.home.loan;S.log.unshift({d:S.day,t:`Sold your home in ${S.home.area||"London"}. ${money(v)} released.`});S.wealth+=v;S.home=roomHome();S.homeLife=clamp(S.homeLife-6,0,100);save();render();hideModal()}
 let pickColor=COLORS[1][1];
 function carModal(id){const c=carOf(id),q=carQuote(c);
- showModal(`<div class="label">Car showroom</div><h2 style="margin-top:4px">${esc(c.n)}</h2><div id="carPrev" style="margin-top:10px">${carArt(c.shape,pickColor,"art art-big")}</div>
-  ${c.shape==="bike"||c.shape==="bus"?"":`<div class="label" style="margin-top:10px">Colour: <span id="colName">${esc((COLORS.find(x=>x[1]===pickColor)||COLORS[1])[0])}</span></div><div class="swatches">${COLORS.map(([n,h])=>`<button data-act="swatch" data-id="${c.id}" data-c="${h}" class="${h===pickColor?"on":""}" style="background:${h}" aria-label="${esc(n)}"></button>`).join("")}</div>`}
+ showModal(`<div class="label">Transport · ${esc(c.sub||"Car")}${c.ev?" · ⚡ Electric":""}</div><h2 style="margin-top:4px">${esc(c.n)}</h2><div id="carPrev" style="margin-top:10px">${carArt(c.shape,pickColor,"art art-big")}</div>
+  ${c.shape==="bus"?"":`<div class="label" style="margin-top:10px">Colour: <span id="colName">${esc((COLORS.find(x=>x[1]===pickColor)||COLORS[1])[0])}</span></div><div class="swatches">${COLORS.map(([n,h])=>`<button data-act="swatch" data-id="${c.id}" data-c="${h}" class="${h===pickColor?"on":""}" style="background:${h}" aria-label="${esc(n)}"></button>`).join("")}</div>`}
   <table class="rep-table"><tr><td>Price</td><td>${money(c.p)}</td></tr>${q.trade?`<tr><td>Trade-in</td><td class="up">${money(q.trade,true)}</td></tr>`:""}<tr><td><b>Cash needed</b></td><td><b>${money(q.need)}</b></td></tr><tr><td>Running costs</td><td>${money(c.run)}/month</td></tr><tr><td>Value over time</td><td>${c.dep<0?"Rises about 6% a year":`Falls about ${Math.round(c.dep*250*100)}% a year`}</td></tr></table>
   <div class="btn-row"><button class="btn primary big" data-act="buycar" data-id="${c.id}" ${q.ok?"":"disabled"}>Buy it</button><button class="btn" data-act="hide">Not now</button></div>`)}
 function buyCar(id){const c=carOf(id),q=carQuote(c);if(!q.ok)return;
@@ -14752,6 +14757,7 @@ function renderNav(){
 /* Tells the player exactly what is blocking the end of the month */
 const needWork=()=>!S.prison&&!S.front&&!S.sel&&!S.sabb&&CAR_().mech==="jobs"&&!S.over&&S.cards&&S.cards.length&&!Object.keys(S.pick||{}).length&&!movesPicked()&&!(S.op&&S.op.on&&S.op.d===S.day);
 const moneyX=(n,sign)=>Math.abs(n)>=1e5?money(n,sign):(n<0?"−":(sign&&n>0?"+":""))+"£"+Math.round(Math.abs(n)).toLocaleString("en-GB");
+const jobLc=n=>String(n||"").split(" · ")[0].replace(/^([A-Z])(?=[a-z])/,c=>c.toLowerCase());
 function closeLabel(){
  const n=S.inbox.filter(m=>!m.done).length;
  if(n)return`Clear the inbox · ${n} left`;
@@ -14764,7 +14770,7 @@ function setTab(t){tab=t;if(t!=="desk")side=t;renderNav();if(window.innerWidth<7
 
 /* ============ Modals ============ */
 let modalHead="";
-function showModal(html){const sh=document.getElementById("sheet"),md=document.getElementById("modal"),head=String(html).replace(/s+/g," ").slice(0,90),same=!md.hidden&&head===modalHead;modalHead=head;const keep=same?sh.scrollTop:0;sh.innerHTML=html;if(sh.querySelector('[data-act="hide"]'))sh.insertAdjacentHTML("afterbegin",'<div class="sheet-xbar"><button class="sheet-x" data-act="hide" aria-label="Close" title="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>');md.hidden=false;sh.scrollTop=keep;md.scrollTop=0;if(!same){const f=document.querySelector("#sheet button:not(.sheet-x), #sheet input");if(f)try{f.focus({preventScroll:true})}catch(e){f.focus()}}}
+function showModal(html){const sh=document.getElementById("sheet"),md=document.getElementById("modal"),head=String(html).replace(/s+/g," ").slice(0,90),same=!md.hidden&&head===modalHead;modalHead=head;const keep=same?sh.scrollTop:0;sh.innerHTML=html;if(sh.querySelector('[data-act="hide"],[data-xclose],[data-act="settingsback"],[data-act="saves"],[data-act="menu"]'))sh.insertAdjacentHTML("afterbegin",'<div class="sheet-xbar"><button class="sheet-x" data-act="hide" aria-label="Close" title="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>');md.hidden=false;sh.scrollTop=keep;md.scrollTop=0;if(!same){const f=document.querySelector("#sheet button:not(.sheet-x), #sheet input");if(f)try{f.focus({preventScroll:true})}catch(e){f.focus()}}}
 function hideModal(){document.getElementById("modal").hidden=true;if(miniRun)miniRun.stop=true;setTimeout(()=>{try{sceneCheck()}catch(e){}},80)}
 function nextModal(){
  const m=modalQueue.shift();
@@ -15612,7 +15618,7 @@ function inheritMorning(){
  if(!l5ok()||S.day<30||S.flags.l5inh||rnd()>.004)return;S.flags.l5inh=S.day;
  const who=pick(["Great-Aunt Margery","Uncle Desmond","your dad's cousin Bernard","Great-Uncle Fergus","your godmother, Pam"]),r=rnd();
  if(r<.5){const amt=Math.round((5+rnd()*60))*1000;pushDyn({id:"inh_"+S.day,life:1,from:"A solicitor's letter",t:"You've been left something",b:`${who} has died and left you ${money(amt)}. You met them twice. Once was at a wedding.`,c:[{t:"Bank it",fx:{gbp:amt},o:"You raise a glass to someone you wish you'd known better."},{t:"Give half to charity in their name",fx:{gbp:Math.round(amt/2),karma:6},o:"The donkey sanctuary sends a lovely card."}]})}
- else if(r<.8){pushDyn({id:"inh_"+S.day,life:1,from:"A solicitor's letter",t:"An unusual inheritance",b:`${who} has left you their collection of 400 porcelain cats. And, according to the will, "whatever is in the shed".`,c:[{t:"Open the shed",p:.35,win:{fx:{gbp:42000},o:"Under a tarpaulin: a 1967 Jaguar E-Type. It sells at auction for £42,000."},lose:{fx:{gbp:-200,fixed:1},o:"A lawnmower, a lot of spiders and a skip-hire bill."}},{t:"Sell the cats on eBay",fx:{gbp:1800},o:"It takes a year. You dream about cats."}]})}
+ else if(r<.8){pushDyn({id:"inh_"+S.day,life:1,from:"A solicitor's letter",t:"An unusual inheritance",b:`${who} has left you their collection of 400 porcelain cats. And, according to the will, "whatever is in the shed".`,c:[{t:"Open the shed",p:.35,win:{fx:{gbp:42000},o:"Under a tarpaulin: a 1967 Jagwah E-Type. It sells at auction for £42,000."},lose:{fx:{gbp:-200,fixed:1},o:"A lawnmower, a lot of spiders and a skip-hire bill."}},{t:"Sell the cats on Flogbay",fx:{gbp:1800},o:"It takes a year. You dream about cats."}]})}
  else{pushDyn({id:"inh_"+S.day,life:1,from:"A solicitor's letter",t:"A cottage in Wales",b:`${who} has left you a tumbledown cottage in Wales. The roof is mostly sheep.`,c:[{t:"Sell it as it is",fx:{gbp:85000},o:"A couple from Bristol buy it for £85,000 and plan to 'do it up'. Good luck to them."},{t:"Do it up as a holiday let",p:.6,win:{fx:{gbp:60000,stress:6},o:"A year of builders later, it's booked solid every summer. You sell it for a tidy profit."},lose:{fx:{gbp:-25000,fixed:1,stress:10},o:"Damp, bats and a protected newt. You sell it at a loss."}}]})}}
 /* Give money to your grown-up children while you're alive. Gifts more than seven years before you die are free of inheritance tax. */
 function giftKidsBtn(){const ad=(S.children||[]).filter(k=>kidAge(k)>=18);if(!ad.length||S.over)return"";const each=Math.max(1000,Math.round(Math.min(S.wealth*.1/ad.length,50000)/1000)*1000);if(S.wealth<each*ad.length+1000)return"";
@@ -15679,7 +15685,7 @@ const HUSTLES={
  dogs:{n:"Dog walking",d:"Fresh air, muddy trainers and other people's dogs.",start:0,earn:[150,420],grow:.05,health:.3},
  photo:{n:"Wedding photography",d:"Weekends at weddings, with a very expensive camera.",start:1500,earn:[100,1200],grow:.1},
  resell:{n:"Reselling trainers",d:"Buy limited drops, sell them for more. In theory.",start:1000,earn:[-300,900],grow:.08},
- youtube:{n:"A YouTube channel",d:"Film, edit, upload, refresh the view counter.",start:500,earn:[0,1600],grow:.2},
+ youtube:{n:"A VidTube channel",d:"Film, edit, upload, refresh the view counter.",start:500,earn:[0,1600],grow:.2},
  food:{n:"A weekend food truck",d:"Street food at markets and festivals.",start:8000,earn:[-200,1600],grow:.12,stress:1},
  airbnb:{n:"Renting out your spare room",d:"Short lets for tourists. Hide the good towels.",start:400,earn:[200,850],grow:.06,need:()=>S.home&&S.home.value>0&&S.home.t!=="flat"&&!S.roomLet?"":"You need a home with a spare room (and not one you're already renting out)."},
  btl:{n:"A buy-to-let flat",d:"Put down a deposit and rent a flat out. You get the deposit back when you sell.",start:40000,earn:[150,650],grow:.03,dep:1},
@@ -15836,7 +15842,7 @@ const DATE_Q=[
    {t:"Dogs. I say hello to every single one I pass.",k:"kind"},
    {t:"Cats. We respect each other's need for a nap.",k:"home",r:"{n} does a slow cat blink at you."},
    {t:"Whichever one's in the Pokemon I'm currently playing",k:"geek"},
-   {t:"My ex got the cat. I still check her Instagram.",k:"cringe",r:"{n} suddenly finds the menu fascinating again."}]},
+   {t:"My ex got the cat. I still check her Instaglam.",k:"cringe",r:"{n} suddenly finds the menu fascinating again."}]},
  {id:"q5",q:"What's the worst job you've ever had?",a:[
    {t:"Dressed as a giant sausage outside a butcher's. In August.",k:"funny",r:"{n} snorts, then tries to pretend it was a cough."},
    {t:"Junior intern. I made coffee and a five-year plan.",k:"ambit",r:"{n} asks if the coffee was part of the plan."},
@@ -15848,7 +15854,7 @@ const DATE_Q=[
    {t:"I can make a decent risotto out of nearly nothing",k:"food"}]},
  {id:"q7",q:"What's your go-to karaoke song?",a:[
    {t:"Bohemian Rhapsody. All the parts. All the voices.",k:"party"},
-   {t:"Something soppy by Adele, eyes closed, hand on heart",k:"rom"},
+   {t:"A soppy power ballad, eyes closed, hand on heart",k:"rom"},
    {t:"I don't sing, I just hold the tambourine with pride",k:"funny",r:"{n} mimes a tiny tambourine in solidarity."},
    {t:"I once did My Way at my nan's funeral. Standing ovation.",k:"cringe",r:"{n} opens their mouth, closes it, and nods very slowly."}]},
  {id:"q8",q:"Describe your dream house.",a:[
@@ -15882,7 +15888,7 @@ const DATE_Q=[
    {t:"A cup of tea, made by someone I love. Or you.",k:"rom",r:"{n} goes slightly pink."}]},
  {id:"q14",q:"What's your zombie apocalypse plan?",a:[
    {t:"I have a spreadsheet. Colour coded. Tab three is weapons.",k:"geek",r:"{n} asks to see tab three. You email it right there."},
-   {t:"Barricade myself in Greggs and live like a king",k:"funny",r:"{n} laughs and asks if there's room in the Greggs."},
+   {t:"Barricade myself in the bakery and live like a king",k:"funny",r:"{n} laughs and asks if there's room in the bakery."},
    {t:"Rescue the neighbour's tortoise first. Then think.",k:"kind"},
    {t:"Throw a last party. If we go, we go dancing.",k:"party"}]},
  {id:"q15",q:"What's the last thing you googled?",a:[
@@ -15917,7 +15923,7 @@ const DATE_Q=[
    {t:"Crying at adverts. Especially the Christmas ones.",k:"rom"}]},
  {id:"q21",q:"What's your favourite film?",a:[
    {t:"The Notebook. I'm not ashamed. I'm a bit ashamed.",k:"rom"},
-   {t:"Star Wars. The original. Don't make me explain why.",k:"geek",r:"{n} does a wheezy Darth Vader breath."},
+   {t:"Space Wars. The original. Don't make me explain why.",k:"geek",r:"{n} does a wheezy Darth Vader breath."},
    {t:"Paddington 2. It's a perfect film about kindness.",k:"kind",r:"{n} says Paddington 2 is the correct answer."}]},
  {id:"q22",q:"What did you have for breakfast?",a:[
    {t:"Smashed avocado with chilli flakes and a poached egg",k:"food"},
@@ -15941,7 +15947,7 @@ const DATE_Q=[
  {id:"q26",q:"What's your typical Friday night?",a:[
    {t:"Dressed up, out by nine, home by sunrise",k:"party"},
    {t:"Pyjamas by seven and a takeaway I've earned",k:"home"},
-   {t:"Board games with friends. It gets competitive.",k:"geek",r:"{n} admits they once flipped a Monopoly board."},
+   {t:"Board games with friends. It gets competitive.",k:"geek",r:"{n} admits they once flipped a Moneyopoly board."},
    {t:"Catching up on emails so Monday fears me",k:"ambit"}]},
  {id:"q27",q:"What's the best gift you've ever been given?",a:[
    {t:"A star named after me. Probably not real. Still cried.",k:"rom"},
@@ -15999,9 +16005,9 @@ const DATE_Q=[
    {t:"Whatever's least effort. I'm not a hero.",k:"funny"}]},
  {id:"q38",q:"What's your favourite board game?",a:[
    {t:"Settlers of Catan. I will trade you sheep.",k:"geek"},
-   {t:"Monopoly. I always win. Always.",k:"ambit",r:"{n} narrows their eyes. A challenge has been set."},
-   {t:"Twister, after a few drinks",k:"party"},
-   {t:"Scrabble with my gran. She cheats, I let her.",k:"kind",r:"{n} grins. \"Your gran sounds brilliant.\""}]},
+   {t:"Moneyopoly. I always win. Always.",k:"ambit",r:"{n} narrows their eyes. A challenge has been set."},
+   {t:"Twisty limbs, after a few drinks",k:"party"},
+   {t:"Word games with my gran. She cheats, I let her.",k:"kind",r:"{n} grins. \"Your gran sounds brilliant.\""}]},
  {id:"q39",q:"Have you ever been in love?",a:[
    {t:"Once. It felt like being in a song.",k:"rom"},
    {t:"With a lasagne in Bologna, yes",k:"food",r:"{n} says they understand. Lasagne is very lovable."},
@@ -16046,7 +16052,7 @@ const DATE_Q=[
    {t:"Everyone knows everyone. It's lovely. And nosy.",k:"kind"},
    {t:"The one nightclub. Sticky floor. Legendary.",k:"party"}]},
  {id:"q48",q:"What's the best concert you've been to?",a:[
-   {t:"Glastonbury. Mud up to my knees. Pure joy.",k:"party",r:"{n} shows you a photo of their own muddy wellies."},
+   {t:"Glastonberry. Mud up to my knees. Pure joy.",k:"party",r:"{n} shows you a photo of their own muddy wellies."},
    {t:"An orchestra playing video game music",k:"geek",r:"{n} says they cried at that exact concert."},
    {t:"A tiny gig in a pub where I met my best mate",k:"kind"}]},
  {id:"q49",q:"How do you handle stress?",a:[
@@ -16065,7 +16071,7 @@ const DATE_Q=[
    {t:"Left a rose on my bike. I still don't know who.",k:"rom"}]},
  {id:"q52",q:"Do you play any video games?",a:[
    {t:"I have 3,000 hours in one farming game",k:"geek",r:"{n} asks what crops you grow. It gets heated."},
-   {t:"Only FIFA, with the lads, with shouting",k:"party"},
+   {t:"Only football on the console, with the lads, with shouting",k:"party"},
    {t:"Snake on my old Nokia. Still undefeated.",k:"funny",r:"{n} asks for your high score. It's 4,812."},
    {t:"No. I'd rather be building something real.",k:"ambit"}]},
  {id:"q53",q:"What's your favourite word?",a:[
@@ -16103,7 +16109,7 @@ const DATE_Q=[
    {t:"Spoilers. I will end you. Politely.",k:"geek",r:"{n} zips their lips with a very serious face."},
    {t:"Waiters. Ugh. Oi, mate, where's my water?",k:"cringe",r:"{n} mouths \"sorry\" to the waiter behind your back."}]},
  {id:"q60",q:"What's your favourite TV show?",a:[
-   {t:"Bake Off. I shout at the telly about soggy bottoms.",k:"food"},
+   {t:"Baking shows. I shout at the telly about soggy bottoms.",k:"food"},
    {t:"Dragon's Den. I take notes.",k:"ambit"},
    {t:"Anything with spaceships and a moody captain",k:"geek"},
    {t:"Old episodes of Blind Date. For research.",k:"rom",r:"{n} does a terrible Cilla impression."}]},
@@ -16237,7 +16243,7 @@ const DATE_Q=[
    {t:"Only at quizzes. Then I'm a monster.",k:"geek"},
    {t:"I let my little cousins win at everything",k:"kind"}]},
  {id:"q88",q:"What's your favourite festival?",a:[
-   {t:"Glastonbury. I've been eleven times.",k:"party",r:"{n} asks if you've ever seen the Pyramid Stage sober."},
+   {t:"Glastonberry. I've been eleven times.",k:"party",r:"{n} asks if you've ever seen the Pyramid Stage sober."},
    {t:"A food festival. Free samples are my cardio.",k:"food",r:"{n} says they have a free sample strategy too."},
    {t:"Comic Con. I go in full costume.",k:"geek"},
    {t:"Bonfire night. Sparklers and hot chocolate.",k:"rom"}]},
@@ -16256,7 +16262,7 @@ const DATE_Q=[
    {t:"Hand them your napkin and help dab it off",k:"kind",r:"{n} smiles at you through a face of Merlot."},
    {t:"Pour your wine on yourself so they don't feel alone",k:"funny",r:"{n} laughs so loud the whole restaurant turns round."},
    {t:"Demand to see the manager, and their manager",k:"ambit"},
-   {t:"Take a photo for your Instagram story",k:"cringe",r:"{n} stares at you, dripping, for a long silent moment."}]},
+   {t:"Take a photo for your Instaglam story",k:"cringe",r:"{n} stares at you, dripping, for a long silent moment."}]},
  {id:"s2",sit:1,q:"Your ex walks in with someone new.",a:[
    {t:"Give a friendly wave and focus back on your date",k:"kind"},
    {t:"Lean in and tell your date a terrible joke",k:"funny"},
@@ -16397,7 +16403,7 @@ const DATE_TYPES={
  adv:{n:"adventurous",hints:["just back from cycling across Peru","will climb anything with a view","passport has run out of pages","happiest in a tent in the rain","looking for a co-pilot for my camper van","once swam with sharks on purpose"],loves:["adv","funny"],hates:["home"]},
  home:{n:"cosy homebody",hints:["big fan of blankets and early nights","my cat is my best friend","perfect night is tea and a box set","proud owner of forty candles","jigsaws are a valid hobby","slippers on by six, every night"],loves:["home","kind"],hates:["party"]},
  rom:{n:"romantic",hints:["still believe in love letters","cried at every wedding I've been to","looking for my lobster","sunsets and slow songs, please","hopeless romantic, emphasis on hopeless","will make you a mixtape"],loves:["rom","kind"],hates:["ambit"]},
- geek:{n:"geeky",hints:["will beat you at the pub quiz","currently levelling up a wizard","ask me about my dice collection","yes, I own a lightsaber","fluent in Elvish, rusty in French","Star Trek or Star Wars, choose wisely"],loves:["geek","funny"],hates:["party"]},
+ geek:{n:"geeky",hints:["will beat you at the pub quiz","currently levelling up a wizard","ask me about my dice collection","yes, I own a lightsaber","fluent in Elvish, rusty in French","Space Trek or Space Wars, choose wisely"],loves:["geek","funny"],hates:["party"]},
  party:{n:"party animal",hints:["first on the dance floor, last to leave","glitter is a lifestyle","festival season is my favourite season","looking for a karaoke duet partner","sleep is for Mondays","know every bouncer in town"],loves:["party","funny"],hates:["home"]},
  ambit:{n:"ambitious",hints:["building an empire, one email at a time","up at 5am, every day","looking for a power couple vibe","three side hustles and counting","my calendar is colour coded","let's discuss your five-year plan"],loves:["ambit","adv"],hates:["home"]},
  foodie:{n:"foodie",hints:["will judge you by your pasta shape","my sourdough starter has a name","know every street food stall in town","life's too short for bad cheese","looking for someone to share starters with","I plan holidays around restaurants"],loves:["food","rom"],hates:["ambit"]}
@@ -16657,7 +16663,7 @@ function sackNote(){const id=S.path,t=R().t,emp=S.bank,owner=/owner|founder|part
 
 /* ============ Football gets its own match-day stories instead of the showbiz "big night" ============ */
 CASES.sport=[
- {who:()=>pick(["a scout from a Champions League club","a scout from a Spanish giant","a scout from a top Premier League side"]),role:"talent spotter",t:"Derby day: {who} is in the stands",b:"It's the biggest game of the month, and {who} is watching from the directors' box.",
+ {who:()=>pick(["a scout from a Champions Cup club","a scout from a Spanish giant","a scout from a top Premier Leek side"]),role:"talent spotter",t:"Derby day: {who} is in the stands",b:"It's the biggest game of the month, and {who} is watching from the directors' box.",
   c:[{t:"Keep it simple and do your job",good:.7,o:"Disciplined and tidy."},{t:"Try something special",good:.5,o:"You go for the spectacular."}],
   win:"Man of the match. {who} files a glowing report.",lose:"A nightmare afternoon. {who} leaves at half-time."},
  {who:()=>pick(["a lad called Leo, your biggest fan","a girl called Maisie, who's made a banner with your name on it","a fan called Kayla, who's been to every away game this season"]),role:"supporter",t:"Match day: {who} is behind the goal",b:"It's a big home game, and {who} is behind the goal, hoping you'll wave.",
@@ -17030,8 +17036,8 @@ const OPS_TIERS={
   ["the Sunday lunch rush","the veg prep for two hundred","the staff tea","the stock for the week","the dessert section on a Friday"],
   ["the fish section on a Saturday","the hen party set menu","the Mother's Day lunch","the bank-holiday barbecue","the tasting for the regulars"],
   ["the wedding banquet","the critic's visit","the charity gala","Valentine's night","the private party"],
-  ["the spring menu launch","the Michelin inspector's lunch","the royal visit","the pop-up in Mayfair","the food festival tent"],
-  ["the new flagship opening","the second Michelin star","the Paris restaurant opening","the hotel group deal","the state banquet"]]},
+  ["the spring menu launch","the Michelinn inspector's lunch","the royal visit","the pop-up in Mayfair","the food festival tent"],
+  ["the new flagship opening","the second Michelinn star","the Paris restaurant opening","the hotel group deal","the state banquet"]]},
  tech:{kinds:["The ticket","The feature","The big launch","The platform","The flotation"],names:[
   ["the login bug","the broken button on Safari","the slow search page","the password reset email","the cookie banner"],
   ["the payments update","the new app","the dark mode","the checkout redesign","the notifications rework"],
@@ -17042,7 +17048,7 @@ const OPS_TIERS={
   ["the youth cup tie","the under-18s derby","the reserves friendly","the academy trial game","the pre-season kickabout"],
   ["the reserves derby","the League Cup first round","the midweek away trip","the pre-season tour","the debut off the bench"],
   ["the local derby","the cup quarter-final","the relegation six-pointer","the Boxing Day clash","the title decider"],
-  ["the cup final","the European away tie","the play-off final","the last day of the season","the Champions League night"],
+  ["the cup final","the European away tie","the play-off final","the last day of the season","the Champions Cup night"],
   ["the World Cup qualifier","the Euros semi-final","the World Cup final","the match against Germany","the penalty shootout in Rome"]]},
  law:{kinds:["The file","The case","The big case","The landmark case","The case of the decade"],names:[
   ["the parking appeal","Patel v Brown","the house purchase","the tenancy dispute","the will with three versions"],
@@ -17063,7 +17069,7 @@ const OPS_TIERS={
   ["the new school building","the budget crisis","the results turnaround","the merger with the primary","the head's first Ofsted"],
   ["the takeover of six schools","the national results tables","the new free school","the trust-wide inspection","the government white paper"]]},
  police:{kinds:["The callout","The case","The investigation","The major inquiry","The national operation"],names:[
-  ["the shoplifter at the Co-op","the noisy neighbours","the stolen bike","the town-centre Saturday night","the missing dog"],
+  ["the shoplifter at the corner shop","the noisy neighbours","the stolen bike","the town-centre Saturday night","the missing dog"],
   ["the car-wash fraud","the phone-shop gang","the burglaries on Elm Road","the stolen catalytic converters","the doorstep scam"],
   ["the Harbour Street robberies","the missing courier","the warehouse fire","the canal-path attacks","the county lines network"],
   ["the cold-case murder","the drugs empire","the kidnap inquiry","the people-smuggling ring","the corrupt councillor"],
@@ -17108,7 +17114,7 @@ const OPS_TIERS={
   ["the Covent Garden Saturday","the open mic night","the busking spot by the tube","the wedding reception","the Christmas carols outside Boots"],
   ["the battle of the bands final","the record-shop signing","the pub residency","the support slot at the Academy","the songwriting showcase"],
   ["the album launch","the festival main stage","the sold-out homecoming","the live radio session","the late-night TV appearance"],
-  ["the arena tour","the Glastonbury headline slot","the American tour","the Wembley show","the awards night performance"],
+  ["the arena tour","the Glastonberry headline slot","the American tour","the Wembley show","the awards night performance"],
   ["the world stadium tour","the Super Bowl halftime show","the global charity concert","the Las Vegas residency","the greatest hits album"]]},
  influencer:{kinds:["The post","The collab","The big campaign","The brand deal","The media empire"],names:[
   ["the ring-light review","the morning routine video","the charity-shop haul","the first sponsored post","the dance trend"],
@@ -17144,7 +17150,7 @@ const OPS_TIERS={
   ["the muddy cup tie","the new stand appeal","the derby with the neighbours","the sponsor's day out","the fans' forum"],
   ["the transfer deadline day","the promotion push","the stadium expansion","the new kit launch","the bank-holiday weekender"],
   ["the Premier Leek opener","the record signing","the FA Cup run","the TV rights row","the title decider"],
-  ["the Champions League campaign","the new stadium","the superstar signing","the Asia pre-season tour","the European final"],
+  ["the Champions Cup campaign","the new stadium","the superstar signing","the Asia pre-season tour","the European final"],
   ["the multi-club takeover","the American franchise deal","the breakaway league talks","the global TV deal","the World Club Cup"]]},
  manager:{kinds:["The session","The match","The big match","The cup run","The tournament"],names:[
   ["the under-16s on Sunday","the cones and bibs session","the youth cup tie","the academy trial day","the set-piece drill"],
@@ -17299,7 +17305,7 @@ OP_SCEN.soldier=[
   lose:["Hughes ends up in the safety wagon and your team is marked as failing to complete.","You finish in the dark, in the wrong valley, eating the last of the {fruit pastilles|Kendal mint cake|jelly babies}."]},
 
  {id:"soldier_1b",tiers:[1],kind:"Exercise",name:"Granite",
-  intro:"A live-fire section attack on {Salisbury Plain|Otterburn ranges|Sennybridge ranges}, with the company commander watching from a {Land Rover|hilltop|range tower}.",
+  intro:"A live-fire section attack on {Salisbury Plain|Otterburn ranges|Sennybridge ranges}, with the company commander watching from a {Landy|hilltop|range tower}.",
   start:"a",
   stages:{
    a:{q:"Orders give your fireteam the left flank. The ground is flat and open.",o:[
@@ -17454,7 +17460,7 @@ OP_SCEN.soldier=[
    b:{q:"The care home manager says nobody's leaving, the residents will panic.",o:[
      {t:"Sit with the residents and explain, gently",d:.1,next:"d"},
      {t:"Start carrying people out anyway",d:-.1,next:"d"}]},
-   c:{q:"Your Land Rover is stuck in the flood. A {farmer|dairy farmer|local contractor} offers his tractor.",o:[
+   c:{q:"Your Landy is stuck in the flood. A {farmer|dairy farmer|local contractor} offers his tractor.",o:[
      {t:"Accept the tractor tow",d:.08,next:"d",note:"He insists on a photo for the parish magazine."},
      {t:"Wait for the army recovery vehicle",d:-.04,next:"d"}]},
    d:{q:"Midnight. The river is still rising and your soldiers are exhausted.",o:[
@@ -17463,7 +17469,7 @@ OP_SCEN.soldier=[
      {t:"Ask the fire service to take over a sector",d:.06,soft:1}]}
   },
   win:["The care home stays dry and a {ninety|ninety-three|ninety-six}-year-old veteran salutes you from his window.","The water peaks two inches below the sandbags. Two inches is plenty."],
-  lose:["The school floods and the local paper asks where the army was.","Exhausted soldiers, a lost Land Rover and a very wet high street."]},
+  lose:["The school floods and the local paper asks where the army was.","Exhausted soldiers, a lost Landy and a very wet high street."]},
 
  {id:"soldier_3a",tiers:[3],kind:"Campaign",name:"the river crossing",
   intro:"As a company commander, you must get your company across a wide river and seize the far bank.",
@@ -17812,7 +17818,7 @@ OP_SCEN.spy=[
    b:{q:["On the boat, he hands you a memory stick and begs to be pulled out tonight.","Below deck, he presses a memory stick into your hand and begs to be pulled out tonight."],o:[
      {t:"Promise to arrange it",d:.1},
      {t:"Tell him it's not possible yet",d:-.12}]},
-   c:{q:"Backup spots a {car|grey Volvo|black Audi} by the harbour with its engine running.",o:[
+   c:{q:"Backup spots a {car|grey estate|black Owdi} by the harbour with its engine running.",o:[
      {t:"Abort and reschedule",d:.02,soft:1},
      {t:"Meet anyway, but keep it to five minutes",d:.12},
      {t:"Have backup check the car first",d:.06}]}
@@ -18922,7 +18928,7 @@ OP_SCEN.police=[
    b:{q:"The outside team suggest planting a fake raid to see who leaks it.",o:[
      {t:"Tell each suspect a different address",d:.14,next:"d",note:"Clever. Only one address gets visited by the family."},
      {t:"Tell everybody the same address",d:-.04,next:"d"}]},
-   c:{q:"Your sergeant mentions that a well-liked inspector has a new {Range Rover|Porsche|speedboat}.",o:[
+   c:{q:"Your sergeant mentions that a well-liked inspector has a new {Strange Rover|Porsha|speedboat}.",o:[
      {t:"Look into the inspector's finances",d:.08,next:"d"},
      {t:"Ask the inspector straight out",d:-.12}]},
    d:{q:["It points to a civilian clerk in the records office, not an officer.","The trail ends at a civilian clerk in the records office, not an officer at all."],o:[
@@ -19055,7 +19061,7 @@ OP_SCEN.fire=[
      {t:"Heave hard and hope",d:-.08,pay:1.1}]}
   },
   win:["Biscuit is out, covered in mud and looking very pleased with herself.","The owner sends the watch a cake with {a horse|a horseshoe|Biscuit's face} on it. Iced badly, eaten instantly."],
-  lose:["Biscuit gets out in the end, but it takes four hours and a farmer's {tractor|Land Rover|telehandler}.","Your crewmate's knee swells up, and the horse is fine. Priorities, eh."]},
+  lose:["Biscuit gets out in the end, but it takes four hours and a farmer's {tractor|Landy|telehandler}.","Your crewmate's knee swells up, and the horse is fine. Priorities, eh."]},
 
  {id:"fire_0c",tiers:[0],kind:"The shout",name:"the car fire on the bypass",
   intro:"A car is on fire on the hard shoulder of the bypass. The driver, {a student|a rep in a suit|a pensioner}, got out and is filming it.",
@@ -22688,7 +22694,7 @@ OP_SCEN.tech=[
      {t:"Ask what would make her stay",d:.08,next:"d",note:"It's a four-day week. Finance blink, then agree."},
      {t:"Hire a contractor to replace her",d:.02,next:"d"},
      {t:"Spread her work across the team",d:-.06,next:"d"}]},
-   d:{q:["Release day. Apple rejects the app over a privacy label.","Release day. Apple's review team bounces the build over a privacy label."],o:[
+   d:{q:["Release day. The app store rejects the app over a privacy label.","Release day. The app store's review team bounces the build over a privacy label."],o:[
      {t:"Fix the label and resubmit tonight",d:.1},
      {t:"Release on Android first",d:.06},
      {t:"Appeal the decision",d:-.08}]}
@@ -22718,7 +22724,7 @@ OP_SCEN.tech=[
      {t:"Trust the provider",d:-.1}]}
   },
   win:["Record sales, zero downtime. The CEO mentions you by name on the Monday call.","The site holds all weekend. You sleep through most of Cyber Monday, deservedly."],
-  lose:["The site goes down at {12.04|12.07|12.11}. Twitter is merciless and very creative.","Payments fail for an hour at peak. Finance work out the lost sales to the penny."]},
+  lose:["The site goes down at {12.04|12.07|12.11}. Social media is merciless and very creative.","Payments fail for an hour at peak. Finance work out the lost sales to the penny."]},
 
  {id:"tech_3a",tiers:[3],kind:"The platform",name:"the Series B pitch",
   intro:"You need £30 million to grow. Three investors are interested, and your co-founder, {Tom|Rachel|Dev}, wants the biggest name.",
@@ -22910,7 +22916,7 @@ OP_SCEN.tech=[
 
 OP_SCEN.arch=[
  {id:"arch_0a",tiers:[0],kind:"The drawing",name:"the kitchen extension",
-  intro:"Your first solo drawing set: a kitchen extension in {Bristol|Bath|Cheltenham}. The clients want it 'like the one on Instagram'.",
+  intro:"Your first solo drawing set: a kitchen extension in {Bristol|Bath|Cheltenham}. The clients want it 'like the one on Instaglam'.",
   start:"a",
   stages:{
    a:{q:"What do you do with that brief?",o:[
@@ -22928,7 +22934,7 @@ OP_SCEN.arch=[
      {t:"Leave it for the builder to deal with",d:-.12}]}
   },
   win:["The drawings sail through building control. The clients send a photo of their first Sunday roast in it.","Your partner signs it off with only {two|three} red-pen notes, both about fonts."],
-  lose:["The builder hits the sewer on day two. The smell, and the bill, are memorable.","The clients go back to Instagram and find a different architect."]},
+  lose:["The builder hits the sewer on day two. The smell, and the bill, are memorable.","The clients go back to Instaglam and find a different architect."]},
 
  {id:"arch_0b",tiers:[0],kind:"The drawing",name:"the loft conversion",
   intro:"A loft conversion in {a Victorian|an Edwardian} terrace. Your boss needs the planning drawings by Friday.",
@@ -23359,7 +23365,7 @@ OP_SCEN.cardealer=[
   lose:["A customer wipes a finger across a bonnet and shows it to the manager.","At {9.15|9.20|9.10} you're still hosing. A family has to step over the hose to get in."]},
 
  {id:"cardealer_0b",tiers:[0],kind:"The valet",name:"the part-exchange tidy-up",
-  intro:"A part-exchange {estate car|people carrier|Volvo estate} comes in. The manager wants it on the forecourt by tomorrow.",
+  intro:"A part-exchange {estate car|people carrier|Swedish estate} comes in. The manager wants it on the forecourt by tomorrow.",
   start:"a",
   stages:{
    a:{q:"Where do you start?",o:[
@@ -23484,7 +23490,7 @@ OP_SCEN.cardealer=[
    a:{q:"How do you win her trust?",o:[
      {t:"Show her the full service history on everything",d:.1,next:"b"},
      {t:"Steer her to the car with the best margin",d:-.08,next:"b"}]},
-   b:{q:"She likes a little {Toyota|Honda|Kia}, but it has a safety recall outstanding.",o:[
+   b:{q:"She likes a little {Toyoda|Hondo|Kiya}, but it has a safety recall outstanding.",o:[
      {t:"Tell her and book the recall work",d:.12,next:"c"},
      {t:"Don't mention it",d:-.14}]},
    c:{q:["Her dad turns up and wants £500 off.","Her dad arrives on the second visit, arms folded, wanting £500 off."],o:[
@@ -23520,7 +23526,7 @@ OP_SCEN.cardealer=[
   lose:["You win, then miss the delivery date. The penalty clause eats your margin.","The 'holiday' rival wins. {Two|Three} years later, there's an investigation. Small comfort."]},
 
  {id:"cardealer_2b",tiers:[2],kind:"The big deal",name:"the footballer's supercar",
-  intro:"A Premier League {striker|winger|centre forward} wants a supercar by Saturday. His agent, {Gary|Marcus|Stefan}, does all the talking.",
+  intro:"A Premier Leek {striker|winger|centre forward} wants a supercar by Saturday. His agent, {Gary|Marcus|Stefan}, does all the talking.",
   start:"a",
   stages:{
    a:{q:"Who do you deal with?",o:[
@@ -24759,7 +24765,7 @@ OP_SCEN.hair=[
      {t:"Rinse immediately and treat",d:.1,soft:1},
      {t:"Keep going and tone it",d:-.14}]}
   },
-  win:["She leaves for her holiday a perfect honey blonde and sends you a {sunset|poolside|beach} selfie.","Her hair is healthy, she's happy, and she tells {the whole WhatsApp group|her entire office|her book club}."],
+  win:["She leaves for her holiday a perfect honey blonde and sends you a {sunset|poolside|beach} selfie.","Her hair is healthy, she's happy, and she tells {the whole group chat|her entire office|her book club}."],
   lose:["She leaves with orange ends and a free deep conditioning treatment.","Her ends snap and she wears a hat all holiday."]},
 
  {id:"hair_1c",tiers:[1],kind:"The booking",name:"the big chop for charity",
@@ -25374,7 +25380,7 @@ OP_SCEN.chef=[
   win:["The spring menu gets a write-up in the county magazine and covers rise by {a fifth|a quarter|a third}.","Regulars start booking just for the lamb. The owners stop asking questions."],
   lose:["Launch night is chaos. Half the dishes come out wrong and the owners were there.","The menu flops. Customers keep asking for the old {fishcakes|steak pie|chicken Kiev}."]},
 
- {id:"chef_3b",tiers:[3],kind:"The new menu",name:"the Michelin inspector's lunch",
+ {id:"chef_3b",tiers:[3],kind:"The new menu",name:"the Michelinn inspector's lunch",
   intro:"A lone diner in a {grey suit|navy jumper|sensible raincoat} orders the tasting menu at lunch, takes no photos and asks about the bread. You know what that means.",
   start:"a",
   stages:{
@@ -25391,7 +25397,7 @@ OP_SCEN.chef=[
      {t:"Keep going, this table matters most",d:-.08,next:"d"}]},
    d:{q:["The diner asks for the bill and a quick word with the chef.","The diner pays {in cash|by card}, then asks for a quick word with the chef."],o:[
      {t:"Thank them and talk about suppliers",d:.1},
-     {t:"Ask outright if they're from Michelin",d:-.14,note:"They smile and don't answer. Awkward."},
+     {t:"Ask outright if they're from Michelinn",d:-.14,note:"They smile and don't answer. Awkward."},
      {t:"Stay in the kitchen",d:.04}]}
   },
   win:["In {February|January|March} the phone rings. You've got a star, and you cry in the walk-in.","The guide lists you as 'one to watch'. The bread gets its own mention."],
@@ -25463,7 +25469,7 @@ OP_SCEN.chef=[
   win:["The flagship is fully booked for {three|four|six} months. Even the vault has a waiting list.","Critics call it 'the opening of the year'. Your mum cuts out every review."],
   lose:["Opening night is a mess and the photos are everywhere.","The investors want a new chief executive. They mean it."]},
 
- {id:"chef_4b",tiers:[4],kind:"The opening",name:"the second Michelin star",
+ {id:"chef_4b",tiers:[4],kind:"The opening",name:"the second Michelinn star",
   intro:"Your group's flagship has one star. You want two, and the inspectors are due {this year|this autumn|any week now}.",
   start:"a",
   stages:{
@@ -25999,7 +26005,7 @@ OP_SCEN.influencer=[
    c:{q:["The rest of the shops have mostly mugs and old DVDs.","The rest of the shops are all {jigsaws|mugs|paperbacks} and old DVDs."],o:[
      {t:"Make it a funny 'worst finds' video",d:.1},
      {t:"Buy the best you can",d:.02},
-     {t:"Give up and go to Primark",d:-.1}]}
+     {t:"Give up and go to the bargain shop",d:-.1}]}
   },
   win:["The haul goes viral and the charity shop gets a queue round the block.","The 'worst finds' video is your most popular ever. People send you their worst {jigsaws|mugs|paperbacks}."],
   lose:["The secretly filmed bit gets you banned from three shops.","Twelve views and a bag of DVDs nobody wants."]},
@@ -26403,7 +26409,7 @@ OP_SCEN.music=[
      {t:"Play your best two and leave them wanting",d:.12},
      {t:"Squeeze in a medley of all three",d:-.1}]}
   },
-  win:["Someone asks for your Instagram, and it isn't your mum.","The landlord offers you a paid slot next month. Paid in chips, but still."],
+  win:["Someone asks for your Instaglam, and it isn't your mum.","The landlord offers you a paid slot next month. Paid in chips, but still."],
   lose:["The room talks through your whole set. A man orders {a mixed grill|scampi and chips|a ploughman's} during your ballad.","Feedback squeals through the speakers and you never quite recover."]},
 
  {id:"music_0c",tiers:[0],kind:"The pitch",name:"the busking spot by the tube",
@@ -26651,7 +26657,7 @@ OP_SCEN.music=[
   win:["Twelve sold-out arenas, and your merch stand runs out of {hoodies|tour programmes|beanies} in {Cardiff|Leeds|Dublin}.","The tour grosses more than the album did. Your accountant smiles for the first time."],
   lose:["A truck breaks down on the {M6|M62|A1} and two shows start an hour late.","Reviews say the production swallowed the songs."]},
 
- {id:"music_3b",tiers:[3],kind:"The tour",name:"the Glastonbury headline slot",
+ {id:"music_3b",tiers:[3],kind:"The tour",name:"the Glastonberry headline slot",
   intro:"You're headlining the Pyramid Stage on Saturday night. Over a hundred thousand people and live on TV.",
   start:"a",
   stages:{
@@ -27711,7 +27717,7 @@ OP_SCEN.clubowner=[
      {t:"Hire a helicopter to dry the pitch",d:-.06,next:"b",pay:.8,note:"It mostly blows the mud into the car park."},
      {t:"Rally volunteers with forks and sand",d:.12,next:"c"},
      {t:"Quietly hope for a postponement and a bigger crowd",d:-.04,next:"d"}]},
-   b:{q:"The ref passes it, just. The TV crew want to film in your boardroom, which is a Portakabin.",o:[
+   b:{q:"The ref passes it, just. The TV crew want to film in your boardroom, which is a portable cabin.",o:[
      {t:"Let them in, warts and all",d:.08,next:"c",note:"The viewers love the kettle with a name."},
      {t:"Say no and keep them pitchside",d:-.02,next:"c"}]},
    c:{q:["The gates open. The queue for the single burger van stretches round the ground.","The gates open, and the lone burger van already has a queue {past the turnstiles|round the car park|out onto the road}."],o:[
@@ -28496,7 +28502,7 @@ OP_SCEN.manager=[
      {t:"On form, even if that means dropping the captain",d:.1,next:"b"},
      {t:"On reputation, experience matters here",d:-.04,next:"c"},
      {t:"Keep the captain but drop his best mate",d:.04,next:"b"}]},
-   b:{q:"The dropped player criticises you on {a podcast|a TV chat show|his YouTube channel}.",o:[
+   b:{q:"The dropped player criticises you on {a podcast|a TV chat show|his VidTube channel}.",o:[
      {t:"Ring him and clear the air",d:.1,next:"d"},
      {t:"Hit back at the press conference",d:-.12,next:"d"}]},
    c:{q:"The old guard look a yard slow in training.",o:[
@@ -28622,7 +28628,7 @@ OP_SCEN.soldier=(OP_SCEN.soldier||[]).concat([
   lose:["The engineers refuse to come back without a bigger escort. The pump stays broken.","A rumour starts that the army poisoned the well. It takes weeks to undo."]},
 
  {id:"soldier_0g",tiers:[0],kind:"Patrol",name:"the broken-down truck",
-  intro:"Your {Foxhound|Land Rover|Jackal} breaks down on a lonely road on the way back to base.",
+  intro:"Your {Foxhound|Landy|Jackal} breaks down on a lonely road on the way back to base.",
   start:"a",
   stages:{
    a:{q:["The driver says it's the fuel pump. Base says recovery is {two hours|three hours|ninety minutes} away.","Steam pours from the bonnet. Base says recovery is {two hours|three hours|ninety minutes} away."],o:[
@@ -28680,7 +28686,7 @@ OP_SCEN.soldier=(OP_SCEN.soldier||[]).concat([
      {t:"Hide in the reeds and let them pass",d:.1,next:"d"},
      {t:"Move fast down a drainage ditch",d:.04,next:"d"},
      {t:"Surrender and argue it wasn't fair",d:-.16}]},
-   d:{q:["A {tractor|milk tanker|Land Rover} comes down the causeway. Is it the enemy?","Headlights on the causeway. Is it the enemy?"],o:[
+   d:{q:["A {tractor|milk tanker|Landy} comes down the causeway. Is it the enemy?","Headlights on the causeway. Is it the enemy?"],o:[
      {t:"Hold fire until you're sure",d:.12},
      {t:"Spring the ambush now",d:-.12,pay:1.2},
      {t:"Send one man to look closer",d:.04}]}
@@ -29053,8 +29059,8 @@ OP_SCEN.spy=(OP_SCEN.spy||[]).concat([
      {t:"Go in and see who he's meeting",d:-.12,pay:1.2},
      {t:"Photograph everyone who comes out",d:.1,note:"One face pops up in a file back at the office."}]}
   },
-  win:["You log a new meeting place nobody knew about. Your team leader says 'not bad' twice.","He never looks back once, and you're home in time for {EastEnders|tea|the late bus}."],
-  lose:["He gives you a little wave as he gets into a taxi. Lovely.","You lose him on the escalators and spend an hour in the wrong {Pret|Boots|Costa}."]},
+  win:["You log a new meeting place nobody knew about. Your team leader says 'not bad' twice.","He never looks back once, and you're home in time for {the soaps|tea|the late bus}."],
+  lose:["He gives you a little wave as he gets into a taxi. Lovely.","You lose him on the escalators and spend an hour in the wrong {sandwich shop|chemist|coffee shop}."]},
 
  {id:"spy_0f",tiers:[0],kind:"The task",name:"Tin Soldier",
   intro:"A retired {plumber|bus driver|dentist} back from a coach holiday says he saw military trucks somewhere he shouldn't. You're sent to debrief him.",
@@ -29942,7 +29948,7 @@ OP_SCEN.astronaut=(OP_SCEN.astronaut||[]).concat([
 
 OP_SCEN.police=(OP_SCEN.police||[]).concat([
  {id:"police_0e",tiers:[0],kind:"The callout",name:"the road rage on the roundabout",
-  intro:"Two drivers are squaring up on the {Tesco|Asda|Morrisons} roundabout after a bump. Traffic is backing up to the {ring road|bypass|high street}.",
+  intro:"Two drivers are squaring up on the {supermarket|retail park|garden centre} roundabout after a bump. Traffic is backing up to the {ring road|bypass|high street}.",
   start:"a",
   stages:{
    a:{q:["One driver has a steering lock in his hand. The other is filming on her phone.","One driver is red in the face and shouting. The other has locked herself in her car."],o:[
@@ -30022,7 +30028,7 @@ OP_SCEN.police=(OP_SCEN.police||[]).concat([
      {t:"Check the bins outside for the empty tin",d:-.08,next:"c"}]},
    b:{q:"The camera is grainy. A teenager in a {red|grey|green} hoodie lifts it while the owner serves.",o:[
      {t:"Show the still to the school's PCSO",d:.12,next:"d"},
-     {t:"Post it on the force Facebook page",d:-.06,next:"d",note:"Two hundred comments, three of them useful."},
+     {t:"Post it on the force social media page",d:-.06,next:"d",note:"Two hundred comments, three of them useful."},
      {t:"File it and wait for a match",d:-.1}]},
    c:{q:"An old man in the queue says the lad went towards the skate park.",o:[
      {t:"Walk round to the skate park",d:.08,next:"d"},
@@ -30078,7 +30084,7 @@ OP_SCEN.police=(OP_SCEN.police||[]).concat([
      {t:"Go in now with the two officers you have",d:-.06},
      {t:"Call for dogs and the helicopter first",d:.06,soft:1}]}
   },
-  win:["Two hundred converters recovered and a buyer who'd been at it for years. The insurers send a fruit basket.","The thefts stop overnight. A hybrid owner shakes your hand in the {Lidl|Aldi|Co-op} car park."],
+  win:["Two hundred converters recovered and a buyer who'd been at it for years. The insurers send a fruit basket.","The thefts stop overnight. A hybrid owner shakes your hand in the {supermarket|retail park|garden centre} car park."],
   lose:["The van gets away down the {A38|A5|A47} and the thefts carry on.","The dealer's solicitor has your search thrown out on a technicality."]},
 
  {id:"police_1g",tiers:[1],kind:"The case",name:"the forged notes at the market",
@@ -30113,7 +30119,7 @@ OP_SCEN.police=(OP_SCEN.police||[]).concat([
      {t:"Skip it and pull the theft reports",d:.02,next:"c"},
      {t:"Tell them to lock things up better",d:-.12,next:"b"}]},
    b:{q:"A farmer says a 'lost' walker asked about his sheds last week. Others report the same.",o:[
-     {t:"Set up a farm watch WhatsApp group",d:.1,next:"c"},
+     {t:"Set up a farm watch group chat",d:.1,next:"c"},
      {t:"Warn them not to confront anyone",d:.04,next:"c"}]},
    c:{q:"A number-plate camera catches a {horsebox|flatbed|Transit} near three of the farms.",o:[
      {t:"Track it to where it goes",d:.1,next:"d"},
@@ -30122,7 +30128,7 @@ OP_SCEN.police=(OP_SCEN.police||[]).concat([
      {t:"Have Border Force open it before it sails",d:.12},
      {t:"Let it sail and tip off the police abroad",d:-.08,pay:1.3}]}
   },
-  win:["Twelve quad bikes and thirty GPS units come home. A farmer gives you a lamb. You give it back.","The gang is charged and the WhatsApp group carries on, mostly about the weather."],
+  win:["Twelve quad bikes and thirty GPS units come home. A farmer gives you a lamb. You give it back.","The gang is charged and the group chat carries on, mostly about the weather."],
   lose:["The container sails an hour early. The farmers' meeting next month is not friendly.","You stop a horsebox on a hunch and find a horse. A very confused horse."]},
 
  {id:"police_2e",tiers:[2],kind:"The investigation",name:"the cash machine blasts",
@@ -30140,7 +30146,7 @@ OP_SCEN.police=(OP_SCEN.police||[]).concat([
    c:{q:["The banks agree, but only for a fortnight.","The banks agree to half the machines and grumble about the cost."],o:[
      {t:"Use the time to trace the gas bottles",d:.1,next:"e"},
      {t:"Push the banks for longer",d:-.08}]},
-   d:{q:"At {2am|3am|4am} a {black Audi|stolen Golf|white Range Rover} pulls up by the machine.",o:[
+   d:{q:"At {2am|3am|4am} a {black Owdi|stolen Gulf|white Strange Rover} pulls up by the machine.",o:[
      {t:"Let them start, then box the car in",d:.12,pay:1.2},
      {t:"Block the road before they get out",d:.04},
      {t:"Wait for the armed unit to arrive",d:-.08}]},
@@ -30159,7 +30165,7 @@ OP_SCEN.police=(OP_SCEN.police||[]).concat([
      {t:"Send the mirror off to identify the model",d:.1,next:"b"},
      {t:"Appeal on the local news for witnesses",d:.02,next:"c"},
      {t:"Ring round garages for front-end repairs",d:-.06,next:"d"}]},
-   b:{q:"It's from a {Ford Focus|Vauxhall Astra|Nissan Qashqai}, five to eight years old, in silver.",o:[
+   b:{q:"It's from a {Fjord Focus|Vauxhaul Astro|Nissun Cashkai}, five to eight years old, in silver.",o:[
      {t:"Check every local one on the cameras that night",d:.12,next:"d"},
      {t:"Check body shops for silver repairs",d:.04,next:"d"}]},
    c:{q:["A caller says her neighbour's car 'went to the scrapyard in a hurry'.","A taxi driver says he saw a car with one headlight speeding off."],o:[
@@ -30342,7 +30348,7 @@ OP_SCEN.police=(OP_SCEN.police||[]).concat([
      {t:"Agree one command room with all three",d:.12,next:"b"},
      {t:"Let the cyber centre lead, police support",d:.06,next:"b"},
      {t:"Insist the police lead, it's a crime",d:-.1,next:"c"}]},
-   b:{q:"The hackers demand £{20|40|60} million in Bitcoin and set a 48-hour deadline.",o:[
+   b:{q:"The hackers demand £{20|40|60} million in crypto and set a 48-hour deadline.",o:[
      {t:"Advise no payment, focus on restoring backups",d:.1,next:"d"},
      {t:"Open talks to buy time",d:.06,next:"e"}]},
    c:{q:"The turf war costs you a day. The hackers leak patient records.",o:[
@@ -31473,7 +31479,7 @@ OP_SCEN.doc=(OP_SCEN.doc||[]).concat([
   lose:["He needs a second trip to theatre that night, and the mortality meeting will want details.","His recovery is slow and stormy, and the family's trust in you takes a knock."]},
 
  {id:"doc_2f",tiers:[2],kind:"The theatre list",name:"the footballer's knee",
-  intro:"{A Premier League striker|An England winger|A Championship captain} has torn a knee ligament and his club wants you to operate. The press already know.",
+  intro:"{A Premier Leek striker|An England winger|A Championship captain} has torn a knee ligament and his club wants you to operate. The press already know.",
   start:"a",
   stages:{
    a:{q:"The club doctor wants the operation tomorrow. The swelling hasn't settled.",o:[
@@ -31541,7 +31547,7 @@ OP_SCEN.doc=(OP_SCEN.doc||[]).concat([
      {t:"Promise to come, with a spare generator",d:.08},
      {t:"Say you'll think about it",d:0}]}
   },
-  win:["You fly home with a sunburnt nose and a WhatsApp group of local surgeons who now teach the same operation.","Two hundred operations in two weeks, and a thank-you song you'll never forget."],
+  win:["You fly home with a sunburnt nose and a group chat of local surgeons who now teach the same operation.","Two hundred operations in two weeks, and a thank-you song you'll never forget."],
   lose:["Supplies run out on day nine and you leave with a long list of people still waiting.","A wound infection outbreak clouds the camp, and the charity reviews its plans."]},
 
  {id:"doc_3e",tiers:[3],kind:"The service",name:"the day-surgery unit",
@@ -32560,7 +32566,7 @@ OP_SCEN.vet=(OP_SCEN.vet||[]).concat([
    b:{q:"Officials need a list of everyone who touched the puppy.",o:[
      {t:"Pull records and call every client personally",d:.12,next:"d"},
      {t:"Send a group email",d:-.04,next:"d"}]},
-   c:{q:"Rumours are spreading on a local {Facebook group|WhatsApp group|community forum}.",o:[
+   c:{q:"Rumours are spreading on a local {neighbourhood group|group chat|community forum}.",o:[
      {t:"Put out a calm, honest statement",d:.1,next:"d"},
      {t:"Deny everything",d:-.12,next:"d"}]},
    d:{q:"Staff who handled the puppy are frightened.",o:[
@@ -32786,7 +32792,7 @@ OP_SCEN.law=(OP_SCEN.law||[]).concat([
      {t:"Serve notice on the new owner straight away",d:.1},
      {t:"Wait to see who their lawyers are",d:-.08}]}
   },
-  win:["The bill is cut to £250 a flat. The residents' WhatsApp group renames itself after you.","The tribunal agrees the agent skipped consultation. A neat win and a lot of grateful cake."],
+  win:["The bill is cut to £250 a flat. The residents' group chat renames itself after you.","The tribunal agrees the agent skipped consultation. A neat win and a lot of grateful cake."],
   lose:["The tribunal finds the works urgent enough to skip consultation. Not the result anyone hoped.","The new owner's lawyers bury you in paperwork and the residents start to argue among themselves."]},
 
  {id:"law_1h",tiers:[1],kind:"The case",name:"the maternity discrimination claim",
@@ -33076,7 +33082,7 @@ OP_SCEN.pol=(OP_SCEN.pol||[]).concat([
      {t:"Cut it to one sentence and a name",d:.12},
      {t:"Keep the statistics in, they're strong",d:-.06}]}
   },
-  win:["The question lands and the Prime Minister promises to look into it. It's on the regional news by six.","Your MP gets a clip that goes round the constituency's Facebook groups. She buys you a sandwich."],
+  win:["The question lands and the Prime Minister promises to look into it. It's on the regional news by six.","Your MP gets a clip that goes round the constituency's community groups. She buys you a sandwich."],
   lose:["The question gets a stock answer and nobody notices. Your MP shrugs it off. You don't.","The Speaker cuts your MP off mid-sentence for running long. The clip goes round for the wrong reasons."]},
 
  {id:"pol_0f",tiers:[0],kind:"The briefing",name:"the inbox mountain",
@@ -33146,7 +33152,7 @@ OP_SCEN.pol=(OP_SCEN.pol||[]).concat([
      {t:"Find a shop that could host a counter",d:.12,next:"b"},
      {t:"Start a petition to keep it open",d:.04,next:"c"},
      {t:"Raise it in Parliament straight away",d:.02,next:"c"}]},
-   b:{q:["The {Co-op|garden centre|pharmacy} might host it, but wants a grant to refit.","A pub landlord offers his back room, but only open four days a week."],o:[
+   b:{q:["The {corner shop|garden centre|pharmacy} might host it, but wants a grant to refit.","A pub landlord offers his back room, but only open four days a week."],o:[
      {t:"Help them bid for a community grant",d:.12,next:"d"},
      {t:"Lean on the postal company to pay",d:-.04,next:"d"}]},
    c:{q:"The petition gets {3,000|4,500} signatures. The company is unmoved.",o:[
@@ -33574,7 +33580,7 @@ OP_SCEN.teach=(OP_SCEN.teach||[]).concat([
      {t:"Drive the wettest home tonight",d:-.04,pay:.8}]}
   },
   win:["Everyone finishes, soggy but happy. One pupil says it was the best weekend of their life.","The lost group turns up with an amazing story and a sheep photo. Every pupil passes."],
-  lose:["The trip is called off on Saturday. The minibus smells of wet socks for weeks.","A parent complains on the school Facebook page about the rain. As if you organised it."]},
+  lose:["The trip is called off on Saturday. The minibus smells of wet socks for weeks.","A parent complains on the school's social media page about the rain. As if you organised it."]},
 
  {id:"teach_1f",tiers:[1],kind:"The test",name:"the exam hall fire alarm",
   intro:"You're invigilating a {GCSE maths|GCSE history|GCSE biology} exam for {ninety|a hundred and twenty|sixty} pupils. Forty minutes in, the fire alarm goes off.",
@@ -33636,7 +33642,7 @@ OP_SCEN.teach=(OP_SCEN.teach||[]).concat([
      {t:"Say there's no bullying here",d:-.1}]}
   },
   win:["Applications rise and three Year 6s ask if they can start tomorrow.","A parent emails the head to say you made her daughter's day. The head forwards it to you with a smiley face."],
-  lose:["One child goes home in tears and the story spreads round the primary playground.","A parent posts a scathing review of the day on Facebook."]},
+  lose:["One child goes home in tears and the story spreads round the primary playground.","A parent posts a scathing review of the day online."]},
 
  {id:"teach_2e",tiers:[2],kind:"The big inspection",name:"the exam board moderation",
   intro:"The exam board's moderator is visiting to check your department's {art|design and technology|drama} coursework. If the marks are cut, every pupil's grade drops.",
@@ -33937,7 +33943,7 @@ OP_SCEN.tech=(OP_SCEN.tech||[]).concat([
      {t:"Ask support for the actual file",d:.12,next:"b"},
      {t:"Try it with a file you make yourself",d:.02,next:"c"},
      {t:"Strip out all accents on upload",d:-.14,next:"c",note:"It works, in the sense that Zoë is now Zoe."}]},
-   b:{q:"The file was saved from an old version of Excel in a different encoding.",o:[
+   b:{q:"The file was saved from an old version of the spreadsheet app in a different encoding.",o:[
      {t:"Detect the encoding before reading",d:.12},
      {t:"Tell the customer to save it differently",d:-.08},
      {t:"Support both and add a clear error",d:.1,pay:.9}]},
@@ -34737,7 +34743,7 @@ OP_SCEN.arch=(OP_SCEN.arch||[]).concat([
 ]);
 OP_SCEN.cardealer=(OP_SCEN.cardealer||[]).concat([
  {id:"cardealer_0e",tiers:[0],kind:"The valet",name:"the wedding car polish",
-  intro:"The boss has lent a {white Bentley|vintage Rolls|silver Jaguar} from the showroom to a customer's daughter for her wedding. You're polishing it.",
+  intro:"The boss has lent a {white Bentlee|vintage Rollz|silver Jagwah} from the showroom to a customer's daughter for her wedding. You're polishing it.",
   start:"a",
   stages:{
    a:{q:"The car leaves at {11am|noon|1pm}. It has a film of dust and a bird's gift on the bonnet.",o:[
@@ -36690,7 +36696,7 @@ OP_SCEN.chef=(OP_SCEN.chef||[]).concat([
      {t:"Just take the bacon off",d:-.12}]}
   },
   win:["The coach leaves on time, full of black pudding and goodwill.","The duty manager says it's the first calm checkout morning this year."],
-  lose:["The coach driver honks while table twenty still waits for toast.","A {TripAdvisor review|guest survey|travel blogger} calls the eggs 'rubbery and late', which is a poor combination."]},
+  lose:["The coach driver honks while table twenty still waits for toast.","A {TripAdvisa review|guest survey|travel blogger} calls the eggs 'rubbery and late', which is a poor combination."]},
 
  {id:"chef_1h",tiers:[1],kind:"The service",name:"the farmers' market pop-up",
   intro:"Your head chef lets you run a lunchtime pop-up at the {Saturday|Sunday|Friday} farmers' market, cooking what the farmers sell.",
@@ -37012,7 +37018,7 @@ OP_SCEN.tvchef=(OP_SCEN.tvchef||[]).concat([
      {t:"Wipe the rim and stop fiddling",d:.06},
      {t:"Add a swoosh of sauce",d:-.08}]}
   },
-  win:["The judges go quiet over the first mouthful, then ask for seconds. You're through.","Your nan watches on the {iPad|telly|laptop} and phones everyone she's ever met."],
+  win:["The judges go quiet over the first mouthful, then ask for seconds. You're through.","Your nan watches on the {tablet|telly|laptop} and phones everyone she's ever met."],
   lose:["The judges say it's 'lovely, but brown'. It is brown.","You're out, but the marquee's cleaner gets your recipe."]},
 
  {id:"tvchef_0f",tiers:[0],kind:"The challenge",name:"the team challenge",
@@ -37142,7 +37148,7 @@ OP_SCEN.tvchef=(OP_SCEN.tvchef||[]).concat([
      {t:"Keep it in, it's funny",d:.1,next:"d"},
      {t:"Stop and reshoot",d:-.04,next:"d"}]},
    d:{q:"The gas bottle runs out with {five|eight|ten} minutes of filming left.",o:[
-     {t:"Finish it on the farmhouse Aga",d:.12},
+     {t:"Finish it on the farmhouse range cooker",d:.12},
      {t:"Do a cold dish instead",d:.04},
      {t:"Fake it for camera",d:-.12}]}
   },
@@ -37283,7 +37289,7 @@ OP_SCEN.tvchef=(OP_SCEN.tvchef||[]).concat([
      {t:"Add a cooking competition with locals",d:.06}]}
   },
   win:["The series is the channel's surprise hit and the camper van gets its own fans.","Italian viewers approve, which is the hardest review of all."],
-  lose:["Italian food Twitter takes the series apart, recipe by recipe.","The staged argument is spotted and the critics call it 'reality pasta'."]},
+  lose:["Italian food social media takes the series apart, recipe by recipe.","The staged argument is spotted and the critics call it 'reality pasta'."]},
 
  {id:"tvchef_3f",tiers:[3],kind:"The series",name:"the live theatre tour",
   intro:"You're taking a live cooking show on tour: {thirty|twenty-five|forty} theatres, a kitchen on stage, and audience members cooking.",
@@ -37780,7 +37786,7 @@ OP_SCEN.influencer=(OP_SCEN.influencer||[]).concat([
      {t:"Stop the show until it's fixed",d:-.08}]}
   },
   win:["The show gets a standing ovation and you announce a second date on stage.","The tech failure becomes the best moment of the night, and it's everywhere online."],
-  lose:["Half-empty seats and a long wait for a screen that never comes back.","The reviews call it 'a long YouTube video with expensive seats'."]},
+  lose:["Half-empty seats and a long wait for a screen that never comes back.","The reviews call it 'a long VidTube video with expensive seats'."]},
 
  {id:"influencer_3h",tiers:[3],kind:"The brand deal",name:"the hacked account",
   intro:"You wake to find your main account hacked, selling {fake crypto|knock-off trainers|dodgy diet pills} to your {two|three|four} million followers.",
@@ -39439,7 +39445,7 @@ OP_SCEN.clubowner=(OP_SCEN.clubowner||[]).concat([
      {t:"Give her two of the three staff",d:.1,next:"d"},
      {t:"Give her everything",d:-.04,pay:.8,next:"d"},
      {t:"Tell her to prove it first",d:-.06,next:"d"}]},
-   c:{q:"He wants a cash bonus for staying up and a {Range Rover|parking space by the door|new office chair}.",o:[
+   c:{q:"He wants a cash bonus for staying up and a {Strange Rover|parking space by the door|new office chair}.",o:[
      {t:"Agree to the bonus only",d:.08},
      {t:"Agree to everything, it's quick",d:-.06,pay:.9}]},
    d:{q:"Saturday's game is away. The players want to know who's in charge.",o:[
@@ -40769,7 +40775,7 @@ NEWS_PLUS.doc={
  noise:[
   "Hospital car park gets a new ticket machine",
   "Junior doctors' football team wins the hospital cup",
-  "Survey: patients Google symptoms before seeing a GP",
+  "Survey: patients search their symptoms online before seeing a GP",
   "Ward cleaner wins the staff award for kindness",
   "Hospital's lost property includes a false leg",
   "GP surgery opens on Saturday mornings",
@@ -41209,7 +41215,7 @@ for(const[p,L]of Object.entries(DIARY_PLUS))(L||[]).forEach(([t,fx],i)=>{const[h
 const STORY_GAP=[[/^We never see you$/,30],[/ at Sunday lunch$/,36],[/^The old gang/,10],[/^A thank-you$/,24],[/^What goes around comes around$/,18],[/^It's come back to bite you$/,18],[/^Same job, \d+% more$/,24]];
 {const _pdv=pushDyn;pushDyn=function(ev){try{const t=String(ev&&ev.t||"");const g=STORY_GAP.find(([re])=>re.test(t));if(g&&S){S.storyAt=S.storyAt||{};const k=String(g[0]);if(S.storyAt[k]!=null&&S.day-S.storyAt[k]<g[1])return;S.storyAt[k]=S.day}}catch(e){}return _pdv.apply(this,arguments)}}
 /* Match-day chatter for footballers */
-const FB_SCOUT=["Scouts from a top European club are in the stands","A Spanish giant has sent two scouts to watch","The national team's assistant coach is in the crowd","A rival chairman is spotted in the directors' box","Agents are circling after your last performance","A Champions League club's chief scout is here tonight"];
+const FB_SCOUT=["Scouts from a top European club are in the stands","A Spanish giant has sent two scouts to watch","The national team's assistant coach is in the crowd","A rival chairman is spotted in the directors' box","Agents are circling after your last performance","A Champions Cup club's chief scout is here tonight"];
 const FB_PREVIEW=["Pundits expect a tight, scrappy game","The bookies make it a coin toss","A heavy pitch is expected after the rain","The away fans have sold out their end","Local paper predicts goals at both ends","The manager calls it a must-win","Both sides are missing key players","A floodlit Friday night crowd expected","The pundits are tipping an upset","Rain, wind and a long-ball battle forecast"];
 
 
@@ -41776,7 +41782,7 @@ DEV_COURSES.influencer=[
 ];
 DEV_COURSES.soldier=[
  {id:"sol_aid",rung:0,n:"Battlefield first aid",months:2,cost:0,perk:"firstaid",d:"Patch people up under pressure. Handy at parties too."},
- {id:"sol_drive",rung:0,n:"Military driving licence",months:1,cost:0,perk:"tech",d:"Trucks, Land Rovers and reversing round cones."},
+ {id:"sol_drive",rung:0,n:"Military driving licence",months:1,cost:0,perk:"tech",d:"Trucks, Landies and reversing round cones."},
  {id:"sol_pti",rung:1,n:"Physical training instructor course",months:2,cost:300,perk:"fitness",d:"Run circuits for the platoon and stay fittest in the room."},
  {id:"sol_jnco",rung:1,n:"Junior NCO cadre",months:2,cost:300,perk:"leadership",d:"Leading a section for the first time, without shouting."},
  {id:"sol_sniper",rung:2,n:"Sniper course",months:3,cost:800,perk:"calm",d:"Hours of stillness and patience. Queues no longer bother you."},
@@ -41976,7 +41982,7 @@ COUNTRIES.usa={
   ["Stoke Newington","Fort Greene"],["Islington","Brooklyn Heights"],["Mayfair","the Upper East Side"],["Belgravia","Park Avenue"],["Chelsea","Tribeca"],
   ["Kensington","the Upper West Side"],["Notting Hill","the West Village"],["Hampstead","Riverdale"],["Romford","Staten Island"],["Camden","the East Village"],["Soho","SoHo"],
   ["Esher","Scarsdale"],["Sevenoaks","Montclair"],["Cobham","Greenwich"],
-  ["Wembley Stadium","MetLife Stadium"],["Wembley Arena","Madison Square Garden"],["Wembley","MetLife Stadium"],["Glastonbury","Coachella"],
+  ["Wembley Stadium","MetLife Stadium"],["Wembley Arena","Madison Square Garden"],["Wembley","MetLife Stadium"],["Glastonberry","Coachella"],
   ["Blackpool","Atlantic City"],["Margate","Coney Island"],["Butlin's","a Catskills resort"],["Kent","New Jersey"],["Essex","Long Island"],
   ["Norfolk Broads","Everglades"],["Norfolk","Iowa"],["Cheltenham-ish","Saratoga-ish"],["Isle of Wight","Martha's Vineyard"],["Ibiza","Cabo"],
   ["Pub quiz","Bar trivia"],["pub quiz","bar trivia"],["Pubs","Bars"],["Pub","Bar"],["pubs","bars"],["pub","bar"],
@@ -42054,7 +42060,7 @@ COUNTRIES.australia={
   ["Stoke Newington","Marrickville"],["Islington","Paddington"],["Mayfair","Point Piper"],["Belgravia","Vaucluse"],["Chelsea","Double Bay"],
   ["Kensington","Bellevue Hill"],["Notting Hill","Balmain"],["Hampstead","Mosman"],["Romford","Penrith"],["Camden","Enmore"],["Soho","Kings Cross"],
   ["Esher","Wahroonga"],["Sevenoaks","Castle Hill"],["Cobham","Lane Cove"],
-  ["Wembley Stadium","Stadium Australia"],["Wembley Arena","Qudos Bank Arena"],["Wembley","the MCG"],["Glastonbury","Splendour in the Grass"],
+  ["Wembley Stadium","Stadium Australia"],["Wembley Arena","Qudos Bank Arena"],["Wembley","the MCG"],["Glastonberry","Splendour in the Grass"],
   ["Blackpool","Surfers Paradise"],["Margate","Coogee"],["Butlin's","a Gold Coast holiday park"],["Kent","the Central Coast"],["Essex","Western Sydney"],
   ["Norfolk Broads","Murray River"],["Norfolk","Hunter Valley"],["Cheltenham-ish","Melbourne Cup-ish"],["Isle of Wight","Rottnest Island"],["Ibiza","Bali"],
   ["Pub quiz","Pub trivia"],["pub quiz","pub trivia"],["pubs","pubs"],["pub","pub"],
@@ -42134,7 +42140,7 @@ COUNTRIES.india={
   ["Stoke Newington","Versova"],["Islington","Khar"],["Mayfair","Malabar Hill"],["Belgravia","Cuffe Parade"],["Chelsea","Worli"],
   ["Kensington","Altamount Road"],["Notting Hill","Bandra"],["Hampstead","Juhu"],["Romford","Kalyan"],["Camden","Linking Road"],["Soho","Colaba"],
   ["Esher","Vashi"],["Sevenoaks","Kharghar"],["Cobham","Nerul"],
-  ["Wembley Stadium","Wankhede Stadium"],["Wembley Arena","the NSCI Dome"],["Wembley","Wankhede"],["Glastonbury","Sunburn"],
+  ["Wembley Stadium","Wankhede Stadium"],["Wembley Arena","the NSCI Dome"],["Wembley","Wankhede"],["Glastonberry","Sunburn"],
   ["Blackpool","Juhu Beach"],["Margate","Alibaug"],["Butlin's","a Lonavala resort"],["Kent","Thane"],["Essex","Navi Mumbai"],
   ["Norfolk Broads","Kerala backwaters"],["Norfolk","rural Maharashtra"],["Cheltenham-ish","Indian Derby-ish"],["Isle of Wight","the Andamans"],["Ibiza","Goa"],
   ["pubs","pubs"],["pub","pub"],
@@ -42221,7 +42227,7 @@ COUNTRIES.nigeria={
   ["Stoke Newington","Ogba"],["Islington","Lekki Phase 1"],["Mayfair","Banana Island"],["Belgravia","Old Ikoyi"],["Chelsea","Oniru"],
   ["Kensington","Parkview Estate"],["Notting Hill","Ikeja GRA"],["Hampstead","Magodo"],["Romford","Ikorodu"],["Camden","Balogun Market"],["Soho","Allen Avenue"],
   ["Esher","Omole"],["Sevenoaks","Ajah"],["Cobham","Sangotedo"],
-  ["Wembley Stadium","the National Stadium"],["Wembley Arena","Eko Convention Centre"],["Wembley","the National Stadium"],["Glastonbury","Felabration"],
+  ["Wembley Stadium","the National Stadium"],["Wembley Arena","Eko Convention Centre"],["Wembley","the National Stadium"],["Glastonberry","Felabration"],
   ["Blackpool","Tarkwa Bay"],["Margate","Badagry"],["Butlin's","a Lekki beach resort"],["Kent","Ogun State"],["Essex","Epe"],
   ["Norfolk Broads","Niger Delta creeks"],["Norfolk","Kwara"],["Cheltenham-ish","Durbar-ish"],["Isle of Wight","Lagos Island"],["Ibiza","Dubai"],
   ["Pub quiz","Bar quiz"],["pub quiz","bar quiz"],["Pubs","Bars"],["Pub","Bar"],["pubs","beer parlours"],["pub","beer parlour"],
@@ -42339,7 +42345,7 @@ COUNTRIES.russia={
   ["Clapham","Sokolniki"],["Shoreditch","Basmanny"],["Camden","Taganka"],["Soho","Kitay-gorod"],["Islington","Zamoskvorechye"],["Hampstead","Sokol"],
   ["Notting Hill","Arbat"],["Chelsea","Yakimanka"],["Kensington","Khamovniki"],["Mayfair","Ostozhenka"],["Belgravia","Prechistenka"],
   ["Hyde Park","Gorky Park"],["Big Ben","the Spasskaya Tower"],["Wapping","Nagatino"],["Bermondsey","Danilovsky"],["Nine Elms","Zilart"],
-  ["Wembley","Luzhniki"],["Glastonbury","Nashestvie"],
+  ["Wembley","Luzhniki"],["Glastonberry","Nashestvie"],
   // culture and life
   ["Red Lion","Zhiguli Bar"],["Coach and Horses","Pivnaya No. 1"],["pubs","bars"],["pub","bar"],
   ["Sunday roast","Sunday shashlik"],["Bonfire Night","Maslenitsa"],["Boxing Day","2 January"],["bank holidays","public holidays"],["bank holiday","public holiday"],
@@ -42447,7 +42453,7 @@ COUNTRIES.japan={
   ["Clapham","Sangenjaya"],["Shoreditch","Shimokitazawa"],["Camden","Koenji"],["Soho","Shibuya"],["Islington","Kagurazaka"],["Hampstead","Jiyugaoka"],
   ["Notting Hill","Daikanyama"],["Chelsea","Hiroo"],["Kensington","Azabu"],["Mayfair","Ginza"],["Belgravia","Shirokanedai"],
   ["Hyde Park","Yoyogi Park"],["Big Ben","Tokyo Tower"],["Wapping","Tsukishima"],["Bermondsey","Toyosu"],["Nine Elms","Shinagawa"],
-  ["Wembley","the Tokyo Dome"],["Glastonbury","Fuji Rock"],
+  ["Wembley","the Tokyo Dome"],["Glastonberry","Fuji Rock"],
   // culture and life
   ["Red Lion","Akachochin"],["Coach and Horses","Tanuki"],["pubs","izakayas"],["pub","izakaya"],
   ["Sunday roast","Sunday nabe"],["Bonfire Night","fireworks festival night"],["Boxing Day","New Year's Day"],["bank holidays","public holidays"],["bank holiday","public holiday"],
@@ -42555,7 +42561,7 @@ COUNTRIES.france={
   ["Clapham","Batignolles"],["Shoreditch","Oberkampf"],["Camden","Belleville"],["Soho","Pigalle"],["Islington","Montmartre"],["Hampstead","Auteuil"],
   ["Notting Hill","Saint-Germain-des-Prés"],["Chelsea","Neuilly"],["Kensington","Passy"],["Mayfair","Avenue Montaigne"],["Belgravia","Faubourg Saint-Honoré"],
   ["Hyde Park","the Jardin du Luxembourg"],["Big Ben","the Eiffel Tower"],["Wapping","Bercy"],["Bermondsey","Butte-aux-Cailles"],["Nine Elms","Paris Rive Gauche"],
-  ["Wembley","Stade de France"],["Glastonbury","Les Vieilles Charrues"],
+  ["Wembley","Stade de France"],["Glastonberry","Les Vieilles Charrues"],
   // culture and life
   ["Red Lion","Lion d'Or"],["Coach and Horses","Café du Commerce"],["pubs","bistros"],["pub","bistro"],
   ["Sunday roast","Sunday gigot"],["Bonfire Night","Fête de la Musique"],["Boxing Day","26 December"],["bank holidays","public holidays"],["bank holiday","public holiday"],
@@ -42657,7 +42663,7 @@ const WED_PLAN=[],WED_DO=[],WED_DAY={},LIFE_SCENES={};
 // ===== WED_PLAN: planning stories =====
 WED_PLAN.push(
  {id:"wp_guests",t:"The guest list",from:"{p}",b:"{p} has started a spreadsheet called GUESTS FINAL v{3|4|7}. It already has {140|160|185} names on it, including someone called 'Dave from the boat?'.",only:["big","church"],c:[
-  {t:"Cut it hard. Only people you'd lend a tenner to",fx:{guests:-40,cost:-2500,fam:-3,stress:2},o:"The list shrinks. Several cousins will be finding out from Facebook."},
+  {t:"Cut it hard. Only people you'd lend a tenner to",fx:{guests:-40,cost:-2500,fam:-3,stress:2},o:"The list shrinks. Several cousins will be finding out from social media."},
   {t:"Invite everyone. It's one day",fx:{guests:30,cost:3000,fam:4,party:3},o:"Dave from the boat is in. Nobody knows who Dave is."},
   {t:"Day guests and evening guests, the classic split",fx:{guests:10,cost:800,fam:-1,party:1},o:"The evening guests will arrive at eight, hungry and slightly offended."}]},
  {id:"wp_plusones",t:"Plus-ones",from:"{p}",b:"{p} asks the eternal question: does everyone get a plus-one? Your mate {Gaz|Robbie|Lou} has been seeing someone for 'about three weeks, but it's serious'.",c:[
@@ -42738,7 +42744,7 @@ WED_PLAN.push(
   {t:"Trust the British summer",fx:{stress:2,karma:1},o:"Bold. Possibly foolish. Very British."}],only:["big","church","small"]},
  {id:"wp_abroad_flights",t:"Flights for the family",from:"Mum",b:"Mum says Nan 'can't really afford the flights' to the ceremony abroad. Nan says she'll 'manage', which means a lot of tinned soup.",only:["abroad"],c:[
   {t:"Pay for Nan's flights",fx:{cost:600,fam:5,karma:2},o:"Nan rings you every day to talk about her new suitcase."},
-  {t:"Livestream the ceremony for those at home",fx:{cost:100,fam:1,stress:1},o:"Nan will watch it on an iPad held by your uncle. Upside down at first."},
+  {t:"Livestream the ceremony for those at home",fx:{cost:100,fam:1,stress:1},o:"Nan will watch it on a tablet held by your uncle. Upside down at first."},
   {t:"Hold a party back home afterwards too",fx:{cost:1500,fam:4,party:2,stress:2},o:"Two celebrations. Double the joy, double the planning."}]},
  {id:"wp_cantcome",t:"A friend who can't come",from:"{bf}",b:"Your old friend {Jess|Ollie|Priya} can't make it. They're {working abroad|due to give birth that week|in the middle of a house move}. They sound gutted.",c:[
   {t:"Ask them to record a video message",fx:{party:2,bf:1},o:"The video is perfect. You'll watch it again in ten years."},
@@ -43329,7 +43335,7 @@ LIFE_SCENES.school=[
   intro:"At the school gate there's a crowd of parents who all seem to know each other already.",
   start:"a",
   stages:{
-   a:{q:"A very organised parent asks you to join the class {WhatsApp group|parent rota|cake sale committee}.",o:[
+   a:{q:"A very organised parent asks you to join the class {group chat|parent rota|cake sale committee}.",o:[
      {t:"Join, it's a good way to meet people",d:.1,next:"b"},
      {t:"Say you'll think about it",d:.02,next:"c"},
      {t:"Mention you're very busy as {job}",d:-.08,next:"c"}]},
@@ -44279,6 +44285,280 @@ inboxArt=function(m,e){
  let svg="";try{svg=IA[pick]()}catch(x){return""}
  return `<div class="mail-art" aria-hidden="true"><svg viewBox="0 0 ${IA_W} ${IA_H}" preserveAspectRatio="xMidYMid slice">${svg}</svg></div>`;
 };
+
+/* ============ Freshness: headlines don't come back for months, and gapped stories respect their gap from every source ============ */
+function newsPick(arr){
+ if(!arr||!arr.length)return pick(arr||[""]);
+ try{const seen=S.newsSeen||(S.newsSeen=[]),fresh=arr.filter(t=>!seen.includes(t)),t=pick(fresh.length?fresh:arr);seen.unshift(t);if(seen.length>120)seen.length=120;return t}catch(e){return pick(arr)}
+}
+STORY_GAP.push([/^Paparazzi$/,8]);
+const gapKey=t=>{const g=STORY_GAP.find(([re])=>re.test(String(t||"")));return g?[String(g[0]),g[1]]:null};
+{const _el=eligible;eligible=function(e){if(!_el.apply(this,arguments))return false;try{const g=gapKey(e.t);if(g&&S.storyAt&&S.storyAt[g[0]]!=null&&S.day-S.storyAt[g[0]]<g[1])return false}catch(x){}return true}}
+{const _pf=pickFresh;pickFresh=function(){const e=_pf.apply(this,arguments);try{const g=e&&gapKey(e.t);if(g){S.storyAt=S.storyAt||{};S.storyAt[g[0]]=S.day}}catch(x){}return e}}
+
+/* ============ Floor plans drawn like an architect's plan: floors, walls, doors, windows, furniture and improvements ============ */
+/* ============ Floor plan drawing: textured floors, walls, doors, windows, furniture, improvements ============ */
+const fp_n=v=>Math.round(v*10)/10;
+const fp_R=(x,y,w,h,f,a)=>`<rect x="${fp_n(x)}" y="${fp_n(y)}" width="${fp_n(w)}" height="${fp_n(h)}" style="fill:${f}" ${a||""}/>`;
+const fp_C=(x,y,r,f,a)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${a||""}/>`;
+const fp_P=(d,c,w,a)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" ${a||""}/>`;
+/* rows of boards / tiles / paving with staggered joints */
+function fp_rows(x,y,w,h,st,jl,c,sw){let d="";for(let r=0,yy=y+st;yy<y+h-.5;r++,yy+=st){d+=`M${fp_n(x)} ${fp_n(yy)}h${fp_n(w)}`;if(jl)for(let jx=x+(r*13)%jl+4;jx<x+w-2;jx+=jl)d+=`M${fp_n(jx)} ${fp_n(yy-st)}v${st}`}
+ return fp_P(d,c,sw)}
+function fp_dots(x,y,w,h,n,c,sw,seed,tuft){let d="";n=Math.min(n,70);for(let i=0;i<n;i++){const a=Math.sin(seed+i*12.9898)*43758.5453,b=Math.sin(seed+i*78.233)*12543.17;
+ const px=x+3+(a-Math.floor(a))*(w-6),py=y+3+(b-Math.floor(b))*(h-6);d+=tuft?`M${fp_n(px-1)} ${fp_n(py+1)}l1 -2.4l1 2.4`:`M${fp_n(px)} ${fp_n(py)}h.01`}
+ return fp_P(d,c,sw,tuft?"":'stroke-linecap="round"')}
+const fp_FLOOR={living:"#E9D8BC",study:"#E9D8BC",spare:"#ECDDC4",mezz:"#E9D8BC",hall:"#E4D2B4",bed:"#EDE4D8",kitchen:"#EEF2F3",bath:"#EEF2F3",garage:"#DEDAD3",basement:"#DEDAD3",garden:"#CFE5C0",terrace:"#DCC4A0",balcony:"#DCC4A0",roof:"#CDBCA9",drive:"#D9D4CB"};
+function fp_tex(k,x,y,w,h){const s=x*7+y*3;
+ if(/living|study|spare|mezz|hall/.test(k))return fp_rows(x,y,w,h,5,34,"#D8C3A0",.5);
+ if(k==="kitchen"||k==="bath"){let d="";for(let i=x+8;i<x+w;i+=8)d+=`M${i} ${y}v${h}`;for(let j=y+8;j<y+h;j+=8)d+=`M${x} ${j}h${w}`;return fp_P(d,"#D5DDE0",.5)}
+ if(k==="bed")return fp_dots(x,y,w,h,w*h/90,"#DDD1C1",.9,s)+fp_R(x+3,y+3,w-6,h-6,"none",'stroke="#E0D4C4" stroke-width=".6"');
+ if(k==="garage"||k==="basement")return fp_rows(x,y,w,h,30,30,"#CFC9BF",.5)+fp_dots(x,y,w,h,w*h/110,"#C6BFB4",.9,s);
+ if(k==="garden")return fp_dots(x,y,w,h,w*h/110,"#B3D19F",.6,s,1);
+ if(k==="terrace"||k==="balcony")return fp_rows(x,y,w,h,4,46,"#C4A77E",.5);
+ if(k==="roof")return fp_rows(x,y,w,h,4,8,"#B7A48F",.45)+fp_P(w>=h?`M${x+4} ${y+h/2}h${w-8}`:`M${x+w/2} ${y+4}v${h-8}`,"#8E7B67",1.3);
+ if(k==="drive")return fp_rows(x,y,w,h,5,10,"#C3BCB0",.5);return""}
+/* furniture & improvements: [designW, designH, draw(sw)] in their own units, later fitted into a box */
+const fp_FU='fill="#FFFDF8"',fp_CAR=[24,44,()=>`<rect width="24" height="44" rx="6" fill="#B9C3CB"/><rect x="3" y="12" width="18" height="7" rx="2" fill="#6F7C86"/><rect x="3" y="19" width="18" height="12" fill="#A9B4BD"/><rect x="3" y="32" width="18" height="5" rx="1.5" fill="#6F7C86"/>`],
+ fp_SOFA=`<rect x="8" y="9" width="44" height="22" rx="2" fill="#E3D3BE" stroke="none"/><rect x="22" y="15" width="16" height="9" rx="1.5" ${fp_FU}/><rect x="6" y="32" width="48" height="10" rx="2.5" fill="#D9CCBA"/><path d="M11 35h38M24 35v7M36 35v7"/>`,
+ fp_DESK=`<rect x="0" y="0" width="24" height="9" rx="1" fill="#E9D8BC"/><rect x="7" y="1.5" width="10" height="2" fill="#4A433B" stroke="none"/><circle cx="12" cy="15" r="4" fill="#9A8F80" stroke="none"/>`;
+const fp_FURN={
+ living:[60,44,()=>`<rect x="18" y="1" width="24" height="3.5" fill="#6B6257" stroke="none"/>`+fp_SOFA],
+ mezz:[60,44,()=>fp_SOFA],
+ kitchen:[60,40,()=>`<path d="M0 0h60v12H12v28H0z" fill="#E4E0D8"/><rect x="16" y="2" width="12" height="8" rx="1.5" fill="#D5DDE0"/><circle cx="22" cy="6" r="2" fill="none"/><circle cx="36" cy="4" r="2.2" fill="none"/><circle cx="43" cy="4" r="2.2" fill="none"/><circle cx="36" cy="9" r="2" fill="none"/><circle cx="43" cy="9" r="2" fill="none"/><rect x="1" y="28" width="10" height="11" fill="#F4F6F7"/>`],
+ bath:[50,36,()=>`<rect width="18" height="36" rx="3" ${fp_FU}/><rect x="2.5" y="2.5" width="13" height="31" rx="6" fill="#DDEEF3"/><rect x="29" y="0" width="12" height="4" ${fp_FU}/><ellipse cx="35" cy="10" rx="4.5" ry="6" ${fp_FU}/><rect x="34" y="26" width="16" height="10" rx="2" ${fp_FU}/><ellipse cx="42" cy="31" rx="5" ry="3" fill="#DDEEF3"/>`],
+ bed:[50,46,()=>`<rect width="8" height="8" rx="1" fill="#D8C3A0"/><rect x="42" width="8" height="8" rx="1" fill="#D8C3A0"/><rect x="10" width="30" height="45" rx="2" ${fp_FU}/><rect x="12" y="2" width="12" height="7" rx="2" fill="#F1ECE4"/><rect x="26" y="2" width="12" height="7" rx="2" fill="#F1ECE4"/><path d="M10 15h30v30H10z" fill="#C9D6E0"/><path d="M10 19h30"/>`],
+ spare:[40,44,()=>`<rect width="18" height="40" rx="2" ${fp_FU}/><rect x="2" y="2" width="14" height="7" rx="2" fill="#F1ECE4"/><path d="M0 13h18v27H0z" fill="#D5CDE0"/><g transform="translate(22 0) scale(.75)">${fp_DESK}</g>`],
+ study:[50,40,()=>`<rect width="50" height="6" fill="#CDB89A"/><path d="M10 0v6M20 0v6M30 0v6M40 0v6"/><g transform="translate(13 14)">${fp_DESK}</g>`],
+ hall:[30,40,()=>`<rect width="14" height="40" ${fp_FU}/><path d="M0 5h14M0 10h14M0 15h14M0 20h14M0 25h14M0 30h14M0 35h14M7 37V4M4 7l3-3 3 3"/><rect x="18" y="8" width="11" height="26" rx="2" fill="#C99C8A" stroke="none"/><rect x="20" y="10" width="7" height="22" rx="1" fill="none" stroke="#E7D3C6"/>`],
+ garage:fp_CAR, drive:fp_CAR,
+ basement:[50,30,()=>`<rect width="50" height="6" fill="#CDB89A"/><path d="M12 0v6M25 0v6M38 0v6"/><rect x="4" y="12" width="12" height="11" fill="#D9C3A0"/><rect x="19" y="15" width="10" height="9" fill="#D9C3A0"/><rect x="32" y="12" width="13" height="12" fill="#D9C3A0"/><path d="M10 12v11M24 15v9M38.5 12v12"/>`],
+ garden:[60,40,()=>`<path d="M30 40c0-10 8-14 8-22s-6-12-6-18" stroke="#E6DCC8" stroke-width="5" fill="none"/><circle cx="12" cy="13" r="10" fill="#A9CB97" stroke="#8FB27C"/><circle cx="12" cy="13" r="4" fill="#97BD84" stroke="none"/><circle cx="50" cy="28" r="9" fill="#A9CB97" stroke="#8FB27C"/><circle cx="50" cy="28" r="3.5" fill="#97BD84" stroke="none"/><circle cx="16" cy="34" r="4" fill="#B9D6A6" stroke="#8FB27C"/>`],
+ terrace:[40,30,()=>`<rect x="9" y="6" width="5" height="5" rx="1" ${fp_FU}/><rect x="18" y="6" width="5" height="5" rx="1" ${fp_FU}/><rect x="9" y="19" width="5" height="5" rx="1" ${fp_FU}/><rect x="18" y="19" width="5" height="5" rx="1" ${fp_FU}/><circle cx="16" cy="15" r="6" ${fp_FU}/><circle cx="35" cy="5" r="4" fill="#A9CB97"/><circle cx="35" cy="25" r="4" fill="#A9CB97"/>`]};
+fp_FURN.balcony=fp_FURN.terrace;
+const fp_MOD={
+ smart:[14,14,()=>`<circle cx="7" cy="9" r="4.5" fill="#6B6257" stroke="none"/><circle cx="7" cy="9" r="1.6" fill="#B8862B" stroke="none"/><path d="M3 3.5a6 6 0 0 1 8 0M5 5.5a3 3 0 0 1 4 0" stroke="#B8862B"/>`],
+ office:[24,19,()=>fp_DESK.replace('fill="#4A433B"','fill="#3F5873"')],
+ cinema:[30,24,()=>`<rect width="30" height="3" fill="#3E3832" stroke="none"/>${[9,15,21].map(y=>[2,9,16,23].map(x=>`<rect x="${x}" y="${y}" width="5" height="4" rx="1" fill="#B5625A" stroke="none"/>`).join("")).join("")}`],
+ gym:[28,22,()=>`<rect width="10" height="22" rx="1.5" fill="#6B6257" stroke="none"/><rect x="2" y="4" width="6" height="16" fill="#9A8F80" stroke="none"/><path d="M15 11h11" stroke="#4A433B" stroke-width="1.4"/><rect x="14" y="7" width="3" height="8" fill="#4A433B" stroke="none"/><rect x="24" y="7" width="3" height="8" fill="#4A433B" stroke="none"/>`],
+ art:[18,14,()=>`<rect width="18" height="14" fill="#E9D8BC" stroke="#B8862B" stroke-width="1.5"/><path d="M3 11l4-5 3 3 2-2 3 4z" fill="#8FB27C" stroke="none"/><circle cx="12" cy="4.5" r="1.5" fill="#E8C35A" stroke="none"/>`],
+ cellar:[30,14,()=>`<rect width="30" height="14" fill="#8C6A4A"/>${[3.5,10.5].map(y=>[3,7.8,12.6,17.4,22.2,27].map(x=>`<circle cx="${x}" cy="${y}" r="1.7" fill="#6E2B3A" stroke="none"/>`).join("")).join("")}`],
+ garden:[30,14,()=>`<rect width="30" height="14" rx="4" fill="#B7D3A3" stroke="#8FB27C"/>${[[5,4,"#E59AA8"],[10,9,"#E8C35A"],[15,5,"#A48BC7"],[20,10,"#E59AA8"],[25,5,"#E8C35A"],[8,11,"#A48BC7"]].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="${c}" stroke="none"/>`).join("")}`],
+ solar:[40,14,()=>`<rect width="40" height="14" fill="#3F5873" stroke="#2C3E52"/><path d="M8 0v14M16 0v14M24 0v14M32 0v14M0 7h40" stroke="#7C93AD"/>`],
+ ev:[16,16,()=>`<rect x="1" width="8" height="12" rx="1.5" fill="#4E8B6A" stroke="none"/><path d="M6 2l-2.5 4.5h3L4 10.5" stroke="#FFFDF8" stroke-width="1"/><path d="M5 12c0 3 10 4 10 0" stroke="#4A433B" stroke-width="1"/>`],
+ hottub:[22,22,()=>`<circle cx="11" cy="11" r="10.5" fill="#E9D8BC" stroke="#9A8F80"/><circle cx="11" cy="11" r="7.5" fill="#BFE3EE" stroke="#8FB8C6"/><circle cx="9" cy="9" r="1" fill="#FFFDF8" stroke="none"/><circle cx="13" cy="12" r="1.3" fill="#FFFDF8" stroke="none"/><circle cx="10" cy="14" r=".8" fill="#FFFDF8" stroke="none"/>`],
+ extension:[30,20,()=>`<rect width="30" height="20" fill="#EDE6DA" stroke="#4A433B" stroke-width="1.5"/><path d="M0 6l6-6M0 14l14-14M0 22l20-20M8 20l20-20M16 20l14-14M24 20l6-6" stroke="#C9BCA8"/>`],
+ pool:[40,20,()=>`<rect width="40" height="20" rx="2" fill="#FFFDF8" stroke="#9A8F80"/><rect x="2" y="2" width="36" height="16" rx="1" fill="#9FD3E6" stroke="none"/><path d="M4 7.5h32M4 12.5h32" stroke="#FFFDF8" stroke-dasharray="3 2"/>`],
+ nursery:[16,20,()=>`<rect x="2" width="12" height="20" rx="1" ${fp_FU}/><path d="M2 4h12M2 8h12M2 12h12M2 16h12" stroke="#D8C3A0"/><rect x="4" y="2" width="8" height="5" rx="2" fill="#F3D9DE" stroke="none"/>`],
+ annex:[24,18,()=>`<rect width="24" height="18" fill="#D9C7AE" stroke="#4A433B" stroke-width="1.5"/><path d="M0 0l7 9h10l7-9M0 18l7-9M24 18l-7-9" stroke="#A8927A"/>`],
+ kitchen:[30,19,()=>`<rect width="30" height="11" rx="2" fill="#E4E0D8"/><circle cx="7" cy="15.5" r="2.5" fill="#9A8F80" stroke="none"/><circle cx="15" cy="15.5" r="2.5" fill="#9A8F80" stroke="none"/><circle cx="23" cy="15.5" r="2.5" fill="#9A8F80" stroke="none"/>`],
+ bathroom:[38,16,()=>`<rect width="16" height="16" fill="#DDE8EC"/><path d="M0 12h12" stroke="#7FA8B8" stroke-width="1.2"/><circle cx="8" cy="6" r="1.2" fill="none"/><ellipse cx="29" cy="8" rx="8.5" ry="7.5" ${fp_FU}/><ellipse cx="29" cy="8" rx="6" ry="5" fill="#DDEEF3" stroke="none"/>`]};
+/* fit a design into a box (rotating if that lets it be bigger), never overflowing */
+function fp_fit(d,b,cap){const[W,H,f]=d;if(b.w<4||b.h<4)return"";const s1=Math.min(b.w/W,b.h/H),s2=Math.min(b.w/H,b.h/W),rot=s2>s1*1.15,s=Math.min(rot?s2:s1,cap);
+ return `<g transform="translate(${fp_n(b.x+b.w/2)} ${fp_n(b.y+b.h/2)})${rot?" rotate(90)":""} scale(${fp_n(s*100)/100}) translate(${-W/2} ${-H/2})" fill="none" stroke="#8C8174" stroke-width="${fp_n(.7/s*10)/10}">${f().replace(/<rect([^>]*?) fill="([^"]+)"/g,'<rect$1 style="fill:$2"')}</g>`}/* style= so the game's :hover rect rule leaves furniture alone */
+const fp_lab=(n,w)=>{let fs=Math.min(8.5,(w-8)/(n.length*.56)),L=[n];if(fs<6&&n.includes(" ")){const i=n.lastIndexOf(" ",Math.ceil(n.length/2))+1||n.indexOf(" ")+1;L=[n.slice(0,i).trim(),n.slice(i)];fs=Math.min(8,(w-8)/(Math.max(...L.map(t=>t.length))*.56))}
+ fs=fp_n(Math.max(fs,5));return{L,fs,w:Math.max(...L.map(t=>t.length))*fs*.56+6,h:L.length*fs*1.15+3}};
+/* uncovered parts of [a,b] once intervals I are removed */
+function fp_gaps(a,b,I){let o=[[a,b]];for(const[c,d]of I)o=o.flatMap(([p,q])=>d<=p||c>=q?[[p,q]]:[[p,Math.max(p,c)],[Math.min(q,d),q]].filter(([u,v])=>v-u>.5));return o}
+floorPlanSVG=function(pickFor){
+ modAtFix();const P=planOf();if(!P.length)return"";const H=S.home,valid=pickFor?freeRooms(pickFor).map(r=>r[0]):[];
+ const mods={};for(const[m,r]of Object.entries(H.modAt||{}))if(H.mods&&H.mods[m])(mods[r]=mods[r]||[]).push(m);
+ const IN=P.filter(r=>!OUTSIDE_KINDS.includes(r[2])),WC="#4A433B";let rooms="",walls="",top="";
+ /* edges: each indoor side, split into shared (with another indoor room) and outer parts */
+ const sides=r=>{const[, , ,x,y,w,h]=r;return[[0,y,x,x+w,-1],[0,y+h,x,x+w,1],[1,x,y,y+h,-1],[1,x+w,y,y+h,1]]};const pairs=[];
+ for(const r of IN)for(const[v,c,a,b,dir]of sides(r)){const sh=[];for(const o of IN)if(o!==r)for(const[v2,c2,a2,b2,d2]of sides(o))if(v2===v&&c2===c&&d2===-dir&&Math.min(b,b2)-Math.max(a,a2)>1){sh.push([Math.max(a,a2),Math.min(b,b2)]);if(r[0]<o[0])pairs.push([r,o,v,c,Math.max(a,a2),Math.min(b,b2)])}
+  for(const[p,q]of fp_gaps(a,b,sh)){const ln=v?`M${c} ${p}V${q}`:`M${p} ${c}H${q}`;walls+=fp_P(ln,WC,3.4,'stroke-linecap="square"');
+   if(q-p>=22){const m=(p+q)/2,L=Math.min(22,(q-p)*.45),o=.9,s=v?`M${c-o} ${m-L/2}v${L}M${c+o} ${m-L/2}v${L}`:`M${m-L/2} ${c-o}h${L}M${m-L/2} ${c+o}h${L}`;
+    top+=fp_P(v?`M${c} ${m-L/2}v${L}`:`M${m-L/2} ${c}h${L}`,"#FFFDF8",3.6)+fp_P(s,"#6B6257",.6)}}}
+ for(const r of IN)walls+=`<rect x="${r[3]}" y="${r[4]}" width="${r[5]}" height="${r[6]}" fill="none" stroke="${WC}" stroke-width="2"/>`;
+ /* doors: each room opens onto its best neighbour (hall first, then living) */
+ const sc=k=>k==="hall"?3:k==="living"?2:0,done={};
+ for(const r of IN){const c=pairs.filter(p=>(p[0]===r||p[1]===r)&&p[5]-p[4]>=14).sort((a,b)=>sc(b[0]===r?b[1][2]:b[0][2])-sc(a[0]===r?a[1][2]:a[0][2])||(b[5]-b[4])-(a[5]-a[4]))[0];
+  if(!c||done[c[0][0]+c[1][0]])continue;done[c[0][0]+c[1][0]]=1;const[, ,v,cc,a,b]=c,d=Math.min(10,b-a-6),h=b-3,sg=(v?r[3]<cc:r[4]<cc)?-1:1;
+  const P1=v?[cc+sg*d,h]:[h,cc+sg*d],P2=v?[cc,h-d]:[h-d,cc],sw=(v?sg<0:sg>0)?1:0;
+  top+=fp_P(v?`M${cc} ${h-d}V${h}`:`M${h-d} ${cc}H${h}`,"#F6F1E8",3.8)+fp_P(`M${v?cc:h} ${v?h:cc}L${P1}A${d} ${d} 0 0 ${sw} ${P2}`,"#8C8174",.6)}
+ let labs="";
+ for(const[id,n,k,x,y,w,h]of P){const out=OUTSIDE_KINDS.includes(k),ok=valid.includes(id),lb=fp_lab(n,w),M=mods[id]||[];
+  /* content box: below the label, or beside it in short rooms */
+  const bl={x:x+4,y:y+lb.h+6,w:w-8,h:h-lb.h-10},bs={x:x+lb.w+7,y:y+4,w:w-lb.w-11,h:h-8},B=Math.min(bl.w,bl.h)>=Math.min(bs.w,bs.h)?bl:bs;
+  const items=(fp_FURN[k]&&k!=="roof"?[[fp_FURN[k],1.6]]:[]).concat(M.map(m=>[fp_MOD[m]||[16,16,()=>`<circle cx="8" cy="8" r="7.5" fill="#FFFDF8" stroke="#B8862B"/><text x="8" y="11" font-size="9" text-anchor="middle" stroke="none" fill="#4A433B">${MOD_ICON[m]||"⭐"}</text>`],1.4]));
+  /* furniture gets a double share of the room, each improvement one share */
+  const hz=B.w>=B.h,N=items.length,wt=items.map(i=>i[1]>1.5&&N>1?2:1),T=wt.reduce((a,b)=>a+b,0),len=(hz?B.w:B.h)-(N-1)*3;let o=0;
+  const art=items.map(([d,cap],i)=>{const l=len*wt[i]/T,b=hz?{x:B.x+o,y:B.y,w:l,h:B.h}:{x:B.x,y:B.y+o,w:B.w,h:l};o+=l+3;return fp_fit(d,b,cap)}).join("");
+  rooms+=`<g ${ok?`class="plan-room ok" data-act="hplace" data-mod="${pickFor}" data-room="${id}"`:`class="plan-room"`}>${fp_R(x,y,w,h,fp_FLOOR[k]||"#FFFDF8")}${fp_tex(k,x,y,w,h)}${art}${out?`<rect x="${x+.5}" y="${y+.5}" width="${w-1}" height="${h-1}" fill="none" stroke="#9A8F80" stroke-width=".9" stroke-dasharray="4 3"/>`:""}${ok?`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#F2C14E" fill-opacity=".3"/>`:""}</g>`;
+  labs+=fp_R(x+3,y+3,lb.w,lb.h,"#FFFDF8",'fill-opacity=".88" rx="3"')+`<text x="${x+6}" y="${fp_n(y+3+lb.fs)}" font-size="${lb.fs}" font-family="system-ui,sans-serif" font-weight="600" letter-spacing=".2" fill="#5E554B">${lb.L.map((t,i)=>`<tspan x="${x+6}" dy="${i?fp_n(lb.fs*1.15):0}">${esc(t)}</tspan>`).join("")}</text>`;
+  if(ok){labs+=`<rect x="${x+1.5}" y="${y+1.5}" width="${w-3}" height="${h-3}" fill="none" stroke="#B8862B" stroke-width="2.5" rx="2"/>`;
+   const sh=h<36,tx=["Tap to put it here","Tap here","Tap"].map(t=>[t,t.length*4.3+8]).find(([t,tw])=>sh?x+w-4-tw>x+3+lb.w+2:tw<=w-8)||["Tap",21];
+   const px=sh?x+w-4-tx[1]:x+(w-tx[1])/2,py=sh?y+(h-11)/2:y+h-15;
+   labs+=fp_R(px,py,tx[1],11,"#B8862B",'rx="5.5"')+`<text x="${fp_n(px+tx[1]/2)}" y="${fp_n(py+8)}" font-size="7.2" font-weight="700" text-anchor="middle" font-family="system-ui,sans-serif" fill="#FFFDF8">${tx[0]}</text>`}}
+ return `<svg class="plan-svg" viewBox="0 0 300 220" role="img" aria-label="Floor plan"><rect width="300" height="220" rx="12" fill="var(--plan-bg,#F3EEE4)"/>${rooms}<g pointer-events="none">${walls}${top}${labs}</g></svg>`;
+};
+
+/* ---- Transport (vehicle shop) ---- */
+/* Existing models: tag with a category (cat) and sub-category (sub); ev marks electric */
+(()=>{const tag={none:["other","Public transport"],brompton:["cycle","Folding"],fiesta:["car","City & hatchback"],mini:["car","City & hatchback"],golf:["car","City & hatchback"],tesla:["car","Saloon",1],m3:["car","Saloon"],rrs:["car","SUV"],"911":["car","Sports"],etype:["car","Classic"],db12:["car","Grand tourer"],bentley:["car","Grand tourer"],f296:["car","Supercar"],revuelto:["car","Supercar"]};
+ for(const c of CARS){const t=tag[c.id];if(t&&!c.cat){c.cat=t[0];c.sub=t[1];if(t[2])c.ev=true}}})();
+/* New models. lvl: 0 = no engine (no driving events), 1-6 = status. dep: daily depreciation, negative = classic that gains value */
+const TP_NEW=[
+ // Cars: city & hatchback
+ {id:"cinq",n:"Fiab Cinquecento",shape:"hatch",p:14e3,run:190,lvl:1,dep:.0006,cat:"car",sub:"City & hatchback"},
+ {id:"yarris",n:"Toyoda Yarris Hybrid",shape:"hatch",p:21e3,run:200,lvl:1,dep:.0005,cat:"car",sub:"City & hatchback"},
+ // Saloon
+ {id:"ordia4",n:"Ordi A4",shape:"sedan",p:40e3,run:380,lvl:2,dep:.0007,cat:"car",sub:"Saloon"},
+ {id:"mercc",n:"Merc-a-Day C300",shape:"sedan",p:46e3,run:420,lvl:2,dep:.0007,cat:"car",sub:"Saloon"},
+ // Estate
+ {id:"octest",n:"Skodda Octavier Estate",shape:"estate",p:28e3,run:280,lvl:1,dep:.0006,cat:"car",sub:"Estate"},
+ {id:"v90",n:"Volvoh V90 Estate",shape:"estate",p:52e3,run:450,lvl:2,dep:.0007,cat:"car",sub:"Estate"},
+ // SUV
+ {id:"cashkai",n:"Nisson Cashkai",shape:"suv",p:29e3,run:300,lvl:1,dep:.0007,cat:"car",sub:"SUV"},
+ {id:"xc90",n:"Volvoh XC90",shape:"suv",p:68e3,run:600,lvl:2,dep:.0007,cat:"car",sub:"SUV"},
+ {id:"defender",n:"Land Ravager Defendor",shape:"suv",p:75e3,run:750,lvl:3,dep:.0006,cat:"car",sub:"SUV"},
+ {id:"cayenne",n:"Porsha Cayenned",shape:"suv",p:92e3,run:850,lvl:3,dep:.0007,cat:"car",sub:"SUV"},
+ {id:"cullinin",n:"Rolls-Roice Cullinin",shape:"suv",p:350e3,run:2800,lvl:6,dep:.0008,cat:"car",sub:"SUV"},
+ // Pickup
+ {id:"hilox",n:"Toyoda Hilox",shape:"pickup",p:38e3,run:420,lvl:1,dep:.0005,cat:"car",sub:"Pickup"},
+ {id:"raptor",n:"Fjord Rangah Raptorr",shape:"pickup",p:62e3,run:680,lvl:2,dep:.0006,cat:"car",sub:"Pickup"},
+ // People carrier
+ {id:"galaxie",n:"Fjord Galaxie",shape:"mpv",p:36e3,run:380,lvl:1,dep:.0007,cat:"car",sub:"People carrier"},
+ {id:"carnivore",n:"Kiya Carnivore",shape:"mpv",p:42e3,run:390,lvl:1,dep:.0007,cat:"car",sub:"People carrier"},
+ // Sports
+ {id:"mx5",n:"Mazdah MX-Five",shape:"sports",p:28e3,run:280,lvl:2,dep:.0005,cat:"car",sub:"Sports"},
+ {id:"a110",n:"Alpyne A110",shape:"sports",p:55e3,run:520,lvl:3,dep:.0005,cat:"car",sub:"Sports"},
+ {id:"cayman",n:"Porsha 718 Caymen",shape:"sports",p:65e3,run:620,lvl:3,dep:.0005,cat:"car",sub:"Sports"},
+ {id:"emiro",n:"Lotos Emiro",shape:"sports",p:85e3,run:800,lvl:4,dep:.0006,cat:"car",sub:"Sports"},
+ // Grand tourer
+ {id:"mercsl",n:"Merc-a-Day SL 55",shape:"gt",p:105e3,run:950,lvl:4,dep:.0007,cat:"car",sub:"Grand tourer"},
+ // Supercar
+ {id:"mcl750",n:"McLorran 750S",shape:"super",p:240e3,run:2100,lvl:6,dep:.0006,cat:"car",sub:"Supercar"},
+ {id:"chirron",n:"Bugotti Chirron",shape:"super",p:2.6e6,run:9000,lvl:6,dep:.0004,cat:"car",sub:"Supercar"},
+ // Classic
+ {id:"beatle",n:"1970 VeeDub Beatle",shape:"minic",p:14e3,run:180,lvl:1,dep:-.00015,cat:"car",sub:"Classic"},
+ {id:"minic",n:"1965 Minnie Cooper S",shape:"minic",p:28e3,run:220,lvl:2,dep:-.0002,cat:"car",sub:"Classic"},
+ {id:"mustung",n:"1967 Fjord Mustung",shape:"classic",p:70e3,run:900,lvl:3,dep:-.0002,cat:"car",sub:"Classic"},
+ {id:"dino",n:"1972 Furrari Deeno",shape:"classic",p:420e3,run:2400,lvl:5,dep:-.0003,cat:"car",sub:"Classic"},
+ // Luxury
+ {id:"sclass",n:"Merc-a-Day S-Class",shape:"sedan",p:110e3,run:1000,lvl:4,dep:.0008,cat:"car",sub:"Luxury"},
+ {id:"spurr",n:"Bentlee Flying Spurr",shape:"sedan",p:190e3,run:1700,lvl:5,dep:.0008,cat:"car",sub:"Luxury"},
+ {id:"ghoast",n:"Rolls-Roice Ghoast",shape:"sedan",p:300e3,run:2600,lvl:6,dep:.0008,cat:"car",sub:"Luxury"},
+ // Electric cars (cheaper to run than petrol equivalents)
+ {id:"dolphin",n:"Bye-D Dolphin",shape:"hatch",p:24e3,run:140,lvl:1,dep:.0008,cat:"car",sub:"City & hatchback",ev:true},
+ {id:"leef",n:"Nisson Leef",shape:"hatch",p:26e3,run:150,lvl:1,dep:.0009,cat:"car",sub:"City & hatchback",ev:true},
+ {id:"ev6",n:"Kiya EV-Sixx",shape:"suv",p:45e3,run:230,lvl:2,dep:.0008,cat:"car",sub:"SUV",ev:true},
+ {id:"modely",n:"Teslo Model Y",shape:"suv",p:46e3,run:250,lvl:2,dep:.0008,cat:"car",sub:"SUV",ev:true},
+ {id:"polestarr",n:"Polestarr 2",shape:"sedan",p:48e3,run:250,lvl:2,dep:.0008,cat:"car",sub:"Saloon",ev:true},
+ {id:"buzzz",n:"VeeDub ID. Buzzz",shape:"camper",p:60e3,run:300,lvl:2,dep:.0007,cat:"other",sub:"Campervan",ev:true},
+ {id:"r1t",n:"Rivion R1T",shape:"pickup",p:75e3,run:380,lvl:3,dep:.0008,cat:"car",sub:"Pickup",ev:true},
+ {id:"cybertruk",n:"Teslo Cybertruk",shape:"pickup",p:95e3,run:420,lvl:3,dep:.0009,cat:"car",sub:"Pickup",ev:true},
+ {id:"taykan",n:"Porsha Taykan",shape:"sports",p:90e3,run:480,lvl:4,dep:.0009,cat:"car",sub:"Sports",ev:true},
+ {id:"lucidd",n:"Lucidd Air",shape:"sedan",p:95e3,run:450,lvl:4,dep:.0009,cat:"car",sub:"Luxury",ev:true},
+ {id:"nevaro",n:"Rimmac Nevaro",shape:"super",p:1.9e6,run:5000,lvl:6,dep:.0005,cat:"car",sub:"Supercar",ev:true},
+ // Motorbikes
+ {id:"pcx",n:"Hondo PCX 125",shape:"scooter",p:3400,run:45,lvl:1,dep:.0006,cat:"moto",sub:"Scooter & moped"},
+ {id:"vesper",n:"Vesper Primavera 125",shape:"scooter",p:4800,run:60,lvl:1,dep:.0005,cat:"moto",sub:"Scooter & moped"},
+ {id:"cb125",n:"Hondo CB125F",shape:"moto",p:3200,run:50,lvl:1,dep:.0006,cat:"moto",sub:"Commuter"},
+ {id:"meteor",n:"Royal Enfeeld Meteorr 350",shape:"cruiser",p:4300,run:65,lvl:1,dep:.0005,cat:"moto",sub:"Commuter"},
+ {id:"mt09",n:"Yamahar MT-09",shape:"moto",p:9500,run:120,lvl:2,dep:.0006,cat:"moto",sub:"Naked"},
+ {id:"z900",n:"Kawasarky Z900",shape:"moto",p:9800,run:120,lvl:2,dep:.0006,cat:"moto",sub:"Naked"},
+ {id:"zx10",n:"Kawasarky Ninja ZX-10R",shape:"sportbike",p:18e3,run:220,lvl:3,dep:.0006,cat:"moto",sub:"Sports bike"},
+ {id:"hayabooza",n:"Suzooki Hayabooza",shape:"sportbike",p:19e3,run:230,lvl:3,dep:.0005,cat:"moto",sub:"Sports bike"},
+ {id:"panigale",n:"Ducarti Panigali V4",shape:"sportbike",p:28e3,run:300,lvl:3,dep:.0006,cat:"moto",sub:"Sports bike"},
+ {id:"ktm890",n:"KTN 890 Adventurr",shape:"adventure",p:13e3,run:160,lvl:2,dep:.0005,cat:"moto",sub:"Adventure"},
+ {id:"gs",n:"BMV R 1300 GZ",shape:"adventure",p:20e3,run:210,lvl:2,dep:.0005,cat:"moto",sub:"Adventure"},
+ {id:"fatboy",n:"Hardly-Davidsun Fat Boi",shape:"cruiser",p:22e3,run:230,lvl:3,dep:.0004,cat:"moto",sub:"Cruiser"},
+ {id:"chieftan",n:"Indiun Chieftan",shape:"cruiser",p:26e3,run:250,lvl:3,dep:.0004,cat:"moto",sub:"Cruiser"},
+ {id:"k1600",n:"BMV K 1600 GTL",shape:"tourer",p:27e3,run:280,lvl:3,dep:.0006,cat:"moto",sub:"Touring"},
+ {id:"goldwung",n:"Hondo Gold Wung",shape:"tourer",p:33e3,run:300,lvl:3,dep:.0005,cat:"moto",sub:"Touring"},
+ {id:"bonnevil",n:"Trimuph Bonnevil T120",shape:"moto",p:12500,run:140,lvl:2,dep:.0003,cat:"moto",sub:"Classic"},
+ {id:"commandoh",n:"1969 Nortun Commandoh",shape:"moto",p:14e3,run:150,lvl:2,dep:-.0002,cat:"moto",sub:"Classic"},
+ {id:"shadoe",n:"1952 Vincint Black Shadoe",shape:"moto",p:75e3,run:300,lvl:3,dep:-.00025,cat:"moto",sub:"Classic"},
+ {id:"niu",n:"Gnu-ish E-moped",shape:"scooter",p:2600,run:20,lvl:1,dep:.0007,cat:"moto",sub:"Electric",ev:true},
+ {id:"zerosrf",n:"Zeroh SR/F",shape:"sportbike",p:21e3,run:90,lvl:2,dep:.0008,cat:"moto",sub:"Electric",ev:true},
+ {id:"livewired",n:"Hardly-Davidsun LiveWired",shape:"moto",p:24e3,run:100,lvl:3,dep:.0008,cat:"moto",sub:"Electric",ev:true},
+ // Bicycles (lvl 0: no engine)
+ {id:"turnlink",n:"Turn Link D8 folding bike",shape:"bike",p:750,run:8,lvl:0,dep:.0006,cat:"cycle",sub:"Folding"},
+ {id:"bromptone",n:"Bromptun Electric",shape:"ebike",p:3600,run:15,lvl:0,dep:.0006,cat:"cycle",sub:"Folding",ev:true},
+ {id:"kanyon",n:"Kanyon Endurace",shape:"rbike",p:2200,run:20,lvl:0,dep:.0005,cat:"cycle",sub:"Road"},
+ {id:"dogmar",n:"Pinarrelo Dogmar",shape:"rbike",p:12500,run:45,lvl:0,dep:.0005,cat:"cycle",sub:"Road"},
+ {id:"marlinn",n:"Trekk Marlinn 7",shape:"mtb",p:1000,run:15,lvl:0,dep:.0006,cat:"cycle",sub:"Mountain"},
+ {id:"bronsun",n:"Santa Crooz Bronsun",shape:"mtb",p:7500,run:35,lvl:0,dep:.0006,cat:"cycle",sub:"Mountain"},
+ {id:"vanmooove",n:"VanMooove S5",shape:"ebike",p:3500,run:18,lvl:0,dep:.0007,cat:"cycle",sub:"E-bike",ev:true},
+ {id:"vardo",n:"Speshalized Turbo Vardo",shape:"ebike",p:4800,run:20,lvl:0,dep:.0006,cat:"cycle",sub:"E-bike",ev:true},
+ {id:"bakfeets",n:"Bakfeets cargo bike",shape:"cargo",p:2400,run:15,lvl:0,dep:.0005,cat:"cycle",sub:"Cargo bike"},
+ {id:"urbunarrow",n:"Urbun Arrow Family",shape:"cargo",p:6500,run:30,lvl:0,dep:.0006,cat:"cycle",sub:"Cargo bike",ev:true},
+ {id:"lookt20",n:"Lookk T20 track bike",shape:"track",p:3200,run:20,lvl:0,dep:.0004,cat:"cycle",sub:"Track"},
+ // Other
+ {id:"xiamee",n:"Xiamee e-scooter",shape:"kick",p:450,run:5,lvl:0,dep:.001,cat:"other",sub:"E-scooter",ev:true},
+ {id:"transitt",n:"Fjord Transitt van",shape:"van",p:32e3,run:380,lvl:1,dep:.0006,cat:"other",sub:"Van"},
+ {id:"campa",n:"1972 VeeDub Campa",shape:"camper",p:38e3,run:450,lvl:2,dep:-.0001,cat:"other",sub:"Campervan"},
+ {id:"californya",n:"VeeDub Californya",shape:"camper",p:70e3,run:600,lvl:2,dep:.0006,cat:"other",sub:"Campervan"},
+ {id:"grizzle",n:"Yamahar Grizzle 700 quad",shape:"quad",p:9e3,run:120,lvl:1,dep:.0006,cat:"other",sub:"Quad"}
+];
+for(const v of TP_NEW)if(!CARS.some(c=>c.id===v.id))CARS.push(v);
+/* car | moto | cycle | none (Clam card) */
+function vKind(c){c=c||carOf(S.car.id);if(!c||c.id==="none")return"none";if(c.cat==="cycle"||c.shape==="kick")return"cycle";if(c.cat==="moto")return"moto";return"car"}
+function vWord(c){c=c||carOf(S.car.id);const k=vKind(c);return c.shape==="kick"?"e-scooter":k==="cycle"?"bike":k==="moto"?"motorbike":c.shape==="van"?"van":c.shape==="camper"?"campervan":"car"}
+/* Body shapes for the generic car renderer */
+Object.assign(CAR_SHAPES,{
+ estate:{b:"M16 62 L16 34 Q16 26 26 24 L124 22 Q132 22 140 30 L152 42 L176 44 Q184 46 184 54 L184 62Z",w:["M24 40 L26 28 L60 27 L60 40Z","M64 27 L104 26 L104 40 L64 40Z","M108 26 L124 26 Q130 26 136 34 L142 40 L108 40Z"],wh:[48,152]},
+ pickup:{b:"M14 64 L14 40 L84 40 L84 18 Q84 14 90 14 L132 14 Q138 14 142 20 L152 36 L178 40 Q186 42 186 50 L186 64Z",w:["M90 20 L114 20 L114 34 L90 34Z","M118 20 L134 20 Q138 20 140 24 L146 34 L118 34Z"],wh:[46,154]},
+ mpv:{b:"M16 64 L16 30 Q16 18 30 16 L120 14 Q130 14 138 22 L160 40 L178 44 Q184 46 184 54 L184 64Z",w:["M24 34 L26 22 L58 20 L58 34Z","M62 20 L96 18 L96 34 L62 34Z","M100 18 L122 18 Q128 18 134 24 L146 36 L100 36Z"],wh:[48,152]},
+ van:{b:"M14 64 L14 14 Q14 10 20 10 L140 10 Q146 10 150 16 L164 38 L180 42 Q186 44 186 52 L186 64Z",w:["M140 16 L148 16 L160 36 L140 36Z"],wh:[44,156]},
+ camper:{b:"M16 64 L16 22 Q16 10 30 10 L160 10 Q178 10 182 28 L184 64Z",w:["M24 18 L50 18 L50 34 L24 34Z","M56 18 L86 18 L86 34 L56 34Z","M92 18 L122 18 L122 34 L92 34Z","M130 18 L162 18 Q174 18 176 30 L176 34 L130 34Z"],wh:[46,150]},
+ minic:{b:"M17 64 L17 48 Q17 42 28 41 L50 40 L58 24 Q60 20 68 20 L132 20 Q140 20 142 24 L150 40 L170 42 Q182 44 182 52 L182 64Z",w:["M60 38 L66 25 L98 25 L98 38Z","M102 25 L134 25 Q138 25 140 29 L144 38 L102 38Z"],wh:[50,150]}
+});
+/* Two-wheelers and other non-car shapes, drawn in the same side-on style (front faces right) */
+const TP_ART=(()=>{
+ const st=(d,c,w,o="")=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${o}/>`;
+ const bw=(x,r,w)=>`<circle cx="${x}" cy="${74-r}" r="${r}" fill="none" stroke="#1B1B1B" stroke-width="${w}"/><circle cx="${x}" cy="${74-r}" r="1.8" fill="#6F7579"/>`;
+ const mw=(x,r,o)=>`<circle cx="${x}" cy="${74-r}" r="${r}" fill="#1B1B1B"/><circle cx="${x}" cy="${74-r}" r="${r-5}" fill="${(o&&o.wheels)||"#8A9096"}"/><circle cx="${x}" cy="${74-r}" r="${Math.max(2,r-10)}" fill="#C9CDD1"/><circle cx="${x}" cy="${74-r}" r="1.8" fill="#4A5055"/>`;
+ const lamp=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#F6E7A8" stroke="#555" stroke-width="1"/>`;
+ const shade=(d,c)=>pa(d,c,'stroke="#000" stroke-opacity=".25" stroke-width="1"');
+ const road=(c,w)=>bw(64,17,w)+bw(136,17,w)+st("M64 57 L94 57 L124 32 L136 57 M94 57 L86 30 L64 57 M86 30 L124 32",c,3)+st("M80 28 L92 28",'#1B1B1B',3.5)+st("M124 32 L122 24 L132 24 Q138 26 134 32",'#1B1B1B',2.5);
+ return{
+  rbike:c=>road(c,2.2),
+  track:c=>`<circle cx="64" cy="57" r="16" fill="#2B2B2B" opacity=".85"/>`+road(c,2.4)+st("M122 24 L132 22 L136 28","#1B1B1B",2.5),
+  mtb:c=>bw(64,17,4.5)+bw(136,17,4.5)+st("M64 57 L92 57 L120 32 L136 57 M92 57 L86 30 L64 57 M88 36 L120 30",c,4)+st("M120 32 L136 57",'#9AA0A6',3)+rc(124,38,5,9,"#E07A2E",'rx="1.5" transform="rotate(-30 126 42)"')+st("M80 28 L92 28",'#1B1B1B',3.5)+st("M118 22 L130 20 M120 30 L122 22",'#1B1B1B',2.5),
+  ebike:c=>bw(66,16,3)+bw(134,16,3)+st("M66 58 L92 58 L118 34 L134 58 M92 58 L84 34 M118 34 L114 26 L124 24",c,3.5)+st("M78 32 L90 32",'#1B1B1B',3.5)+pa("M96 53 L112 38 L117 42 L101 57Z","#2B2B2B")+`<circle cx="66" cy="58" r="5" fill="#3A3F44"/><path d="M106 44 L103 49 L106 49 L103 54" fill="none" stroke="#F6D44A" stroke-width="1.2"/>`,
+  cargo:c=>bw(52,17,3)+bw(160,11,3)+st("M52 57 L80 57 L94 34 M80 57 L74 32 L52 57 M80 57 L156 57 L160 63 M94 34 L98 52",c,3.5)+st("M68 30 L80 30",'#1B1B1B',3.5)+st("M94 34 L92 24 L102 22",'#1B1B1B',2.5)+rc(106,30,44,24,c,'rx="3" stroke="#000" stroke-opacity=".3"')+rc(110,34,36,3,"#fff",'opacity=".35"'),
+  kick:c=>bw(58,8,3)+bw(142,8,3)+rc(56,60,80,5,"#2B2B2B",'rx="2.5"')+st("M136 62 L142 66 M134 62 L128 18",c,4)+st("M120 18 L136 17",'#1B1B1B',3)+lamp(130,26,2.5),
+  moto:(c,o)=>mw(50,14,o)+mw(150,14,o)+st("M50 60 L94 56",'#444',4)+st("M92 62 Q68 66 38 52","#B9BEC3",4)+rc(84,42,30,18,"#5A6066",'rx="3"')+st("M88 47 L110 47 M88 52 L110 52","#80878E",1.2)+st("M66 40 L92 42 M122 32 L114 58","#2B2B2B",3)+st("M150 60 L132 22","#9AA0A6",4)+shade("M90 38 Q92 26 108 26 L124 28 Q131 32 126 41 L94 42Z",c)+pa("M56 38 Q58 32 70 33 L92 36 L92 42 L58 42Z","#1B1B1B")+shade("M38 42 Q46 34 60 36 L60 42 L44 46Z",c)+shade("M138 46 Q150 40 163 47 L161 50 Q150 45 140 50Z",c)+st("M124 20 L138 17","#1B1B1B",3)+lamp(139,28,5.5),
+  sportbike:(c,o)=>mw(50,14,o)+mw(150,14,o)+st("M50 60 L92 56",'#444',4)+st("M150 60 L140 36","#9AA0A6",4)+rc(86,44,28,14,"#5A6066",'rx="3"')+st("M84 58 L60 50","#B9BEC3",4)+shade("M66 46 L86 30 L120 26 Q142 24 158 34 L162 46 L140 54 L100 58 L76 54Z",c)+shade("M34 38 L72 30 L86 32 L84 38 L60 44Z",c)+pa("M64 32 L86 29 L88 34 L68 37Z","#1B1B1B")+pa("M136 26 L148 17 L160 31 L150 32Z","#9CC0D2",'opacity=".9"')+pa("M151 36 L161 38 L159 43 L149 41Z","#F6E7A8")+st("M100 40 L130 34","#fff",2,'opacity=".35"'),
+  cruiser:(c,o)=>mw(42,15,o)+mw(160,14,o)+st("M42 59 L92 58",'#444',4)+st("M104 62 L30 64 M100 58 L34 60","#C9CDD1",3.5)+`<rect x="84" y="38" width="12" height="20" rx="2" fill="#C9CDD1" transform="rotate(-25 90 48)"/><rect x="98" y="38" width="12" height="20" rx="2" fill="#C9CDD1" transform="rotate(25 104 48)"/>`+st("M160 60 L134 16","#C9CDD1",4)+shade("M90 36 Q94 26 112 26 Q128 28 130 36 Q118 41 96 41Z",c)+pa("M56 42 Q64 34 82 36 L94 40 L92 45 L60 47Z","#2A1B12")+shade("M22 54 Q28 36 52 37 L60 40 L60 44 Q40 44 30 58Z",c)+shade("M146 50 Q160 40 174 50 L172 53 Q160 46 148 54Z",c)+st("M130 16 L127 6 L141 4","#1B1B1B",3)+lamp(144,30,6),
+  adventure:(c,o)=>mw(50,14,o)+mw(150,15,o)+st("M50 60 L94 54",'#444',4)+st("M150 59 L134 20","#9AA0A6",4)+rc(84,40,32,16,"#5A6066",'rx="3"')+pa("M84 56 L118 56 L112 62 L90 62Z","#80878E")+rc(28,34,34,22,"#3A3F44",'rx="3"')+st("M30 40 L60 40","#5A6066",1.5)+shade("M86 30 Q90 21 110 21 L130 23 Q139 30 134 39 L94 41Z",c)+pa("M54 30 Q58 25 72 26 L92 29 L92 35 L58 36Z","#1B1B1B")+shade("M138 30 L163 36 L150 41Z",c)+pa("M126 15 L136 4 L144 20 L134 24Z","#9CC0D2",'opacity=".9"')+st("M122 18 L138 15","#1B1B1B",3)+lamp(140,27,5),
+  tourer:(c,o)=>mw(50,14,o)+mw(150,14,o)+st("M50 60 L92 56",'#444',4)+st("M150 60 L138 32","#9AA0A6",4)+rc(84,44,30,14,"#5A6066",'rx="3"')+rc(22,18,32,18,c,'rx="4" stroke="#000" stroke-opacity=".25"')+rc(28,40,38,18,c,'rx="4" stroke="#000" stroke-opacity=".25"')+shade("M68 50 L80 30 Q100 20 130 22 Q151 24 159 40 L156 50 L120 56 L90 56Z",c)+pa("M54 36 Q62 28 80 30 L96 30 L96 36 L58 39Z","#1B1B1B")+pa("M131 22 L143 7 L152 11 L146 28Z","#9CC0D2",'opacity=".9"')+pa("M150 38 L160 40 L158 45 L148 43Z","#F6E7A8")+st("M90 40 L140 34","#fff",2,'opacity=".3"'),
+  scooter:(c,o)=>mw(58,10,o)+mw(146,10,o)+rc(96,52,32,6,"#2B2B2B",'rx="2"')+shade("M36 52 Q38 34 60 32 L96 34 L100 52 L118 53 L116 59 L48 61 Q38 60 36 52Z",c)+shade("M122 59 L128 26 L142 24 Q153 40 152 59Z",c)+pa("M54 31 Q58 24 76 24 L96 26 L96 32 L60 34Z","#1B1B1B")+st("M140 24 L136 12","#444",3)+st("M128 11 L146 9","#1B1B1B",3)+lamp(141,16,4)+shade("M134 56 Q146 48 158 56 L156 58 Q146 52 136 58Z",c),
+  quad:(c,o)=>`<circle cx="50" cy="60" r="14" fill="#1B1B1B"/><circle cx="150" cy="60" r="14" fill="#1B1B1B"/><circle cx="50" cy="60" r="7" fill="${(o&&o.wheels)||"#8A9096"}"/><circle cx="150" cy="60" r="7" fill="${(o&&o.wheels)||"#8A9096"}"/>`+rc(80,46,40,12,"#5A6066",'rx="3"')+shade("M28 48 Q32 34 54 33 L80 36 L90 30 L120 30 L130 36 L156 33 Q174 35 174 48 L162 50 Q150 40 138 50 L64 50 Q52 40 40 50Z",c)+pa("M74 30 Q78 23 92 23 L108 25 L108 30Z","#1B1B1B")+st("M24 34 L54 32 M146 32 L176 34","#3A3F44",2.5)+st("M118 26 L130 18 M124 18 L136 18","#1B1B1B",3)+lamp(168,40,3.5)
+ };
+})();
+{const _ca=carArt;carArt=function(shape,color="#B3262E",cls="art",o){const f=TP_ART[shape];if(!f)return _ca(shape,color,cls,o);
+ return `<svg class="${cls}" viewBox="0 0 200 90" aria-hidden="true">${rc(0,74,200,16,"var(--road)")}<ellipse cx="100" cy="74" rx="70" ry="3" fill="#000" opacity=".2"/>${f(color,o||{})}</svg>`}}
+/* Riding a pedal bike is exercise; an e-bike a little; a motorbike none */
+{const _hd=homeDay;homeDay=function(notes){_hd(notes);try{if(S&&!S.over&&!S.prison&&vKind()==="cycle"){const c=carOf(S.car.id);S.health=clamp(S.health+(c.ev?.05:.12),0,100)}}catch(e){}}}
+ACCIDENTS.push({t:"You came off your motorbike on a diesel spill and broke your collarbone.",days:2,when:()=>vKind()==="moto"});
+/* ---- Shop UI ---- */
+let tpCat="car",tpSub="";
+const TP_CATS=[["all","All"],["car","Cars"],["ev","⚡ Electric"],["moto","Motorbikes"],["cycle","Bicycles"],["other","Other"]];
+const TP_CATN={car:"Cars",moto:"Motorbikes",cycle:"Bicycles",other:"Other"},TP_CAT1={car:"Car",moto:"Motorbike",cycle:"Bicycle",other:""};
+const TP_SUBS={car:["City & hatchback","Saloon","Estate","SUV","Pickup","People carrier","Sports","Grand tourer","Supercar","Classic","Luxury"],
+ moto:["Scooter & moped","Commuter","Naked","Sports bike","Adventure","Cruiser","Touring","Classic","Electric"],
+ cycle:["Folding","Road","Mountain","E-bike","Cargo bike","Track"],other:["E-scooter","Van","Campervan","Quad"]};
+const tpKey=x=>tpCat==="ev"?TP_CATN[x.cat]:x.sub;
+const tpPool=k=>{const all=CARS.filter(x=>x.id!=="none"&&x.id!==S.car.id);return k==="all"?all:k==="ev"?all.filter(x=>x.ev):all.filter(x=>x.cat===k)};
+function transportShop(){
+ if(!TP_CATS.some(c=>c[0]===tpCat))tpCat="car";
+ const pool=tpPool(tpCat),order=tpCat==="ev"?["Cars","Motorbikes","Bicycles","Other"]:TP_SUBS[tpCat]||[];
+ const subs=order.filter(k=>pool.some(x=>tpKey(x)===k));
+ if(tpSub&&!subs.includes(tpSub))tpSub="";
+ const list=pool.filter(x=>!tpSub||tpKey(x)===tpSub).sort((a,b)=>a.p-b.p||a.n.localeCompare(b.n));
+ const rows=list.map(x=>{const q=carQuote(x),kind=(tpCat==="all"||tpCat==="ev")&&TP_CAT1[x.cat]?TP_CAT1[x.cat]+" · ":"";
+  return `<li class="listing">${carArt(x.shape,COLORS[(x.p/1000|0)%COLORS.length][1])}<span class="nm">${esc(x.n)}</span><span class="sub">${esc(kind+(x.sub||""))}${x.ev?'<span class="tp-ev">⚡ Electric</span>':""}<br><span class="mono">${money(x.p)}</span> · ${money(x.run)}/month${x.dep<0?" · Classic: gains value":""}${q.ok?"":" · "+esc(q.why)}</span><button class="btn sm ${q.ok?"primary":""}" data-act="qcar" data-id="${x.id}" ${q.ok?"":"disabled"}>View</button></li>`}).join("");
+ const cats=TP_CATS.map(([k,n])=>{const c=tpPool(k).length;return c?`<button class="btn sm ${tpCat===k?"primary":""}" data-act="tpcat" data-k="${k}" aria-pressed="${tpCat===k}">${n} <span class="tp-n">${c}</span></button>`:""}).join("");
+ const subRow=subs.length>1?`<div class="tp-subs" role="group" aria-label="Type">${[["","All"]].concat(subs.map(k=>[k,k])).map(([k,n])=>`<button class="${tpSub===k?"on":""}" data-act="tpsub" data-k="${esc(k)}" aria-pressed="${tpSub===k}">${esc(n)}</button>`).join("")}</div>`:"";
+ const cur=S.car.id==="none"?"":` Your current ${vWord()} is traded in at 90% of its value.`;
+ return `<details class="shop" id="showroom"><summary>Transport · ${CARS.length-1} to choose from</summary><p class="hint" style="margin:4px 0">Cars, motorbikes, bikes and more. Cash only. Pick your colour.${cur}</p><div class="chips-row tp-cats">${cats}</div>${subRow}<ul>${rows||'<li class="hint" style="padding:10px 0">Nothing here right now.</li>'}</ul></details>`;
+}
+XCLICK.tpcat=t=>{tpCat=t.dataset.k||"car";tpSub="";openShops.showroom=true;render()};
+XCLICK.tpsub=t=>{tpSub=t.dataset.k||"";openShops.showroom=true;render()};
 
 function start(data){
  S=(data&&data.S)||load();
