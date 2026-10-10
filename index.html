@@ -6836,7 +6836,7 @@ function homeLifeSec(){
  if(!S.home)return"";const c=commute(),own=ownsHome(),rm=remortgageAmt(),canLet=own&&(S.home.tier||0)>=2&&!S.roomLet;
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Living here</h2><span class="label">${esc(S.home.area||"")}</span></div>
   <div class="kv"><span>${S.path==="dj"||S.path==="music"?"Getting to gigs":"Commute"}</span><span>${S.path==="influencer"?"None: you work from home":COMMUTE_N[c]+(c>=1&&carOf(S.car.id).lvl>=1?" by car":"")}</span><span>Schools</span><span>${goodSchool()?"Good catchment area":"Average"}</span><span>Hosting</span><span>${["Cramped","Cosy","Comfortable","Great","Spectacular"][clamp(Math.floor(hostScore()/2),0,4)]}</span><span>Car</span><span>${S.car.id==="none"?"Public transport":carOld()?"Getting unreliable":carFlash()?"Turns heads":"Reliable"}</span></div>
-  <p class="hint" style="margin:8px 0 0">${S.path==="influencer"?"No commute: your work is wherever your phone is.":S.path==="dj"||S.path==="music"?(c===2?"Living out here means long late drives home from gigs. A car helps.":c===1?"Late-night journeys home from gigs add a little stress. A car helps.":"Most venues are close by. Easy nights home."):c===2?"A long commute adds stress every month. A home office or a car helps.":c===1?"Your commute adds a little stress. A car or a home office helps.":"A short commute keeps stress down."} ${goodSchool()?"Children here do better at school.":""} A nicer home makes parties and dinners go better.</p>
+  <p class="hint" style="margin:8px 0 0">${S.path==="influencer"?"No commute: your work is wherever your phone is.":S.path==="dj"||S.path==="music"?(c===2?"Living out here means long late drives home from gigs. A car helps.":c===1?"Late-night journeys home from gigs add a little stress. A car helps.":"Most venues are close by. Easy nights home."):c===2?`A long commute adds stress every month. ${DESKY.includes(S.path)?"A home office or a car helps":"A car helps"}.`:c===1?`Your commute adds a little stress. ${DESKY.includes(S.path)?"A car or a home office helps":"A car helps"}.`:"A short commute keeps stress down."} ${goodSchool()?"Children here do better at school.":""} A nicer home makes parties and dinners go better.</p>
   ${own?floorPlanSec():""}${own&&S.home.loan>0?`<div class="mort-box"><div class="label">Mortgage</div><p class="hint" style="margin:2px 0 6px">${money(S.home.loan)} left · ${money(homePay())} a month · ${Math.ceil((S.home.left||0)/12)} years to go</p><div class="btn-row" style="margin:0"><button class="btn sm" data-act="payoffmort" ${S.wealth<payoffAmt()?"disabled":""}>Pay it all off: ${money(payoffAmt())}</button>${S.overpayYr!==Math.floor(S.day/12)&&S.wealth>=overpayAmt()&&overpayAmt()>=1000?`<button class="btn sm" data-act="overpay">Overpay ${money(overpayAmt())} (no fee)</button>`:""}</div>${S.wealth<payoffAmt()?`<p class="hint" style="margin:6px 0 0">Paying it off early costs the balance plus a 2% early repayment fee and £300.</p>`:""}</div>`:""}
   ${own?`<div class="btn-row" style="margin-top:10px">${rm>=10000?`<button class="btn sm" data-act="remortgage">Remortgage: release ${money(rm)}</button>`:""}${canLet?`<button class="btn sm" data-act="letroom">Rent out a room (${money(roomRent())}/month)</button>`:""}${S.roomLet?`<button class="btn sm" data-act="unletroom">Stop renting out the room</button>`:""}</div>`:""}</div>`;
 }
@@ -16947,6 +16947,16 @@ addEventListener("resize",()=>{if(tourI>=0)tourShow()});
 XCLICK.tourreplay=()=>{hideModal();setTimeout(()=>{tab="desk";render();tourStart(true)},250)};
 {const _set=settingsModal;settingsModal=function(){const r=_set.apply(this,arguments);try{const g=document.querySelector("#sheet .menu-grid");if(g&&!g.querySelector('[data-act="tourreplay"]'))g.insertAdjacentHTML("afterbegin",`<button class="btn" data-act="tourreplay">Show the guide again</button>`)}catch(e){}return r}}
 
+
+/* Only desk jobs can work from a home office */
+const DESKY=["bank","law","pol","tech","arch","influencer"];
+/* Working for yourself: your own business name instead of "Independent" */
+const SOLO_BRAND={music:"Music",dj:"Sound",actor:"Productions",influencer:"Media"};
+const soloBrand=()=>{const p=String(S&&S.name||"").trim().split(/\s+/);const sur=p.length>1?p[p.length-1]:p[0]||"Your";return `${sur} ${SOLO_BRAND[S.path]}`};
+function soloRename(){try{if(!S||!SOLO_BRAND[S.path])return;const C=CAREERS[S.path],b=soloBrand(),old=C.employers[0];if(/^Independent( creator)?$/.test(S.bank)||(C.__brand&&S.bank===old))S.bank=b;if(/^Independent( creator)?$/.test(old)||C.__brand){C.employers[0]=b;C.__brand=1}}catch(e){}}
+{const _ng2=newGame;newGame=function(){const r=_ng2.apply(this,arguments);soloRename();return r}}
+{const _sc2=switchCareer;switchCareer=function(){const r=_sc2.apply(this,arguments);soloRename();try{save();render()}catch(e){}return r}}
+{const _st2=start;start=function(){const r=_st2.apply(this,arguments);try{soloRename();if(S&&!S.placeholder){save();render()}}catch(e){}return r}}
 
 function start(data){
  S=(data&&data.S)||load();
