@@ -633,6 +633,19 @@ html,body{overflow-x:clip}
 #sheet .me-notes .note{padding:2px 0 2px 13px;margin:0;font-size:12.5px;line-height:1.35;background:none!important;border:0!important;box-shadow:none!important;border-radius:0;position:relative}
 #sheet .me-notes .note::before{content:"•";position:absolute;left:0;top:2px;color:var(--accent)}
 #sheet .me-go{margin-top:8px}
+.ie-cost{color:var(--accent)!important}
+.remembered{margin-top:10px}
+.remembered summary{cursor:pointer;list-style:none;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.remembered summary::-webkit-details-marker{display:none}
+.remembered summary::before{content:"▸";color:var(--muted);font-size:12px}
+.remembered[open] summary::before{content:"▾"}
+.remembered .people{margin-top:8px}
+.person.gone{grid-template-columns:1fr;opacity:.92}
+.gone-row{display:flex;gap:10px;align-items:center}
+.gone-face{filter:grayscale(.85);flex:none}
+.gone-row .role{display:block}
+.gone-line{font-style:italic}
+.g2-tip{margin:6px 0 0;font-size:12.5px;line-height:1.4}.g2-tip b{font-weight:600}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -5443,7 +5456,7 @@ function wedding(p){p.wed=1;const gift=(S.items||[]).filter(i=>["watch","wine","
 function tipOff(p){pp("tip",p,{from:p.n,t:`A tip from ${p.n.split(" ")[0]}`,b:`${p.n} (${ROLE_N[p.role].toLowerCase()}) calls with a heads-up: there's a great opportunity, and they've put your name forward.`,c:[
  {t:"Follow it up",fx:{pnl:3,rep:4,act:"ppbond",d:6},o:"It comes good. You owe them a drink."},
  {t:"Thank them and pass",fx:{act:"ppbond",d:2},o:"They understand."}]})}
-function passing(p){const keep=rnd()<.5;pp("passing",p,{from:"A phone call",t:`Sad news about ${p.n.split(" ")[0]}`,b:`${p.n} has died suddenly. You met ${Math.max(1,Math.round((S.day-p.met)/12))} year${Math.round((S.day-p.met)/12)>1?"s":""} ago: ${p.how.toLowerCase()}.`,c:[
+function passing(p){const keep=rnd()<.5;pp("passing",p,{from:"A phone call",t:`Sad news about ${p.n.split(" ")[0]}`,b:`${p.n} has died ${p.cause||"suddenly"}. You met ${Math.max(1,Math.round((S.day-p.met)/12))} year${Math.round((S.day-p.met)/12)>1?"s":""} ago: ${p.how.toLowerCase()}.`,c:[
  {t:"Speak at the funeral",fx:{act:"ppdie",keep,home:2,stress:6,karma:2},o:keep?"You tell the story of how you met. Afterwards, their family hands you something they wanted you to have.":"You tell the story of how you met. The whole room laughs, then cries."},
  {t:"Send flowers",fx:{act:"ppdie",keep:false,stress:3},o:"You think about them often."}]})}
 function reconnect(p){pp("reconnect",p,{from:p.n,t:`${/^(a|an|the|two) /i.test(p.n)?p.n:p.n.split(" ")[0]} gets in touch`,b:`It's been years. ${p.n} wants to meet up for a drink.`,c:[
@@ -5518,7 +5531,7 @@ function peopleSec(){
   <div class="people">${core.join("")}${(peopleAll?ps:ps.slice(0,6)).map(p=>`<div class="person"><div><b>${esc(p.n)}</b><span class="role">${esc(ROLE_N[p.role]||"Friend")} · ${esc(p.how)}${p.owed?` · owes you ${money(p.owed)}`:""}</span>${ktLineHtml(p)}</div>${meterMini(p.bond)}${p.role==="lover"||p.role==="openlover"?`<button class="btn sm" data-act="endlover" data-p="${p.id}">End it</button>`:""}${p.role!=="lover"&&p.role!=="openlover"?`<button class="btn sm" data-act="ktopen" data-p="${p.id}">Get in touch</button>`:""}</div>`).join("")}</div>
   ${!peopleAll&&ps.length>6?`<div class="btn-row"><button class="btn sm" data-act="peopleall">Show all ${ps.length} people</button></div>`:""}
   ${!ps.length?`<p class="hint" style="margin:8px 0 0">Meet people through your free time below. Friends can lend a hand, ask for one, invite you to weddings, set you up on dates or tip you off about jobs.</p>`:""}
-  ${ktLostHtml()}${gone.length?`<div class="label" style="margin-top:10px">Remembered</div><p class="hint" style="margin:2px 0 0">${gone.map(p=>esc(p.n)).join(", ")}</p>`:""}</div>`;
+  ${ktLostHtml()}${gone.length?rememberedHTML():""}</div>`;
 }
 const bondWord=v=>v>=80?"Very close":v>=60?"Close":v>=40?"Friendly":v>=20?"Distant":"Cold";
 const meterMini=v=>`<div class="bond-row"><div class="bar mini"><i style="width:${clamp(v,0,100)}%"></i></div><span class="bond-n">${bondWord(v)} · ${Math.round(clamp(v,0,100))}</span></div>`;
@@ -45659,11 +45672,11 @@ function vitalsHTML(){
 const EN_CATS=["work","dating","friends","fitness","family","fun","rest"];
 const EN_CAT_N={work:"Work",dating:"Dating",friends:"Friends",fitness:"Fitness",family:"Family",fun:"Fun",rest:"Rest"};
 const EN_DIAL=[
- {k:"coast",n:"Coasting",cap:.7,int:.85,out:.75,e:28,st:-1,rep:-.4,d:"Fewer hours and an easier month. Work pays and counts for less."},
- {k:"normal",n:"Normal",cap:1,int:1,out:1,e:45,st:0,rep:0,d:"A normal working month."},
- {k:"push",n:"Pushing",cap:1.25,int:1.12,out:1.15,e:63,st:.6,rep:.3,d:"Longer days. More work, more pay and a better shot at promotion."},
- {k:"allin",n:"All-in",cap:1.5,int:1.35,out:1.3,e:92,st:2.5,rep:.6,d:"Every hour you have. Big results, and it will catch up with you."}];
-const EN_HARD=1.3,EN_WK=45;let EN_STRAIN_MAX=3,EN_DEBT_CAP=.35;const enDebt=(over,streak,a)=>Math.min(Math.round(enBase(a)*EN_DEBT_CAP),Math.round(over*enRate(streak,a)));let EN_REST_ST=.25;
+ {k:"coast",n:"Coasting",cap:.7,int:.85,out:.75,e:40,st:-1,rep:-.4,d:"Fewer hours and an easier month. Work pays and counts for less."},
+ {k:"normal",n:"Normal",cap:1,int:1,out:1,e:62,st:0,rep:0,d:"A normal working month."},
+ {k:"push",n:"Pushing",cap:1.25,int:1.12,out:1.15,e:85,st:.6,rep:.3,d:"Longer days. More work, more pay and a better shot at promotion."},
+ {k:"allin",n:"All-in",cap:1.5,int:1.35,out:1.3,e:118,st:2.5,rep:.6,d:"Every hour you have. Big results, and it will catch up with you."}];
+const EN_HARD=1.3,EN_WK=62;let EN_STRAIN_MAX=3,EN_DEBT_CAP=.35;const enDebt=(over,streak,a)=>Math.min(Math.round(enBase(a)*EN_DEBT_CAP),Math.round(over*enRate(streak,a)));let EN_REST_ST=.25;
 let EN_RAW=0,EN_CTX=null;
 const enHas=()=>!!(S&&!S.placeholder);
 function enBase(a){const P=[[0,115],[25,115],[35,100],[45,90],[55,80],[65,70],[80,62],[200,62]];for(let i=1;i<P.length;i++)if(a<=P[i][0]){const[x0,y0]=P[i-1],[x1,y1]=P[i];return y0+(y1-y0)*(a-x0)/(x1-x0)}return 62}
@@ -45907,7 +45920,7 @@ function enSettle(notes){
  if(over>0){E.streak=(E.streak||0)+1;E.debt=enDebt(over,E.streak,a);E.rested=0;E.strain=Math.min(15,(E.strain||0)+Math.min(EN_STRAIN_MAX,E.debt/10));
   S.stress=clamp(S.stress+over*.12,0,100);if(used>al*1.15)S.health=clamp(S.health-.4,0,100);
   notes.push(`You ran on empty: ${over} energy over your limit. Next month starts ${E.debt} down${E.streak>1?`, and it's ${E.streak} months in a row`:""}.`)}
- else{E.streak=0;E.debt=0;const under=-over;E.rested=Math.min(Math.round(10*rec),Math.round(under*.5));if(under>=al*.2)S.stress=clamp(S.stress-EN_REST_ST*rec,0,100);E.strain=Math.max(0,(E.strain||0)-(1.5+under/12)*rec)}
+ else{E.streak=0;E.debt=0;const under=-over;E.rested=under>=al*.25?Math.min(Math.round(10*rec),Math.max(1,Math.round((under-al*.25)*.5))):0;if(under>=al*.2)S.stress=clamp(S.stress-EN_REST_ST*rec,0,100);E.strain=Math.max(0,(E.strain||0)-(1.5+under/12)*rec)}
  if(!S.prison&&!S.sabb&&!(E.bsab&&E.bsab.until>S.day))S.stress=clamp(S.stress+EN_DIAL[enDial()].st,0,100);
  if(E.ther&&E.ther.until>S.day){E.strain=Math.max(0,E.strain-1.5);S.stress=clamp(S.stress-2,0,100)}
  if(E.pt&&E.pt.until>S.day&&!selfPaid()&&!S.prison){const cut=Math.round(salary()/12*.3/10)*10;S.wealth-=cut;notes.push(`Part-time: ${money(cut)} less pay this month.`)}
@@ -46004,6 +46017,252 @@ function enModal(){const E=enS();if(!E)return;const A=enAllowance(E),plan=enPlan
 XCLICK.enopen=()=>enModal();
 XCLICK.endialm=t=>{XCLICK.endial(t);enModal()};
 XCLICK.enpeople=()=>{hideModal();try{lifeTab="people";localStorage.setItem("ftb-lifetab","people")}catch(e){}setTab("life");render()};
+
+/* INBOX energy */
+/* ============ Inbox choices use energy too: big nights, extra shifts, travel and helping out ============ */
+const IE_RULES=[
+ {re:/\b(all night|3am|4am|party|parties|rave|festival|join in|night out|go out out|pub crawl|bender|dj|djing|clubbing|nightclub|stag|hen do|lock-in|one more drink|drinks with|celebrate|dance all|afterparty|after-party)\b/i,e:14,cat:"fun",big:1},
+ {re:/\b(stay late|overtime|work (the|all|through the) weekend|extra shifts?|cover (the|a|her|his|their) shifts?|night shift|come in on|work through|all-nighter|double shift|on call|work late|stay on|extra hours|take it on yourself|do it yourself)\b/i,e:12,cat:"work"},
+ {re:/\b(fly out|fly to|fly over|get a flight|book a flight|drive (down|up|over|to|them|her|him)|road trip|travel to|go abroad|overnight train|long drive)\b/i,e:10,cat:"fun"},
+ {re:/\b(help (them|him|her) move|move house|babysit|look after|visit (her|him|them) in hospital|sit with|care for|nurse (her|him|them)|help out|help them out|lend a hand|give up your weekend)\b/i,e:8,cat:"family"},
+ {re:/\b(go round|meet (up|them|him|her)|dinner|lunch|coffee|catch up|accept the invite|go along|say yes|have them over|host|go to the (wedding|party|do|reunion|match))\b/i,e:6,cat:"friends"}
+];
+const IE_REST=/\b(stay in|early night|go to bed|sleep|decline|say no|ignore it|skip it|not tonight|stay home|turn it down|politely decline|rest)\b/i;
+function ieCost(e,c){
+ try{if(!e||!c||typeof enS!=="function"||!enS())return null;const t=String(c.t||"");if(IE_REST.test(t))return null;
+  const R=IE_RULES.find(r=>r.re.test(t));if(!R)return null;let v=R.e;
+  if(R.big){const a=typeof ageInt==="function"?ageInt():30;v*=1+Math.max(0,a-35)*.02;try{if((S.traits||[]).includes("party"))v*=.7}catch(x){}}
+  return {e:Math.round(v),cat:R.cat}}catch(x){return null}}
+{const _ch=choose;choose=function(i,ci){let m,c,cost=null;try{m=S.inbox[i];const e=getEv(m);c=choicesOf(e)[ci];cost=ieCost(e,c);if(cost&&(m.bd||m.csqBig))cost.e=Math.round(cost.e*1.5)}catch(x){}
+ const r=_ch.apply(this,arguments);
+ try{if(cost&&m&&m.done&&m.ci===ci){enCharge(cost.cat,cost.e,String(c.t).slice(0,40));m.ieE=cost.e;render()}}catch(x){}return r}}
+{const _ri=renderInbox;renderInbox=function(){const r=_ri.apply(this,arguments);try{
+ document.querySelectorAll('#pane-inbox [data-act="choose"]').forEach(b=>{if(b.querySelector(".ie-cost"))return;const m=S.inbox[+b.dataset.i];if(!m||m.done)return;const e=getEv(m),c=choicesOf(e)[+b.dataset.c];const k=ieCost(e,c);if(!k)return;const v=(m.bd||m.csqBig)?Math.round(k.e*1.5):k.e;
+  const sp=document.createElement("span");sp.className="odds ie-cost";sp.textContent="⚡ "+v+" energy";b.appendChild(sp)});
+ document.querySelectorAll('#pane-inbox .mail:not(.pending)').forEach(()=>{});
+ }catch(x){}return r}}
+
+/* PEOPLE extras */
+/* ============ How people died, an expandable Remembered list, one meet-up a month, and friends who get in touch with you ============ */
+function deathCause(p){const a=(p&&p.age)?p.age+Math.max(0,Math.round((S.day-(p.met??S.day))/12)):60,r=rnd();
+ if(a<40)return r<.35?"in a car accident":r<.55?"of a sudden heart condition":r<.7?"in a climbing accident":r<.85?"after a short illness":"of an aneurysm";
+ if(a<65)return r<.3?"of a heart attack":r<.55?"after a short illness":r<.75?"of cancer":r<.88?"after a stroke":"in a road accident";
+ return r<.3?"peacefully in their sleep":r<.55?"after a long illness":r<.75?"of a heart attack":r<.9?"after a stroke":"after a fall"}
+{const _ps=passing;passing=function(p){try{if(p&&!p.cause)p.cause=deathCause(p)}catch(e){}return _ps.apply(this,arguments)}}
+function agoText(d){if(d==null||d<0)return"";const m=Math.max(0,S.day-d);if(m<1)return"this month";if(m<12)return m===1?"a month ago":m+" months ago";const y=Math.round(m/12);return y===1?"a year ago":y+" years ago"}
+function rememberedHTML(){
+ const gone=(S.people||[]).filter(p=>!p.alive).sort((a,b)=>(b.died??0)-(a.died??0));if(!gone.length)return"";
+ return '<details class="remembered"><summary><span class="label">Remembered</span> <span class="hint">'+gone.length+' '+(gone.length===1?"person":"people")+' · '+gone.slice(0,3).map(p=>esc(p.n.split(" ")[0])).join(", ")+(gone.length>3?"…":"")+'</span></summary><div class="people">'+
+  gone.map(p=>{const ago=agoText(p.died),age=p.age?p.age+Math.max(0,Math.round(((p.died??S.day)-(p.met??p.died??S.day))/12)):null;
+   const line=[p.cause?("Died "+p.cause):"Died",ago,age?("aged "+age):""].filter(Boolean).join(" · ");
+   return '<div class="person gone"><div class="gone-row"><span class="gone-face">'+personFace(esc(p.n))+'</span><div><b>'+esc(p.n)+'</b><span class="role">'+esc(ROLE_N[p.role]||(p.role?p.role.charAt(0).toUpperCase()+p.role.slice(1):"Friend"))+(p.how&&p.how!=="Family"?" · "+esc(p.how):"")+'</span><span class="role gone-line">'+esc(line)+'</span></div></div></div>'}).join("")+'</div></details>'}
+// One meet-up per person a month
+{const _kd=ktDo;ktDo=function(key,what){const r=_kd.apply(this,arguments);try{if(["catch","invite","help","favour"].includes(what)){const g=ktGet(key);if(g&&g.o)g.o.ktAt=S.day}}catch(e){}return r}}
+{const _km=ktModal;ktModal=function(key){const r=_km.apply(this,arguments);try{const g=ktGet(key);if(g&&g.o&&g.o.ktAt===S.day){document.querySelectorAll('#sheet [data-act="ktdo"]').forEach(b=>{if(["catch","invite","help","favour"].includes(b.dataset.o)){b.disabled=true;const sp=b.querySelector("span");if(sp)sp.textContent="You've already seen them this month"}})}}catch(e){}return r}}
+// Friends get in touch with you
+const KT_IN=[
+ ["Fancy a pint this week?","{f} texts: \"Pint on Thursday? I've got news.\""],
+ ["Coffee?","{f} messages: \"I'm near yours on Saturday. Coffee?\""],
+ ["A walk and a catch-up","{f} wants to drag you up a hill this weekend. \"Fresh air. Gossip. Cake after.\""],
+ ["Are you free Friday?","{f} has two tickets to a gig and their plus-one has bailed."],
+ ["Long time no see","{f}: \"It's been ages. Come round for food, I'm trying a new recipe on you.\""],
+ ["Quiz night","{f}'s pub quiz team is one short. \"We need your brain. And your round.\""],
+ ["Need a chat","{f} calls. They don't say much, but you can tell they could do with a friend tonight."],
+ ["Birthday drinks","It's {f}'s birthday on Saturday. \"Small thing. Come, it won't be the same without you.\""]];
+function ktInMorning(){if(!S||S.placeholder||S.over||S.prison)return;if(S.inbox.some(m=>!m.done&&/^ktin_/.test(m.id)))return;if(S.day-(S.ktInAt??-99)<2)return;
+ const ps=(S.people||[]).filter(p=>p.alive!==false&&(p.bond||0)>=40&&!/lover/.test(p.role||"")&&S.day-(p.last??p.met??0)>=2&&p.ktAt!==S.day);if(!ps.length||rnd()>Math.min(.45,.12+ps.length*.04))return;
+ const p=ps.sort((a,b)=>(b.bond||0)-(a.bond||0))[Math.floor(rnd()*Math.min(4,ps.length))],f=p.n.split(" ")[0],T=pick(KT_IN);S.ktInAt=S.day;
+ pushDyn({id:"ktin_"+S.day,life:1,from:p.n,t:T[0],b:T[1].replace(/\{f\}/g,f),vars:{pid:p.id,pn:p.n},c:[
+  {t:"Say yes and meet up",fx:{act:"ktinyes",pid:p.id,stress:-2},o:pick(["You're so glad you went.","Three hours vanish. Worth it.","Exactly what you both needed."])},
+  {t:"Not this week, sorry",fx:{act:"ktinno",pid:p.id},o:pick(["\"No worries, another time.\" There's a little pause before they say it.","They understand. They always do. For now."])},
+  {t:"Leave them on read",fx:{act:"ktinno",pid:p.id,d:-8},o:"You mean to reply. You don't."}]})}
+ACTS.ktinyes=fx=>{const p=(S.people||[]).find(x=>x.id===fx.pid);if(!p)return;p.bond=clamp((p.bond||0)+8,0,100);p.last=S.day;p.ktAt=S.day;try{enCharge("friends",8,"Seeing "+p.n.split(" ")[0])}catch(e){}};
+ACTS.ktinno=fx=>{const p=(S.people||[]).find(x=>x.id===fx.pid);if(!p)return;p.bond=clamp((p.bond||0)+(fx.d||-3),0,100)};
+{const _wmI=willMorning;willMorning=function(){const r=_wmI.apply(this,arguments);try{ktInMorning()}catch(e){}return r}}
+
+/* G2: life balance links. Hobbies, pets, things, side hustles, courses, fame, the economy and later life all feed the energy budget.
+   State: S.hobby.last/rch/drop, S.items[].used/nag, S.sh.big/small/g2grow, S.g2 = {fm (last fame story), priv, ec (economy story), lw (worry note),
+          old (last later-life story), lone}. Everything is optional, so old saves just pick it up. */
+const g2=()=>{if(!S.g2||typeof S.g2!=="object")S.g2={};return S.g2};
+const g2ok=()=>{try{return enHas()&&!!S.en&&!S.over&&!S.prison}catch(e){return false}};
+const g2charge=(cat,e,n)=>{try{if(enHas())enCharge(cat,e,n)}catch(x){}};
+/* ---- Hobbies: practising recharges you; leaving them alone lets them fade ---- */
+const G2_HOB={run:{cat:"fitness",r:4,v:"Every run clears your head."},golf:{cat:"fitness",r:4,v:"Four hours outdoors with no phone signal."},band:{cat:"fun",r:5,v:"Loud music with your mates."},
+ paint:{cat:"fun",r:5,v:"Time disappears at the easel."},bake:{cat:"fun",r:4,v:"Flour everywhere and a kitchen that smells amazing."},chess:{cat:"fun",r:3,v:"A quiet game, a busy mind."}};
+function g2HobR(){const h=S.hobby;if(!h||!G2_HOB[h.k])return 0;return G2_HOB[h.k].r+(h.lvl>=2?1:0)+(h.lvl>=4?1:0)}
+function g2HobDone(){const h=S.hobby;if(!h)return;h.last=S.day;if(h.rch!==S.day){h.rch=S.day;const r=g2HobR();if(r)g2charge("rest",-r,`${HOBBIES[h.k].n} recharges you`)}}
+{const _hg=hobbyGo;hobbyGo=function(){const h=S&&S.hobby;if(!h||!HOBBIES[h.k]||!enHas()||!S.en)return _hg.apply(this,arguments);
+ if(h.lvl>=5){if(10>enRoom()){try{toastMsg("Not enough energy left this month.")}catch(e){}return}
+  const x=HOBBIES[h.k];enCharge(G2_HOB[h.k]?G2_HOB[h.k].cat:"fun",10,"Keeping up: "+x.n.toLowerCase());try{applyFx({stress:(x.fx&&x.fx.stress)||-2},{vars:{}})}catch(e){}g2HobDone();try{toastMsg(`${x.n}: still got it. ⚡ +${g2HobR()} back.`)}catch(e){}save();render();return}
+ const sp0=JSON.stringify(S.en.sp);const r=_hg.apply(this,arguments);try{if(JSON.stringify(S.en.sp)!==sp0)g2HobDone()}catch(e){}return r}}
+{const _hs=hobbySec;hobbySec=function(){let h=_hs.apply(this,arguments);try{const H=S.hobby;if(!h||!H||!HOBBIES[H.k]||!enHas())return h;const r=g2HobR(),G=G2_HOB[H.k];if(!G)return h;
+ h=h.replace("Practise · ⚡ 10",`Practise · ⚡ 10, +${r} back`);
+ if(H.lvl>=5)h=h.replace(/<p class="hint" style="margin:0">You've reached the top\. A legend\.<\/p>/,`<p class="hint" style="margin:0 0 6px">You've reached the top. A legend.</p><div class="btn-row"><button class="btn sm primary" data-act="hobbygo" ${10>enRoom()?"disabled":""}>Keep it up · ⚡ 10, +${r} back</button></div>`);
+ const gap=S.day-(H.last??H.since??S.day),tip=`${esc(G.v)} Counts as ${G.cat==="fitness"?"fitness":"fun"}, and the first session each month recharges you +${r}.${gap>=4?` <b class="down">You haven't practised for ${gap} months: it's slipping.</b>`:""}`;
+ h=h.replace(/<\/ol>/,`</ol><p class="hint keep g2-tip">${tip}</p>`)}catch(e){}return h}}
+function g2HobMonth(notes){const h=S.hobby;if(!h||!HOBBIES[h.k])return;if(h.last==null)h.last=Math.max(h.since||0,S.day-1);const gap=S.day-h.last;
+ if(gap>=4&&h.lvl<5)h.xp=Math.max(0,(h.xp||0)-4);
+ if(gap===4)notes.push(`You haven't made time for ${HOBBIES[h.k].n.toLowerCase()} in a while. It's starting to slip.`);
+ h.peak=Math.max(h.peak||0,h.lvl);
+ if(h.lvl>Math.max(1,h.peak-2)&&(h.lvl>=5?gap>=18:gap>=12&&(h.xp||0)<=0)&&S.day-(h.drop??-99)>=18){h.drop=S.day;h.lvl--;h.xp=50;notes.push(`${HOBBIES[h.k].n}: you've gone rusty. Back to ${h.lvl?HOBBIES[h.k].tiers[h.lvl-1].toLowerCase():"beginner"}.`);try{S.log.unshift({d:S.day,t:`${HOBBIES[h.k].n}: gone rusty from lack of practice.`})}catch(e){}}}
+/* ---- Pets ---- */
+function g2Pet(){const p=S.pet;if(!p)return null;const n=p.n||"your pet";return p.kind==="dog"?{n,cat:"fitness",cost:6,give:4,what:`Walking ${n}`}:{n,cat:"family",cost:2,give:3,what:`Looking after ${n}`}}
+{const _ps=petSec;petSec=function(){let h=_ps.apply(this,arguments);try{const P=g2Pet();if(h&&P&&enHas())h=h.replace(/(<div class="btn-row">)(?![\s\S]*<div class="btn-row">)/,`<p class="hint keep g2-tip">⚡ ${P.cost} a month${S.pet.kind==="dog"?" for walks (they count as fitness)":""}, and ${esc(P.n)} recharges you +${P.give}.</p>$1`)}catch(e){}return h}}
+/* ---- Things you own: enjoying them takes energy and gives some back ---- */
+const G2_USE={boat:{b:"Sail",cost:16,rch:12,fx:{stress:-4,home:3},o:"A day on the water. Salt on your face, phone in a dry bag."},
+ telescope:{b:"Stargaze",cost:5,rch:6,fx:{stress:-2},o:"Saturn's rings, live. It never gets old."},
+ guitar:{b:"Play",cost:5,rch:6,fx:{stress:-3,home:1},o:"An hour of chords on the sofa. Your fingers remember more than you do."},
+ horse:{b:"Visit",cost:10,rch:6,fx:{stress:-2,home:2},o:"Mortgage Payment eats a carrot from your hand and treads on your foot."}};
+{const _is=itemsSec;itemsSec=function(){let h=_is.apply(this,arguments);try{if(!h||!enHas()||S.over||S.prison)return h;const room=enRoom();
+ h=h.replace(/<button class="btn sm" data-act="itemgive" data-i="([^"]+)">/g,(m,id)=>{const it=(S.items||[]).find(i=>i.id===id),U=it&&G2_USE[it.k];if(!U)return m;const done=it.used===S.day;
+  return `<button class="btn sm" data-act="g2use" data-i="${id}" ${done||U.cost>room?"disabled":""}>${done?"Done this month":`${U.b} · ⚡ ${U.cost}, +${U.rch}`}</button>`+m})}catch(e){}return h}}
+XCLICK.g2use=t=>{const it=(S.items||[]).find(i=>i.id===t.dataset.i),U=it&&G2_USE[it.k];if(!U||!g2ok()||it.used===S.day)return;if(U.cost>enRoom()){toastMsg("Not enough energy left this month.");return}
+ it.used=S.day;enCharge("fun",U.cost,`${U.b}: ${it.n.replace(/^An? /,"").toLowerCase()}`);enCharge("rest",-U.rch,`${it.n.replace(/^An? /,"")} recharges you`);try{applyFx(U.fx,{vars:{}})}catch(e){}
+ try{if(rnd()<.25)itemNote(it,U.o.split(".")[0]+".")}catch(e){}try{toastMsg(`${U.o} ⚡ +${U.rch} back.`)}catch(e){}save();render()};
+function g2ItemMonth(){for(const it of S.items||[]){if(!G2_USE[it.k]||it.k==="guitar"||it.k==="telescope")continue;if(it.used==null)it.used=it.bought??S.day;
+ if(S.day-it.used>=12&&S.day-(it.nag??-99)>=24&&!l5busy(/^g2_/)){it.nag=S.day;const boat=it.k==="boat";
+  pushDyn({id:"g2_it_"+S.day,life:1,from:boat?"The harbour master":"The trainer",t:boat?"The boat hasn't moved":"When are you visiting?",b:boat?`Your boat hasn't left its mooring in a year. You're paying ${money(300)} a month for a very expensive seagull perch.`:"Your racehorse share comes with visits, and you haven't been once this year. The trainer is starting to take it personally.",c:[
+   {t:boat?"Book a weekend sailing":"Go and see the horse",fx:{act:"g2itemuse",iid:it.id,stress:-3},o:boat?"You'd forgotten how good it feels.":"Muddy boots and a happy horse."},
+   {t:boat?"Sell the boat":"Sell your share",fx:{act:"itsell",iid:it.id},o:boat?"The two happiest days of owning a boat: the day you buy it, and the day you sell it.":"Someone keener buys your share."},
+   {t:"Next year, definitely",fx:{stress:1},o:"Next year."}]})}}}
+/* ---- Side hustles: bigger ones cost more, and success makes demands ---- */
+const G2_SHE={tutor:10,dogs:9,etsy:12,airbnb:7,btl:5,resell:10,podcast:12,photo:16,youtube:14,food:20,app:15};
+function g2ShE(id,c){let e=G2_SHE[id]||12;if(c){const l=c.lvl||0;e*=c.small?Math.min(1.2,1+.4*l):1+.4*l;if(c.big)e*=1.5}return Math.round(e)}
+{const _pl=enPlan;enPlan=function(){const L=_pl.apply(this,arguments);try{
+ const c=typeof shCur==="function"&&shCur();if(c)for(const p of L)if(/^Side hustle: /.test(p.n))p.e=g2ShE(c.id,c);
+ if(S.prison||S.over)return L;const add=(cat,n,e)=>{e=Math.round(e);if(e)L.push({cat,n,e})};
+ const P=g2Pet();if(P){add(P.cat,P.what,P.cost);add("rest",`${P.n} recharges you`,-P.give)}
+ if(hasItem("boat"))add("fun","Boat upkeep: scraping, varnish, worry",3);
+ const fe=g2FameE();if(fe)add("work","Being recognised: press and public",fe)}catch(e){}return L}}
+{const _ss=sideSec;sideSec=function(){let h=_ss.apply(this,arguments);try{if(!h||!enHas()||!S.en)return h;const c=shCur();
+ h=h.replace("Each one takes ⚡ 12 of your energy a month and adds a little stress.","Each one takes energy every month and adds a little stress. Bigger ones take more, and they ask more of you as they grow.");
+ if(!c){for(const id in HUSTLES){const n=esc(HUSTLES[id].n);h=h.replace(`<b>${n}</b><small>`,`<b>${n}</b><small><em class="en-c">⚡ ${g2ShE(id)}/month</em>`)}}
+ else{const e=g2ShE(c.id,c),E=enS(),f=enForecast(),pct=Math.round(e/Math.max(1,E.al)*100);
+  h=h.replace(/ · ⚡ 12\/month/,` · ⚡ ${e}/month`);
+  h=h.replace(/(<div class="btn-row"><button class="btn sm" data-act="shstop">)/,`<p class="hint keep g2-tip ${f.over>0?"down":""}">⚡ ${e} a month: ${pct}% of your energy${c.big?", and more since you went bigger":c.lvl>=.35&&!c.small?", and growing as it takes off":""}.${f.over>0?" <b>With everything else, you're overspending: something has to give.</b>":""}</p>$1`)}}catch(e){}return h}}
+if(typeof XCLICK!=="undefined"&&XCLICK.shgo){const _sg=XCLICK.shgo;XCLICK.shgo=t=>{try{const id=t.dataset.k,e=g2ShE(id);if(enHas()&&S.en&&e>12&&e>enRoom()){toastMsg(`That needs ⚡ ${e} a month and you don't have it right now.`);return}}catch(e){}return _sg(t)}}
+{const _sd=shDay;shDay=function(notes){const c=shCur();const r=_sd.apply(this,arguments);try{if(c&&c.big&&S.sh===c&&c.last>0){const x=Math.round(c.last*.5);S.wealth+=x;c.earned+=x;c.last+=x;S.stress=clamp(S.stress+.5,0,100);notes.push(`Going bigger paid an extra ${money(x)}.`)}}catch(e){}return r}}
+/* ---- Courses: they cost energy now and make work lighter for good ---- */
+function g2Learn(){let n=0;try{for(const k in S.flags||{})if(/^spec_/.test(k))n+=2}catch(e){}
+ try{n+=crsList().filter(c=>crsDone(c.id)).length}catch(e){}
+ try{if(S.cx&&S.cx.path===S.path&&S.cx.coursesDone)for(const k in S.cx.coursesDone)n+=Math.min(2,S.cx.coursesDone[k])}catch(e){}
+ return Math.min(.1,n*.015)}
+const g2Wind=()=>age()>=63&&enDial()===0;
+{const _we=enWorkE;enWorkE=function(){let e=_we.apply(this,arguments);try{if(!e||S.over||S.prison||S.front||S.sel||S.sabb||S.lastOff===S.day)return e;
+ e*=1-g2Learn();if(g2Wind())e*=.75;return Math.round(e)}catch(x){return e}}}
+/* ---- Fame: being known takes it out of you ---- */
+function g2FameE(){const f=S.fame||0;if(f<25||S.over||S.prison)return 0;return Math.round(Math.min(10,(f-15)/8)*(g2().priv?.7:1))}
+/* ---- The economy at home ---- */
+const G2_HARD=["recession","banking","pandemic"],G2_TIGHT=["recession","inflation","energy","rateshock","banking"],G2_GOOD=["boom","rally","lowrates","cheapenergy"];
+const g2W=()=>(S.world&&S.world.id)||"calm";
+function g2Hard(){const w=g2W();return G2_HARD.includes(w)||(w==="techbust"&&S.path==="tech")||(w==="ai"&&["law","arch","music"].includes(S.path))}
+function g2Employee(){try{return!S.over&&!S.prison&&!S.sabb&&!S.front&&!S.sel&&!ownerRank()&&age()<STATE_PENSION}catch(e){return false}}
+function g2Skint(){try{return S.wealth<monthly()*3}catch(e){return false}}
+/* ---- Later life: people, health and money ---- */
+function g2Late(){const a=age();if(a<60)return null;let pp=0;const why=[];
+ if(inLove()){pp+=S.homeLife>=60?2:S.homeLife>=35?1:0}
+ const fr=(S.friend&&S.friend.bond>=45?1:0)+alivePeople().filter(p=>p.role==="friend"&&p.bond>=50).length;pp+=Math.min(2,fr);
+ const adult=(S.children||[]).filter(k=>kidAge(k)>=18&&k.alive!==false&&!k.dead);
+ const close=adult.filter(k=>{const b=k.bond??k.rel??k.close??k.closeness;return typeof b==="number"?b>=50:true}).length;pp+=Math.min(2,close);
+ if(S.grandkids)pp+=1;
+ let v=pp-2;if(S.health>=65)v+=1;else if(S.health<35)v-=2;try{if(netWorth()>=250000)v+=1;else if(S.wealth<0)v-=1}catch(e){}
+ return{pp,v:clamp(v,-4,4),lonely:pp<=1,adult}}
+{const _al=enAllowance;enAllowance=function(E,o){const r=_al.apply(this,arguments);try{if(!enHas()||S.over)return r;let add=0;const p=(n,x)=>{x=Math.round(x);if(x){r.parts.push([n,x]);add+=x}};
+ const h=S.hobby;if(h&&G2_HOB[h.k]&&h.last!=null&&S.day-h.last<=1)p(`Keeping up ${HOBBIES[h.k].n.toLowerCase()}`,2);
+ if(S.pet&&S.pet.kind==="dog")p("Dog walks",2);
+ const w=g2W();if(g2Hard()&&g2Employee())p("Worried about your job",-2);else if(G2_GOOD.includes(w)&&!g2Skint())p("Good times: less to worry about",2);
+ if(G2_TIGHT.includes(w)&&g2Skint())p("Money worries",-2);
+ const L=g2Late();if(L&&L.v)p(L.v>0?"Later life: people around you":"Later life: a quiet house",L.v);
+ if(add)r.v=Math.max(Math.round(enBase(age())*.6),r.v+add)}catch(e){}return r}}
+{const _dh=enDialHtml;enDialHtml=function(inModal){let h=_dh.apply(this,arguments);try{if(!h)return h;const bits=[],l=g2Learn();
+ if(l>0)bits.push(`Courses you've finished make work ${Math.round(l*100)}% lighter.`);
+ if(g2Wind())bits.push("Winding down: coasting costs a quarter less at your age.");
+ if(g2Hard()&&g2Employee())bits.push(`<b class="down">${esc(wld().n)}: coasting now puts your job at risk.</b>`);
+ if(bits.length)h=h.replace(/<\/p><\/div>\s*$/,` ${bits.join(" ")}</p></div>`)}catch(e){}return h}}
+/* ---- Month end ---- */
+function g2Month(notes){const G=g2();
+ try{g2HobMonth(notes)}catch(e){}
+ try{const lt=G.late,E=S.en;if(lt&&S.day>=lt.until){G.late=null;if(E&&E.dial===lt.v){E.dial=lt.prev;notes.push(`The extra hours are over: back to ${EN_DIAL[lt.prev].n.toLowerCase()} hours.`)}}}catch(e){}
+ try{g2ItemMonth()}catch(e){}
+ /* Fame strains the partner who didn't sign up for it */
+ try{const f=S.fame||0;if(f>=35&&inLove()){const E=S.en||{},lv=E.tm&&E.tm.p!=null?E.tm.p:1;let d=(f-25)/150;d*=S.rel.trait==="romantic"?1.8:S.rel.trait==="ambitious"?.6:1;if(lv===2)d*=.5;if(G.priv)d*=.7;
+  S.homeLife=clamp(S.homeLife-d,0,100);if(f>=55&&S.day%9===0)notes.push(`${S.rel.name.split(" ")[0]} is tired of sharing you with the public.`)}}catch(e){}
+ /* The economy */
+ try{const w=g2W();
+  if(g2Hard()&&g2Employee()){const d=enDial();S.stress=clamp(S.stress+(d>=2?.15:.35),0,100);
+   if(G.lw!==S.world.since){G.lw=S.world.since;notes.push("Everyone at work is nervous about cuts. Being seen to slack would be a bad idea.")}}
+  if(G2_TIGHT.includes(w)&&g2Skint()){S.homeLife=clamp(S.homeLife-.4,0,100);S.stress=clamp(S.stress+.3,0,100);if(G.mw!==S.world.since){G.mw=S.world.since;notes.push("Money is tight and prices keep rising. It's causing arguments at home.")}}
+  else if(G2_GOOD.includes(w))S.homeLife=clamp(S.homeLife+.15,0,100)}catch(e){}
+ /* Later life */
+ try{const L=g2Late();if(L){if(L.lonely){S.stress=clamp(S.stress+.3,0,100);G.lone=(G.lone||0)+1}else G.lone=0;if(L.v>=2)S.stress=clamp(S.stress-.3,0,100)}}catch(e){}
+}
+{const _ld=lifeDay;lifeDay=function(notes){const r=_ld.apply(this,arguments);try{if(g2ok())g2Month(notes||[])}catch(e){try{window.__hbErr&&window.__hbErr(e,"g2Month")}catch(x){}}return r}}
+/* ---- Stories ---- */
+function g2Morning(){if(!g2ok()||!l5ok()||l5busy(/^g2_/)||S.day<6)return;const G=g2(),f=S.fame||0,a=age();
+ const push=(k,ev)=>pushDyn(Object.assign({id:`g2_${k}_${S.day}`,life:1},ev));
+ /* A hustle that takes off */
+ const c=shCur();if(c&&c.lvl>=.7&&!c.g2grow&&!c.dep&&rnd()<.5){c.g2grow=1;const H=HUSTLES[c.id],e0=g2ShE(c.id,c),e1=Math.round(e0*1.5);
+  push("shgrow",{from:"Your side hustle",t:`${H.n}: it's taking off`,b:`People want more than you can give in your evenings. ${H.n} is costing you ⚡ ${e0} a month already. Go bigger and it's ⚡ ${e1}, with half as much again in earnings.`,c:[
+   {t:"Go bigger",fx:{act:"g2shbig",stress:3},o:"More orders, more money, fewer evenings."},
+   {t:"Keep it the size it is",fx:{act:"g2shsmall",stress:-2},o:"You turn work away. It feels oddly good."}]});return}
+ /* Fame */
+ if(f>=35&&S.day-(G.fm??-99)>=10&&rnd()<.08){G.fm=S.day;const kids=(S.children||[]).filter(k=>kidAge(k)>=4&&kidAge(k)<16),o=[];
+  if(kids.length){const k=pick(kids);o.push(Object.assign(()=>push("fmschool",{from:"The school office",t:"Cameras at the school gates",b:`Photographers are waiting outside ${k.n}'s school, hoping for a picture of you on the school run.`,c:[
+   {t:"Do the school run yourself and face them",fx:{act:"g2en",cat:"family",v:6,n:"The school run, with cameras",home:4,stress:4},o:`${k.n} holds your hand tight. The pictures are dull, and the photographers drift off.`},
+   {t:`Pay for a driver for a month (${money(1500)})`,fx:{gbp:-1500,fixed:1,home:2},o:"Tinted windows. It works, and it feels strange."},
+   {t:"Keep the kids home for a few days",fx:{home:-3,stress:2},o:`${k.n} is thrilled. The school is not.`}]}),{k:"school"}))}
+  o.push(Object.assign(()=>push("fmdoor",{from:"Your doorbell",t:"A fan on the doorstep",b:"Someone has found out where you live. They're on your doorstep with a scrapbook about you.",c:[
+   {t:"Sign it and send them off kindly",fx:{act:"g2en",cat:"work",v:4,n:"A fan on the doorstep",karma:2,fame:1,stress:2},o:"They cry. You need a lie-down."},
+   {t:`Fit gates and cameras (${money(8000)})`,fx:{gbp:-8000,fixed:1,act:"g2priv",stress:-3},o:"Being recognised wears you out a bit less from now on."},
+   {t:"Don't answer",fx:{stress:3,home:-1},o:"They wait for an hour. You watch from behind the curtain."}]}),{k:"door"}));
+  if(inLove())o.push(Object.assign(()=>push("fmtalk",{from:"A magazine",t:"The at-home interview",b:`A glossy magazine wants a photo shoot at home with you and ${S.rel.name.split(" ")[0]}. The fee is generous.`,c:[
+   {t:"Do it together",fx:{act:"g2en",cat:"work",v:8,n:"A photo shoot at home",gbp:5000,fixed:1,fame:3,home:3},o:"Ten pages of you laughing in a kitchen you've never cooked in."},
+   {t:"Do it on your own",fx:{gbp:5000,fixed:1,fame:2,home:-4},o:`${S.rel.name.split(" ")[0]} reads it and says nothing for two days.`},
+   {t:"Keep your home private",fx:{home:3},o:`${S.rel.name.split(" ")[0]} is quietly relieved.`}]}),{k:"talk"}));
+  const fresh=o.filter(x=>x.k!==G.fmk),ch=pick(fresh.length?fresh:o);G.fmk=ch.k;ch();return}
+ /* The economy */
+ if(S.world&&S.day-(G.ec??-99)>=12&&g2Employee()){
+  if(g2Hard()&&enDial()===0&&!(S.en.pt&&S.en.pt.until>S.day)&&!(S.en.bsab&&S.en.bsab.until>S.day)&&rnd()<.18){G.ec=S.day;push("eclist",{from:"A friend in HR",t:"Your name's on a list",b:"Cuts are coming, and people who look like they're coasting are first in line. Your name came up.",c:[
+   {t:"Step it up: back to normal hours",fx:{act:"g2dial",v:1,stress:3},o:"You're in early and visible. The list moves on."},
+   {t:"Take voluntary redundancy",fx:{act:"redundancy"},o:"A payout, and a whole new chapter."},
+   {t:"Keep coasting and hope",p:.6,win:{fx:{stress:2},o:"You survive. Just."},lose:{fx:{act:"paycut",stress:8},o:"You keep your job, on a 10% pay cut."}}]});return}
+  if(g2Hard()&&enDial()<=1&&rnd()<.1){G.ec=S.day;push("eclate",{from:"The office",t:"Everyone's staying late",b:"With jobs on the line, the whole team is working late to look busy. You're the first to leave every evening.",c:[
+   {t:"Stay late too",fx:{act:"g2dial",v:2,m:3,rep:2,stress:2},o:"Pushing hours for the next three months. Your boss notices."},
+   {t:"Go home on time",p:.75,win:{fx:{home:2},o:"Nobody says anything. Your family is glad to see you."},lose:{fx:{rep:-3,stress:3},o:"Your boss notices, and says so."}}]});return}
+  if(G2_TIGHT.includes(g2W())&&g2Skint()&&inLove()&&rnd()<.12){G.ec=S.day;push("ecmoney",{from:S.rel.name,t:"Money rows",b:`Every bill is a fight at the moment. ${S.rel.name.split(" ")[0]} wants to sit down and go through everything.`,c:[
+   {t:"Do a budget together",fx:{act:"g2en",cat:"family",v:6,n:"A budget at the kitchen table",home:4,stress:-2},o:"Grim spreadsheets, a plan, and a hug at the end."},
+   {t:"Pick up extra hours",fx:{act:"g2dial",v:2,m:3,gbp:400,stress:3},o:"More money, less of you at home."},
+   {t:"Avoid the subject",fx:{home:-4,stress:2},o:"The bills keep coming. So do the rows."}]});return}}
+ /* Later life */
+ if(a>=60&&S.day-(G.old??-99)>=10&&rnd()<.1){const L=g2Late();if(!L)return;G.old=S.day;const o=[];
+  if(S.grandkids)o.push(()=>push("gkids",{from:"Your family",t:"The grandchildren are coming",b:`The grandchildren want to stay${S.grandkids>1?"":", just the one of them, but they have the energy of five"}.`,c:[
+   {t:"Have them for the whole week",fx:{act:"g2en",cat:"family",v:16,n:"A week with the grandchildren",home:8,stress:2},o:"Dens, biscuits and bedtime stories. You sleep for two days afterwards."},
+   {t:"A day out together",fx:{act:"g2en",cat:"family",v:8,n:"A day out with the grandchildren",gbp:-120,home:5},o:"The zoo, an ice cream each and a very long nap in the car."},
+   {t:"Not this time",fx:{home:-2},o:"Maybe at Christmas."}]}));
+  if(L.adult.length)o.push(()=>{const k=pick(L.adult);push("kidlunch",{from:k.n,t:"Sunday lunch?",b:`${k.n} rings to ask if they can come for Sunday lunch. It's been a while.`,c:[
+   {t:"Cook a proper roast",fx:{act:"g2en",cat:"family",v:6,n:`Sunday lunch with ${k.n}`,home:4,stress:-2,act2:"g2kid",kid:k.n},o:`You talk until it's dark. ${k.n} takes the leftovers home.`},
+   {t:"Next weekend instead",fx:{},o:"Next weekend comes and goes."}]})});
+  if(L.lonely)o.push(()=>push("lonely",{from:"A quiet house",t:"Too quiet",b:"Some weeks the only people you speak to are on the telly. The days are long.",c:[
+   {t:"Join a walking club",fx:{act:"g2club",stress:-3},o:"Twelve people, one flask each and a lot of opinions about stiles. You make a friend."},
+   {t:"Volunteer at the library",fx:{act:"g2club",karma:3},o:"You read to children on Saturdays. It's the best part of the week."},
+   {t:"Turn the telly up",fx:{stress:3,home:-2},o:"The quiz shows keep you company. Sort of."}]}));
+  let nw=0;try{nw=netWorth()}catch(e){}
+  if(S.health>=60&&S.wealth>=15000&&nw>=150000)o.push(()=>push("bigtrip",{from:"A travel brochure",t:"The trip of a lifetime",b:"A month away: trains across a continent, places you've always meant to see. While your knees still work.",c:[
+   {t:`Go (${money(9000)})`,fx:{gbp:-9000,fixed:1,act:"g2en",cat:"rest",v:-24,n:"The trip of a lifetime",stress:-10,home:6},o:"Mountains, markets and a sunset you'll describe to anyone who'll listen."},
+   {t:"Maybe next year",fx:{},o:"The brochure goes in a drawer."}]}));
+  if(o.length)pick(o)()}
+}
+{const _wm=willMorning;willMorning=function(){const r=_wm.apply(this,arguments);try{g2Morning()}catch(e){try{window.__hbErr&&window.__hbErr(e,"g2Morning")}catch(x){}}return r}}
+Object.assign(ACTS,{
+ g2en:(fx,m)=>{if(fx.v)g2charge(fx.cat||"fun",fx.v,fx.n);if(fx.act2&&ACTS[fx.act2])ACTS[fx.act2](fx,m)},
+ g2shbig:()=>{const c=shCur();if(c){c.big=1;c.small=0}},
+ g2shsmall:()=>{const c=shCur();if(c){c.small=1;c.big=0}},
+ g2dial:fx=>{const E=enS();if(!E)return;if(E.pt&&E.pt.until>S.day)return;const prev=enDial(),v=clamp(fx.v|0,0,3);if(fx.m&&v>prev)g2().late={until:S.day+fx.m,prev,v};E.dial=v;try{enTrimPicks()}catch(e){}},
+ g2priv:()=>{g2().priv=1;try{S.log.unshift({d:S.day,t:"Fitted gates and cameras at home."})}catch(e){}},
+ g2itemuse:fx=>{const it=(S.items||[]).find(i=>i.id===fx.iid),U=it&&G2_USE[it.k];if(!U)return;it.used=S.day;g2charge("fun",U.cost,U.b);g2charge("rest",-U.rch,`${it.n.replace(/^An? /,"")} recharges you`)},
+ g2kid:fx=>{const k=(S.children||[]).find(x=>x.n===fx.kid);if(!k)return;for(const f of["bond","rel","close","closeness"])if(typeof k[f]==="number"){k[f]=clamp(k[f]+5,0,100);break}},
+ g2club:()=>{try{const p=addPerson(fullName(),"friend","Met through a club in later life",50);if(p)S.log.unshift({d:S.day,t:`Made a new friend: ${p.n}.`})}catch(e){}g2charge("friends",6,"A new club")}
+});
 
 function start(data){
  S=(data&&data.S)||load();
