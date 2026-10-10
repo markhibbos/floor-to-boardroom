@@ -8753,9 +8753,9 @@ function opSet(k,v){
 function opsSec(){
  const o=S.op,T=OPS[S.path];if(!o||!T||o.d!==S.day)return"";
  const ready=o.plan!=null&&o.kit!=null,p=ready?opP(o,false):null,worth=o.base*OP_RISK[o.risk][3];
- const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}${(()=>{if(k==="risk")return"";let fit=0;for(const [bk,ab] of Object.entries(x[2]||{})){const bi=T.brief.findIndex(b=>b[0]===bk);if(bi>=0&&o.conds[bi])fit+=ab[o.conds[bi].shown]||0}return fit>=.1?`<span class="pill fit-good">Suits the briefing</span>`:fit<=-.08?`<span class="pill fit-bad">Poor fit for the briefing</span>`:""})()}</button>`).join("")}</div>`;
+ const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}</button>`).join("")}</div>`;
  return `<div class="ops ${o.on?"on":""}"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.h}h of your month</span></div>
-  <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}: the green tags show what suits it. Confirmed intel is right 9 times in 10; unconfirmed is barely better than a guess.</p>
+  <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}: read each option carefully and match it to what you know. Confirmed intel is right 9 times in 10; unconfirmed is barely better than a guess.</p>
   <div class="op-brief">${T.brief.map(([k,n,vals,srcs],i)=>{const c=o.conds[i];return `<div><span class="label">${esc(n)}</span><b>${esc(vals[c.shown])}</b><span class="pill ${c.conf?"":"rum"}">${esc(srcs[c.conf?0:1])}: ${c.conf?"confirmed":"unconfirmed"}</span></div>`}).join("")}</div>
   <div class="label" style="margin-top:10px">1. The plan</div>${opt("plan",T.plans)}
   <div class="label" style="margin-top:10px">2. ${esc(T.kitN)}</div>${opt("kit",T.kits)}
