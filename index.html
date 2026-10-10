@@ -8724,23 +8724,26 @@ const OPS={
   lose:["An alarm. You abort and come home early.","A tool floats off into space on live TV.","The mission overruns and costs millions."]}
 };
 OPS.plumb=Object.assign({},OPS.elec,{names:["the hotel bathrooms","the hospital boilers","the block of flats","the swimming-pool plant room","the stately home"]});
+const OP_DIFF=["Routine","Tricky","Hard","Very hard","Brutal"];
+const opAccAt=r=>Math.round((.9-r*.05)*100)/100,opConfAt=r=>.55-r*.07,opBaseAt=r=>.48-r*.065;
+const opAcc=o=>o&&o.acc!=null?o.acc:.9;
 const OP_RISK=[["Cautious","Safer, smaller payoff.",.12,.7],["Standard","",0,1],["Bold","Bigger payoff, more can go wrong.",-.14,1.6]];
 function opGen(){
  const T=OPS[S.path];if(!T||S.prison||S.front||S.sel||S.sabb||S.over||CAR_().mech!=="jobs"){S.op=null;return}
  if(S.op&&S.op.d===S.day)return;
  if(S.opLast!=null&&S.day-S.opLast<2&&rnd()<.85){S.op=null;return}S.opLast=S.day;
- const conds=T.brief.map(()=>{const truth=rnd()<.5?0:1,conf=rnd()<.55,shown=rnd()<(conf?.9:.55)?truth:1-truth;return{truth,shown,conf}});
+ const rk=S.rank||0,acc=opAccAt(rk),conds=T.brief.map(()=>{const truth=rnd()<.5?0:1,conf=rnd()<opConfAt(rk),shown=rnd()<(conf?acc:.55)?truth:1-truth;return{truth,shown,conf}});
  const top=(S.cards||[]).map(c=>c.pay).sort((a,b)=>b-a).slice(0,2).reduce((a,b)=>a+b,0);
- S.op={d:S.day,name:pick(T.names),conds,plan:null,kit:null,risk:1,on:false,h:Math.round(R().cap*(.35+rnd()*.15)*10)/10,base:Math.max(1,Math.round(top*1.5))};
+ S.op={d:S.day,name:pick(T.names),conds,acc,diff:rk,b0:opBaseAt(rk),plan:null,kit:null,risk:1,on:false,h:Math.round(R().cap*(.35+rnd()*.15)*10)/10,base:Math.max(1,Math.round(top*1.5))};
 }
 function opFit(o,useTruth){
  const T=OPS[S.path];let f=0;
  for(const part of [T.plans[o.plan],T.kits[o.kit]]){if(!part)continue;const fit=part[2]||{};
   T.brief.forEach(([k],i)=>{const v=fit[k];if(!v)return;const c=o.conds[i];
-   if(useTruth)f+=v[c.truth];else{const r=c.conf?.9:.55;f+=v[c.shown]*r+v[1-c.shown]*(1-r)}})}
+   if(useTruth)f+=v[c.truth];else{const r=c.conf?opAcc(o):.55;f+=v[c.shown]*r+v[1-c.shown]*(1-r)}})}
  return f;
 }
-const opP=(o,useTruth)=>clamp(.48+(S.skill-40)/300+cx().gear*.015+opFit(o,useTruth)+OP_RISK[o.risk][2],.08,.9);
+const opP=(o,useTruth)=>clamp((o.b0!=null?o.b0:.48)+(S.skill-40)/300+cx().gear*.015+opFit(o,useTruth)+OP_RISK[o.risk][2],.08,.9);
 {const _ju=jobsUsed;jobsUsed=function(){return _ju.apply(this,arguments)+(S.op&&S.op.on&&S.op.d===S.day?S.op.h:0)}}
 {const _jm=jobsMorning;jobsMorning=function(){_jm.apply(this,arguments);try{opGen()}catch(e){}}}
 function opSet(k,v){
@@ -8754,8 +8757,8 @@ function opsSec(){
  const o=S.op,T=OPS[S.path];if(!o||!T||o.d!==S.day)return"";
  const ready=o.plan!=null&&o.kit!=null,p=ready?opP(o,false):null,worth=o.base*OP_RISK[o.risk][3];
  const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}</button>`).join("")}</div>`;
- return `<div class="ops ${o.on?"on":""}"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.h}h of your month</span></div>
-  <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}: read each option carefully and match it to what you know. Confirmed intel is right 9 times in 10; unconfirmed is barely better than a guess.</p>
+ return `<div class="ops ${o.on?"on":""}"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.diff!=null?OP_DIFF[o.diff]+" · ":""}${o.h}h of your month</span></div>
+  <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}: read each option carefully and match it to what you know. Confirmed intel is right ${Math.round(opAcc(o)*10)} times in 10${(o.diff||0)>=2?" at this level":""}; unconfirmed is barely better than a guess.</p>
   <div class="op-brief">${T.brief.map(([k,n,vals,srcs],i)=>{const c=o.conds[i];return `<div><span class="label">${esc(n)}</span><b>${esc(vals[c.shown])}</b><span class="pill ${c.conf?"":"rum"}">${esc(srcs[c.conf?0:1])}: ${c.conf?"confirmed":"unconfirmed"}</span></div>`}).join("")}</div>
   <div class="label" style="margin-top:10px">1. The plan</div>${opt("plan",T.plans)}
   <div class="label" style="margin-top:10px">2. ${esc(T.kitN)}</div>${opt("kit",T.kits)}
