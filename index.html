@@ -496,6 +496,8 @@ html,body{overflow-x:clip}
 .jrisk{display:block;width:56%;height:3px;border-radius:2px;margin:4px auto 0;opacity:.8}.jrisk.hi{background:var(--up)}.jrisk.mid{background:#E9A23B}.jrisk.lo{background:var(--down)}
 .mv-run,.mv-dur{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}.mv-run span:first-child{color:var(--accent);font-weight:600}.mv-bar{display:block;height:4px;border-radius:2px;background:var(--line);margin-top:3px;overflow:hidden}.mv-bar i{display:block;height:100%;background:var(--accent)}.mv-done{color:var(--up)}
 .fc-list{list-style:none;padding:0;margin:4px 0 0}.fc-list li{padding:8px 0;border-bottom:1px solid var(--line)}.fc-list .hint{display:block;margin:0}
+.l5-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}.l5-list li{display:flex;align-items:center;justify-content:space-between;gap:10px}.l5-list li>span{display:flex;flex-direction:column;min-width:0}.l5-list small{color:var(--muted);font-size:12.5px}
+.l5-btns{display:flex;gap:6px;flex-shrink:0}.l5-list i{font-style:normal;color:var(--down)}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -14817,7 +14819,7 @@ function endModal(){
  challengeCheck(null);checkUnlocks(null);
  let [t,b]=ENDINGS[S.over]||ENDINGS.fired;const L=legacy(),a=ageInt();
  if(S.over==="won"){t=S.path==="foot"?"World champion":S.path==="pol"?"A landslide legacy":"Retired at the top";b=CAR_().winText}
- if(S.over==="banned"){t={bank:"Banned by the regulator",foot:"Banned from football",manager:"Sacked and blacklisted",elec:"Struck off",plumb:"Struck off",hair:"Shut down",chef:"Shut down",tech:"Career over",law:"Struck off",doc:"Struck off",teach:"Barred from teaching",police:"Dismissed",pol:"Resigned in disgrace",pilot:"Licence revoked",nurse:"Struck off",fire:"Dismissed",vet:"Struck off",arch:"Struck off",music:"Dropped",influencer:"Cancelled",soldier:"Dishonourably discharged",astronaut:"Grounded",spy:"Disavowed",tvchef:"Off the air",clubowner:"Forced to sell",actor:"Blacklisted"}[S.path]||"Career over";b=CAR_().banText}
+ if(S.over==="banned"){t={bank:"Banned by the regulator",foot:"Banned from football",manager:"Sacked and blacklisted",elec:"Struck off",plumb:"Struck off",cardealer:"Banned from the motor trade",hair:"Shut down",chef:"Shut down",tech:"Career over",law:"Struck off",doc:"Struck off",teach:"Barred from teaching",police:"Dismissed",pol:"Resigned in disgrace",pilot:"Licence revoked",nurse:"Struck off",fire:"Dismissed",vet:"Struck off",arch:"Struck off",music:"Dropped",influencer:"Cancelled",soldier:"Dishonourably discharged",astronaut:"Grounded",spy:"Disavowed",tvchef:"Off the air",clubowner:"Forced to sell",actor:"Blacklisted"}[S.path]||"Career over";b=CAR_().banText}
  if(S.over==="fired"&&S.path==="foot"){t="Released";b="The club releases you."}
  if(S.over==="fired"&&S.path==="pol"){t="Deselected";b="Your local party picks someone else. Your political career is over."}
  if(S.over==="retired"){t=a>=PENSION_ACCESS?"Retired":"Retired early";b=`You retire at ${a}.${S.lump?` You took ${money(S.lump)} tax-free from your pension, and the rest pays about ${money(pensionIncome())} a year`:""}${a<STATE_PENSION?`, with the State Pension to come at ${STATE_PENSION}.`:", on top of the State Pension."}`}
@@ -14921,7 +14923,7 @@ function startModal0(){
 }
 function menuModal(){
  showModal(`<h2>Menu</h2><p>${esc(S.name)}, ${esc(R().t)}, age ${ageInt()}. Your game saves automatically on this device${cloudCode?" and in the cloud":""}.</p>
-  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button>${isNative()&&capPlugin("LocalNotifications")?`<button class="btn" data-act="notiftoggle">Reminders: ${notifOn()?"on":"off"}</button>`:""}<a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button><button class="btn" data-act="themetoggle">Theme: ${themeLabel()}</button><button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
+  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button><a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="settings">Settings</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
  markets:`<tr><td><b>1. Read the brief</b><br>Each month's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
@@ -14966,6 +14968,7 @@ document.addEventListener("click",e=>{
  if(a==="albumall"){albumAll=true;render();return}
  if(a==="albummore"){albumN=(albumN||(window.innerWidth<520?12:24))+(window.innerWidth<520?12:24);render();return}
  if(a==="freegrp"){freeGrp=t.dataset.v;render();return}
+ if(XCLICK[a]){XCLICK[a](t);return}
  if(a==="fcbest"){fcBest(t.dataset.id);return}
  if(a==="fcmove"){fcMove(t.dataset.id);return}
  if(a==="mvrest"){S.mvRest=S.day;save();render();return}
@@ -15116,6 +15119,643 @@ document.addEventListener("click",e=>{
  else if(a==="export")exportSave();
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("modal").hidden&&S&&!S.over&&!modalQueue.length&&document.querySelector('#sheet [data-act="hide"]'))hideModal()});
+
+/* ============ Car dealer: valeter to owner of a dealership group (generic jobs career, registered late) ============ */
+CAREERS.cardealer={id:"cardealer",n:"Car dealer",mech:"jobs",blurb:"Forecourt valeter to owner of a dealership group.",teamFrom:3,heatName:"Complaints",heatShort:"Complaints",outName:"Sales",lift:"Career ladder",
+ employers:["Kingsway Motors","Brightside Cars","Pendle & Sons Motor Group","Regal Prestige","Ashbury Motor Group"],
+ ranks:[
+  {t:"Valeter and lot assistant",place:"Washing cars on the forecourt",sal:18e3,cap:6,js:1,pm:.6,bonus:.03,repName:"Reputation"},
+  {t:"Sales executive",place:"A desk in the showroom",sal:26e3,cap:8,js:1,pm:1,bonus:.08,repName:"Reputation"},
+  {t:"Sales manager",place:"Running the sales floor",sal:55e3,cap:9,js:1,pm:1.3,bonus:.07,repName:"Reputation"},
+  {t:"Dealer principal",place:"In charge of the whole dealership",sal:110e3,cap:30,js:3,pm:1.4,bonus:.06,repName:"Reputation"},
+  {t:"Owner, dealership group",place:"Twenty forecourts across the country",sal:900e3,cap:300,js:25,pm:1.6,bonus:.012,repName:"Board confidence"}],
+ promo:["","You're on the sales floor. Your name is on the sales board.","You run the sales floor. The targets are yours now.","You run the whole dealership. Showroom, workshop and staff.","You own a dealership group. Three strong board reviews and you retire on top."],
+ appr:[{n:"Hard sell",pay:1,h:.7,q:-.22,risk:2},{n:"Honest pitch",pay:1,h:1,q:0,risk:1},{n:"White-glove service",pay:1.3,h:1.35,q:.12,risk:.5}],
+ big:["","",""," (with your sales team)"," (across the group)"],
+ jobs:[
+  {n:"Valet a car for the forecourt",h:1,pay:60,d:.05,tag:"valet",rmax:1},{n:"Shuffle the cars around the lot",h:2,pay:50,d:.05,tag:"valet",rmax:1},
+  {n:"Defrost the forecourt on a frosty morning",h:1,pay:40,d:.1,tag:"valet",rmax:1},{n:"Photograph cars for the website",h:2,pay:70,d:.1,tag:"online",rmax:1},
+  {n:"Show a customer round a used hatchback",h:2,pay:120,d:.15,tag:"used",rmax:2},{n:"Accompanied test drive",h:1,pay:80,d:.2,tag:"used",rmax:2},
+  {n:"Answer online enquiries",h:2,pay:90,d:.15,tag:"online",rmax:2},{n:"Deliver a car to a customer's door",h:2,pay:80,d:.1,tag:"newcar",rmax:1},
+  {n:"Sell a used hatchback",h:3,pay:350,d:.25,tag:"used",rmin:1,rmax:3},{n:"Value a part-exchange",h:1,pay:150,d:.3,tag:"partex",rmin:1,rmax:3},
+  {n:"Sign up a finance deal",h:2,pay:400,d:.3,tag:"finance",rmin:1,rmax:3,risk:1},{n:"Sell a new family SUV",h:3,pay:600,d:.3,tag:"newcar",rmin:1,rmax:3},
+  {n:"Sell an electric car to a nervous buyer",h:3,pay:550,d:.35,tag:"ev",rmin:1},{n:"Sell a warranty and paint protection",h:1,pay:180,d:.25,tag:"finance",rmin:1,rmax:2,risk:1},
+  {n:"Run the Saturday open day",h:4,pay:500,d:.2,tag:"newcar",rmin:1,rmax:2},{n:"Buy stock at a car auction",h:4,pay:700,d:.4,tag:"auction",rmin:1,rmax:3},
+  {n:"Close a month-end deal",h:3,pay:1200,d:.4,tag:"finance",rmin:2,rmax:3,risk:1},{n:"Fleet deal for a local firm",h:4,pay:1800,d:.45,tag:"fleet",rmin:2,rmax:3},
+  {n:"Sell a prestige saloon",h:3,pay:1500,d:.4,tag:"prestige",rmin:2},{n:"Bid at a classic car auction",h:4,pay:2000,d:.55,tag:"classic",rmin:2},
+  {n:"Launch night for a new model",h:4,pay:1400,d:.35,tag:"newcar",rmin:2,rmax:3},{n:"Win back an angry reviewer",h:2,pay:600,d:.35,tag:"online",rmin:2,rmax:3},
+  {n:"Sell a supercar to a footballer",h:3,pay:3000,d:.5,tag:"prestige",rmin:2},{n:"Hit the manufacturer's quarterly target",h:5,pay:3500,d:.5,tag:"newcar",rmin:3},
+  {n:"Council fleet of electric vans",h:5,pay:4000,d:.55,tag:"fleet",rmin:3},{n:"Open a new EV showroom",h:6,pay:4500,d:.5,tag:"ev",rmin:3},
+  {n:"Buy out a rival's stock",h:5,pay:3800,d:.5,tag:"auction",rmin:3},{n:"Rental company fleet deal",h:5,pay:5000,d:.55,tag:"fleet",rmin:3},
+  {n:"Win a new brand franchise",h:6,pay:7000,d:.6,tag:"prestige",rmin:4},{n:"Sell a one-off hypercar to a billionaire",h:4,pay:6000,d:.55,tag:"prestige",rmin:4},
+  {n:"Launch an online car-buying site",h:6,pay:6500,d:.55,tag:"online",rmin:4},{n:"Run a national classic car sale",h:5,pay:5000,d:.55,tag:"classic",rmin:4},
+  {n:"Buy a family-run dealership",h:8,pay:8000,d:.6,tag:"used",rmin:4}],
+ trends:{
+  used:{n:"Used cars",up:["Used car prices hit a record high","New car delays push buyers to used","Buyers flock to nearly new bargains"],dn:["Used car prices slide for a third month","Glut of ex-lease cars floods the market","Buyers sit on their hands as prices drop"]},
+  newcar:{n:"New cars",up:["New car registrations jump","Manufacturers launch big discounts","Chip shortage finally over: new cars arrive"],dn:["New car sales fall for the fifth month","Factory strike delays new deliveries","Ship carrying 3,000 new cars stuck in port"]},
+  finance:{n:"Finance",up:["Lenders slash car finance rates","0% finance deals are back","Credit checks get easier"],dn:["Car finance rates hit a ten-year high","Regulator cracks down on car finance","Lenders tighten credit checks"]},
+  partex:{n:"Part-exchange",up:["Part-exchange values soar","Online valuation sites push trade prices up","Buyers trade up after a bumper bonus season"],dn:["Trade values tumble at auction","Online car buyers undercut dealer part-ex offers","Nobody wants diesel part-exchanges"]},
+  ev:{n:"Electric cars",up:["Electric car grant launched","Charging network doubles in a year","Petrol prices spike: EV enquiries soar"],dn:["Electric car grant scrapped","Charger queues put drivers off EVs","Second-hand EV prices crash"]},
+  valet:{n:"Valeting",up:["Sunny week: forecourts sparkle and buyers come out","Spring clean season for the forecourt"],dn:["Hosepipe ban hits car washes","A week of rain keeps buyers indoors"]},
+  online:{n:"Online",up:["Online car sales hit a record","Buyers now start their search online","Video walk-rounds sell cars faster"],dn:["Online review scandal hits dealers","Fake listings scare buyers off online sales"]},
+  auction:{n:"Auctions",up:["Car auctions packed with bargains","Ex-fleet cars flood the auctions"],dn:["Auction prices go silly","Trade auctions short of stock"]},
+  fleet:{n:"Fleet",up:["Firms switch company cars to electric","Rental companies restock their fleets","Councils order hundreds of electric vans"],dn:["Firms cut company car budgets","Rental companies keep cars for longer"]},
+  prestige:{n:"Prestige",up:["Footballers' summer spending spree","Bonus season: prestige cars fly out","Supercar waiting lists hit two years"],dn:["Luxury car tax rise hits prestige sales","Footballers told to rein it in"]},
+  classic:{n:"Classics",up:["Classic car prices beat the stock market","TV restoration show sparks a classic boom","Barn-find sells for a record sum"],dn:["Classic car bubble bursts","Petrol classics face low-emission zone charges"]}},
+ noise:["Average new car price passes £40,000","Most popular car colour is grey again","Dealers report brisk weekend footfall","Car finance makes up nine in ten new car sales","Car auction company opens new site","Number plate auction raises £300,000 for one plate","Motorists keep their cars for longer than ever","Dealer groups merge in a £200m deal","Survey: buyers trust car salespeople slightly more than estate agents","Electric car charging points pass 70,000","Showroom coffee voted 'surprisingly good'","Insurance premiums for young drivers rise again","Inflatable gorilla returns to dealership roof by popular demand","MOT failure rates up on older cars","Car theft rises as keyless entry hacked","Classic car show breaks attendance record","Low-emission zone expands across the city","Motor trade apprenticeships hit a five-year high","Dealers try four-day weeks for sales staff","New car smell bottled and sold online"],
+ offerFrom:"Sales director at ",
+ winText:"Three strong board reviews. You sell the group, keep one classic for yourself and retire somewhere with a long, empty road.",
+ banText:"Complaints hit 100. Trading Standards close you down and no manufacturer will let you sell their cars."};
+
+/* Late registrations, like the DJ */
+PEN.cardealer={n:"Workplace pension",emp:.03};
+AGE0.cardealer=18;RETRAIN.cardealer=1500;RETRAIN_NOTE.cardealer="A sharp suit and a full driving licence";
+BIZ.cardealer={n:"Independent car lot",d:"A small forecourt of used cars with your name on the sign.",cost:40e3,profit:3.5e3,vol:.6};
+MINI.cardealer=["Close the deal","Tap when the customer's smile is widest.","Sold! Keys handed over.","Sold, with a big discount.","They walk. Straight to the dealer across the road."];
+AWARDS.cardealer=["Rookie Salesperson of the Year","Car Dealer of the Year","Motor Retail Hall of Fame"];
+RIVAL_CTX.cardealer=["The Monday sales meeting","your deal","the sales manager"];
+WORK_SPOT.cardealer=[290,112,"The car showroom"];
+CAREER_CRIME.cardealer="fraud";
+SECOND_ACTS.cardealer={why:"The sales targets never stop",when:()=>age()>=50,opts:[["influencer",()=>1,"Review cars online","You can talk about cars all day, and you do."],["teach",()=>0,"Teach motor vehicle studies","Pass it on to the next lot."],["pol",()=>0,"Stand for the council","Selling is selling."]]};
+RIVALS.push("Del Sharpe","Tina Reynolds");
+
+/* Lookup maps keyed by career */
+ACC_RISK.cardealer=1.1;
+ACCIDENTS.push({t:"A customer reversed a demo car into you on the forecourt.",days:1,c:"cardealer"},{t:"You trapped your fingers in a boot lid during a demo.",days:1,c:"cardealer"});
+{const _fc=fatalCause;fatalCause=function(){if(S&&S.path==="cardealer"&&rnd()<.4)return pick(["A customer on a test drive took a bend at 90mph. You were in the passenger seat.","A car transporter's ramp gave way while you were unloading stock."]);return _fc.apply(this,arguments)}}
+ABSURD.push(["You were flattened by the giant inflatable gorilla when it blew off the showroom roof.",()=>S.path==="cardealer"]);
+{const wp=(k,v)=>{if(WORLD[k])WORLD[k].payFor=Object.assign(WORLD[k].payFor||{},{cardealer:v})};
+ wp("boom",1.2);wp("recession",.8);wp("inflation",.9);wp("pandemic",.8);wp("lowrates",1.15);wp("rateshock",.85);wp("rally",1.05);wp("green",1.05);wp("energy",.9);wp("banking",.85)}
+KID_JOBS.rebel.push("a car dealer");KID_JOBS2.work.push("a car salesperson");
+CL_DEF.cardealer={n:"Top Dealer Group Rankings",tail:"Motors"};
+WORK_WORDS.cardealer=["the showroom","the whole sales floor","deals"];
+AV_UNIFORM.cardealer=["#2B3A50","#2B3A50"];
+AMB_OF.cardealer="office";CASE_GROUP.cardealer="trade";PH_WORK.cardealer="road";
+IA_CAREER.cardealer="car";IA_ALT.cardealer=["car","office"];
+NAT_SHUT.push("cardealer");SUED_FOR.push("cardealer");POSTING_NO.push("cardealer");
+TAKEOVER_CAREERS.push("cardealer");BUYERS.cardealer=["Vantage Motor Holdings","the Summit Automotive Group"];
+for(const id of ["w_overtime","w_payrise","w_review"]){const e=EV.find(x=>x.id===id);if(e&&e.only&&!e.only.includes("cardealer"))e.only.push("cardealer")}
+
+/* Qualifications, kit and vocabulary */
+QUALS.cardealer=["Motor industry sales certificate","Consumer credit and finance qualification","Sales management diploma","Dealer principal leadership programme"];
+KIT.cardealer=["A sharp suit and good shoes","A tablet for walk-round videos","A proper valeting bay","A customer database and CRM","A group-wide stock system"];
+NET.cardealer="A motor trade dinner";
+PROMO.cardealer=["Walk-round videos on social media","A launch party for a new model"];
+TEAM_N.cardealer="a salesperson";
+
+/* Career games */
+ARC.cardealer={place:"the forecourt",good:["🚗","🔑","💷"],gn:"sold cars",bad:["🍋","🛞"],bn:"lemons",bg:"#2B3A50",sig:{g:"hold",t:"Hold your nerve",b:"The customer wants a discount. Hold the button and let go when the price is just right.",res:["Full price and they thank you for it. The sales board turns green.","A bit of a discount, but the car's sold.","You knock off so much the finance director has to lie down."]}};
+Object.assign(ARC_CAREER,{cardealer:[
+{e:"reps",t:"Buff the Bonnet",b:"Tap as fast as you can for 10 seconds to polish the bonnet to a showroom shine before the customer arrives.",res:["You can see your face in it. So can the customer. They buy it.","Shiny-ish. Park it in the shade.","Swirl marks everywhere. It looks like a snail held a party."],bg:"#DDE6EE",pose:"object",icon:"🧽",who:"#2B3A50"},
+{e:"targets",t:"Spot the Real Buyers",b:"Tap the customers ready to buy. Ignore the tyre-kickers who just want a free coffee.",scene:"road",good:["🤑","💳","🙋"],bad:["☕","🥱"],res:["Every buyer spotted. The coffee machine gets a rest.","A few sales, a lot of free coffee.","You spent the day with a man who 'just likes the smell of new cars'."]},
+{e:"zone",t:"Name Your Price",b:"Tap to stop the marker in the green zone to land a price the customer will accept. Six deals to close!",icon:"💷",lo:"Too cheap!",hi:"Too pricey!",ok:"Deal!",scene:"city",res:["Six deals, six handshakes. You are a pricing genius.","Some good deals, one you'd rather forget.","You sold a car for less than the mats cost."]},
+{e:"steady",t:"Park It in the Showroom",b:"Hold to steer up, let go to drift down. Squeeze the car through the showroom doors without a scratch!",res:["Not a mark on it. The workshop applauds.","A tiny scuff. A bit of polish will sort it.","You've parked it in the reception desk."],bg:"#E9EEF2",wall:"#8E969A",icon:"🚗"}
+]});
+if(window.__arcReg){ARC_CAREER.cardealer.forEach((T,i)=>{const k=`c_cardealer_${i}`;ARC_KINDS[k]={th:T.th||ARC_TH[T.e],only:["cardealer"],theme:T,t:()=>T.t,b:()=>T.b};ARC_NAMES[k]=ARC_ENGINES[T.e]||T.e})}
+
+/* First day */
+FIRSTDAY.cardealer={s:["Arriving","The tea room","Your first customer"],a:["Your first day at the dealership. Bunting, balloons and forty cars that all need washing.",["Early, with doughnuts for the sales team","The sales team decide you're all right."],["On time, shoes polished","Smart. The sales manager nods."],["Late, after getting lost in the car park","You blend in with the customers.","Someone tries to sell you a car."]],l:["Lunch in the tea room. A sales board on the wall shows who's winning.",["Sit with the old hands","You learn more in an hour than in a week of training."],["Study the price list","Dull, but you know every car on the lot now."],["Ask the top seller for tips","They tell you their three best lines.","They tell you to stay away from their customers."]],w:["A customer walks in. Everyone else is busy. It's yours.",["Keep it friendly and honest","They don't buy today, but they take your card."],["Go straight for the close","They sign! The sales board gets your first tick.","They leave. Quickly."],["Fetch the sales manager","You watch a master at work."]]};
+
+/* The big deal of the month */
+OPS.cardealer={kind:"The big deal",kitN:"Preparation",names:["the fleet tender","the footballer's supercar","the month-end push","the new model launch weekend","the classic car auction","the open day","the company car scheme","the rental company order","the dentist's sports car","the family who want three cars","the taxi firm's new fleet","the council van contract","the retired couple's motorhome","the lottery winner's shopping spree","the car club's electric fleet"],
+ brief:[["buyer","The buyer",["ready to buy today","just browsing"],["The receptionist","The salesperson who met them last week"]],["car","The car",["spotless","a bit tired"],["The workshop","The online listing"]]],
+ plans:[["Go for the close today","Brilliant with a buyer ready to sign. Scares off a browser.",{buyer:[.18,-.16]}],["No pressure, build trust","Slow, but browsers come back and buy.",{buyer:[-.06,.16]}],["A long test drive","Lets a great car sell itself. Shows up every rattle in a tired one.",{car:[.18,-.16]}]],
+ kits:[["A full valet and a fresh MOT","Hides a tired car's flaws.",{car:[-.02,.16]}],["A tempting finance offer","Tips a keen buyer over the line. Wasted on a browser.",{buyer:[.12,-.1]}],["A money-back guarantee","If it goes wrong, the customer isn't lost.",{},1]],
+ win:["They sign on the spot and shake your hand twice.","They buy the extended warranty too. The finance manager hugs you.","They post a five-star review before they've left the car park.","They send their brother in the next week.","Your name goes to the top of the sales board in green.","The manufacturer rings to say well done.","Full price. No discount. Not even the mats.","They order a second car for their partner.","The whole showroom claps as the keys are handed over.","Head office uses the deal as an example in training."],
+ lose:["They go away to 'think about it'. They never come back.","They buy the same car from the dealer across the road for £200 less.","The finance gets turned down at the last minute.","The car won't start for the test drive.","They find a scratch you missed and walk.","Their partner rings mid-deal and says no.","The part-exchange turns out to be worth nothing.","They ask for so much off that you lose money.","A warning light comes on during the test drive.","They leave a one-star review. For the coffee."]};
+JOB_TWISTS.cardealer=[["cash buyer",1.2,.8,-.04],["month-end",1.4,1,.08],["hard haggler",.85,1.2,.08],["smelly part-ex",.9,1.1,.06],["finance wobble",.8,1,.1]];
+
+/* Diary */
+DIARY_JOB.cardealer=[["Month-end sales push","big"],["A car handover you promised","must"],["A motor trade dinner","net"],["A one-to-one with the sales manager","boss"]];
+DIARY_JOB2.cardealer=[["A new model launch night","big"],["Clearing the online enquiries","must"],["A trip to the car auction","net"],["A delivery to a customer's door","must"],["A manufacturer's training day","net"],["A fleet buyer who wants it all by Friday","big"]];
+DIARY_JOB3.cardealer=[["A supercar sale to a footballer","big"],["The September plate-change rush","big"],["Closing a fleet deal","big"],["A classic car auction","big"],["The quarterly target deadline","big"],["A mystery shopper visit","big"],["A family buying three cars at once","big"],["Valeting the whole forecourt","must"],["A warranty claim to sort out","must"],["Paperwork for a finance deal","must"],["A part-exchange to check over","must"],["Returning a customer's call about a rattle","must"],["Booking in a car for its first service","must"],["A dealer awards dinner","net"],["A motor show","net"],["A manufacturer's new model preview","net"],["A breakfast with local business owners","net"],["Training the new valeter","net"],["Going through the sales figures with the boss","boss"],["Cars and coffee with the dealer principal","boss"]];
+DIARY_JOB.cardealer.forEach(([t,fx],i)=>{const [hit,miss]=DIARY_FX[fx];DIARY_POOL.push({k:`dj_cardealer_${i}`,kind:"work",t,ok:fx==="boss"?()=>S.path==="cardealer"&&!!S.boss&&!soloJob()&&S.rank<4:()=>S.path==="cardealer",hit,miss})});
+DIARY_JOB2.cardealer.forEach(([t,fx],i)=>{const [hit,miss]=DIARY_FX[fx];DIARY_POOL.push({k:`dj2_cardealer_${i}`,kind:"work",t,ok:fx==="boss"?()=>S.path==="cardealer"&&!!S.boss&&!soloJob()&&S.rank<4:()=>S.path==="cardealer",hit,miss})});
+DIARY_JOB3.cardealer.forEach(([t,fx],i)=>{const [hit,miss]=DIARY_FX[fx]||DIARY_FX.must;DIARY_POOL.push({k:`dj3_cardealer_${i}`,kind:"work",t,ok:fx==="boss"?()=>S.path==="cardealer"&&!!S.boss&&!soloJob()&&S.rank<4:()=>S.path==="cardealer",hit,miss})});
+
+/* Seasonal: new number plates arrive in March and September */
+EV.push(
+ cal("cal_cardealer","cardealer",2,"The sales manager","New plate day","The new registration plates arrive on the 1st. Every buyer in town wants the new number.",[{t:"Open early and stay late all week",fx:{pnl:4,stress:8},o:"Forty handovers in five days. You dream about number plates."},{t:"Keep normal hours",fx:{pnl:2},o:"Busy, but you still see daylight."}]),
+ cal("cal_cardealer2","cardealer",8,"The manufacturer","September plate change","The second plate change of the year, and the manufacturer has set a huge target.",[{t:"Throw a launch party on the forecourt",p:.6,win:{fx:{pnl:4,rep:4},o:"Balloons, a hot dog van and a queue of buyers."},lose:{fx:{pnl:1,stress:4},o:"It pours with rain. The balloons blow onto the bypass."}},{t:"Ring every customer due a new car",fx:{pnl:3,stress:4},o:"Three hundred calls. Twenty-two orders."}])
+);
+
+/* Inbox stories */
+EV.push(
+ {id:"cd_1",career:"cardealer",r:[0,1],from:"The sales manager",t:"Indicator fluid",b:"The sales manager sends you to the workshop for a can of indicator fluid. The mechanics are already grinning.",c:[
+  {t:"Go and ask for it",fx:{stress:2,rep:1},o:"The workshop sends you to parts. Parts send you to the office. You work it out at lunch."},
+  {t:"Ask if he means blinker fluid",p:.5,win:{fx:{rep:3},o:"He laughs. 'This one's sharp.'"},lose:{fx:{rep:-1},o:"'No, indicator fluid. Totally different.' Off you go."}}]},
+ {id:"cd_2",career:"cardealer",r:[0,1],from:"The forecourt",t:"Frost on forty windscreens",b:"It's minus four and there are forty cars to defrost before opening. You have one scraper and a kettle.",c:[
+  {t:"Scrape every car by hand",fx:{stress:4,rep:2,health:-1},o:"Your fingers stop working at car twenty-six. The forecourt sparkles."},
+  {t:"Pour hot water on the screens",p:.6,win:{fx:{rep:1},o:"Clear in minutes. Nobody notices your shortcut."},lose:{fx:{rep:-3,gbp:-300,fixed:1},o:"A windscreen cracks with a noise like a gunshot. It comes out of your wages."}}]},
+ {id:"cd_3",career:"cardealer",r:[0,1],from:"A part-exchange",t:"What's in the boot?",b:"Valeting a part-exchange, you find a bag in the spare wheel well with £600 in cash and a betting slip.",c:[
+  {t:"Hand it in and call the owner",fx:{karma:4,rep:2},o:"The owner is a pensioner. She brings the whole team a Victoria sponge."},
+  {t:"Keep it quiet and keep it",p:.5,win:{fx:{gbp:600,karma:-5},o:"Nobody ever asks. You feel slightly sick whenever you see a sponge cake."},lose:{fx:{heat:10,rep:-5,karma:-5},o:"The owner rings asking about it. The CCTV is very clear."}}]},
+ {id:"cd_4",career:"cardealer",r:[0,1],from:"A customer",t:"The test drive that won't end",b:"You're in the passenger seat on a test drive. The customer has just taken the slip road for the motorway and says he wants to 'see what she does'.",c:[
+  {t:"Firmly ask him to turn back",fx:{rep:1,stress:2},o:"He sulks back to the showroom at exactly 29mph. He doesn't buy."},
+  {t:"Let him enjoy it",p:.5,win:{fx:{pnl:1,rep:2},o:"He loves it. He signs before he's even parked."},lose:{fx:{heat:6,stress:6},o:"A speed camera flashes. The ticket goes to the dealership, then to you."}}]},
+ {id:"cd_5",career:"cardealer",r:[0,1],from:"The dealer principal",t:"Wash the boss's car",b:"The dealer principal wants his own car washed by hand, inside and out, by lunchtime. It's not in your job description.",c:[
+  {t:"Do a perfect job",fx:{rep:2,stress:2},o:"He notices the tyre shine. He remembers your name."},
+  {t:"Put it through the jet wash quickly",p:.5,win:{fx:{},o:"Close enough. He doesn't look."},lose:{fx:{rep:-3},o:"There's still a crisp packet in the door pocket. He looks."}},
+  {t:"Point out it's not your job",fx:{rep:-2,karma:1},o:"Technically right. Practically, a mistake."}]},
+ {id:"cd_6",career:"cardealer",r:[0,2],from:"Your phone",t:"The 11pm enquiry",b:"A buyer messages at 11pm asking for a video walk-round of a hatchback. Right now, please.",c:[
+  {t:"Go back and film it by torchlight",fx:{stress:4,home:-2,pnl:1},o:"Grainy, a bit spooky, and it sells the car."},
+  {t:"Promise it first thing tomorrow",p:.6,win:{fx:{pnl:.5},o:"They wait. They buy."},lose:{fx:{},o:"A dealer in Swindon filmed theirs at 11.05pm."}}]},
+ {id:"cd_7",career:"cardealer",r:[0,1],from:"The workshop",t:"The smell in the part-ex",b:"A part-exchange has arrived smelling strongly of wet dog and something worse. It needs to be on the forecourt by Saturday.",c:[
+  {t:"Deep clean it yourself",fx:{stress:3,health:-1,rep:2,skill:1},o:"Four hours, two bottles of shampoo and an ozone machine. It smells of pine now. Mostly."},
+  {t:"Hang six air fresheners in it",p:.4,win:{fx:{},o:"Someone with a heavy cold buys it."},lose:{fx:{rep:-3},o:"A test driver opens the window at the first junction and keeps it open."}}]},
+ {id:"cd_8",career:"cardealer",r:[0,1],from:"The sales manager",t:"Mystery shopper",b:"Head office are sending a mystery shopper this month. Your manager says, 'Treat everyone like they're the mystery shopper.'",c:[
+  {t:"Treat everyone perfectly",fx:{stress:3,rep:3},o:"You score 98%. You lost two points for not offering a biscuit."},
+  {t:"Try to guess who it is",p:.4,win:{fx:{rep:4},o:"You spot the clipboard in their handbag and give the performance of your life."},lose:{fx:{rep:-4},o:"You fuss over a man who only wanted the toilet. The real shopper waits twenty minutes."}}]},
+ {id:"cd_9",career:"cardealer",r:[0,1],from:"A student",t:"A first car for £1,500",b:"A nervous 17-year-old and his dad have £1,500 for a first car. Your cheapest is £2,995 and needs a clutch.",c:[
+  {t:"Point them to a reliable car elsewhere",fx:{karma:4,rep:1},o:"The dad shakes your hand. Two years later he buys his own car from you."},
+  {t:"Push finance on the £2,995 car",p:.5,win:{fx:{pnl:.5,karma:-2},o:"They sign. The clutch lasts four months."},lose:{fx:{heat:6,karma:-3},o:"The clutch goes on the drive home. The dad goes to Trading Standards."}}]},
+ {id:"cd_10",career:"cardealer",r:[0,2],from:"The wash bay",t:"The pressure washer incident",b:"You've pressure-washed a classic convertible's soft top. It now has a hole in it.",c:[
+  {t:"Own up straight away",fx:{rep:-1,karma:3,stress:3},o:"Your manager sighs. The new roof costs £1,200. You keep your job."},
+  {t:"Patch it and say nothing",p:.3,win:{fx:{karma:-3},o:"Nobody notices. Until it rains."},lose:{fx:{rep:-5,heat:6},o:"The buyer drives off in a downpour and comes back with a wet lap."}}]},
+ {id:"cd_11",career:"cardealer",r:[1,2],from:"The sales board",t:"Month-end, two cars short",b:"It's the 30th. You're two cars short of your bonus and the showroom is empty.",c:[
+  {t:"Ring every lead from the last six months",fx:{stress:5,pnl:1,skill:1},o:"Forty calls, two appointments, one sale. Close enough."},
+  {t:"Offer big discounts to anyone who'll sign today",p:.6,win:{fx:{pnl:1.5,rep:1},o:"Two sales at 6.55pm. The board turns green."},lose:{fx:{pnl:-1,rep:-2},o:"You sell one at a loss. The finance director wants a word."}},
+  {t:"Accept the miss",fx:{stress:-2},o:"Next month starts on Thursday."}]},
+ {id:"cd_12",career:"cardealer",r:[1,3],from:"A part-exchange",t:"The clocked car",b:"A part-exchange shows 41,000 miles. The service book says it had done 112,000 two years ago.",c:[
+  {t:"Report it and refuse the part-ex",fx:{karma:4,rep:2},o:"The customer suddenly remembers another appointment."},
+  {t:"Take it and sell it on as it is",p:.4,win:{fx:{pnl:1.5,karma:-6},o:"It sells in a week. You don't sleep that well."},lose:{fx:{heat:16,rep:-6,karma:-6},o:"The new owner runs a history check. Trading Standards ring the showroom."}}]},
+ {id:"cd_13",career:"cardealer",r:[1,2],from:"A couple",t:"The timewasters",b:"A couple have test driven nine cars over three Saturdays. They drink a lot of your free coffee.",c:[
+  {t:"Give them one last proper go",p:.4,win:{fx:{pnl:1,rep:2},o:"They buy the first car they drove, three weeks ago."},lose:{fx:{stress:3},o:"They're 'just thinking about it'. And about the biscuits."}},
+  {t:"Politely pass them to a colleague",fx:{stress:-2},o:"Your colleague sells them a car on day one. You say nothing."}]},
+ {id:"cd_14",career:"cardealer",r:[1,3],from:"The finance manager",t:"Pack the payment",b:"The finance manager says you could add paint protection and gap insurance to every deal 'without making a fuss about it'.",c:[
+  {t:"Explain every extra properly",fx:{karma:3,rep:1},o:"Half of them say no. The ones who say yes mean it."},
+  {t:"Slip them into the monthly payment",p:.5,win:{fx:{pnl:2,karma:-4},o:"The commission is fantastic. Nobody reads page seven."},lose:{fx:{heat:14,rep:-5,karma:-4},o:"A customer reads page seven. So does the ombudsman."}}]},
+ {id:"cd_15",career:"cardealer",r:[1,3],from:"Online reviews",t:"The wrong blue",b:"A one-star review: 'Worst dealer in Britain. Car was the wrong blue.' The car is the blue they ordered.",c:[
+  {t:"Reply politely with the facts",fx:{rep:2},o:"Other buyers can see you're reasonable."},
+  {t:"Reply with a photo of the order form",p:.5,win:{fx:{rep:3},o:"The internet loves a receipt. It gets 4,000 likes."},lose:{fx:{rep:-3,heat:4},o:"The local paper runs it as 'Dealer shames customer'."}},
+  {t:"Offer a free valet",fx:{pnl:-.2,rep:1},o:"They change it to three stars. 'The valet was nice.'"}]},
+ {id:"cd_16",career:"cardealer",r:[1,3],from:"A footballer's agent",t:"A supercar by Saturday",b:"A young footballer wants a bright orange supercar by Saturday, for his birthday. Price isn't a problem. Paperwork is.",c:[
+  {t:"Move heaven and earth",p:.6,win:{fx:{pnl:2,rep:4},o:"He posts it to four million followers. Your phone rings for a week."},lose:{fx:{stress:6,rep:-2},o:"It arrives on Monday. He's bought one somewhere else."}},
+  {t:"Promise it for next month",fx:{rep:-1},o:"His agent says he'll 'keep you in mind'."}]},
+ {id:"cd_17",career:"cardealer",r:[1,2],from:"The multi-storey",t:"The demo car scrape",b:"You've scraped the demonstrator down a concrete pillar in the multi-storey. It's the manager's favourite.",c:[
+  {t:"Tell him straight away",fx:{rep:-2,karma:2,stress:2},o:"He goes very quiet, then very loud. Then it's over."},
+  {t:"Get a smart repair before he notices",p:.6,win:{fx:{gbp:-250},o:"A man with a van makes it vanish in an hour."},lose:{fx:{gbp:-250,rep:-4},o:"The repair is a slightly different silver. He spots it from across the car park."}}]},
+ {id:"cd_18",career:"cardealer",r:[1,3],from:"A customer",t:"Cash in a carrier bag",b:"A man wants to pay £18,000 in cash for a hatchback. It's in a carrier bag. He's very relaxed about it.",c:[
+  {t:"Follow the money laundering checks",fx:{karma:3,rep:1,stress:2},o:"He suddenly needs to 'pop to the bank'. He never comes back."},
+  {t:"Take the cash, no questions",p:.5,win:{fx:{pnl:1,karma:-5},o:"Sold. You try not to think about it."},lose:{fx:{heat:18,karma:-5,stress:6},o:"The police visit. The money was not from a lottery win."}}]},
+ {id:"cd_19",career:"cardealer",r:[1,3],from:"A pensioner",t:"Too much car",b:"A lovely 84-year-old wants to swap her tiny runaround for a huge SUV. She can barely see over the wheel of her current car.",c:[
+  {t:"Gently steer her to something smaller",fx:{karma:4,rep:1},o:"She buys a little automatic and sends you a Christmas card."},
+  {t:"Sell her the SUV",p:.5,win:{fx:{pnl:1,karma:-2},o:"She loves it. She parks across three spaces at the supermarket every week."},lose:{fx:{pnl:1,heat:6,karma:-3},o:"Her son rings, furious. So does the local radio phone-in."}}]},
+ {id:"cd_20",career:"cardealer",r:[1,2],from:"The handover bay",t:"Wrong fuel",b:"A colleague promised a customer a full tank. The car is a diesel. Someone has filled it with petrol.",c:[
+  {t:"Get it drained before the handover",fx:{pnl:-.3,stress:3},o:"The customer waits an extra hour and never finds out why."},
+  {t:"Hope it was only a splash",p:.2,win:{fx:{},o:"Somehow, it runs."},lose:{fx:{rep:-4,pnl:-.6,heat:4},o:"It stops on the roundabout outside. In full view of the showroom."}}]},
+ {id:"cd_21",career:"cardealer",r:[1,3],from:"A customer",t:"Range anxiety",b:"A customer wants an electric car but is sure it'll run out of charge between Leeds and Wakefield.",c:[
+  {t:"Lend them one for the weekend",p:.7,win:{fx:{pnl:1,rep:2},o:"They come back with 60% battery and a deposit."},lose:{fx:{rep:-2},o:"They forget to charge it and push it into a lay-by."}},
+  {t:"Sell them a hybrid instead",fx:{pnl:.6},o:"A compromise. Everyone's mildly happy."}]},
+ {id:"cd_22",career:"cardealer",r:[1,2],from:"Your colleague Gaz",t:"Gaz is poaching your customers",b:"Gaz has been 'helping' your customers while you're on lunch, and logging the sales as his.",c:[
+  {t:"Raise it with the sales manager",p:.6,win:{fx:{rep:2,pnl:.5},o:"The records don't lie. Gaz buys you a coffee, sulkily."},lose:{fx:{stress:4},o:"'Sort it out between yourselves.' Brilliant."}},
+  {t:"Eat lunch at your desk from now on",fx:{stress:3,health:-1},o:"You guard your patch like a hawk with a meal deal."},
+  {t:"Do it back to him",fx:{pnl:.5,karma:-3,rep:-1},o:"The showroom turns into a cold war."}]},
+ {id:"cd_23",career:"cardealer",r:[0,2],from:"The weather",t:"Hailstorm on the forecourt",b:"Hailstones the size of golf balls have just dented every car on the forecourt. All seventy of them.",c:[
+  {t:"Hold a 'hail sale'",p:.6,win:{fx:{pnl:1.5,rep:2},o:"Dimpled cars, dimpled prices. The queue goes round the block."},lose:{fx:{pnl:-1},o:"Nobody wants a golf-ball car. The insurer takes months."}},
+  {t:"Claim on the insurance and wait",fx:{pnl:-.5,stress:2},o:"A quiet month while the dent men work their magic."}]},
+ {id:"cd_24",career:"cardealer",r:[1,3],from:"A customer",t:"The 13-day return",b:"A customer wants to return a car after 13 days. Legally they have 14. They say it 'doesn't suit their personality'.",c:[
+  {t:"Take it back with a smile",fx:{pnl:-.4,rep:2},o:"They come back next month and buy a yellow one."},
+  {t:"Argue the point",p:.4,win:{fx:{},o:"They decide their personality can adapt."},lose:{fx:{rep:-3,heat:5},o:"Consumer law is very clear. So is their review."}}]},
+ {id:"cd_25",career:"cardealer",r:[2,3],from:"Head office",t:"Register them ourselves",b:"You're 30 cars short of the manufacturer's quarterly target. Head office suggests registering them to the dealership and selling them as 'nearly new'.",c:[
+  {t:"Do it, everyone does",fx:{pnl:2,rep:1},o:"Target hit. The forecourt is full of 'nearly new' cars with ten miles on them."},
+  {t:"Sell harder instead",p:.4,win:{fx:{pnl:2.5,rep:3},o:"Your team sells 30 cars in nine days. Legends."},lose:{fx:{pnl:-1,rep:-3},o:"You miss the target. The bonus money vanishes."}}]},
+ {id:"cd_26",career:"cardealer",r:[3,4],from:"Your best salesperson",t:"Your top seller wants to leave",b:"Priya sells twice as much as anyone. The dealer across the road has offered her more commission.",c:[
+  {t:"Match the offer",fx:{pnl:-.5,morale:4},o:"She stays. The others notice and ask for the same."},
+  {t:"Let her go",fx:{pnl:-1,morale:-3},o:"She takes her customers with her. Everyone else gets busier."},
+  {t:"Offer her a promotion instead",p:.6,win:{fx:{morale:5,rep:2},o:"She loves the new title more than the money."},lose:{fx:{morale:-2},o:"She takes the title, then the job across the road."}}]},
+ {id:"cd_27",career:"cardealer",r:[2,4],from:"A rival dealer",t:"Price war",b:"The dealer across the road has knocked £1,000 off every car and put up a huge banner: 'CHEAPER THAN OPPOSITE'.",c:[
+  {t:"Match their prices",fx:{pnl:-1,rep:1},o:"Both forecourts are busy. Neither of you makes any money."},
+  {t:"Compete on service",p:.55,win:{fx:{pnl:1,rep:3},o:"Free valets and a proper coffee machine. Buyers come back."},lose:{fx:{pnl:-1.5},o:"Buyers love the coffee. Then they buy across the road."}},
+  {t:"Put up a bigger banner",p:.5,win:{fx:{rep:2,pnl:.5},o:"'WE'RE OPPOSITE THE CHEAP ONE.' The local paper loves it."},lose:{fx:{heat:5},o:"The council says your banner needs planning permission."}}]},
+ {id:"cd_28",career:"cardealer",r:[2,3],from:"The workshop manager",t:"Thirteen months",b:"A customer's gearbox has died at 13 months. The warranty ran out at 12.",c:[
+  {t:"Cover it as goodwill",fx:{pnl:-1,rep:3,karma:3},o:"An expensive gesture. The customer tells everyone at their golf club."},
+  {t:"Split the cost",fx:{pnl:-.4,rep:1},o:"Some grumbling, but fair."},
+  {t:"Point at the small print",p:.5,win:{fx:{},o:"They pay up. They don't come back."},lose:{fx:{rep:-4,heat:6},o:"A consumer TV show wants to talk to you about it."}}]},
+ {id:"cd_29",career:"cardealer",r:[2,4],from:"A friend in the trade",t:"Hidden cameras",b:"Rumour has it a TV consumer show is filming dealers with hidden cameras this month.",c:[
+  {t:"Brief the team to do everything by the book",fx:{stress:3,rep:2},o:"Every customer gets every form. Sales take twice as long."},
+  {t:"Carry on as normal",p:.6,win:{fx:{},o:"They film the dealer in the next town instead. Ouch."},lose:{fx:{heat:12,rep:-5},o:"Your top seller calls a car 'basically new' on camera. It's ten years old."}}]},
+ {id:"cd_30",career:"cardealer",r:[2,3],from:"A farmer's widow",t:"The barn find",b:"A widow wants to sell a rusty sports car that's been in a barn since 1978. It could be worth a fortune. Or nothing.",c:[
+  {t:"Offer a fair price and tell her what it's worth",fx:{karma:5,pnl:.5,rep:2},o:"She's delighted. You restore it and still make a decent profit."},
+  {t:"Offer £2,000 and call it scrap",p:.5,win:{fx:{pnl:2.5,karma:-6},o:"It sells at auction for £85,000. You don't mention this to her."},lose:{fx:{heat:12,karma:-6,rep:-5},o:"Her grandson looks it up. The local paper does the rest."}}]},
+ {id:"cd_31",career:"cardealer",r:[2,3],from:"The finance company",t:"Computer says no",b:"A young nurse has been turned down for finance on a cheap hatchback. She needs a car for night shifts.",c:[
+  {t:"Find a lender who'll take her",fx:{karma:3,pnl:.4},o:"Three hours on the phone. She cries happy tears."},
+  {t:"Help 'adjust' her income on the form",p:.5,win:{fx:{pnl:.6,karma:-4},o:"Approved. It's fraud, but approved."},lose:{fx:{heat:15,karma:-4},o:"The lender audits the file. Your name is on it."}}]},
+ {id:"cd_32",career:"cardealer",r:[2,4],from:"The local Scouts",t:"Lend a minibus",b:"The Scouts' minibus has died the week before their trip to Wales. They ask if you can help.",c:[
+  {t:"Lend them a minibus for free",fx:{karma:4,rep:3,pnl:-.2},o:"They bring it back with a hand-drawn thank-you card. It goes on the showroom wall."},
+  {t:"Offer a discount on a new one",fx:{pnl:.3,rep:1},o:"They can't afford it. They go by train."}]},
+ {id:"cd_33",career:"cardealer",r:[3,4],from:"Your sales team",t:"Team building",b:"Your team wants go-karting for a team-building day. The budget covers pizza.",c:[
+  {t:"Pay for go-karting yourself",fx:{gbp:-600,morale:6},o:"The finance manager wins. Nobody saw that coming."},
+  {t:"Pizza in the showroom",fx:{morale:1},o:"It's fine. Someone gets cheese on a leather seat."}]},
+ {id:"cd_34",career:"cardealer",r:[2,4],from:"The manufacturer",t:"The model nobody wants",b:"The manufacturer's new model is late and ugly, and you've been told to take 40 of them.",c:[
+  {t:"Take them and get creative",p:.5,win:{fx:{pnl:2,rep:3},o:"You market it as 'bold'. It works on exactly 40 people."},lose:{fx:{pnl:-2},o:"They sit on the forecourt so long people give directions by them."}},
+  {t:"Push back and take ten",fx:{rep:-2,pnl:-.3},o:"The manufacturer notes your 'lack of partnership'."}]},
+ {id:"cd_35",career:"cardealer",r:[2,4],from:"The forecourt",t:"The test drive that never came back",b:"A man took a sports car for a test drive this morning and hasn't come back. His licence was fake.",c:[
+  {t:"Call the police and the tracker company",p:.7,win:{fx:{stress:3},o:"It's found in a supermarket car park with a parking ticket on it."},lose:{fx:{pnl:-1.5,stress:6},o:"It's on a ship to somewhere warm. The insurer is not amused."}},
+  {t:"Chase it yourself with the tracker app",p:.5,win:{fx:{rep:4,stress:4},o:"You find it outside his mum's. He hands over the keys and says sorry."},lose:{fx:{health:-3,stress:8},o:"A car chase in a demo hatchback. You lose, and get a speeding ticket."}}]},
+ {id:"cd_36",career:"cardealer",r:[3,3],from:"The manufacturer",t:"Rebuild the showroom",b:"The manufacturer wants every dealer to rebuild their showroom in its new 'brand identity'. Cost: £1.2 million. Main change: grey.",c:[
+  {t:"Do it",fx:{pnl:-2,rep:3},o:"The showroom is very grey. The manufacturer loves it."},
+  {t:"Negotiate a cheaper refresh",p:.5,win:{fx:{pnl:-.5,rep:1},o:"New signs and a coffee machine. They accept."},lose:{fx:{rep:-4},o:"They threaten to take your franchise. You order the grey."}}]},
+ {id:"cd_37",career:"cardealer",r:[3,4],from:"An auditor",t:"Stamps without services",b:"Your service manager has been stamping service books for work that was never done. Customers paid for oil changes they didn't get.",c:[
+  {t:"Sack him and refund every customer",fx:{pnl:-2,karma:5,rep:2,heat:-5},o:"Expensive and painful. Customers trust you more for it."},
+  {t:"Quietly move him on",p:.5,win:{fx:{pnl:-.3,karma:-3},o:"He leaves with a reference. It goes away."},lose:{fx:{heat:16,rep:-6},o:"A customer's engine fails. The service history was fiction. Lawyers arrive."}}]},
+ {id:"cd_38",career:"cardealer",r:[3,4],from:"An electric car brand",t:"A brand nobody's heard of",b:"A new electric car brand nobody's heard of wants you to sell its cars. They're good and very cheap.",c:[
+  {t:"Sign up",p:.6,win:{fx:{pnl:3,rep:3},o:"They sell faster than you can unload the transporters."},lose:{fx:{pnl:-2,rep:-2},o:"The brand pulls out of Britain after eight months."}},
+  {t:"Stick with your current brands",fx:{rep:-1},o:"The dealer in the next town signs up. Their forecourt is packed."}]},
+ {id:"cd_39",career:"cardealer",r:[3,4],from:"Your HR manager",t:"The commission culture",b:"Exit interviews say your sales floor is aggressive and burns people out. Two good people left last month.",c:[
+  {t:"Move to salaries with team bonuses",p:.6,win:{fx:{morale:8,pnl:.5,karma:2},o:"Calmer, kinder, and sales are up. Customers notice."},lose:{fx:{morale:2,pnl:-1.5},o:"Calmer, kinder, and sales fall off a cliff."}},
+  {t:"Keep the commission system",fx:{morale:-3,pnl:.5},o:"The sales board stays. So does the staff turnover."}]},
+ {id:"cd_40",career:"cardealer",r:[3,4],from:"Your IT supplier",t:"Hacked",b:"Hackers have locked your dealer system and want £80,000 in crypto. You can't sell or service a thing.",c:[
+  {t:"Refuse and restore from backups",p:.6,win:{fx:{pnl:-1,stress:6,rep:1},o:"Three horrible days. Then it's back."},lose:{fx:{pnl:-3,stress:10},o:"The backups were locked too. A fortnight of chaos and paper forms."}},
+  {t:"Pay the ransom",fx:{pnl:-2,heat:6,karma:-2},o:"The system unlocks. The hackers keep a copy of your customers' details."}]},
+ {id:"cd_41",career:"cardealer",r:[3,4],from:"The council",t:"Save Gary the gorilla",b:"Gary, your giant inflatable gorilla, has been voted the town's favourite landmark. The council wants him taken down.",c:[
+  {t:"Launch a 'Save Gary' campaign",p:.6,win:{fx:{rep:5,pnl:1},o:"5,000 signatures. Gary stays. Sales go up."},lose:{fx:{heat:5,rep:-1},o:"The council wins. Gary retires to a farm in Shropshire."}},
+  {t:"Take him down quietly",fx:{rep:-2},o:"The town mourns for about a week."}]},
+ {id:"cd_42",career:"cardealer",r:[3,4],from:"The finance regulator",t:"The commission scandal",b:"The regulator says dealers took hidden commission on car finance for years. Old customers may claim compensation.",c:[
+  {t:"Set money aside and contact customers",fx:{pnl:-2.5,karma:4,heat:-6},o:"Expensive. But you're the dealer the papers don't write about."},
+  {t:"Wait and see who complains",p:.5,win:{fx:{pnl:-.5},o:"Few people claim. You got away with it."},lose:{fx:{pnl:-3,heat:14},o:"A claims firm writes to all your customers at once."}}]},
+ {id:"cd_43",career:"cardealer",r:[3,3],from:"Your accountant",t:"Stock that won't shift",b:"Cars are sitting on the forecourt and the funding company wants its money back on anything older than 180 days.",c:[
+  {t:"Send the old stock to auction",fx:{pnl:-1,stress:2},o:"A loss, but you can breathe again."},
+  {t:"Cut prices hard on the forecourt",p:.6,win:{fx:{pnl:.5,rep:2},o:"'SALE' banners work. They always do."},lose:{fx:{pnl:-1.5},o:"Buyers smell desperation and offer even less."}}]},
+ {id:"cd_44",career:"cardealer",r:[3,4],from:"A footballer",t:"Return the supercar",b:"A footballer you sold a £300,000 supercar to wants to give it back after a month. His new club has a 'no supercars' rule.",c:[
+  {t:"Buy it back at a fair price",fx:{pnl:-.5,rep:3},o:"He sends you signed shirts. You sell the car to a dentist."},
+  {t:"Offer him very little",p:.5,win:{fx:{pnl:1.5},o:"He doesn't care. He's got a new contract."},lose:{fx:{rep:-4,heat:4},o:"He moans about you in a post-match interview."}}]},
+ {id:"cd_45",career:"cardealer",r:[4,4],from:"Private equity",t:"A buyout offer",b:"An investment firm wants to buy your group and bolt it onto forty others. They'll pay a lot. They'll also cut a lot.",c:[
+  {t:"Hold out for more",p:.5,win:{fx:{pnl:3,rep:2},o:"They walk away, then come back with more. They blinked first."},lose:{fx:{pnl:-1},o:"They buy your biggest rival instead."}},
+  {t:"Turn them down",fx:{morale:5,rep:2},o:"Your staff hear about it. They're proud to work for you."}]},
+ {id:"cd_46",career:"cardealer",r:[4,4],from:"The government",t:"The end of petrol",b:"The government confirms the date for ending new petrol car sales. Your group sells mostly petrol.",c:[
+  {t:"Go all in on electric",p:.6,win:{fx:{pnl:3,rep:4},o:"Your chargers fill up. So do your order books."},lose:{fx:{pnl:-2},o:"The date gets pushed back. Again."}},
+  {t:"Wait and see",fx:{pnl:.5},o:"The date gets pushed back. Again. You feel smug for exactly one year."}]},
+ {id:"cd_47",career:"cardealer",r:[4,4],from:"A TV production company",t:"A reality show",b:"A TV channel wants a fly-on-the-wall series about your group. 'Like a nature documentary, but with car salesmen.'",c:[
+  {t:"Say yes",p:.5,win:{fx:{rep:6,pnl:2},o:"Gaz from Doncaster becomes a national treasure. Sales soar."},lose:{fx:{rep:-5,heat:10},o:"The edit makes your team look like sharks. In one scene, they are."}},
+  {t:"Say no",fx:{},o:"They film a rival instead. Gaz is devastated."}]},
+ {id:"cd_48",career:"cardealer",r:[4,4],from:"Your finance director",t:"Showrooms or screens?",b:"Your finance director wants to close half the showrooms and sell cars online, delivered to the door.",c:[
+  {t:"Go online",p:.55,win:{fx:{pnl:3,morale:-3},o:"Costs fall and sales rise. Some old-school staff leave."},lose:{fx:{pnl:-2,morale:-5},o:"People want to kick the tyres. Sales stall."}},
+  {t:"Keep the showrooms",fx:{morale:3},o:"The coffee machines live another day."},
+  {t:"Do both",fx:{pnl:1,stress:5},o:"Expensive, but you get the best of both."}]},
+ {id:"cd_49",career:"cardealer",r:[4,4],from:"A business broker",t:"Buy your old rival",b:"The dealer across the road, the one with the 'CHEAPER THAN OPPOSITE' banner, is up for sale.",c:[
+  {t:"Buy it",p:.6,win:{fx:{pnl:3,rep:4},o:"You take down the banner yourself. It feels wonderful."},lose:{fx:{pnl:-2,stress:6},o:"Their books were worse than they looked. Much worse."}},
+  {t:"Let someone else have it",fx:{},o:"A national chain buys it. The banner stays."}]},
+ {id:"cd_50",career:"cardealer",r:[4,4],from:"A tabloid",t:"The boat called 'Finance Agreement'",b:"A tabloid prints a photo of your new boat, named 'Finance Agreement', next to a story about car finance mis-selling.",c:[
+  {t:"Rename the boat",fx:{rep:1,gbp:-5000},o:"It's now called 'Customer First'. Nobody believes it."},
+  {t:"Laugh it off",p:.5,win:{fx:{rep:2},o:"The public like a sense of humour."},lose:{fx:{heat:10,rep:-3},o:"The regulator likes it less."}}]},
+ {id:"cd_51",career:"cardealer",r:[3,4],from:"The workshop",t:"No mechanics",b:"Nobody wants to be a car technician any more. Your workshops are 30 mechanics short.",c:[
+  {t:"Build your own training academy",fx:{pnl:-1.5,karma:4,morale:4},o:"Two years later, you have the best workshops in the county."},
+  {t:"Poach them from rivals",p:.6,win:{fx:{pnl:.5},o:"You fill the gaps."},lose:{fx:{pnl:-1,rep:-2},o:"A bidding war. Everyone's wages go up."}}]},
+ {id:"cd_52",career:"cardealer",r:[4,4],from:"A billionaire's assistant",t:"The lipstick-red hypercar",b:"A billionaire wants a hypercar painted to match his wife's favourite lipstick. He has sent the lipstick.",c:[
+  {t:"Have it colour-matched perfectly",p:.7,win:{fx:{pnl:2,rep:3},o:"A perfect match. He orders three more, for the other lipsticks."},lose:{fx:{pnl:-1,stress:6},o:"It's slightly too orange. He sends it back. And the lipstick."}},
+  {t:"Offer the nearest factory colour",fx:{pnl:.5},o:"He buys it, but you'll never be his favourite dealer."}]},
+ {id:"cd_53",career:"cardealer",r:[0,1],from:"The showroom",t:"The coffee machine dies",b:"The showroom coffee machine has broken on the busiest Saturday of the year.",c:[
+  {t:"Run to the café for takeaways (£40)",fx:{gbp:-40,fixed:1,rep:2,stress:2},o:"Twelve flat whites balanced on a spare wheel. Heroic."},
+  {t:"Offer squash and an apology",fx:{rep:-1},o:"A man asks for a refund on his free coffee."}]},
+ {id:"cd_54",career:"cardealer",r:[0,2],from:"A customer's toddler",t:"A biscuit in the CD slot",b:"While you did the paperwork, a toddler posted a custard cream into a brand-new car's CD slot.",c:[
+  {t:"Fish it out with tweezers",p:.6,win:{fx:{skill:1},o:"It comes out whole. The toddler is impressed."},lose:{fx:{rep:-2,pnl:-.2},o:"It comes out in crumbs. The radio now only plays one station."}},
+  {t:"Laugh and say it happens",fx:{rep:2},o:"The parents are so relieved they buy the extended warranty."}]},
+ {id:"cd_55",career:"cardealer",r:[1,3],from:"The car auction",t:"Bidding blind",b:"At the auction, a tidy estate car is going cheap. You haven't had time to check it over.",c:[
+  {t:"Bid anyway",p:.5,win:{fx:{pnl:1},o:"A bargain. It sells in four days."},lose:{fx:{pnl:-.8},o:"Cracked head gasket and a smell. A lot of smell."}},
+  {t:"Let it go",fx:{},o:"The dealer who bought it looks very pleased with himself."}]},
+ {id:"cd_56",career:"cardealer",r:[1,2],from:"A customer",t:"The man who knows cars",b:"A customer insists he knows more about cars than you. He's mostly wrong, and very loud.",c:[
+  {t:"Agree with everything he says",p:.6,win:{fx:{pnl:.6},o:"He buys a car and tells his mates he got the better of you."},lose:{fx:{stress:3},o:"He buys nothing and reviews your 'lack of knowledge'."}},
+  {t:"Politely correct him",p:.4,win:{fx:{rep:2,skill:1},o:"He's oddly impressed. 'You know your stuff.'"},lose:{fx:{stress:4},o:"Forty minutes about torque. He leaves."}}]},
+ {id:"cd_57",career:"cardealer",r:[0,4],again:24,from:"Your back",t:"Too long in the showroom chair",b:"Long days sitting at a desk waiting for walk-ins have done something to your back.",c:[
+  {t:"See a physio (£200)",fx:{gbp:-200,fixed:1,health:3,stress:-1},o:"She says 'move more'. You walk round the forecourt every hour."},
+  {t:"Ignore it",fx:{health:-2},o:"You now get out of cars like a very old man."}]},
+ {id:"cd_58",career:"cardealer",r:[1,3],from:"Your partner",t:"Saturdays, every Saturday",b:"Your partner points out you haven't had a Saturday off since the spring. Saturday is when people buy cars.",c:[
+  {t:"Take every other Saturday off",fx:{home:5,pnl:-.5},o:"You go to a garden centre. It's lovely. You check your sales app twice."},
+  {t:"Keep working them",fx:{home:-4,pnl:.5},o:"The commission is good. The silence at dinner isn't."}]},
+ {id:"cd_59",career:"cardealer",r:[3,4],from:"A trade magazine",t:"Dealer of the Year",b:"Your dealership has been nominated for Dealer of the Year. The ceremony is a black-tie dinner in Birmingham.",c:[
+  {t:"Take the whole team",fx:{gbp:-1500,morale:5,rep:2},o:"You don't win. The team talks about the dinner for a year."},
+  {t:"Go alone and network",p:.5,win:{fx:{rep:4},o:"You win! The speech is short and nobody heckles."},lose:{fx:{rep:1},o:"You lose to a dealer from Solihull. The wine is nice."}}]},
+ {id:"cd_60",career:"cardealer",r:[2,4],from:"A man at the auction",t:"A container of cars",b:"A man you met at the auction offers you 'a container of nearly new cars from abroad'. No paperwork yet. Very cheap.",c:[
+  {t:"Walk away",fx:{karma:2},o:"Two months later, he's on the local news."},
+  {t:"Take a look, at least",p:.3,win:{fx:{pnl:2,karma:-5},o:"The paperwork turns up eventually. You don't ask how."},lose:{fx:{heat:20,karma:-5,pnl:-1},o:"The cars were stolen to order. The police take them, and your statement."}}]}
+);
+
+/* Pictures: the forecourt and the career icon */
+function cardealerArt(){
+ const r=S.rank,W=320,G=96;let g=rc(0,0,W,G+24,"#CFE3EE");
+ g+=`<circle cx="40" cy="22" r="12" fill="#F6D44A" opacity=".8"/>`;
+ g+=rc(170,26,146,70,"#E9EEF2")+rc(170,20,146,8,"#2B3A50");for(let i=0;i<4;i++)g+=rc(176+i*35,34,30,50,"#9CC0D2",'opacity=".75"');
+ g+=rc(196,4,94,16,"#B3262E")+`<text x="243" y="15.5" font-size="9" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">MOTORS</text>`;
+ let bt="";for(let i=0;i<10;i++){const x=6+i*16;bt+=`<path d="M${x} 30 L${x+8} 30 L${x+4} 38Z" fill="${["#B3262E","#F6D44A","#2F7FC1"][i%3]}"/>`}g+=`<path d="M0 30 Q85 34 170 30" fill="none" stroke="#555" stroke-width="1"/>`+bt;
+ g+=rc(0,G,W,24,"#8E969A");for(let i=0;i<8;i++)g+=rc(8+i*40,G+11,20,2,"#F2F4F5",'opacity=".6"');
+ const car=(x,y,col)=>`<g transform="translate(${x} ${y})"><path d="M0 18 L5 9 Q7 5 13 5 H30 Q35 5 38 10 L46 12 Q50 13 50 17 V22 H0Z" fill="${col}"/><path d="M11 8 H22 V12 H8Z" fill="#9CC0D2"/><path d="M25 8 H30 Q33 8 35 12 H25Z" fill="#9CC0D2"/>${rc(18,14,6,4,"#F6D44A")}<circle cx="11" cy="22" r="5" fill="#1B1B1B"/><circle cx="11" cy="22" r="2" fill="#C9CDD1"/><circle cx="39" cy="22" r="5" fill="#1B1B1B"/><circle cx="39" cy="22" r="2" fill="#C9CDD1"/></g>`;
+ const cols=["#B3262E","#2F7FC1","#F2F4F5","#1C2329","#4BBA85","#D7A744"],n=[2,3,3,4,4][r];
+ for(let i=0;i<n;i++)g+=car(4+i*40,G-20+(i%2)*4,cols[i%cols.length]);
+ if(r>=2)g+=car(200,G-24,r>=4?"#D7A744":"#1C2329");
+ if(r>=3)g+=car(258,G-24,"#B3262E");
+ if(r===0)g+=`<circle cx="150" cy="72" r="5" fill="#E0B37E"/>`+rc(146,77,8,16,"#2F7FC1")+`<path d="M155 82 L162 88" stroke="#F6D44A" stroke-width="3"/>`;
+ if(r>=4)g+=`<g transform="translate(150 6)"><ellipse cx="10" cy="22" rx="9" ry="12" fill="#4B3A2E"/><circle cx="10" cy="7" r="7" fill="#4B3A2E"/><circle cx="10" cy="8" r="3.5" fill="#C9A27A"/></g>`;
+ return `<svg class="art work-art" viewBox="0 0 ${W} 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg>`;
+}
+{const _wa=workArt;workArt=function(){if(S&&S.path==="cardealer"&&!S.prison&&!S.front&&!S.sel&&!S.sabb){try{return cardealerArt()}catch(e){}}return _wa.apply(this,arguments)}}
+{const _ci=careerIcon;careerIcon=function(id){if(id!=="cardealer")return _ci.apply(this,arguments);const st='fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"';
+ return `<svg viewBox="0 0 38 38" width="34" height="34" aria-hidden="true" style="color:var(--accent);flex:none"><path ${st} d="M5 25 V20 L9 13 Q10 11 13 11 H25 Q28 11 29 13 L33 20 V25 Z"/><path ${st} d="M8 19 H30"/><circle cx="12" cy="27" r="3" fill="currentColor"/><circle cx="26" cy="27" r="3" fill="currentColor"/></svg>`}}
+
+
+/* ============ Clicks for the newer sections ============ */
+const XCLICK={};
+const l5ok=()=>S&&!S.over&&!S.prison&&!S.front&&!S.sel;
+const l5busy=re=>S.inbox.some(m=>!m.done&&re.test(m.id));
+const youSex=()=>S.av&&S.av.sex==="f"?"f":S.av&&S.av.sex==="m"?"m":"x";
+const firstOf=n=>String(n||"").split(" ")[0];
+
+/* ============ Brothers and sisters ============ */
+const SIB_JOBS=["a teacher","a nurse","an accountant","a plumber","a police officer","a vet","a hairdresser","a software developer","an estate agent","a paramedic","a chef","a solicitor","a lorry driver","a personal trainer","a social worker","an electrician","a pharmacist","a graphic designer","a firefighter","a shop manager","a dental hygienist","a train driver","a florist","a project manager"];
+function ensureSibs(){
+ if(!S)return[];if(S.sibs)return S.sibs;
+ const taken=new Set([firstOf(S.name),S.rel&&S.rel.name,S.friend&&firstOf(S.friend.n),...(S.children||[]).map(k=>k.n)]);
+ const mk=n=>{const sx=genderOf(n)==="f"?"f":"m";const d=rnd()<.5?-(1+Math.floor(rnd()*7)):1+Math.floor(rnd()*7);return{n,sx,d,job:"",partner:rnd()<.3&&age()+d>=26?1:0,kids:0,bond:45+Math.floor(rnd()*25),alive:true,seen:-99}};
+ let names=[];
+ if(S.siblings&&S.siblings.length)names=S.siblings.map(firstOf);
+ else{const r=rnd(),cnt=r<.22?0:r<.62?1:r<.88?2:3;const pool=NAMES_M.concat(NAMES_F).filter(x=>!taken.has(x));for(let i=0;i<cnt&&pool.length;i++){const n=pool.splice(Math.floor(rnd()*pool.length),1)[0];names.push(n)}}
+ S.sibs=names.map(mk);for(const s of S.sibs)sibJob(s);return S.sibs}
+const sibAge=s=>Math.max(0,Math.floor(age()+s.d));
+const sibWord=s=>s.sx==="f"?"sister":"brother";
+const sibWho=s=>`your ${s.d>0?"older":"younger"} ${sibWord(s)}`;
+const auntWord=()=>youSex()==="f"?"an aunt":youSex()==="m"?"an uncle":"an aunt or uncle";
+function sibJob(s){if(!s.job&&sibAge(s)>=22)s.job=pick(SIB_JOBS);if(!s.job&&sibAge(s)<22)s.job=sibAge(s)>=18?"a student":"at school"}
+const liveSibs=()=>ensureSibs().filter(s=>s.alive);
+function sibsSec(){
+ if(!S||S.over)return"";const L=ensureSibs();if(!L.length)return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Brothers and sisters</h2></div><p class="hint" style="margin:0">You're an only child. Your parents say you were plenty.</p></div>`;
+ const row=s=>{const a=sibAge(s),bits=[s.alive?`${a}`:"",s.job&&s.alive?s.job:"",s.partner?(s.partner===2?"divorced":"married"):"",s.kids?`${s.kids} child${s.kids>1?"ren":""}`:"",s.owe?`owes you ${money(s.owe)}`:"",!s.alive?`Died aged ${s.da}`:""].filter(Boolean).join(" · ");
+  return `<li class="${s.alive?"":"gone"}"><svg class="folk-face" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="var(--accent-soft, #F3E2BD)"/>${avatarInner({av:avDefault(s.n+"sib",s.sx),ageOver:s.alive?a:s.da||a,photo:1,outfit:"casual",nw:0,smile:s.bond>=40})}</svg><span><b>${esc(s.n)}</b> · ${esc(cap1(sibWho(s).replace("your ","")))}<small>${esc(bits)}</small>${s.alive?meterMini(s.bond):""}${s.alive?`<span class="btn-row" style="margin:4px 0 0"><button class="btn sm" data-act="sibsee" data-n="${esc(s.n)}" ${freeLeft()<1||s.seen===S.day||S.prison?"disabled":""}>Catch up (1 free evening)</button></span>`:""}</span></li>`};
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Brothers and sisters</h2><span class="label">${L.filter(s=>s.alive).length} living</span></div><ul class="folks">${L.map(row).join("")}</ul></div>`}
+XCLICK.sibsee=t=>{const s=ensureSibs().find(x=>x.n===t.dataset.n&&x.alive);if(!s||freeLeft()<1||s.seen===S.day)return;useFree();s.seen=S.day;s.bond=clamp(s.bond+6+Math.floor(rnd()*5),0,100);S.stress=clamp(S.stress-3,0,100);
+ const lines=s.bond<30?[`It's tense. You manage an hour before the old arguments start.`,`You talk about the weather. A lot.`]:[`You end up laughing about the time ${s.d>0?"they":"you"} broke the greenhouse.`,`Takeaway, terrible telly and an argument about who Mum likes best.`,`${s.n} tells you everything going on in their life. You realise you'd missed them.`,`A long walk and a pint. Just like old times.`];
+ save();render();actResult(`You and ${s.n}`,esc(pick(lines)))};
+/* Siblings get older, find jobs, marry and have kids, and turn up in your inbox now and again */
+function sibsDay(){if(!S||S.over)return;for(const s of ensureSibs()){if(!s.alive)continue;if(sibAge(s)>=22&&(s.job==="a student"||s.job==="at school"||!s.job)){s.job="";sibJob(s)}
+ if(s.bond>20&&s.seen<S.day-18)s.bond=clamp(s.bond-.15,0,100);
+ if(sibAge(s)>=70&&rnd()<Math.pow((sibAge(s)-65)/30,2)*.01){s.alive=false;s.da=sibAge(s);S.log.unshift({d:S.day,t:`Your ${sibWord(s)} ${s.n} died, aged ${s.da}.`});pushDyn({id:"sib_die_"+S.day,life:1,from:"The family",t:`Goodbye, ${s.n}`,b:`${s.n}, ${sibWho(s)}, has died at ${s.da}. ${s.bond>=50?"You were close to the end.":"You'd drifted apart, and now there's no time to fix it."}`,c:[{t:"Give the eulogy",fx:{home:3,stress:6,karma:2},o:"You tell the story about the greenhouse. Everyone laughs, then cries."},{t:"Sit quietly at the back",fx:{stress:8},o:"You think about all the phone calls you meant to make."}]})}}}
+function sibMorning(){
+ if(!l5ok()||S.day<8||S.day-(S.sibAt??-99)<7||rnd()>.11||l5busy(/^sib_/))return;
+ const L=liveSibs().filter(s=>sibAge(s)>=18);if(!L.length)return;const s=pick(L),n=s.n,a=sibAge(s),opts=[];
+ const lend=[2000,3000,5000,8000][Math.floor(rnd()*4)];
+ if(!s.owe&&S.wealth>lend*3)opts.push({k:"loan",t:`${n} needs a loan`,b:`${n} is behind on the rent and too proud to say it twice. "Could you lend me ${money(lend)}? I'll pay you back. Honestly."`,c:[{t:`Lend it (${money(lend)})`,fx:{gbp:-lend,fixed:1,act:"sibloan",n,amt:lend},o:`${n} hugs you for slightly too long.`},{t:"Say no",fx:{act:"sibbond",n,d:-12},o:`"Fine. Forget I asked." The line goes quiet.`}]});
+ if(s.owe&&S.day-(s.oweAt||0)>=10)opts.push({k:"repay",t:`About that money, ${n}`,b:`${n} still owes you ${money(s.owe)}. They've just posted holiday photos from Lanzarote.`,c:[{t:"Ask for it back",p:.55,win:{fx:{act:"sibrepay",n,full:1},o:`${n} transfers it that night, a bit red-faced.`},lose:{fx:{act:"sibbond",n,d:-15},o:`"I can't believe you're bringing this up." They don't pay, and now you're the bad guy.`}},{t:"Let it go",fx:{act:"sibrepay",n,full:0,karma:2},o:"Some things are worth more than money. You tell yourself that, anyway."}]});
+ if(!s.partner&&a>=24&&a<=50)opts.push({k:"wed",t:`${n} is getting married`,b:`${n} is engaged! The wedding is in the spring and they want you to ${rnd()<.5?"give a speech":"do a reading"}.`,c:[{t:"Go all out",p:.7,win:{fx:{act:"sibwed",n,d:12,home:3,gbp:-400},o:"There isn't a dry eye in the marquee. Even the DJ claps."},lose:{fx:{act:"sibwed",n,d:3,stress:4,gbp:-400},o:"You mention the ex. In the speech. Out loud."}},{t:"Just turn up and dance",fx:{act:"sibwed",n,d:5,gbp:-250},o:"A lovely day. You catch the bouquet by accident."}]});
+ if(s.partner===1&&a>=25&&a<=44&&s.kids<3&&rnd()<.6)opts.push({k:"baby",t:`${n} has had a baby`,b:`${n} sends a photo of a tiny, furious baby. You're ${auntWord()}!`,c:[{t:"Visit with a huge cuddly toy",fx:{act:"sibbaby",n,d:8,gbp:-80,home:2},o:"The toy is bigger than the baby. Everyone's delighted."},{t:"Send a card",fx:{act:"sibbaby",n,d:2},o:"A card with a stork on it. Classic."}]});
+ if(s.partner===1&&a>=30&&rnd()<.25)opts.push({k:"div",t:`${n}'s marriage is over`,b:`${n} rings at midnight. Their marriage is finished and they need somewhere to stay for a bit.`,c:[{t:"Have them stay with you",fx:{act:"sibdiv",n,d:15,home:-4,stress:4},o:`${n} stays six weeks and leaves the place spotless. And slightly too full of houseplants.`},{t:"Help them find a flat",fx:{act:"sibdiv",n,d:6,gbp:-500},o:"You pay the deposit. They cry in the estate agent's."}]});
+ if(netWorth()>200000)opts.push({k:"jeal",t:`${n} at Sunday lunch`,b:`Mum mentions your ${S.home&&S.home.value>500000?"house":"new car"} again. ${n} goes quiet, then says "Some of us didn't get the lucky breaks."`,c:[{t:"Have it out with them",p:.4,win:{fx:{act:"sibbond",n,d:10,stress:3},o:"Thirty years of rivalry comes out over the gravy. Afterwards, you're closer than ever."},lose:{fx:{act:"sibbond",n,d:-18,stress:6,home:-3},o:"Someone throws a Yorkshire pudding. Christmas is going to be awkward."}},{t:"Offer to help them out",fx:{act:"sibbond",n,d:6,karma:3,gbp:-1000},o:"They take it, stiffly. It helps more than either of you admits."},{t:"Change the subject",fx:{act:"sibbond",n,d:-4},o:"You talk about the weather until pudding."}]});
+ else opts.push({k:"brag",t:`${n} has news`,b:`${n} has been promoted. Again. Mum has already told the neighbours, the vicar and the man in the post office.`,c:[{t:"Take them out to celebrate",fx:{act:"sibbond",n,d:8,gbp:-150},o:"You're genuinely proud of them. Mostly."},{t:"Send a thumbs-up emoji",fx:{act:"sibbond",n,d:-3,stress:2},o:"It says more than you meant it to."}]});
+ const frail=(S.folks||[]).some(f=>f.alive&&f.frail);
+ if(frail)opts.push({k:"care",t:"Who looks after Mum and Dad?",b:`${n} calls. "Someone needs to be there more. I've done three weekends in a row. It's your turn."`,c:[{t:"Take on more of it",fx:{act:"sibbond",n,d:12,stress:6,home:-3,karma:3},o:"You start driving up every other weekend. It's hard, but you're glad you did."},{t:"Offer to pay for help instead",fx:{act:"sibbond",n,d:2,gbp:-3000,fixed:1},o:`You pay for a carer three days a week. ${n} says money isn't the same as being there.`},{t:"Say you're too busy",fx:{act:"sibbond",n,d:-20,karma:-3},o:`${n} hangs up. You'll hear about this at every family do from now on.`}]});
+ if(a>=50&&rnd()<.4)opts.push({k:"ill",t:`${n} is in hospital`,b:`${n} has had a health scare. They're okay, but they'd love a visit.`,c:[{t:"Drop everything and go",fx:{act:"sibbond",n,d:12,stress:3},o:"Grapes, a crossword and two hours of hospital gossip. They squeeze your hand when you leave."},{t:"Call them instead",fx:{act:"sibbond",n,d:2},o:"A short call. They say they understand."}]});
+ if(!opts.length)return;S.sibAt=S.day;const e=pick(opts);delete e.k;pushDyn(Object.assign({id:"sib_"+S.day,life:1,from:`${n}, ${sibWho(s)}`},e))}
+const sibByN=n=>ensureSibs().find(s=>s.n===n);
+Object.assign(ACTS,{
+ sibbond:fx=>{const s=sibByN(fx.n);if(s)s.bond=clamp(s.bond+(fx.d||0),0,100)},
+ sibloan:fx=>{const s=sibByN(fx.n);if(s){s.owe=(s.owe||0)+fx.amt;s.oweAt=S.day;s.bond=clamp(s.bond+10,0,100)}},
+ sibrepay:fx=>{const s=sibByN(fx.n);if(!s)return;if(fx.full){S.wealth+=s.owe||0;S.log.unshift({d:S.day,t:`${s.n} paid back ${money(s.owe||0)}.`})}else s.bond=clamp(s.bond+8,0,100);s.owe=0},
+ sibwed:fx=>{const s=sibByN(fx.n);if(s){s.partner=1;s.bond=clamp(s.bond+(fx.d||0),0,100);S.log.unshift({d:S.day,t:`Your ${sibWord(s)} ${s.n} got married.`})}},
+ sibbaby:fx=>{const s=sibByN(fx.n);if(s){s.kids=(s.kids||0)+1;s.bond=clamp(s.bond+(fx.d||0),0,100);S.log.unshift({d:S.day,t:`Became ${auntWord()} to ${s.n}'s baby.`})}},
+ sibdiv:fx=>{const s=sibByN(fx.n);if(s){s.partner=2;s.bond=clamp(s.bond+(fx.d||0),0,100)}}
+});
+/* When a parent dies, a brother or sister may not agree with how it's been split */
+{const _pd=ACTS.parentdies;ACTS.parentdies=function(fx,m){const r=_pd.apply(this,arguments);try{const L=liveSibs().filter(s=>sibAge(s)>=18);if(L.length&&rnd()<.35){const s=pick(L),amt=Math.round((5+rnd()*25))*1000;setTimeout(()=>{try{pushDyn({id:"sib_will_"+S.day,life:1,from:`${s.n}, ${sibWho(s)}`,t:"The will",b:`${s.n} thinks the will is unfair. "You always were the favourite. I want ${money(amt)} more, or I'm getting a solicitor."`,c:[{t:`Give them ${money(amt)}`,fx:{gbp:-amt,fixed:1,act:"sibbond",n:s.n,d:10,karma:2},o:"It hurts, but you'd rather have a sibling than a court case."},{t:"Split the difference",p:.6,win:{fx:{gbp:-Math.round(amt/2),fixed:1,act:"sibbond",n:s.n,d:4},o:"A tense meeting in a café. You shake on it."},lose:{fx:{gbp:-Math.round(amt/2),fixed:1,act:"sibbond",n:s.n,d:-15,stress:5},o:"They take the money and still don't speak to you for a year."}},{t:"See you in court",p:.5,win:{fx:{gbp:-2500,fixed:1,act:"sibbond",n:s.n,d:-30,stress:8},o:"You win. It costs £2,500 in legal fees and your brother or sister."},lose:{fx:{gbp:-(amt+6000),fixed:1,act:"sibbond",n:s.n,d:-35,stress:12},o:"You lose, and pay their legal costs too."}}]});save();render()}catch(e){}},300)}}catch(e){}return r}}
+
+/* ============ Grown-up children ============ */
+function ensureGkids(){S.gkids=S.gkids||[];while(S.gkids.length<(S.grandkids||0)){const ad=(S.children||[]).filter(k=>kidAge(k)>=22);S.gkids.push({n:pick(KID_NAMES),born:S.day-Math.floor(rnd()*36),of:ad.length?pick(ad).n:""})}return S.gkids}
+const gkAge=g=>Math.max(0,Math.floor((S.day-g.born)/YEAR));
+{const _gk=ACTS.grandkid;ACTS.grandkid=function(fx,m){const r=_gk.apply(this,arguments);try{ensureGkids();const g=S.gkids[S.gkids.length-1];const t=m&&m.dyn&&m.dyn.t||"";const by=(S.children||[]).find(k=>t.indexOf(k.n)===0);if(g){g.born=S.day;if(by)g.of=by.n;{const pool=KID_NAMES.filter(x=>!(S.children||[]).some(k=>k.n===x)&&!S.gkids.some(y=>y!==g&&y.n===x));g.n=pick(pool.length?pool:KID_NAMES)}}}catch(e){}return r}}
+const careerJobTitle=()=>{try{const t=CAREERS[S.path].ranks[0].t;return(/^[aeiou]/i.test(t)?"an ":"a ")+t.toLowerCase()}catch(e){return"something like you"}};
+function kidGrownMorning(){
+ if(!l5ok()||S.day-(S.kgAt??-99)<9||rnd()>.09||l5busy(/^kg_/))return;
+ const ad=(S.children||[]).filter(k=>kidAge(k)>=21&&!k.gone),gk=ensureGkids(),opts=[];if(!ad.length&&!gk.length)return;
+ const k=ad.length?pick(ad):null,n=k&&k.n;
+ if(k&&!k.same&&!k.biz&&kidAge(k)<30&&(!k.job||k.job==="still finding their way"||rnd()<.3))opts.push({k:"same",t:`${n} wants to follow you`,b:`${n} has been watching you all these years. "I want to do what you do. Will you help me get started?"`,c:[{t:"Help them get a foot in the door",fx:{act:"kgsame",n,home:6,rep:-1},o:`${n} starts as ${careerJobTitle()}. You pretend not to watch their first day from across the road.`},{t:"Tell them to find their own path",fx:{act:"kgbond",n,d:-6},o:`"Fine. I'll do something you've never heard of." They probably will.`}]});
+ if(k&&k.same&&!k.sameDone&&kidAge(k)>=26)opts.push({k:"same2",t:`${n} is doing well`,b:`Word reaches you that ${n} is being talked about as the best young ${CAREERS[S.path]?CAREERS[S.path].n.toLowerCase():"talent"} in years. Someone asks if you're related.`,c:[{t:'"That\'s my kid"',fx:{act:"kgbond",n,d:8,home:4,flag:"kidsame"},o:"You say it to three more people before lunch."},{t:"Give them some unwanted advice",p:.5,win:{fx:{act:"kgbond",n,d:6,skill:1},o:"They actually listen. It helps."},lose:{fx:{act:"kgbond",n,d:-8},o:`"I've got this, thanks." They really have.`}}]});
+ if(k&&S.biz&&!k.biz&&kidAge(k)<40)opts.push({k:"biz",t:`${n} and the family business`,b:`${n} asks if there's a job going at ${S.biz.name}. "I'd work hard. I've watched you do it."`,c:[{t:"Give them a job",fx:{act:"kgbiz",n,home:4},o:`${n} starts on Monday. The staff are nervous. So are you.`},{t:"Keep family and business separate",fx:{act:"kgbond",n,d:-5},o:"They understand. They say they do, anyway."}]});
+ if(k&&k.biz&&S.biz&&!k.bizHand&&age()>=60)opts.push({k:"hand",t:`Hand ${S.biz.name} to ${n}?`,b:`${n} has run ${S.biz.name} day to day for years. "Let me take it on properly. You could finally retire."`,c:[{t:`Hand it over to ${n}`,fx:{act:"kghand",n,home:10,stress:-10},o:`You give ${n} the keys and a speech that goes on too long. The staff cheer.`},{t:"Not yet",fx:{act:"kgbond",n,d:-8},o:`${n} sighs. "You'll still be here when you're ninety."`}]});
+ if(k&&kidAge(k)>=24&&kidAge(k)<45&&rnd()<.5)opts.push({k:"redund",t:`${n} has lost their job`,b:`${n} has been made redundant. They're putting a brave face on it.`,c:[{t:"Help them out (£3,000)",fx:{gbp:-3000,fixed:1,act:"kgbond",n,d:10},o:"It tides them over. Three months later they have a better job."},{t:"Help with their CV",fx:{act:"kgbond",n,d:5,skill:0},o:"You spend a Sunday on it. They get two interviews."},{t:"Tell them to toughen up",fx:{act:"kgbond",n,d:-12},o:"They do. Without your help."}]});
+ if(k&&kidAge(k)>=25&&rnd()<.3)opts.push({k:"debt",t:`${n} is in debt`,b:`${n} finally admits it: credit cards, a car loan and a buy-now-pay-later habit. About £9,000.`,c:[{t:"Clear it for them",fx:{gbp:-9000,fixed:1,act:"kgbond",n,d:12,karma:1},o:"They cut the cards up in front of you."},{t:"Help them make a plan",p:.65,win:{fx:{act:"kgbond",n,d:8},o:"A spreadsheet, two years and a lot of beans on toast. They clear it themselves."},lose:{fx:{act:"kgbond",n,d:-4,stress:4},o:"They stick to it for a month."}}]});
+ if(gk.length){const g=pick(gk),gn=g.n,ga=gkAge(g);
+  if(ga>=3&&ga<12)opts.push({k:"gk1",t:`${gn} wants to stay with you`,b:`Your grandchild ${gn} wants a whole week at yours in the summer holidays.`,c:[{t:"Yes! Plan adventures",fx:{home:8,stress:4,gbp:-300},o:"Crabbing, ice cream and staying up far too late. Best week of the year."},{t:"Just the weekend",fx:{home:3},o:`${gn} says the weekend was 'pretty good'. High praise.`}]});
+  if(ga>=14&&ga<21)opts.push({k:"gk2",t:`${gn} needs advice`,b:`Your grandchild ${gn} wants to talk about careers. "Mum says you'd know."`,c:[{t:"Tell them everything you've learned",fx:{home:6,karma:2},o:"They write some of it down. Most of it, they'll ignore. That's fine."},{t:"Tell them to do what makes them happy",fx:{home:4},o:"They look relieved."}]});
+  if(ga>=21&&!g.grad)opts.push({k:"gk3",t:`${gn}'s graduation`,b:`Your grandchild ${gn} is graduating, and they've saved you a seat at the front.`,c:[{t:"Wouldn't miss it",fx:{home:8,act:"gkgrad",g:gn},o:"You cry when they cross the stage. So does the person next to you, who you've never met."}]})}
+ if(k&&age()>=72&&(S.health<55||isSingle()))opts.push({k:"care",t:`${n} is worried about you`,b:`${n} has noticed you're slowing down. "Why don't you come and live with us? We've got the room."`,c:[{t:"Move in with them",fx:{act:"kgcare",n,how:"live",home:12,stress:-8},o:"Grandchildren knocking on your door every morning. It's noisy, and it's lovely."},{t:"Have a carer visit instead",fx:{act:"kgcare",n,how:"carer",gbp:-600},o:"A cheerful carer called Bev visits three times a week. You like Bev."},{t:'"I\'m perfectly fine, thank you"',fx:{act:"kgbond",n,d:-4},o:`${n} sighs and puts a key safe by your door anyway.`}]});
+ if(!opts.length)return;S.kgAt=S.day;const e=pick(opts);delete e.k;pushDyn(Object.assign({id:"kg_"+S.day,life:1,from:n||"Your family"},e))}
+const kidByN=n=>(S.children||[]).find(k=>k.n===n);
+Object.assign(ACTS,{
+ kgbond:fx=>{const k=kidByN(fx.n);if(k)k.kb=clamp((k.kb||0)+(fx.d||0),-50,50)},
+ kgsame:fx=>{const k=kidByN(fx.n);if(k){k.same=S.path;k.job=careerJobTitle();k.kb=clamp((k.kb||0)+8,-50,50);S.log.unshift({d:S.day,t:`${k.n} followed you into the job.`})}},
+ kgbiz:fx=>{const k=kidByN(fx.n);if(k&&S.biz){k.biz=1;k.job=`working at ${S.biz.name}`;S.biz.mom=clamp((S.biz.mom||50)+8,0,100);S.log.unshift({d:S.day,t:`${k.n} joined ${S.biz.name}.`})}},
+ kghand:fx=>{const k=kidByN(fx.n);if(k&&S.biz){k.bizHand=1;k.job=`running ${S.biz.name}`;S.biz.manager=true;S.biz.heir=k.n;S.log.unshift({d:S.day,t:`Handed ${S.biz.name} to ${k.n}. You still get your share.`})}},
+ kgcare:fx=>{const k=kidByN(fx.n);S.oldCare={by:fx.n,how:fx.how,since:S.day};if(k)k.kb=clamp((k.kb||0)+10,-50,50)},
+ gkgrad:fx=>{const g=(S.gkids||[]).find(x=>x.n===fx.g);if(g)g.grad=1}
+});
+/* Living with family in old age keeps you healthier */
+const careBoost=()=>S.oldCare?(S.oldCare.how==="live"?.15:.08):0;
+
+/* ============ Inheritance ============ */
+/* Now and again, a relative you barely knew leaves you something */
+function inheritMorning(){
+ if(!l5ok()||S.day<30||S.flags.l5inh||rnd()>.004)return;S.flags.l5inh=S.day;
+ const who=pick(["Great-Aunt Margery","Uncle Desmond","your dad's cousin Bernard","Great-Uncle Fergus","your godmother, Pam"]),r=rnd();
+ if(r<.5){const amt=Math.round((5+rnd()*60))*1000;pushDyn({id:"inh_"+S.day,life:1,from:"A solicitor's letter",t:"You've been left something",b:`${who} has died and left you ${money(amt)}. You met them twice. Once was at a wedding.`,c:[{t:"Bank it",fx:{gbp:amt},o:"You raise a glass to someone you wish you'd known better."},{t:"Give half to charity in their name",fx:{gbp:Math.round(amt/2),karma:6},o:"The donkey sanctuary sends a lovely card."}]})}
+ else if(r<.8){pushDyn({id:"inh_"+S.day,life:1,from:"A solicitor's letter",t:"An unusual inheritance",b:`${who} has left you their collection of 400 porcelain cats. And, according to the will, "whatever is in the shed".`,c:[{t:"Open the shed",p:.35,win:{fx:{gbp:42000},o:"Under a tarpaulin: a 1967 Jaguar E-Type. It sells at auction for £42,000."},lose:{fx:{gbp:-200,fixed:1},o:"A lawnmower, a lot of spiders and a skip-hire bill."}},{t:"Sell the cats on eBay",fx:{gbp:1800},o:"It takes a year. You dream about cats."}]})}
+ else{pushDyn({id:"inh_"+S.day,life:1,from:"A solicitor's letter",t:"A cottage in Wales",b:`${who} has left you a tumbledown cottage in Wales. The roof is mostly sheep.`,c:[{t:"Sell it as it is",fx:{gbp:85000},o:"A couple from Bristol buy it for £85,000 and plan to 'do it up'. Good luck to them."},{t:"Do it up as a holiday let",p:.6,win:{fx:{gbp:60000,stress:6},o:"A year of builders later, it's booked solid every summer. You sell it for a tidy profit."},lose:{fx:{gbp:-25000,fixed:1,stress:10},o:"Damp, bats and a protected newt. You sell it at a loss."}}]})}}
+/* Give money to your grown-up children while you're alive. Gifts more than seven years before you die are free of inheritance tax. */
+function giftKidsBtn(){const ad=(S.children||[]).filter(k=>kidAge(k)>=18);if(!ad.length||S.over)return"";const each=Math.max(1000,Math.round(Math.min(S.wealth*.1/ad.length,50000)/1000)*1000);if(S.wealth<each*ad.length+1000)return"";
+ return `<div class="btn-row" style="margin-top:6px"><button class="btn sm" data-act="giftkids" data-a="${each}">Give each child ${money(each)} now</button></div><p class="hint" style="margin:4px 0 0">Gifts are free of inheritance tax if you live seven more years.${S.gifts&&S.gifts.length?` You've given ${money(S.gifts.reduce((a,g)=>a+g.a,0))} so far.`:""}</p>`}
+XCLICK.giftkids=t=>{const a=+t.dataset.a,ad=(S.children||[]).filter(k=>kidAge(k)>=18);if(!a||S.wealth<a*ad.length)return;S.wealth-=a*ad.length;S.gifts=(S.gifts||[]).concat({d:S.day,a:a*ad.length});for(const k of ad)k.kb=clamp((k.kb||0)+6,-50,50);S.log.unshift({d:S.day,t:`Gave each of your children ${money(a)}.`});save();render();toastMsg(`${ad.map(k=>k.n).join(" and ")} ${ad.length>1?"are":"is"} very grateful.`)};
+{const _ws=willSec;willSec=function(){return String(_ws.apply(this,arguments)||"").replace(/<\/div>\s*$/,giftKidsBtn()+"</div>")}}
+
+/* ============ Health: conditions and habits ============ */
+const CONDS={
+ bp:{n:"High blood pressure",min:35,fix:"Daily tablets",cost:10,hit:.3},
+ chol:{n:"High cholesterol",min:40,fix:"Statins",cost:10,hit:.25},
+ back:{n:"A bad back",min:28,fix:"Physio",cost:60,hit:.2,stress:.2},
+ knee:{n:"Dodgy knees",min:45,fix:"Physio and a knee brace",cost:40,hit:.2},
+ t2:{n:"Type 2 diabetes",min:40,fix:"Medication and a diet plan",cost:20,hit:.45},
+ asthma:{n:"Asthma",min:18,fix:"Inhalers",cost:10,hit:.2},
+ migraine:{n:"Migraines",min:20,fix:"Prescription tablets",cost:15,hit:.1,stress:.25},
+ anx:{n:"Anxiety",min:18,fix:"Therapy",cost:120,hit:.1,stress:.35},
+ tinn:{n:"Tinnitus",min:30,fix:"Hearing therapy",cost:30,hit:.05,stress:.2},
+ arth:{n:"Arthritis",min:60,fix:"Painkillers and physio",cost:40,hit:.3},
+ hear:{n:"Hearing loss",min:62,fix:"Hearing aids",cost:50,hit:.05,stress:.15}
+};
+const conds=()=>S.conds=S.conds||[];
+function healthMorning(){
+ if(!l5ok()||S.day<6||l5busy(/^hc_/))return;const a=age(),have=new Set(conds().map(c=>c.k));
+ /* A new long-term condition */
+ if(S.day-(S.condAt??-99)>=18){const p=.003+(a>40?(a-40)*.0006:0)+(S.stress>70?.004:0)+(S.health<50?.005:0)+(S.habit&&S.habit.smoke?.003:0);
+  if(rnd()<p){const pool=Object.keys(CONDS).filter(k=>!have.has(k)&&a>=CONDS[k].min&&(k!=="tinn"||["dj","music","soldier","police","fire"].includes(S.path)||rnd()<.3)&&(k!=="anx"||S.stress>55));
+   if(pool.length){const k=pick(pool),C=CONDS[k];S.condAt=S.day;pushDyn({id:"hc_"+S.day,life:1,from:"Your GP",t:`The doctor says: ${C.n.toLowerCase()}`,b:`After a few tests, your GP has diagnosed ${C.n.toLowerCase()}. "Lots of people live with it perfectly well. But we need to manage it."`,c:[
+    {t:`${C.fix} (${money(C.cost)} a month)`,fx:{act:"cond",k,ctl:1},o:"Sorted. You set a reminder on your phone."},
+    {t:"Change your lifestyle",p:S.health>=60||(S.life&&S.life.gym)?.65:.35,win:{fx:{act:"cond",k,ctl:2,health:2},o:"More walking, less takeaway. Six months later the doctor is impressed."},lose:{fx:{act:"cond",k,ctl:0,stress:2},o:"You last until the first biscuit. It's not under control."}},
+    {t:"Ignore it",fx:{act:"cond",k,ctl:0},o:"You'll deal with it later. Probably."}]});return}}}
+ /* A health scare */
+ if(a>=35&&S.day-(S.scareAt??-99)>=40&&rnd()<.01){S.scareAt=S.day;pushDyn({id:"hc_scare_"+S.day,life:1,from:"You",t:"Something doesn't feel right",b:pick(["You've found a lump. It's probably nothing.","Chest pains on the stairs. Probably indigestion.","You've been getting dizzy spells. It's probably just tiredness."]),c:[
+  {t:"Get it checked straight away",p:.85,win:{fx:{stress:-4},o:"It's nothing serious. The relief is enormous."},lose:{fx:{act:"sick",days:1,hp:6,stress:6},o:"They caught it early. A month of treatment, and you're going to be fine."}},
+  {t:"Wait and see",p:.7,win:{fx:{stress:2},o:"It goes away on its own. You got lucky."},lose:{fx:{act:"sick",days:3,hp:20,stress:12},o:"It was something. Leaving it made it much worse. Three months off."}}]});return}
+ /* A free NHS health check at 40, 50 and 60 */
+ for(const m of[40,50,60])if(a>=m&&a<m+1&&!S.flags["hcheck"+m]){S.flags["hcheck"+m]=S.day;const n=conds().filter(c=>!c.ctl).length;pushDyn({id:"hc_check_"+S.day,life:1,from:"Your GP surgery",t:`Your ${m}th birthday health check`,b:`The NHS invites you for a free health check. ${n?`It would be a good chance to sort out your ${conds().filter(c=>!c.ctl).map(c=>CONDS[c.k].n.toLowerCase()).join(" and ")}.`:"Blood pressure, cholesterol and some awkward questions about how much you drink."}`,c:[{t:"Go",fx:{act:"hcheck",health:3},o:n?"The nurse sorts out a plan. Everything is under control now.":"All good. The nurse says you're doing better than most."},{t:"Skip it",fx:{},o:"You're far too busy. You're sure it's fine."}]});return}
+ /* Habits: smoking and drinking */
+ const H=S.habit=S.habit||{smoke:0,drink:0};
+ if(!H.smoke&&!H.quitSmoke&&S.stress>70&&S.day-(S.habitAt??-99)>=24&&rnd()<.03){S.habitAt=S.day;pushDyn({id:"hc_smoke_"+S.day,life:1,from:"A colleague",t:"Fancy one?",b:"It's been a horrible week. Someone outside offers you a cigarette. You haven't had one in years.",c:[{t:"Just the one",fx:{act:"habit",h:"smoke",v:1,stress:-6},o:"Just the one turns into twenty a day."},{t:"No thanks",fx:{stress:2},o:"You go for a walk instead. It doesn't help as much, but it helps."}]});return}
+ if(H.drink<2&&S.stress>65&&S.day-(S.habitAt??-99)>=24&&rnd()<.03){S.habitAt=S.day;pushDyn({id:"hc_drink_"+S.day,life:1,from:"You",t:"A glass most nights",b:"A glass of wine to unwind has become most of a bottle, most nights.",c:[{t:"It helps me relax",fx:{act:"habit",h:"drink",v:H.drink+1,stress:-4},o:"It does help. Until the mornings."},{t:"Try dry January, in whatever month this is",p:.6,win:{fx:{health:3,stress:-2},o:"You sleep better than you have in years."},lose:{fx:{act:"habit",h:"drink",v:H.drink+1},o:"You last nine days."}}]});return}
+ if((H.smoke||H.drink>=2)&&S.day-(S.habitAt??-99)>=14&&rnd()<.06){S.habitAt=S.day;const sm=!!H.smoke;pushDyn({id:"hc_quit_"+S.day,life:1,from:sm?"Your doctor":(isSingle()?"Your best friend":S.rel.name),t:sm?"Time to quit?":"About the drinking",b:sm?"Your doctor shows you a picture of a smoker's lungs. You lose your appetite.":`"I'm worried about how much you're drinking." It's hard to hear.`,c:[{t:sm?"Quit with patches (£150)":"Cut right down",p:sm?.55:.6,win:{fx:{act:"habit",h:sm?"smoke":"drink",v:0,quit:1,health:3,gbp:sm?-150:0,fixed:1},o:sm?"Three months smoke-free. You can taste food again.":"Weekends only now. You feel ten years younger."},lose:{fx:{stress:4,gbp:sm?-150:0,fixed:1},o:"You try. It doesn't stick this time."}},{t:"Not now",fx:{home:sm?0:-4},o:"Maybe next year."}]})}}
+Object.assign(ACTS,{
+ cond:fx=>{const L=conds();let c=L.find(x=>x.k===fx.k);if(!c){c={k:fx.k,since:S.day};L.push(c)}c.ctl=fx.ctl;S.log.unshift({d:S.day,t:`Diagnosed with ${CONDS[fx.k].n.toLowerCase()}.`})},
+ condfix:fx=>{const c=conds().find(x=>x.k===fx.k);if(c)c.ctl=1},
+ hcheck:()=>{for(const c of conds())if(!c.ctl)c.ctl=1},
+ habit:fx=>{const H=S.habit=S.habit||{smoke:0,drink:0};H[fx.h]=fx.v;if(fx.quit){H["quit"+(fx.h==="smoke"?"Smoke":"Drink")]=S.day;S.log.unshift({d:S.day,t:fx.h==="smoke"?"Gave up smoking.":"Cut down on the drinking."})}}
+});
+XCLICK.condfix=t=>{ACTS.condfix({k:t.dataset.k});save();render();toastMsg("Now under control.")};
+XCLICK.habitquit=t=>{const h=t.dataset.k,sm=h==="smoke";if(S.flags["quitTry"+h]===S.day)return;S.flags["quitTry"+h]=S.day;if(sm)S.wealth-=150;
+ if(rnd()<(sm?.45:.55)){ACTS.habit({h,v:0,quit:1});S.health=clamp(S.health+3,0,100);save();render();actResult(sm?"Smoke-free":"Cutting down",esc(sm?"It's the hardest thing you've ever done. Three months on, you've done it.":"Alcohol-free beer turns out to be fine. Mostly."))}
+ else{S.stress=clamp(S.stress+4,0,100);save();render();actResult("Not this time",esc(sm?"You last eleven days. You can try again next month.":"Friday comes round, and so does the wine. Try again next month."))}};
+function healthSec(){if(!S||S.over)return"";const L=conds(),H=S.habit||{};if(!L.length&&!H.smoke&&!H.drink)return"";
+ const rows=L.map(c=>{const C=CONDS[c.k];return `<li><span><b>${esc(C.n)}</b><small>${c.ctl===2?"Under control with a healthy lifestyle":c.ctl?`${esc(C.fix)} · ${money(C.cost)} a month`:"Not being treated · it's wearing down your health"}</small></span>${c.ctl?"":`<button class="btn sm" data-act="condfix" data-k="${c.k}">Start treatment</button>`}</li>`});
+ if(H.smoke)rows.push(`<li><span><b>Smoking</b><small>About £300 a month, and it's hurting your health</small></span><button class="btn sm" data-act="habitquit" data-k="smoke" ${S.flags.quitTrysmoke===S.day?"disabled":""}>Try to quit (£150)</button></li>`);
+ if(H.drink>=1)rows.push(`<li><span><b>Drinking${H.drink>=2?" too much":""}</b><small>${H.drink>=2?"Most nights. Your health and home life are suffering":"A bit more than you should"}</small></span><button class="btn sm" data-act="habitquit" data-k="drink" ${S.flags.quitTrydrink===S.day?"disabled":""}>Cut down</button></li>`);
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Your health</h2><span class="label">${L.length} condition${L.length===1?"":"s"}</span></div><ul class="l5-list">${rows.join("")}</ul></div>`}
+
+/* ============ Side hustles: pick one for three or six months ============ */
+const HUSTLES={
+ etsy:{n:"Handmade shop online",d:"Make things in the evenings and sell them online.",start:200,earn:[40,600],grow:.12},
+ podcast:{n:"A podcast",d:"Talk into a microphone about something you love. Hope people listen.",start:300,earn:[0,900],grow:.18},
+ tutor:{n:"Tutoring",d:"Help teenagers through their exams, two evenings a week.",start:0,earn:[200,520],grow:.05},
+ dogs:{n:"Dog walking",d:"Fresh air, muddy trainers and other people's dogs.",start:0,earn:[150,420],grow:.05,health:.3},
+ photo:{n:"Wedding photography",d:"Weekends at weddings, with a very expensive camera.",start:1500,earn:[100,1200],grow:.1},
+ resell:{n:"Reselling trainers",d:"Buy limited drops, sell them for more. In theory.",start:1000,earn:[-300,900],grow:.08},
+ youtube:{n:"A YouTube channel",d:"Film, edit, upload, refresh the view counter.",start:500,earn:[0,1600],grow:.2},
+ food:{n:"A weekend food truck",d:"Street food at markets and festivals.",start:8000,earn:[-200,1600],grow:.12,stress:1},
+ airbnb:{n:"Renting out your spare room",d:"Short lets for tourists. Hide the good towels.",start:400,earn:[200,850],grow:.06,need:()=>S.home&&S.home.value>0&&S.home.t!=="flat"&&!S.roomLet?"":"You need a home with a spare room (and not one you're already renting out)."},
+ btl:{n:"A buy-to-let flat",d:"Put down a deposit and rent a flat out. You get the deposit back when you sell.",start:40000,earn:[150,650],grow:.03,dep:1},
+ app:{n:"Building an app",d:"Code in the evenings. One day it could be huge.",start:2000,earn:[-50,300],grow:.25,jackpot:1}
+};
+const shCur=()=>S.sh&&HUSTLES[S.sh.id]?S.sh:null;
+function shAvail(id){const H=HUSTLES[id];if(H.need){const w=H.need();if(w)return w}if(S.wealth<H.start)return`You need ${money(H.start)} to start.`;return""}
+function sideSec(){if(!S||S.over||S.prison)return"";const c=shCur();
+ if(!c){const all=Object.keys(HUSTLES).sort((a,b)=>!!shAvail(a)-!!shAvail(b)),ids=shAll?all:all.slice(0,4);return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">A side hustle</h2><span class="label">3 or 6 months at a time</span></div><p class="hint" style="margin:0 0 8px">Make some money on the side. Each one takes a few evenings a month, so it adds a little stress. One at a time.</p><ul class="l5-list">${ids.map(id=>{const H=HUSTLES[id],w=shAvail(id);return `<li><span><b>${esc(H.n)}</b><small>${esc(H.d)} ${cap1(`${H.start?`start-up ${money(H.start)}${H.dep?" (you get it back when you sell)":""}, `:""}${H.earn[0]<0?"could lose money, ":""}up to ${money(H.earn[1])} a month.`)}${w?` <i>${esc(w)}</i>`:""}</small></span>${w?"":`<span class="l5-btns"><button class="btn sm" data-act="shgo" data-k="${id}" data-m="3">3 mo</button><button class="btn sm" data-act="shgo" data-k="${id}" data-m="6">6 mo</button></span>`}</li>`}).join("")}</ul>${shAll?"":`<div class="btn-row" style="margin-top:8px"><button class="btn sm" data-act="shall">Show all ${all.length} ideas</button></div>`}</div>`}
+ const H=HUSTLES[c.id],done=c.total-c.left;
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Side hustle: ${esc(H.n)}</h2><span class="label">Month ${Math.min(c.total,done+1)} of ${c.total}</span></div><span class="mv-run" style="display:block"><span class="mv-bar"><i style="width:${Math.round(done/c.total*100)}%"></i></span></span><p class="hint" style="margin:6px 0 0">Earned ${money(c.earned)} so far${c.last!=null?` · last month ${money(c.last)}`:""}. ${c.lvl>=.7?"It's really taking off.":c.lvl>=.35?"It's growing.":"Early days."}</p><div class="btn-row"><button class="btn sm" data-act="shstop">Stop now</button></div></div>`}
+XCLICK.shgo=t=>{const id=t.dataset.k,m=+t.dataset.m,H=HUSTLES[id];if(!H||shCur()||shAvail(id))return;S.wealth-=H.start;S.sh={id,total:m,left:m,since:S.day,earned:0,lvl:(S.shLvl&&S.shLvl[id])||0,dep:H.dep?H.start:0};S.log.unshift({d:S.day,t:`Started a side hustle: ${H.n.toLowerCase()}.`});save();render();toastMsg(`${H.n}: ${m} months. Good luck!`)};
+let shAll=false;XCLICK.shall=()=>{shAll=true;render()};
+XCLICK.shstop=()=>{shEnd(true);save();render()};
+function shEnd(early){const c=shCur();if(!c)return;const H=HUSTLES[c.id];S.shLvl=S.shLvl||{};S.shLvl[c.id]=c.lvl;let msg=`${H.n}: you made ${money(c.earned)} in total.`;
+ if(c.dep){const back=Math.round(c.dep*(.92+rnd()*.3)/100)*100;S.wealth+=back;msg+=` You sold the flat and got ${money(back)} back from your ${money(c.dep)} deposit.`}
+ S.shDone=(S.shDone||0)+1;S.sh=null;S.shEndAt=S.day;S.log.unshift({d:S.day,t:msg});if(early)toastMsg(msg);return msg}
+/* Each month: earnings, a bit of stress, and it grows the longer you keep at it */
+function shDay(notes){const c=shCur();if(!c||S.prison)return;const H=HUSTLES[c.id];
+ let g=Math.round(H.earn[0]+(H.earn[1]-H.earn[0])*(.25+.75*c.lvl)*(.6+rnd()*.6));if(H.jackpot&&c.lvl>.8&&rnd()<.03)g+=Math.round((20+rnd()*80))*1000;
+ S.wealth+=g;c.earned+=g;c.last=g;c.lvl=clamp(c.lvl+H.grow*(.5+rnd()),0,1);S.stress=clamp(S.stress+.7+(H.stress||0)*.5,0,100);if(H.health)S.health=clamp(S.health+H.health,0,100);
+ notes.push(`Side hustle (${H.n.toLowerCase()}): ${g>=0?"made":"lost"} ${money(Math.abs(g))} this month.`);c.left--;
+ if(c.left<=0){c.left=0;pushDyn({id:"sh_end_"+S.day,life:1,from:"Your side hustle",t:`${H.n}: ${c.total} months on`,b:`You've made ${money(c.earned)} from ${H.n.toLowerCase()} so far. ${c.lvl>=.7?"It's really taking off.":c.lvl>=.35?"It's starting to grow.":"It's been slow going."} Keep going?`,c:[
+  {t:"Another 3 months",fx:{act:"shmore",m:3},o:"Back to it."},{t:"Another 6 months",fx:{act:"shmore",m:6},o:"You're in it for the long haul."},
+  ...(c.lvl>=.6&&!H.dep?[{t:`Sell it on (about ${money(Math.round(c.earned*1.5/100)*100)})`,fx:{act:"shsell"},o:"Someone with more time and fewer evenings buys it from you."}]:[]),
+  {t:"Stop",fx:{act:"shstop"},o:"You get your evenings back."}]})}}
+Object.assign(ACTS,{shmore:fx=>{const c=shCur();if(c){c.total=fx.m;c.left=fx.m}},shstop:()=>shEnd(false),shsell:()=>{const c=shCur();if(!c)return;const v=Math.round(c.earned*1.5/100)*100;S.wealth+=v;S.shLvl=S.shLvl||{};S.shLvl[c.id]=0;S.log.unshift({d:S.day,t:`Sold your ${HUSTLES[c.id].n.toLowerCase()} for ${money(v)}.`});S.sh=null;S.shEndAt=S.day}});
+/* Every so often, a nudge or a story */
+function shMorning(){
+ if(!l5ok()||S.day<10||l5busy(/^sh_/))return;const c=shCur();
+ if(!c){if(S.day-(S.shEndAt??0)>=12&&S.day-(S.shNudge??-99)>=24&&(S.shNudges||0)<3&&!S.shDone&&rnd()<.12){S.shNudge=S.day;S.shNudges=(S.shNudges||0)+1;const ids=Object.keys(HUSTLES).filter(id=>!shAvail(id));if(ids.length<2)return;const a=pick(ids),b=pick(ids.filter(x=>x!==a));
+  pushDyn({id:"sh_nudge_"+S.day,life:1,from:"An idea",t:"Fancy a side hustle?",b:`A friend has been making good money on the side. You could try ${HUSTLES[a].n.toLowerCase()}, or ${HUSTLES[b].n.toLowerCase()}. Three months, to see how it goes.`,c:[{t:`Try ${HUSTLES[a].n.toLowerCase()}`,fx:{act:"shstart",k:a},o:"New project. New spreadsheet."},{t:`Try ${HUSTLES[b].n.toLowerCase()}`,fx:{act:"shstart",k:b},o:"New project. New spreadsheet."},{t:"Not right now",fx:{},o:"Your evenings are precious."}]})}return}
+ if(c.storied||c.total-c.left<1||rnd()>.25)return;c.storied=1;const H=HUSTLES[c.id],S0={
+  etsy:["A big order",`A shop in Brighton wants 200 of your things by Friday.`,[{t:"Pull three all-nighters",p:.7,win:{fx:{gbp:1200,stress:8},o:"You make it. Your fingers may never recover."},lose:{fx:{gbp:300,stress:10},o:"You deliver 140. They take them, grumpily."}},{t:"Say you can do 50",fx:{gbp:350},o:"They take 50, and come back for more next month."}]],
+  podcast:["A famous guest","A minor celebrity has agreed to come on your podcast. Their agent wants a fee.",[{t:"Pay the £300",p:.5,win:{fx:{gbp:-300,fixed:1,act:"shboost",v:.3},o:"Your downloads triple overnight."},lose:{fx:{gbp:-300,fixed:1},o:"They spend 40 minutes plugging their book."}},{t:"Stick with your regular guests",fx:{},o:"Your loyal 200 listeners are delighted."}]],
+  tutor:["Exam results day",`Your student got an A. Their parents want you to tutor their other three children.`,[{t:"Take them all on",fx:{gbp:600,stress:5,act:"shboost",v:.2},o:"Your Tuesday evenings are now algebra."},{t:"Just one more",fx:{gbp:200},o:"Manageable. Just."}]],
+  dogs:["The great escape","A spaniel called Biscuit has slipped his lead in the park.",[{t:"Sprint after him",p:.6,win:{fx:{health:2,act:"shboost",v:.15},o:"You catch him at the duck pond. His owner leaves you a five-star review."},lose:{fx:{gbp:-150,fixed:1,stress:6},o:"Biscuit is found two hours later in a pub. You pay for the vet check-up."}},{t:"Rattle the treat bag",fx:{},o:"Biscuit comes straight back. Of course he does."}]],
+  photo:["The drunk uncle","At a wedding, the bride's uncle keeps photobombing every shot.",[{t:"Have a quiet word",p:.6,win:{fx:{act:"shboost",v:.2},o:"The couple love the photos. Three of their friends book you."},lose:{fx:{stress:5},o:"He has a loud word back. Still, great photos of the argument."}},{t:"Just work around him",fx:{},o:"He's in 40% of the album. They don't seem to mind."}]],
+  resell:["A hot drop","Limited trainers drop at 8am. You could buy ten pairs.",[{t:"Buy ten (£2,000)",p:.55,win:{fx:{gbp:1600},o:"They sell out in an hour. Profit!"},lose:{fx:{gbp:-900,fixed:1},o:"So did everyone else. Prices crash. You own a lot of trainers."}},{t:"Sit this one out",fx:{},o:"You watch the prices with interest."}]],
+  youtube:["Going viral?","One of your videos has suddenly got 200,000 views.",[{t:"Post every day this month",p:.55,win:{fx:{stress:6,act:"shboost",v:.35},o:"Subscribers flood in. Brands start emailing."},lose:{fx:{stress:8},o:"The algorithm moves on. Exhausting."}},{t:"Keep your normal schedule",fx:{act:"shboost",v:.1},o:"Slow and steady. A few new subscribers."}]],
+  food:["Festival weekend",`A festival offers you a pitch for £1,200. Thousands of hungry people.`,[{t:"Book it",p:.65,win:{fx:{gbp:2600,stress:6},o:"You sell out by Saturday night. Sunday you buy every bread roll in town."},lose:{fx:{gbp:-1200,fixed:1,stress:6},o:"It rains all weekend. Nobody wants a burrito in a swamp."}},{t:"Stick to the Saturday market",fx:{gbp:200},o:"Steady. And dry."}]],
+  airbnb:["A guest from hell","Your guest has had a party. There's glitter in places glitter shouldn't be.",[{t:"Claim the damage",p:.6,win:{fx:{gbp:400},o:"The platform pays out. Eventually."},lose:{fx:{gbp:-300,fixed:1,stress:5},o:"They leave you a one-star review. For your 'attitude'."}},{t:"Just clean it",fx:{stress:3},o:"You'll be finding glitter for years."}]],
+  btl:["The boiler's gone","Your tenant rings: no heating, no hot water and a baby on the way.",[{t:"Get it fixed today (£2,500)",fx:{gbp:-2500,fixed:1,karma:3},o:"Warm tenants and a thank-you card. They renew for two years."},{t:"Patch it up (£400)",p:.5,win:{fx:{gbp:-400,fixed:1},o:"It holds. For now."},lose:{fx:{gbp:-3200,fixed:1,stress:6},o:"It breaks again in a cold snap. Now it's an emergency call-out."}}]],
+  app:["An investor calls","Someone wants to invest in your app. They want 40% for £20,000.",[{t:"Take the deal",fx:{gbp:20000,act:"shboost",v:.3},o:"You spend some of it on a better laptop. Then on actual developers."},{t:"Keep it all yours",p:.3,win:{fx:{act:"shboost",v:.4},o:"Lucky. A month later, downloads take off on their own."},lose:{fx:{},o:"You never hear from them again. Downloads stay at 14."}}]]}[c.id];
+ if(S0)pushDyn({id:"sh_st_"+S.day,life:1,from:H.n,t:S0[0],b:S0[1],c:S0[2]})}
+ACTS.shboost=fx=>{const c=shCur();if(c)c.lvl=clamp(c.lvl+(fx.v||.1),0,1)};
+ACTS.shstart=fx=>{if(shCur()||shAvail(fx.k))return;const H=HUSTLES[fx.k];S.wealth-=H.start;S.sh={id:fx.k,total:3,left:3,since:S.day,earned:0,lvl:(S.shLvl&&S.shLvl[fx.k])||0,dep:H.dep?H.start:0}};
+
+/* ============ Work politics, every few months ============ */
+const wpOn=()=>l5ok()&&!S.sabb&&!soloJob()&&S.path!=="foot"&&S.day>=6;
+function wpMorning(){
+ if(!wpOn()||S.day-(S.wpAt??-99)<5||rnd()>.13||l5busy(/^wp_/))return;
+ const W=WORK_WORDS[S.path]||WORK_WORDS.tech,boss=S.boss&&S.boss.n?firstOf(S.boss.n):"your boss",col=pick(NAMES_M.concat(NAMES_F).filter(n=>n!==firstOf(S.name))),riv=S.rival&&S.rival.name?firstOf(S.rival.name):col,place=W[0],crowd=W[1];
+ const E=[
+  ["Who gets the credit?",`${riv} presented your idea at the big meeting as their own. ${boss} loved it.`,[{t:"Call it out, there and then",p:.5,win:{fx:{rep:4,act:"wpboss",d:6},o:`You have the emails to prove it. ${riv} goes very quiet.`},lose:{fx:{rep:-2,stress:5,act:"wpboss",d:-6},o:"It looks like sour grapes. Everyone shifts in their seats."}},{t:`Have a quiet word with ${boss} later`,fx:{rep:2,act:"wpboss",d:4},o:`${boss} nods slowly. "I did wonder."`},{t:"Let it go",fx:{stress:4},o:"You'll remember this, though."}]],
+  ["A reorganisation",`There's a big shake-up at ${place}. Everyone's job is being 'reviewed'.`,[{t:"Volunteer to help plan it",p:.55,win:{fx:{rep:5,stress:4,act:"wpboss",d:8},o:"You end up with a better job and a bigger desk."},lose:{fx:{rep:-2,stress:6},o:"You get the blame for every unpopular change."}},{t:"Keep your head down",fx:{stress:3},o:"You survive. Not everyone does."}]],
+  ["The new boss",`There's a new manager above ${boss}. They want to 'shake things up' and they're watching everyone.`,[{t:"Make a strong first impression",p:.6,win:{fx:{rep:4,act:"wpboss",d:5},o:"They remember your name. Good sign."},lose:{fx:{rep:-2,stress:3},o:"You talk for too long in the first meeting. They remember your name. Bad sign."}},{t:"Wait and see what they're like",fx:{},o:"Sensible. Three of your colleagues weren't."}]],
+  ["Gossip about you",`You walk into ${place} and the conversation stops. Someone's been talking about you.`,[{t:"Find out who",p:.5,win:{fx:{rep:2,stress:-2},o:`It was ${col}. You clear the air over a coffee.`},lose:{fx:{stress:6,rep:-2},o:"You find out. You also find out what they said. It stings."}},{t:"Rise above it",fx:{stress:3,karma:1},o:"By Friday they're gossiping about someone else."}]],
+  ["Spy for the boss?",`${boss} asks you to keep an eye on ${col} and 'let them know' if anything seems off.`,[{t:"Agree",fx:{rep:2,karma:-4,act:"wpboss",d:8},o:`You feel grubby. ${boss} seems pleased.`},{t:"Refuse politely",fx:{karma:3,act:"wpboss",d:-5},o:`"I'm not comfortable with that." ${boss} changes the subject quickly.`},{t:`Warn ${col}`,fx:{karma:2,act:"wpboss",d:-10,rep:1},o:`${col} buys you a drink and owes you one.`}]],
+  ["The promotion",`You and ${riv} are both going for the same promotion. It's getting competitive at ${place}.`,[{t:"Work every hour you can",p:.55,win:{fx:{rep:6,stress:8},o:"The extra hours are noticed. You're the favourite now."},lose:{fx:{stress:10,health:-2},o:"You're exhausted, and they still can't decide."}},{t:"Suggest you share the role",p:.4,win:{fx:{rep:3,karma:2},o:"It works. Somehow, you're friends now."},lose:{fx:{rep:-1},o:"They think you're not hungry enough."}}]],
+  ["The reply-all",`${col} has accidentally replied to everyone at ${place} with a rude comment about ${boss}. And they mentioned you.`,[{t:`Apologise to ${boss} right away`,fx:{act:"wpboss",d:2,stress:4},o:`${boss} says they've 'seen worse'. They haven't.`},{t:"Pretend you didn't see it",p:.5,win:{fx:{},o:"It blows over in a week."},lose:{fx:{act:"wpboss",d:-8,stress:4},o:"Silence looks like agreement."}}]],
+  ["The leaked pay list",`A spreadsheet of everyone's pay has leaked. You're paid less than ${col}, who started two years after you.`,[{t:"Ask for a pay rise",p:.5,win:{fx:{gbp:2000,act:"wpboss",d:-2},o:"They match it. And back-pay you, quietly."},lose:{fx:{stress:6,act:"wpboss",d:-4},o:`"Budgets are very tight." ${col} has a new car.`}},{t:"Let it slide",fx:{stress:5},o:"It bothers you every payday."}]],
+  ["Left out",`Everyone's been invited to a big meeting about the future of ${place}. Everyone except you.`,[{t:"Turn up anyway",p:.55,win:{fx:{rep:4},o:'"Oh, glad you could make it." Turns out it was a mistake.'},lose:{fx:{rep:-2,stress:5},o:"It wasn't a mistake. Awkward."}},{t:`Ask ${boss} about it`,fx:{act:"wpboss",d:2},o:`${boss} looks embarrassed and adds you to the invite.`}]],
+  ["Someone's leaving",`${col} has quit, and all their work is landing on your desk.`,[{t:"Take it on and ask for more money",p:.5,win:{fx:{gbp:1500,stress:6,rep:3},o:"They agree. More work, more pay."},lose:{fx:{stress:9},o:"More work. Same pay."}},{t:"Push back",fx:{act:"wpboss",d:-3,stress:2},o:"They hire a temp. The temp is brilliant."}]],
+  ["Cover for the boss",`${boss} made a big mistake and wants you to say it was a 'team decision'.`,[{t:"Back them up",fx:{act:"wpboss",d:12,karma:-3},o:`${boss} won't forget this. Neither will you.`},{t:"Refuse",p:.6,win:{fx:{karma:4,rep:3,act:"wpboss",d:-10},o:"Their boss finds out the truth. People respect you for it."},lose:{fx:{act:"wpboss",d:-15,stress:6},o:"You're frozen out of everything for months."}}]],
+  ["An alliance",`${riv} suggests you team up. "If we stick together, we'll both go further."`,[{t:"Shake on it",fx:{act:"wpriv",d:15,rep:2},o:"An unlikely team. It works, mostly."},{t:"Keep your distance",fx:{act:"wpriv",d:-5},o:"They'll be watching you now."}]],
+  ["Office romance rumours",`People at ${place} think you and ${col} are having an affair. You're not. You just get coffee together.`,[{t:"Laugh it off",fx:{stress:2},o:"The rumour dies after a week. Mostly."},{t:"Stop getting coffee together",fx:{stress:3,home:1},o:"Shame. They're good company."}]],
+  ["The team day out",`It's the team-building day: paintball in a muddy field.`,[{t:"Go all in",p:.6,win:{fx:{rep:3,stress:-4,act:"wpboss",d:4},o:`You take out ${boss} with a perfect shot. They actually laugh.`},lose:{fx:{health:-2,stress:3},o:"A paintball to the ear. It throbs for a week."}},{t:"Volunteer to 'run the first aid tent'",fx:{stress:-2},o:"You read a book in the tent."}]]
+ ];
+ const seen=S.wpSeen=S.wpSeen||[];let pool=E.map((e,i)=>i).filter(i=>!seen.includes(i));if(!pool.length){S.wpSeen=[];pool=E.map((e,i)=>i)}
+ const i=pick(pool);S.wpSeen.push(i);S.wpAt=S.day;const e=E[i];pushDyn({id:"wp_"+S.day,life:1,from:cap1(place),t:e[0],b:e[1],c:e[2]})}
+ACTS.wpboss=fx=>{if(S.boss)S.boss.mood=clamp((S.boss.mood||50)+(fx.d||0),0,100)};
+ACTS.wpriv=fx=>{if(S.rival)S.rival.bond=clamp((S.rival.bond||0)+(fx.d||0),-100,100)};
+
+/* ============ Strikes, recessions and price rises ============ */
+function econMorning(){
+ if(!l5ok()||S.day<10||S.day-(S.econAt??-99)<8||rnd()>.09||l5busy(/^econ_/))return;
+ const pay=Math.max(500,Math.round(salary()/12/100)*100),opts=[];const kidsSchool=(S.children||[]).some(k=>kidAge(k)>=5&&kidAge(k)<16);
+ if(!soloJob()&&S.path!=="pol")opts.push(["Strike ballot",`Your union is balloting for a strike over pay. Everyone at ${(WORK_WORDS[S.path]||WORK_WORDS.tech)[0]} is talking about it.`,[{t:"Vote yes and walk out",p:.55,win:{fx:{gbp:-Math.round(pay*.4),fixed:1,stress:4,act:"econraise",amt:Math.round(pay*1.2)},o:"Two weeks on the picket line, then a deal. The back pay more than covers it."},lose:{fx:{gbp:-Math.round(pay*.6),fixed:1,stress:8},o:"Three weeks without pay, and a deal no better than the first offer."}},{t:"Vote no and keep working",fx:{karma:-1,stress:3},o:"Some colleagues stop talking to you. The deal still goes through."}]]);
+ if(commuteMins()>20&&!(S.car&&S.car.value>0))opts.push(["Train strike",`The trains are on strike all week. Your commute just became a two-hour bus odyssey.`,[{t:"Work from home where you can",fx:{stress:-1,rep:-1},o:"Your living room becomes your office. The cat attends every meeting."},{t:"Get a taxi every day (£300)",fx:{gbp:-300,stress:-2},o:"Expensive, but you're never late."},{t:"Brave the buses",fx:{stress:6},o:"You learn the life stories of several bus drivers."}]]);
+ opts.push(["Energy bills are up",`Energy prices have jumped. Your bill is up ${money(Math.round(120+rnd()*100))} a month.`,[{t:"Turn the heating down and wear a jumper",fx:{health:-1,stress:2,gbp:-200},o:"You can see your breath in the bathroom."},{t:"Fit insulation (£2,500)",fx:{gbp:-2500,karma:2},o:"Toasty, and the bills are lower than before."},{t:"Just pay it",fx:{gbp:-600},o:"Ouch."}]]);
+ if(S.home&&S.home.loan>50000){const hit=Math.round(S.home.loan*.0015/10)*10;opts.push(["Interest rates are rising",`The Bank of England has raised rates again. Your mortgage could go up by ${money(hit)} a month.`,[{t:"Fix your rate now (£1,000 fee)",fx:{gbp:-1000,fixed:1},o:"Locked in for five years. You sleep better."},{t:"Gamble on rates falling",p:.45,win:{fx:{},o:"Rates fall back within a year. Good call."},lose:{fx:{act:"econrate",amt:hit,stress:5},o:"They keep rising. Your payments go up for the next year."}}]])}
+ if(inWorld(S,"recession")||inWorld(S,"crash"))opts.push(["Saving jobs",`Times are hard. Everyone at ${(WORK_WORDS[S.path]||WORK_WORDS.tech)[0]} is asked to take a 10% pay cut for six months to avoid job losses.`,[{t:"Agree",fx:{gbp:-Math.round(pay*.6),fixed:1,karma:4,rep:2},o:"Nobody loses their job. You feel good about that."},{t:"Refuse",p:.6,win:{fx:{karma:-2},o:"Enough people agree anyway."},lose:{fx:{rep:-4,stress:6},o:"Your name is noted. Not in a good way."}}]]);
+ if(inWorld(S,"boom"))opts.push(["Boom time",`Business is booming. There's a bonus pot for everyone at ${(WORK_WORDS[S.path]||WORK_WORDS.tech)[0]}.`,[{t:"Spend it",fx:{gbp:Math.round(pay*.5),home:3},o:"A weekend away. You deserve it."},{t:"Save it for a rainy day",fx:{gbp:Math.round(pay*.5),stress:-3},o:"Sensible. Rainy days always come."}]]);
+ if(kidsSchool)opts.push(["Teachers' strike","The teachers are on strike for three days. The kids are at home, and you're meant to be at work.",[{t:"Take time off",fx:{home:5,rep:-1},o:"Three days of board games and a trip to the museum."},{t:"Pay for a holiday club (£250)",fx:{gbp:-250,fixed:1},o:"The kids come home covered in paint. Happy, though."}]]);
+ opts.push(["Bin strike","The bin collectors are on strike. It's week three, and something is living in your recycling.",[{t:"Take it to the tip yourself",fx:{stress:2},o:"A queue of grim-faced neighbours with car boots full of bags."},{t:"Wait it out",fx:{stress:4,home:-2},o:"A fox has moved in. It has a family."}]]);
+ opts.push(["Prices keep rising","The weekly shop costs a fortune now. A block of cheese costs what a meal out used to.",[{t:"Switch to the budget supermarket",fx:{gbp:150,stress:1},o:"Turns out the own-brand cereal is fine."},{t:"Carry on as normal",fx:{gbp:-200},o:"You stop looking at the receipt."}]]);
+ if(S.holi||rnd()<.3)opts.push(["Airport strike","Baggage handlers are striking. Holidays everywhere are cancelled.",[{t:"Stay at home this year",fx:{home:2,stress:2},o:"A 'staycation'. It rains."},{t:"Drive to France instead",fx:{gbp:-400,home:4},o:"Croissants, motorways and very good cheese."}]]);
+ if(!opts.length)return;S.econAt=S.day;const e=pick(opts);pushDyn({id:"econ_"+S.day,life:1,from:"The news",t:e[0],b:e[1],c:e[2]})}
+ACTS.econraise=fx=>{S.wealth+=fx.amt||0};
+ACTS.econrate=fx=>{S.rateHike={amt:fx.amt,until:S.day+12}};
+
+/* ============ Monthly upkeep for all of the above ============ */
+{const _hd=healthDay;healthDay=function(notes){const r=_hd.apply(this,arguments);try{
+ let cost=0,hit=0,st=0;for(const c of conds()){const C=CONDS[c.k];if(!C)continue;if(c.ctl===1)cost+=C.cost;else if(!c.ctl){hit+=C.hit;st+=C.stress||0}}
+ const H=S.habit||{};if(H.smoke){hit+=.3;cost+=300}if(H.drink>=2){hit+=.25;S.homeLife=clamp(S.homeLife-.4,0,100);cost+=120}else if(H.drink===1){hit+=.08;cost+=50}
+ hit-=careBoost();if(cost){S.wealth-=cost}S.health=clamp(S.health-hit,0,100);S.stress=clamp(S.stress+st,0,100);
+ if(S.rateHike&&S.day<S.rateHike.until){S.wealth-=S.rateHike.amt}else if(S.rateHike)S.rateHike=null;
+ shDay(notes);sibsDay()}catch(e){}return r}}
+/* Look after a parent's house and inheritances in the life summary */
+function gkSec(){if(!S||S.over||!(S.grandkids>0))return"";const L=ensureGkids();return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Grandchildren</h2><span class="label">${L.length}</span></div><p class="hint" style="margin:0">${L.map(g=>`<b>${esc(g.n)}</b> (${gkAge(g)}${g.of?`, ${esc(g.of)}'s`:""})`).join(" · ")}</p></div>`}
+{const _fs=folksSec;folksSec=function(){return _fs.apply(this,arguments)+sibsSec()+gkSec()+healthSec()}}
+{const _hs=hobbySec;hobbySec=function(){return _hs.apply(this,arguments)+sideSec()}}
+
+/* ============ Settings: text size and vibration ============ */
+function textPref(){try{const v=localStorage.getItem("ftb-text");return v==="l"||v==="xl"?v:"n"}catch(e){return"n"}}
+const TEXT_ZOOM={n:1,l:1.1,xl:1.2};
+function applyText(){try{const z=TEXT_ZOOM[textPref()];document.documentElement.style.zoom=z===1?"":String(z)}catch(e){}}
+applyText();
+let hapticsOn=true;try{hapticsOn=localStorage.getItem("ftb-haptics")!=="0"}catch(e){}
+/* A light tap on the phone for wins and big moments. In the app it uses the phone's own haptics. */
+function haptic(kind){if(!hapticsOn)return;try{const H=typeof capPlugin==="function"&&isNative()?capPlugin("Haptics"):null;if(H){if(kind==="win")H.notification({type:"SUCCESS"}).catch(()=>{});else if(kind==="bad")H.notification({type:"WARNING"}).catch(()=>{});else H.impact({style:kind==="heavy"?"HEAVY":"LIGHT"}).catch(()=>{});return}
+ if(navigator.vibrate&&(!navigator.userActivation||navigator.userActivation.hasBeenActive))navigator.vibrate(kind==="win"?[20,40,20]:kind==="bad"?60:kind==="heavy"?35:12)}catch(e){}}
+{const g=sfx.good,b=sfx.bad,f=sfx.fanfare,c=sfx.coin;if(g)sfx.good=function(){haptic("tap");return g.apply(this,arguments)};if(b)sfx.bad=function(){haptic("bad");return b.apply(this,arguments)};if(f)sfx.fanfare=function(){haptic("win");return f.apply(this,arguments)};if(c)sfx.coin=function(){haptic("tap");return c.apply(this,arguments)}}
+XCLICK.textsize=()=>{const o=["n","l","xl"],v=o[(o.indexOf(textPref())+1)%3];try{if(v==="n")localStorage.removeItem("ftb-text");else localStorage.setItem("ftb-text",v)}catch(e){}applyText();menuModal()};
+XCLICK.haptictoggle=()=>{hapticsOn=!hapticsOn;try{localStorage.setItem("ftb-haptics",hapticsOn?"1":"0")}catch(e){}if(hapticsOn)haptic("win");menuModal()};
+const textLabel=()=>({n:"Normal",l:"Large",xl:"Larger"})[textPref()];
+
+/* ============ Hook the new stories into the month ============ */
+{const _wm=willMorning;willMorning=function(){const r=_wm.apply(this,arguments);for(const f of[sibMorning,kidGrownMorning,inheritMorning,healthMorning,shMorning,wpMorning,econMorning])try{f()}catch(e){}return r}}
+
+/* ============ Settings live in their own screen so the menu fits on small phones ============ */
+let inSettings=false;
+function settingsModal(){inSettings=true;
+ showModal(`<div class="label">Menu</div><h2 style="margin-top:4px">Settings</h2><div class="menu-grid">
+  <button class="btn" data-act="themetoggle">Theme: ${themeLabel()}</button><button class="btn" data-act="textsize">Text size: ${textLabel()}</button>
+  <button class="btn" data-act="sound" aria-pressed="${soundOn}">Sound: ${soundOn?"on":"off"}</button><button class="btn" data-act="ambtoggle">Workplace sounds: ${ambOn?"on":"off"}</button>
+  ${isNative()||navigator.vibrate?`<button class="btn" data-act="haptictoggle">Vibration: ${hapticsOn?"on":"off"}</button>`:""}${isNative()&&capPlugin("LocalNotifications")?`<button class="btn" data-act="notiftoggle">Reminders: ${notifOn()?"on":"off"}</button>`:""}
+  <button class="btn primary" data-act="settingsback">Back to the menu</button></div>`)}
+{const _mm=menuModal;menuModal=function(){if(inSettings)return settingsModal();return _mm.apply(this,arguments)}}
+{const _hm=hideModal;hideModal=function(){inSettings=false;return _hm.apply(this,arguments)}}
+XCLICK.settings=()=>settingsModal();
+XCLICK.settingsback=()=>{inSettings=false;menuModal()};
+
 
 function start(data){
  S=(data&&data.S)||load();
