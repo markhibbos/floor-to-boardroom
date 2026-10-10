@@ -560,6 +560,36 @@ html,body{overflow-x:clip}
 .kt-opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;white-space:normal;padding:10px 12px}
 .kt-opt b{font-size:14px}.kt-opt span{font-size:12px;font-weight:400;color:var(--muted);line-height:1.3}
 .kt-bye{background:none;border-color:transparent;color:var(--muted);text-decoration:underline}
+.mail.big{border-color:var(--accent)}
+.mail.big.pending{box-shadow:inset 4px 0 0 var(--accent),0 0 0 1px var(--accent)}
+.pill.bd-pill{color:var(--on-accent,#fff);background:var(--accent);border-color:var(--accent)}
+.pill.csq-pill{color:var(--accent);border-color:currentColor;background:var(--accent-soft,transparent)}
+.bd-stakes{font-size:12px;font-weight:600;line-height:1.35;color:var(--accent);margin-top:-4px}
+/* Consequences: floating stat badges, threshold alerts, month-in-choices line, Known as */
+.fx-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 70px);transform:translateX(-50%);z-index:85;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;width:min(calc(100vw - 32px),420px)}
+.fx-badge{font:600 14px/1.2 var(--f-body);padding:6px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.18);animation:fxIn .25s ease-out,fxOut .4s ease-in 2.25s forwards;white-space:nowrap}
+.fx-badge.up{color:var(--up);border-color:var(--up)}
+.fx-badge.down{color:var(--down);border-color:var(--down)}
+.fx-alert{font:500 14px/1.35 var(--f-body);padding:10px 14px;border-radius:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--warn);box-shadow:0 8px 24px rgba(0,0,0,.22);width:100%;animation:fxIn .25s ease-out,fxOut .5s ease-in 5.6s forwards}
+.fx-alert.good{border-left-color:var(--up)}
+.fx-alert.bad{border-left-color:var(--down)}
+@keyframes fxIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes fxOut{to{opacity:0;transform:translateY(-8px)}}
+.meter.fx-pulse-up .bar{animation:fxRingUp 1.3s ease-out}
+.meter.fx-pulse-down .bar{animation:fxRingDown 1.3s ease-out}
+.meter.fx-pulse-up>.mono{color:var(--up)}
+.meter.fx-pulse-down>.mono{color:var(--down)}
+@keyframes fxRingUp{0%{box-shadow:0 0 0 0 transparent}30%{box-shadow:0 0 0 3px var(--up)}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes fxRingDown{0%{box-shadow:0 0 0 0 transparent}30%{box-shadow:0 0 0 3px var(--down)}100%{box-shadow:0 0 0 0 transparent}}
+.ts.fx-pulse-up strong{color:var(--up);transition:color .3s}
+.ts.fx-pulse-down strong{color:var(--down);transition:color .3s}
+.mc-line{margin-top:10px;font-size:13px;line-height:1.5;padding:8px 10px;border-radius:10px;background:var(--surface2);border:1px solid var(--line)}
+.mc-line .label{display:block;margin-bottom:2px}
+.mc-line b.up{color:var(--up)}
+.mc-line b.down{color:var(--down)}
+.ka-row{margin-top:10px;padding:8px 10px;border-radius:10px;background:var(--surface2);border:1px solid var(--line)}
+.ka-row .ka-name{font-weight:600;font-size:15px}
+@media (prefers-reduced-motion:reduce){.fx-badge,.fx-alert{animation:none}.meter.fx-pulse-up .bar,.meter.fx-pulse-down .bar{animation:none}}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -14790,7 +14820,7 @@ function nextModal(){
    <table class="rep-table">${rows}</table>
    ${d.gross!=null?`<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Living costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div><details class="me-more"><summary>Pay breakdown</summary><table class="rep-table"><tr><td>${d.self?"Your earnings (self-employed)":"Salary this month"}</td><td>${moneyX(d.gross)}</td></tr><tr><td>Income tax and National Insurance</td><td class="down">${moneyX(-d.tax)}</td></tr>${d.you?`<tr><td>Your pension contribution</td><td class="down">${moneyX(-d.you)}</td></tr>`:""}<tr><td><b>Take-home pay</b></td><td><b>${moneyX(d.pay)}</b></td></tr>${d.pen?`<tr><td>Into your pension (with tax relief and employer)</td><td class="up">${moneyX(d.pen,true)}</td></tr>`:""}</table></details>`:
    `<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Living costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div>`}
-   ${dl?`<div class="chips">${dl}</div>`:""}
+   ${dl?`<div class="chips">${dl}</div>`:""}${typeof monthChoicesLine==="function"?monthChoicesLine(d):""}
    ${d.notes.length?`<div class="me-notes">${d.notes.map(n=>`<div class="note">${esc(n)}</div>`).join("")}</div>`:""}
    <div class="btn-row me-go"><button class="btn primary big" data-act="next">${modalQueue.length?"Continue":"Next month"}</button></div>`);
   countUp(document.querySelector("#sheet .big-num"),d.tot);if(d.tot>0)sfx.coin();else if(d.tot<0)sfx.bad();
@@ -44762,6 +44792,795 @@ function ktMorning(){if(!S||S.placeholder||S.over)return;
 {const _wmK=willMorning;willMorning=function(){const r=_wmK.apply(this,arguments);try{ktMorning()}catch(e){}return r}}
 try{STORY_GAP.push([/^Guess who's back$/,18],[/^Drifting apart from /,12],[/ is getting married$/,10])}catch(e){}
 
+/* CSQ: consequences module. Remembered choices (callbacks months later) and Big decisions. */
+/* CSQ templates: [kind, good, req, from, title, body, choices]
+   req: "" | "w" (needs a named person from the trace) | "boss" | "rival"
+   choice: [text, fx, outcome] or [text, p, winFx, winO, loseFx, loseO]
+   fx extras: bm (boss mood), pb (bond with the person in the story), rv (review standing), ap (add a person with this role)
+   Rule: every option and every branch costs something. */
+const CSQ_T=[
+/* ---------- kind ---------- */
+["kind",1,"","An old acquaintance","Kindness remembered","[AGO], in \"[T]\", you chose \"[C]\". {It was a small thing to you|You'd forgotten all about it}. It wasn't small to the person on the other end, and they've just put your name forward for something good. The catch: it means a lot of extra hours.",[
+ ["Take the opportunity",{rep:14,cash:20,stress:8,home:-6},"A door opens that you didn't know was there. So does your diary, sadly."],
+ ["Say they owe you nothing",{karma:12,home:8,rep:-4,ap:"friend"},"They insist on staying in touch. You've made a friend, but the chance goes to someone else."]]],
+["kind",1,"","A letter","A card in the post","A handwritten card arrives. It's about \"[T]\", [AGO], when you chose \"[C]\". {They say it got them through a hard month|They say they think about it whenever things get tough}. They'd like to meet up and thank you properly, on a weekend you'd planned to rest.",[
+ ["Go and meet them",{home:12,karma:6,stress:6,ap:"acq"},"A lovely afternoon, and a long drive home."],
+ ["Send a kind reply instead",{karma:4,stress:-4,home:-4},"They understand. You feel a little mean about it."]]],
+["kind",1,"","Word of mouth","Your good name","Word gets around. [AGO] you chose \"[C]\" when \"[T]\" landed on you, and {people noticed|it's been quietly talked about ever since}. Now you're the first name on every charity committee in town.",[
+ ["Chair the committee",{rep:14,karma:8,stress:8,home:-8},"Respect, and a lot of evening meetings."],
+ ["Turn it down",{rep:-6,stress:-4},"They find someone else. A few people think less of you."]]],
+["kind",1,"w","[W]","[WF] hasn't forgotten","[WF] {gets in touch|catches you on your way out|calls out of the blue}. \"I never thanked you properly for \"[T]\",\" they say. You chose \"[C]\", and it mattered more than you knew. Now they'd like to return the favour, and ask one more of their own.",[
+ ["Accept their help, and help them back",{stress:-14,pb:20,cash:-10,home:-4},"Favours flow both ways. It costs you a weekend and a bit of money, and you're closer than ever."],
+ ["Tell them it was nothing",{karma:8,pb:-8,stress:4},"They look a bit hurt that you won't let them in."]]],
+["kind",1,"","Someone you helped","The favour comes back","You're in a bind this month and help arrives from an unlikely place: someone who was there for \"[T]\" [AGO], when you chose \"[C]\". They've sorted the problem, but they've also mentioned they'll need a hand next spring.",[
+ ["Accept, and owe them",{stress:-18,cash:15,karma:-2,rv:1},"Problem solved. You've a debt to pay later."],
+ ["Insist on paying for it yourself",{stress:-6,cash:-20,karma:6},"Independence is expensive, but you owe nobody."]]],
+["kind",0,"","Your inbox","Taken for a soft touch","Since \"[T]\", [AGO], when you chose \"[C]\", {word has spread|people seem to have decided} that you're the person to ask. Your inbox is full of requests for money, time and favours.",[
+ ["Say yes to a few more",{karma:10,stress:8,cash:-15},"You help. You're also exhausted and poorer."],
+ ["Draw a firm line",.6,{stress:-6,karma:-6},"People get the message. Some think you've gone cold.",{rep:-10,karma:-8,home:-6},"It gets ugly. You're called a hypocrite in front of others."]]],
+["kind",0,"","The past","No good deed","Remember \"[T]\"? You chose \"[C]\" and felt good about it. It turns out the help was {misused|spent on something else entirely|not what it seemed}, and now your name is attached to the mess.",[
+ ["Explain what happened",.6,{rep:-4,stress:6},"Most people believe you.",{rep:-14,stress:8},"Explaining only makes it look worse."],
+ ["Keep your head down",{rep:-10,stress:8},"It passes, slowly."]]],
+["kind",0,"w","[W]","[WF] wants more","[WF] {is back|has been in touch again}. Ever since \"[T]\", when you chose \"[C]\", they seem to think there's more where that came from.",[
+ ["Help again, one last time",{karma:8,stress:8,cash:-15,pb:10},"They're grateful. You suspect it won't be the last time."],
+ ["Say no kindly but clearly",{stress:-4,karma:-4,pb:-20},"It's the right call for you. They don't see it that way."]]],
+/* ---------- shady ---------- */
+["shady",1,"","The past","Got away with it","\"[T]\", [AGO]. You chose \"[C]\". {The file is finally closed|The last person who could have asked has moved on|The audit came and went}. Nobody is going to ask now. You'd still sleep better if you put it right.",[
+ ["Breathe out and forget it",{stress:-15,heat:-12,karma:-8},"Safe. Quietly, it changes you a little."],
+ ["Quietly put things right anyway",{karma:15,heat:-6,cash:-25,stress:6},"It costs you money and a nervous week. Your conscience is clean."]]],
+["shady",1,"","A senior colleague","The shortcut paid","Remember \"[T]\"? You chose \"[C]\", {and frankly it worked|and it did save you a lot of time}. Someone now wants to know how you got such quick results, and wants you to teach everyone else.",[
+ ["Take the credit and teach it",{rep:14,karma:-10,heat:10,rv:2},"You're the star of the training day. More people now know where the bodies are buried."],
+ ["Change the subject",{rep:-4,stress:6},"They're puzzled why you won't share."]]],
+["shady",1,"","A smooth stranger","Friends in low places","The kind of people who noticed when you chose \"[C]\" in \"[T]\" want to do business with you. Their offer is generous. You can probably guess why.",[
+ ["Take the money",{cash:40,heat:16,karma:-14},"The money is real. So is the feeling you've crossed a line."],
+ ["Turn them down",{karma:10,cash:-5,stress:8},"They take it badly. You keep checking your mirror for a week."]]],
+["shady",0,"","Compliance","It's come out","Remember \"[T]\", [AGO]? You chose \"[C]\". {Someone has put it in writing|An email has surfaced|A colleague mentioned it to the wrong person}, and now there's a formal question about it.",[
+ ["Own it and apologise",.65,{rep:-8,heat:-10,karma:10},"Honesty limits the damage.",{rep:-16,heat:8,rv:-2},"They throw the book at you anyway."],
+ ["Deny it",.45,{stress:8,karma:-6},"It goes away. You'll always know.",{rep:-20,heat:22,karma:-8,rv:-3},"The evidence is clear. Denying it was a mistake."]]],
+["shady",0,"","An auditor","The paper trail","An auditor is going through old records and has stopped at \"[T]\". Your choice that day, \"[C]\", is right there in black and white.",[
+ ["Help them with everything",{heat:-6,rep:-10,stress:8,karma:6},"Painful, but it's over."],
+ ["Pay someone to argue it",{cash:-30,heat:-12,stress:6,karma:-4},"Expensive, and it works. Mostly."]]],
+["shady",0,"","Your conscience","It still bothers you","You keep thinking about \"[T]\". You chose \"[C]\", [AGO], and {it still sits badly|it's been keeping you awake|you can't quite let it go}.",[
+ ["Talk it through with someone",{stress:-10,home:6,karma:6,rep:-4},"Saying it aloud helps. You worry a little about who they'll tell."],
+ ["Bury it in work",{stress:8,health:-10,rep:4},"The work gets done. The feeling doesn't go."]]],
+["shady",0,"w","[W]","[WF] knows","[WF] {pulls you aside|sends a short, careful message}. They know what really happened in \"[T]\", when you chose \"[C]\". They haven't told anyone. Yet.",[
+ ["Ask what they want",{cash:-25,heat:-8,stress:8,pb:-15},"A favour, and some money. It stays quiet, for now."],
+ ["Call their bluff",.5,{stress:4,pb:-10},"They back down.",{rep:-18,heat:18,pb:-30},"They weren't bluffing."]]],
+["shady",0,"","The office grapevine","The rumour","There's a rumour going round about \"[T]\", [AGO], and it's not far from the truth. You chose \"[C]\", and {people are starting to join the dots|it's being repeated at lunch}.",[
+ ["Get ahead of it",{rep:-8,heat:-8,karma:8,stress:6},"You tell your side first. It stings, but it works."],
+ ["Let it blow over",.5,{stress:4},"It fades.",{rep:-14,heat:12,stress:8},"It grows legs."]]],
+/* ---------- honest ---------- */
+["honest",1,"","Upstairs","Trust earned","[AGO], in \"[T]\", you chose \"[C]\". It cost you at the time. It's just paid off: you're being trusted with something {important|that nobody else was offered|delicate}. It will eat your evenings.",[
+ ["Take it on",{rep:16,skill:8,stress:8,home:-8,rv:2},"A real vote of confidence, and a lot of late nights."],
+ ["Pass it to someone who needs a break",{karma:12,rep:-6},"Generous. Your bosses wonder if you're ambitious enough."]]],
+["honest",1,"","A tense meeting","A straight answer","When \"[T]\" came up, you chose \"[C]\". {That's been remembered|People have long memories}. In a difficult meeting today, someone says, \"Ask them. They'll tell us the truth.\" Everyone turns to you.",[
+ ["Tell the truth again",{rep:14,heat:-10,bm:-8,stress:6},"Respect from the room. Your boss would have preferred you kept quiet."],
+ ["Keep it diplomatic",{rep:-4,stress:-4,karma:-6},"Smooth, and a little disappointing to those who trusted you."]]],
+["honest",1,"","A review panel","Clean record","A check on old decisions has turned up \"[T]\". You chose \"[C]\" and it's all above board. {You're one of the few|The reviewer seems almost surprised}. They'd like you on the panel that checks everyone else.",[
+ ["Join the panel",{rep:12,heat:-10,stress:8,skill:6,pb:0},"Useful, respected and not popular with everyone you check."],
+ ["Decline and keep your head down",{heat:-10,rep:-3,stress:-4},"Your record speaks for itself. Your chance to shine passes."]]],
+["honest",1,"w","[W]","[WF] respects you","[WF] brings up \"[T]\" out of nowhere. \"You chose \"[C]\". Not many would have. I've never forgotten it.\" They'd like your help with something tricky of their own.",[
+ ["Help them",{skill:10,rep:6,pb:15,stress:8},"Time well spent, though it eats into your month."],
+ ["Thank them, but you're too busy",{stress:-6,pb:-10},"They understand, mostly."]]],
+["honest",1,"","The past","Nothing to hide","You realise you never think about \"[T]\" any more. You chose \"[C]\", [AGO], {and there's nothing to worry about|and nothing is hanging over you}. Others who cut corners that month haven't been so lucky, and one of them asks you for help.",[
+ ["Help them out",{karma:12,stress:8,rep:-4},"Kind, and people who don't know the details wonder why you're involved."],
+ ["Stay well clear",{stress:-10,karma:-6},"Sensible. You feel a bit cold."]]],
+["honest",0,"","Someone powerful","Honesty has a price","Remember \"[T]\"? You chose \"[C]\". Someone powerful didn't like it, and {you've been left off an important list|your name has quietly gone missing from a project}.",[
+ ["Ask why, directly",.5,{rep:8,stress:6},"Your nerve impresses them. You're back in.",{rep:-12,stress:8,bm:-10},"It goes badly. You've made it worse."],
+ ["Let it go",{rep:-10,stress:8,karma:4},"You keep your dignity, and lose the project."]]],
+["honest",0,"","Someone you crossed","Made an enemy","The truth you told in \"[T]\", [AGO], when you chose \"[C]\", got someone in trouble. They've {just been promoted|landed on their feet} and they haven't forgotten.",[
+ ["Offer an olive branch",.5,{stress:4,karma:6},"An awkward coffee, but it clears the air.",{stress:8,rep:-6},"They make you grovel."],
+ ["Keep your distance",{rep:-8,stress:8},"They make your life awkward from afar."]]],
+["honest",0,"w","[W]","[WF] is still upset","[WF] is still upset about \"[T]\". You chose \"[C]\", and in their eyes you {chose honesty over them|took the wrong side}.",[
+ ["Talk it out",.55,{home:6,pb:15,stress:6},"Tears, then a hug.",{home:-10,stress:8,pb:-20},"It turns into a row."],
+ ["Give them space",{stress:6,pb:-12},"Time may help. It hasn't yet."]]],
+/* ---------- loyal ---------- */
+["loyal",1,"","Your corner","Loyalty returned","[AGO], in \"[T]\", you chose \"[C]\". You backed people when it counted. Now it's your turn to need backing, and {they're there|they step up without being asked}. They'll expect the same next time.",[
+ ["Accept the support",{stress:-15,rep:10,karma:-2,rv:1},"You're carried through a hard month. You're in their debt now."],
+ ["Say you're fine",{stress:8,karma:4},"Proud, and a little lonely."]]],
+["loyal",1,"w","[W]","[WF] puts in a word","You hear that [WF] put in a good word for you {in a meeting you weren't in|with someone who matters}. It's because of \"[T]\", when you chose \"[C]\". They've hinted they'd like you to do the same for their nephew.",[
+ ["Return the favour",{rep:10,pb:20,karma:-6},"Fair's fair. The nephew is not very good."],
+ ["Thank them, and leave it there",{rep:6,pb:-10,stress:4},"They notice you didn't offer anything back."]]],
+["loyal",1,"","Your team","People remember","People still talk about \"[T]\", [AGO], when you chose \"[C]\". {You've a reputation for standing by people|Morale is up}, and a few good people have asked to work with you, which won't please their current managers.",[
+ ["Bring them in",{rep:12,morale:12,skill:6,heat:8},"A stronger team, and some bruised colleagues."],
+ ["Recommend them elsewhere",{karma:10,rep:-4},"Decent of you. Your own work gets no lighter."]]],
+["loyal",1,"boss","Your boss","The boss noticed","Your boss brings up \"[T]\" in your one-to-one. You chose \"[C]\", [AGO]. \"That's the kind of loyalty I need,\" they say. Then they hand you a project nobody wants.",[
+ ["Take the project",{rep:12,stress:8,home:-6,bm:15,rv:3},"Your boss is delighted. Your evenings are gone."],
+ ["Say thanks, but your plate is full",{bm:-6,stress:-4},"The warmth cools a few degrees."]]],
+["loyal",1,"","Friends","A friend indeed","When things got hard this month, someone remembered \"[T]\" and how you chose \"[C]\". {A meal turns up|A spare room is offered|Your phone keeps buzzing with offers of help}.",[
+ ["Lean on them",{home:15,stress:-15,karma:-2,cash:-10},"You're looked after. You insist on paying for dinner after."],
+ ["Insist you're OK",{stress:8,home:-4},"They back off. You wish they hadn't."]]],
+["loyal",0,"","The past","Backed the wrong horse","Remember \"[T]\"? You chose \"[C]\". The person you stood by {has turned out to be trouble|is now under investigation}, and you're tarred with the same brush.",[
+ ["Stand by them still",.4,{rep:8,karma:10,stress:6},"Loyalty, vindicated. Just.",{rep:-16,heat:10},"It drags you down with them."],
+ ["Distance yourself",{rep:-8,karma:-8,stress:6},"You get out, and feel grubby about it."]]],
+["loyal",0,"","Colleagues","Loyalty abused","Since \"[T]\", [AGO], when you chose \"[C]\", {they've assumed you'll always cover for them|you've become everyone's backup}. This month it's cost you.",[
+ ["Cover again",{stress:8,rep:-6,karma:6},"You keep the peace and lose a weekend."],
+ ["Say enough is enough",{stress:-4,rep:-6,home:6},"It's awkward. Your weekends are your own again."]]],
+["loyal",0,"w","[W]","[WF] let you down","[WF] {didn't return the favour|wasn't there when you needed them}. After \"[T]\", when you chose \"[C]\", you'd have expected more.",[
+ ["Tell them how you feel",.5,{pb:15,stress:6},"They apologise properly.",{pb:-25,stress:8},"They get defensive. It ends badly."],
+ ["Quietly let them go",{stress:6,pb:-25},"You stop calling. So do they."]]],
+/* ---------- disloyal ---------- */
+["disloyal",1,"","The past","No looking back","\"[T]\", [AGO]. You chose \"[C]\". It looked cold at the time, but you've {moved on and moved up|landed somewhere better because of it}. Someone from back then wants coffee.",[
+ ["Skip the coffee",{rep:12,karma:-8},"No regrets, and one less friend."],
+ ["Go, and apologise",{karma:12,rep:-4,stress:8},"Awkward, honest, and it costs you some face."]]],
+["disloyal",1,"","Someone senior","Ruthless works","Someone senior admires how you handled \"[T]\". You chose \"[C]\", and they say {that's the kind of edge they're looking for|it's exactly what the job needs}. They want more of it.",[
+ ["Lean into it",{rep:16,karma:-10,stress:6,rv:3,bm:8},"You're on the fast track. Fewer people sit with you at lunch."],
+ ["Say it wasn't your proudest moment",{rep:-4,karma:6},"They seem a little disappointed."]]],
+["disloyal",1,"","Your diary","A clean break","Choosing \"[C]\" in \"[T]\", [AGO], cut ties you'd have had to cut eventually. {Life is simpler|Your diary is your own again}. The people on the other side still talk about you.",[
+ ["Enjoy the space",{stress:-14,home:10,rep:-6},"Peace, at the cost of a few stories told behind your back."],
+ ["Reach out once, to be decent",{karma:10,stress:8},"It's awkward but it's done."]]],
+["disloyal",0,"w","[W]","[WF] remembers","[WF] {hasn't forgotten|hasn't forgiven you for} \"[T]\". You chose \"[C]\", and they've {been telling people|made sure the right people heard about it}.",[
+ ["Apologise",.5,{karma:10,pb:20,rep:-4},"It's a start.",{rep:-10,pb:-10},"They want more than sorry."],
+ ["Shrug it off",{rep:-14,pb:-25},"The story spreads."]]],
+["disloyal",0,"","Old contacts","Burned bridges","You need help this month, and the people who might have given it remember \"[T]\". You chose \"[C]\", and {doors that used to be open are closed|calls aren't being returned}.",[
+ ["Struggle on alone",{stress:8,rep:-6},"You manage. Just."],
+ ["Pay for the help instead",{cash:-30,stress:-4},"Money talks, when friends won't."]]],
+["disloyal",0,"","A new colleague","Your reputation","A new colleague says they've \"heard about you\". It turns out the story of \"[T]\", when you chose \"[C]\", {got around|is better known than you thought}.",[
+ ["Prove them wrong",{stress:8,rep:-4,karma:8,skill:6},"It takes months of being decent."],
+ ["Don't bother",{rep:-14,karma:-4},"The label sticks."]]],
+["disloyal",0,"boss","Your boss","The tables turn","The person you {let down|stepped over} in \"[T]\", [AGO], when you chose \"[C]\", is now very close to your boss.",[
+ ["Make amends fast",.5,{rep:4,bm:5,stress:8},"Fences mended, for now.",{rep:-12,bm:-15,stress:8},"Too little, too late."],
+ ["Keep your head down",{stress:8,bm:-12,rv:-3},"Your boss's door closes a little."]]],
+["disloyal",0,"","Your colleagues","Trust is thin","Ever since \"[T]\", when you chose \"[C]\", {people check your work twice|conversations stop when you walk in}. It's wearing you down.",[
+ ["Win them round slowly",{stress:8,karma:8,rep:4},"Slow going, but it's working."],
+ ["Find new allies",{rep:-8,stress:6,ap:"contact"},"A new circle. The old one is gone for good."]]],
+/* ---------- risky ---------- */
+["risky",1,"","A headhunter","Fortune favours the bold","[AGO], with \"[T]\", you chose \"[C]\". {The gamble has kept paying off|It quietly opened a door}. Someone wants you for exactly that kind of nerve.",[
+ ["Back yourself again",.6,{rep:18,cash:25,stress:8},"Bold pays twice.",{rep:-8,stress:8},"Not this time."],
+ ["Take the safe version",{rep:6,stress:4,karma:-2},"Steady, and less exciting."]]],
+["risky",1,"","Accounts","The long tail","A late windfall from \"[T]\". You chose \"[C]\", [AGO], and {it's paid a bonus nobody expected|the numbers finally came through}. Others who took the risk with you think they deserve a share.",[
+ ["Bank it all",{cash:30,karma:-8,rep:-4},"Rich, and a few people think you're mean."],
+ ["Share it out",{cash:10,karma:10,stress:-4,rep:4,home:-2},"Less for you. More goodwill all round."]]],
+["risky",1,"","Office legend","Legend","\"[T]\" has become a story people tell. You chose \"[C]\", and {the details get bigger every time|newcomers ask if it's true}. A journalist wants the full story.",[
+ ["Tell it properly",{rep:12,heat:10},"Great story. Some people would rather it hadn't been told."],
+ ["Decline the interview",{rep:-4,stress:-4},"The story stays a rumour."]]],
+["risky",1,"boss","Your boss","Nerve noticed","Your boss mentions \"[T]\". \"You chose \"[C]\". Risky. But I like people who can make a call.\" There's a bigger job going, if you want it.",[
+ ["Ask for the bigger role",{rep:12,bm:15,stress:8,home:-6,rv:3},"You get it, and all that comes with it."],
+ ["Promise to be more careful",{bm:-4,heat:-8},"Your boss looks a little bored."]]],
+["risky",0,"","The bill","The bill arrives","The risk you took in \"[T]\", [AGO], when you chose \"[C]\", has {come back with a bill|left a mess someone has to clean up}. That someone is you.",[
+ ["Pay up and move on",{cash:-25,stress:8},"Expensive, but over."],
+ ["Argue it",.45,{stress:6},"They drop it.",{cash:-40,rep:-10,stress:8},"You lose, and pay more."]]],
+["risky",0,"","A review","Questions asked","Someone has been looking again at \"[T]\". You chose \"[C]\", and {with hindsight it looks reckless|they want to know what you were thinking}.",[
+ ["Explain your reasoning",.6,{rep:6,heat:-8,stress:6},"They accept it, grudgingly.",{rep:-12,heat:12,rv:-2},"It doesn't land."],
+ ["Take the telling-off",{rep:-10,heat:-6,stress:8},"Humbling. Over quickly."]]],
+["risky",0,"","The past","Luck runs out","You've been riding the luck of \"[T]\", [AGO], when you chose \"[C]\". This month it {runs out|turns}.",[
+ ["Cut your losses",{cash:-20,stress:-6,rep:-6},"A sore loss, but a small one."],
+ ["Double down",.4,{cash:30,rep:8,stress:8},"It comes good again!",{cash:-40,stress:8,rep:-12},"It all falls apart."]]],
+["risky",0,"","The past","The aftershock","\"[T]\" still has aftershocks. Choosing \"[C]\", [AGO], {left you exposed in ways you didn't see|has started a chain of small disasters}.",[
+ ["Fix it properly",{stress:8,skill:8,rep:-4},"Hard work, and you learn a lot."],
+ ["Patch it up",{stress:6,heat:10},"It holds. For now."]]],
+/* ---------- family ---------- */
+["family",1,"","Home","Worth it","[AGO], in \"[T]\", you chose \"[C]\". {Your family still talk about it|It's become one of those memories everyone brings up}. They'd love you to do it again this month, in the middle of a busy patch at work.",[
+ ["Do it again",{home:16,stress:-10,rep:-6},"A lovely time. Work notices you were gone."],
+ ["Not this time",{home:-8,rep:4},"Faces fall at home."]]],
+["family",1,"","Home","Roots","Because you chose \"[C]\" in \"[T]\", things at home are {steadier than they've been in years|properly good}. It shows in your work, and a chance comes up that would mean travel.",[
+ ["Keep the balance and say no",{home:12,stress:-8,rep:-6},"Home stays happy. The chance goes elsewhere."],
+ ["Take the travel",{rep:14,home:-10,stress:8},"Career boost, and a lot of missed bedtimes."]]],
+["family",1,"","The kitchen table","A thank-you note","Someone at home has left you a note. It mentions \"[T]\" and how you chose \"[C]\". {You keep it in your wallet|You read it twice}. They'd like a proper holiday this year.",[
+ ["Book the holiday",{home:18,cash:-25,rep:-4},"Worth every penny, and every missed email."],
+ ["Promise next year",{home:-6,stress:4},"They smile, a bit thinly."]]],
+["family",1,"boss","Your boss","Boundaries respected","Your boss mentions \"[T]\", when you chose \"[C]\". \"{I wish I'd done that at your age|More people should do what you did},\" they say, to your surprise. You could ask for flexible hours.",[
+ ["Ask for flexible hours",.6,{home:15,stress:-10,rep:-4},"Granted, with a slight cut in what's expected of you, and to your prospects.",{bm:-8,stress:6},"They didn't mean it quite like that."],
+ ["Say thanks and leave it",{bm:6,stress:4,home:-4},"Nothing changes."]]],
+["family",1,"","Your doctor","A health dividend","Choosing \"[C]\" in \"[T]\", [AGO], {started a habit|changed your routine for the better}. Your doctor says your numbers are the best they've been. Keeping it up means saying no to a few work dos.",[
+ ["Keep it up",{health:15,stress:-8,rep:-6},"Healthier, and a little out of the loop."],
+ ["Celebrate at the work do",{health:-6,rep:6,home:6},"Fun night. Back to old habits."]]],
+["family",0,"","Work","The cost at work","\"[T]\", [AGO]. You chose \"[C]\". Someone at work hasn't forgotten {the deadline you missed|the meeting you skipped}, and it comes up at a bad moment.",[
+ ["Defend the choice",.5,{rep:4,home:6,stress:6},"Fair enough, they say.",{rep:-12,stress:8,bm:-10},"Not a good look."],
+ ["Work late to make up for it",{rep:6,home:-10,stress:8},"You make up the ground, and lose the evenings."]]],
+["family",0,"","Work","Passed over","The opportunity you passed on by choosing \"[C]\" in \"[T]\" went to someone else. They've {done brilliantly with it|just been promoted on the back of it}.",[
+ ["Be pleased for them",{karma:10,stress:6,rep:-6},"Gracious. It still stings."],
+ ["Make up the ground",{rep:8,stress:8,home:-8},"You claw it back, at home's expense."]]],
+["family",0,"","The wider family","No pleasing everyone","You chose \"[C]\" in \"[T]\" for the family. {Now the other side of the family feels left out|Somehow that's become a grievance too}.",[
+ ["Do the rounds",{home:8,stress:8,cash:-10},"Every relative visited. You need a holiday."],
+ ["Let them grumble",{home:-10,stress:-4},"The grumbling continues."]]],
+/* ---------- neglect (work over home) ---------- */
+["neglect",1,"","Upstairs","The extra hours paid","All those hours since \"[T]\", when you chose \"[C]\", have {been noticed upstairs|added up}. There's a reward on its way, and with it, more of the same.",[
+ ["Take it",{rep:14,cash:20,home:-8,stress:8,rv:3},"Paid well, and wanted even more."],
+ ["Use it to buy back some time",{home:12,rep:-4,cash:-5},"A gentler pace. Not everyone upstairs approves."]]],
+["neglect",1,"","Home","Understanding at home","You worried about \"[T]\", when you chose \"[C]\". But home has {forgiven you|understood better than you expected}. You're told to stop apologising, and to make it up to them properly.",[
+ ["Make it up to them",{home:16,cash:-15,rep:-4},"A weekend away, a phone switched off."],
+ ["Accept the grace and carry on",{home:-6,stress:-6,rep:4},"They let it go. For now."]]],
+["neglect",1,"","Your work","Built something","Choosing \"[C]\" in \"[T]\", [AGO], laid the groundwork for something {you're now proud of|that's finally working}. Keeping it going will need more of you.",[
+ ["Throw yourself into it",{rep:12,skill:8,home:-8,stress:6},"It flourishes. Home sees less of you."],
+ ["Hand it over to someone else",{home:8,rep:-6},"You let go. Someone else gets the credit."]]],
+["neglect",0,"","Home","Missed it","It's been a while since \"[T]\", when you chose \"[C]\". Someone at home {brings it up during a row|says they've stopped expecting you}.",[
+ ["Promise to change",{home:10,stress:6,rep:-4},"You mean it. Work notices you leaving on time."],
+ ["Say work has to come first",{home:-18,rep:6,stress:8},"The door closes a little harder than usual."]]],
+["neglect",0,"","Home","The empty chair","Another family event, and the photo has an empty space where you should be. It started with \"[T]\", [AGO], when you chose \"[C]\".",[
+ ["Turn up next time, whatever it costs",{home:14,rep:-8},"You make the next one. Work frowns."],
+ ["Send a present instead",{home:-6,cash:-10},"Nice present. Not the same."]]],
+["neglect",0,"","Your doctor","Running on empty","Since \"[T]\", when you chose \"[C]\", you haven't really stopped. {Your body is starting to object|A doctor has used the word \"burnout\"}.",[
+ ["Take two weeks off",{stress:-20,health:10,rep:-8},"You come back human again."],
+ ["Push through",{stress:8,health:-15,rep:6},"You keep going. Your body keeps score."]]],
+["neglect",0,"","Home","Strangers at home","You come home early for once and realise how much you've missed since \"[T]\", when you chose \"[C]\". {Everyone has new routines|Nobody expected you}.",[
+ ["Clear your diary for a month",{home:18,rep:-10},"Slowly, you find your place again."],
+ ["Feel sad and go back to work",{home:-12,stress:8},"Work is easier. That's the problem."]]],
+["neglect",0,"","Home","A hard talk","\"We need to talk.\" It's about \"[T]\", [AGO], when you chose \"[C]\", and everything since.",[
+ ["Listen properly",.6,{home:16,stress:6,rep:-4},"Hard to hear, but things get better.",{home:-12,stress:8},"It doesn't go well."],
+ ["Get defensive",{home:-18,stress:8},"It ends in silence."]]],
+/* ---------- ambitious ---------- */
+["ambitious",1,"","A recruiter","Ambition rewarded","When \"[T]\" came up, [AGO], you chose \"[C]\". Someone has been watching, and {you're on a shortlist|your name came up for something bigger}.",[
+ ["Go for it",.65,{rep:18,cash:20,stress:8,home:-6,rv:4},"You get it, and the hours that come with it.",{rep:-6,stress:8},"Pipped at the post."],
+ ["Not yet",{rep:-4,stress:-6},"The chance won't come round again soon."]]],
+["ambitious",1,"","Your work","Experience counts","Choosing \"[C]\" in \"[T]\" taught you more than you realised. This month the skills come in handy, and everyone wants a piece of you.",[
+ ["Show what you learned",{skill:12,rep:10,stress:8},"Impressive, and exhausting."],
+ ["Teach someone else instead",{skill:6,karma:8,rep:-2,stress:4},"Generous. Someone else gets the spotlight."]]],
+["ambitious",1,"","Someone senior","A mentor appears","Someone senior saw how you handled \"[T]\", when you chose \"[C]\", and offers to mentor you. Early mornings, every week.",[
+ ["Accept",{skill:12,rep:8,stress:8,home:-4,ap:"mentor"},"Gold-dust advice, at 7am."],
+ ["Politely decline",{stress:-4,rep:-4},"They don't offer again."]]],
+["ambitious",1,"","Your work","Momentum","Since \"[T]\", things have moved quickly. You chose \"[C]\", and {one opportunity led to another|you've got momentum now}.",[
+ ["Keep pushing",{rep:14,stress:8,home:-6},"Momentum, and very little sleep."],
+ ["Bank the gains and rest",{rep:-4,stress:-12},"Rested, but the moment passes."]]],
+["ambitious",0,"","Your diary","Stretched too thin","You said yes in \"[T]\", [AGO], choosing \"[C]\". {Now it's all due at once|Everything you took on needs you this month}.",[
+ ["Pull all-nighters",{stress:8,rep:8,health:-8},"You deliver. Barely."],
+ ["Drop something",{rep:-12,stress:-6},"People notice what you dropped."]]],
+["ambitious",0,"","Your colleagues","Elbows out","Colleagues still grumble about \"[T]\", when you chose \"[C]\". {They think you're in it for yourself|Someone called you a climber}.",[
+ ["Buy a round and build bridges",{cash:-10,rep:4,karma:6,stress:4},"A few pints help."],
+ ["Ignore them",{rep:-10,stress:6},"They keep grumbling."]]],
+["ambitious",0,"","The project","Overpromised","What you signed up for in \"[T]\", choosing \"[C]\", is now {behind schedule|over budget}, and everyone knows whose idea it was.",[
+ ["Own it",{rep:-10,karma:8,heat:-6},"Painful, but people respect it."],
+ ["Blame circumstances",.5,{stress:4,karma:-6},"It works.",{rep:-16,karma:-6,rv:-2},"Nobody buys it."]]],
+["ambitious",0,"rival","[R]","The rival stirs","Your rival [R] has been reminding people about \"[T]\", when you chose \"[C]\", and {casting it in the worst light|asking whether you're really ready}.",[
+ ["Answer with results",{stress:8,rep:8,home:-4},"Your numbers do the talking."],
+ ["Have it out with them",.5,{rep:10,stress:6},"You win the argument.",{rep:-12,heat:8},"You lose your temper. Badly."]]]
+];
+const CSQ_X=/^(offer|fund|trial|callup|legend|csq_|cb_|tut|first|intro|welcome|ill)/;
+const CSQ_STATS=["rep","stress","heat","morale","home","skill","health","karma","form","fit"];
+const CSQ_BADUP={stress:1,heat:1};
+let CSQ_BIG_BASE=.21;
+function csqHash(s){let h=2166136261;s=String(s);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}h^=h>>>13;h=Math.imul(h,0x5bd1e995);h^=h>>>15;return(h>>>0)/4294967296}
+const csqBase=id=>String(id||"").replace(/_?\d+$/,"");
+const csqFxs=c=>c?(c.p!=null?[c.win&&c.win.fx,c.lose&&c.lose.fx]:[c.fx]).filter(Boolean):[];
+const csqStatty=c=>csqFxs(c).some(fx=>CSQ_STATS.some(k=>fx[k])||fx.pnl||fx.cash||fx.gbp);
+/* Which stories are Big decisions: stable per story (hash of its id), weighted towards gambles, 3+ options and work stories */
+function csqIsBig(m,e){const th=csqBigTh(m,e);return th>0&&csqHash("bd:"+csqBase(m.id))<th}
+/* Chance (0 = never) that a story is a Big decision. Fixed per story, so the hash makes it stable */
+function csqBigTh(m,e){
+ try{if(!m||!e||!S)return 0;
+  if(CSQ_X.test(String(m.id))||e.ill||e.front||e.prison||e.chat||e.noBig)return 0;
+  const ch=choicesOf(e);if(!ch||ch.length<2||ch.filter(csqStatty).length<1)return 0;
+  if(ch.some(c=>csqFxs(c).some(fx=>fx.act&&/^(die|retirewin|redundancy|switchprompt|goalprompt)$/.test(fx.act))))return 0;
+  const hasP=ch.some(c=>c.p!=null),car=!!(e.career||(!e.life&&!m.dyn));
+  return CSQ_BIG_BASE+(hasP?.1:0)+(ch.length>=3?.08:0)+(car?.04:0)}catch(x){return 0}
+}
+/* Classify what kind of choice it was, from its effects and wording */
+const CSQ_RE={
+ honest:/\b(honest|honestly|the truth|escalate|raise (it|concerns|the alarm)|blow the whistle|tell (someone|a manager|hr|the manager)|own up|admit|confess|come clean|tell (them |him |her |the client |your boss )?the truth|be honest|be upfront|report it|flag it|declare it|whistle|apologi[sz]e|refund|correct (it|the record)|tell (risk|compliance|the client|your boss))/i,
+ disloyal:/\b(blame|under the bus|take (the )?credit|go over (his|her|their) head|report (him|her|them)|ditch|walk out on|poach|undercut|snitch|sell (him|her|them) out|let (him|her|them) take|drop (him|her|them))/i,
+ loyal:/\b(back (him|her|them|your|the team)|stand by|stick (up|by)|defend|cover for|side with|vouch|loyal|stay with|keep (his|her|their) secret)/i,
+ shady:/\b(lie|fib|fudge|fiddle|fake|forge|bribe|backdate|hide|cover (it )?up|say nothing|pocket|cut corners?|bend the rules|look the other way|blind eye|off the books|cash in hand|pretend|bluff|deny|delete|shred|cheat|quietly)/i,
+ kind:/\b(donate|give|lend|help|pay for|treat (them|her|him)|volunteer|support|mentor|look after|visit|comfort|forgive|charity|offer to|invite)/i,
+ family:/\b(family|kids?|partner|home|be there|day off|leave early|holiday|school|birthday|wedding|parents?|mum|dad)\b/i,
+ ambitious:/\b(push for|ask for (a )?(raise|promotion|pay rise)|pitch|lead|take (it )?on|apply|go for it|step up|network|say yes|grab|volunteer)/i
+};
+function csqKind(c,fx,txt){
+ fx=fx||{};const g=k=>+fx[k]||0,kar=g("karma"),heat=g("heat"),home=g("home"),rep=g("rep"),gbp=g("gbp")+g("cash"),stress=g("stress");
+ if(CSQ_RE.disloyal.test(txt)&&kar<=0)return"disloyal";
+ if(CSQ_RE.honest.test(txt)&&kar>=0&&heat<=2)return"honest";
+ if((kar<=-3||heat>=5)||(CSQ_RE.shady.test(txt)&&(heat>0||kar<0)))return"shady";
+ if(CSQ_RE.loyal.test(txt)&&kar>=0)return"loyal";
+ if(kar>=3||(CSQ_RE.kind.test(txt)&&(kar>0||gbp<0)))return"kind";
+ if(home>=4&&rep<=0||(CSQ_RE.family.test(txt)&&home>0))return"family";
+ if(home<=-4&&(rep>0||(+fx.pnl||0)>0||gbp>0||CSQ_RE.ambitious.test(txt)||/\b(work|late|office|shift|stay|overtime|deadline|client)/i.test(txt)))return"neglect";
+ if((c&&c.p!=null&&c.p<=.6)||heat>=3)return"risky";
+ if(rep>=4&&(home<0||stress>=4)||(CSQ_RE.ambitious.test(txt)&&rep>0))return"ambitious";
+ if(c&&c.p!=null)return"risky";
+ return null;
+}
+const CSQ_GOOD={kind:1,honest:1,loyal:1,family:1};
+const csqNamey=n=>/^[A-Z][a-z'-]+( [A-Z][A-Za-z'-]+)*$/.test(String(n||""))&&!/^(The|A|An|Your|Two|Some|My|Our|Their|His|Her|Old|New)\b/.test(String(n));
+function csqWho(m,e){
+ try{const v=m.vars||{};if(v.pid&&v.pn)return csqNamey(v.pn)?{n:v.pn,r:"person",pid:v.pid}:null;
+  const txt=[m.t,m.from,fill(e.b||"",m),m.ct].join(" ");
+  if(S.boss&&S.boss.n&&txt.includes(S.boss.n))return{n:S.boss.n,r:"boss"};
+  if(S.rival&&S.rival.name&&txt.includes(S.rival.name))return{n:S.rival.name,r:"rival"};
+  if(S.friend&&S.friend.n&&txt.includes(S.friend.n.split(" ")[0]))return{n:S.friend.n,r:"friend"};
+  if(S.rel&&S.rel.name&&S.rel.st&&S.rel.st!=="single"&&txt.includes(S.rel.name))return{n:S.rel.name,r:"partner"};
+  for(const p of alivePeople())if(p.n&&p.n.length>3&&csqNamey(p.n)&&txt.includes(p.n))return{n:p.n,r:"person",pid:p.id}}catch(x){}
+ return null;
+}
+const csqQ=()=>{S.csq=S.csq||{};S.csq.tr=S.csq.tr||[];S.csq.seen=S.csq.seen||{};return S.csq};
+function csqTrace(m,e,c,big){
+ if(!m||!e||!c||CSQ_X.test(String(m.id))||m.id==="csq")return null;
+ const fx=m.fx||{},txt=String(m.ct||c.t||"");const k=csqKind(c,fx,txt+" "+String(m.o||""));if(!k&&!big)return null;
+ const won=c.p!=null?(c.win&&m.fx===c.win.fx):null;
+ const tr={d:S.day,k:k||(fx.rep>0||fx.pnl>0?"ambitious":"risky"),t:String(m.t||"").slice(0,90),c:stripPrice(txt).slice(0,110),lf:e.life?1:0};
+ if(big)tr.big=1;if(won!=null)tr.won=won?1:0;const w=csqWho(m,e);if(w)tr.w=w;
+ const Q=csqQ();Q.tr.push(tr);if(Q.tr.length>40){const i=Q.tr.findIndex(x=>!x.big);Q.tr.splice(i<0?0:i,1)}
+ return tr;
+}
+/* Big decision: amplify the effects, then make it stick */
+function csqAmplify(m,e,c){
+ const fx=m.fx||{},add={},out=Object.assign({},fx);let neg=false;
+ for(const k of CSQ_STATS){const v=+fx[k]||0;if(!v)continue;const cap=k==="karma"?30:25;
+  let t=Math.round(v*(k==="stress"&&v>0?1:2.6));t=Math.max(-cap,Math.min(cap,t));if(k==="stress"&&t>15)t=Math.max(v,15);if(Math.abs(t)<Math.abs(v))t=v;add[k]=t-v;out[k]=t}
+ if(fx.pnl)add.pnl=fx.pnl*.5,out.pnl=fx.pnl*1.5;
+ if(fx.cash>0)add.cash=fx.cash*.5,out.cash=fx.cash*1.5;
+ if(fx.gbp>0)add.gbp=Math.round(fx.gbp*.5),out.gbp=fx.gbp+add.gbp;
+ /* Every big choice costs something: if this one didn't, it does now */
+ const isNeg=(k,v)=>CSQ_BADUP[k]?v>0:v<0;
+ for(const k in out)if((CSQ_STATS.includes(k)||k==="pnl"||k==="cash"||k==="gbp")&&isNeg(k,+out[k]||0))neg=true;
+ const kind=csqKind(c,fx,String(m.ct||""));
+ if(!neg){const car=!e.life;const cost=CSQ_GOOD[kind]?(car?{rep:-5,home:-4}:{home:-6,cash:-6}):(car?{home:-6,karma:-4}:{karma:-5,cash:-6});
+  for(const k in cost){add[k]=(add[k]||0)+cost[k];out[k]=(+out[k]||0)+cost[k]}}
+ /* Selfish shortcuts pay better in the short run: that's the temptation */
+ if(kind==="shady"||kind==="disloyal"||kind==="neglect"){const r=+out.rep||0;if(r>0){add.rep=(add.rep||0)+4;out.rep=r+4}else if(!out.cash&&!out.gbp&&!out.pnl){add.cash=10;out.cash=10}}
+ const sp=(k,v)=>{if(!v)return;
+  if(k==="home"){S.homeLife=clamp(S.homeLife+v,v<0?Math.min(S.homeLife,5):0,100);return}
+  if(k==="karma"){S.karma=clamp((S.karma||0)+v,-100,100);return}
+  if(k==="form"||k==="fit"){if(S.fb)S.fb[k]=clamp(S.fb[k]+v,0,100);return}
+  if(k==="pnl"){S.evPnl+=v*rankK();return}
+  if(k==="cash"){S.wealth+=v*salary()/250;return}
+  if(k==="gbp"){S.wealth+=v;return}
+  if(S[k]==null)return;
+  if(CSQ_BADUP[k]&&v>0){S[k]=Math.min(S[k]+v,Math.max(S[k],82));return}
+  if(k==="rep"&&v<0){S[k]=Math.max(S[k]+v,Math.min(S[k],5));return}
+  if(k==="health"&&v<0){S[k]=Math.max(S[k]+v,Math.min(S[k],15));return}
+  S[k]=clamp(S[k]+v,0,100)};
+ for(const k in add)try{sp(k,add[k])}catch(x){}
+ m.fx=out;m.bd=1;
+ m.now={rep:S.rep,stress:S.stress,heat:S.heat,morale:S.morale,skill:S.skill,health:S.health,homeLife:S.homeLife,form:S.fb?S.fb.form:null,fit:S.fb?S.fb.fit:null};
+ /* Lasting consequences beyond the numbers */
+ const notes=[],g=k=>+out[k]||0;
+ const good=(g("rep")>0||g("pnl")>0)&&g("heat")<=2&&g("karma")>=-2,bad=g("rep")<0||g("heat")>=5||g("pnl")<0;
+ const car=!e.life&&!soloJob()&&S.rank<4&&S.boss;
+ if(car&&(good||bad)){const d=good&&!bad?10:-10;S.boss.mood=clamp((S.boss.mood||50)+d,0,100);notes.push(d>0?`${S.boss.n} won't forget this.`:`${S.boss.n} won't forget this, and not in a good way.`)}
+ if(!e.life&&(good||bad)&&S.rank<4){S.csqRev=clamp((S.csqRev||0)+(good&&!bad?3:-3),-6,6);notes.push(good&&!bad?"It will count in your favour at your next review.":"It will count against you at your next review.")}
+ const w=csqWho(m,e),kd=kind||"";
+ if(w){const up=kd==="kind"||kd==="loyal"?1:kd==="disloyal"?-1:0;if(up){csqBond(w,up*15);notes.push(up>0?`${w.n.split(" ")[0]} feels closer to you now.`:`Things with ${w.n.split(" ")[0]} won't be the same.`)}}
+ else if(CSQ_GOOD[kd]&&csqHash("bdp:"+m.id+S.day)<.35){try{const p=addPerson(fullName(),kd==="family"?"acq":"contact",`Met through "${String(m.t).slice(0,60)}"`,55);if(p)notes.push(`You've made a new connection: ${p.n}.`)}catch(x){}}
+ notes.push("This one will be remembered.");
+ m.o=String(m.o||"")+" "+notes.join(" ");
+ S.log.unshift({d:S.day,t:`Big decision: ${m.t}. You chose "${stripPrice(m.ct||c.t||"")}".`});
+}
+function csqBond(w,d){
+ if(!w||!d)return;
+ if(w.pid){const p=personBy(w.pid);if(p)p.bond=clamp((p.bond||40)+d,0,100);return}
+ if(w.r==="boss"&&S.boss){S.boss.mood=clamp((S.boss.mood||50)+d*.7,0,100);return}
+ if(w.r==="rival"&&S.rival){S.rival.bond=clamp((S.rival.bond||0)+d,0,100);return}
+ if(w.r==="friend"&&S.friend){S.friend.bond=clamp((S.friend.bond||50)+d,0,100);return}
+ if(w.r==="partner"){S.homeLife=clamp(S.homeLife+d*.5,0,100);return}
+ const p=(S.people||[]).find(x=>x.alive&&x.n===w.n);if(p)p.bond=clamp((p.bond||40)+d,0,100);
+}
+{const _csqC=choose;choose=function(i,ci){
+ const m=S&&S.inbox?S.inbox[i]:null,was=!m||m.done;let e=null,c=null,big=false;
+ try{if(!was){e=getEv(m);c=e&&choicesOf(e)[ci];big=!!c&&csqIsBig(m,e)}}catch(x){}
+ delete S._csqNote;const r=_csqC.apply(this,arguments);
+ try{if(S._csqNote&&m&&m.done&&!was)m.o=String(m.o||"")+S._csqNote;delete S._csqNote}catch(x){}
+ try{if(m&&!was&&m.done&&c&&!S.over&&m.ci===ci){if(big)csqAmplify(m,e,c);csqTrace(m,e,c,big);if(big){save();render()}}}catch(x){}
+ return r}}
+/* Review: big calls since the last review shift your standing going into it */
+{const _csqR=review;review=function(){
+ let note="";try{const d=S.csqRev||0;S.csqRev=0;if(d&&S.rank<4){S.rep=clamp(S.rep+d,0,100);note=d>0?`Your big calls since the last review counted in your favour (${R().repName.toLowerCase()} +${d}).`:`Some of your big calls since the last review counted against you (${R().repName.toLowerCase()} ${d}).`}}catch(x){}
+ const r=_csqR.apply(this,arguments);if(note&&r)r.outcome=(r.outcome||"")+" "+note;return r}}
+/* Callbacks: the past pays you back, one story every 3 to 5 months */
+ACTS.csq=(fx,m)=>{const v=(m&&m.vars)||{};
+ if(fx.bm&&S.boss)S.boss.mood=clamp((S.boss.mood||50)+fx.bm,0,100);
+ if(fx.pb)csqBond(v.wr?{n:v.wn,r:v.wr,pid:v.pid}:null,fx.pb);
+ if(fx.rv)S.csqRev=clamp((S.csqRev||0)+fx.rv,-6,6);
+ if(fx.ap){try{const p=addPerson(fullName(),fx.ap,v.how||"Met because of an old decision",50);if(p)S._csqNote=` You've a new ${({mentor:"mentor",friend:"friend",contact:"contact",acq:"acquaintance"})[fx.ap]||"connection"}: ${p.n}.`}catch(x){}}};
+const csqVar=s=>String(s).replace(/\{([^{}]*\|[^{}]*)\}/g,(_,x)=>pick(x.split("|")));
+function csqAgo(d){const n=S.day-d;return n<=6?pick(["a few months ago","some months ago","not long ago"]):n<=11?pick(["most of a year ago","several months ago","nearly a year ago"]):pick(["over a year ago","more than a year ago","a long while back"])}
+function csqFx(fx,mul){const o={};let act=false;
+ for(const k in fx){let v=fx[k];if(!v)continue;if(k==="bm"||k==="pb"||k==="rv"){act=true;o[k]=v;continue}if(k==="ap"){act=true;o[k]=v;continue}
+  if(mul!==1&&CSQ_STATS.includes(k))v=Math.max(-25,Math.min(25,Math.round(v*mul)));else if(mul!==1&&k==="cash")v=Math.round(v*mul);o[k]=v}
+ if(act)o.act="csq";return o}
+function csqBuild(T,tr,big){
+ const [k,g,req,from,title,body,chs]=T,w=tr.w||{},wf=String(w.n||"").split(" ")[0],rv=S.rival?S.rival.name:"Your rival";
+ const sub=s=>csqVar(String(s).replace(/\[T\]/g,tr.t).replace(/\[C\]/g,tr.c).replace(/\[AGO\]/g,csqAgo(tr.d)).replace(/\[WF\]/g,wf).replace(/\[W\]/g,w.n||"").replace(/\[R\]/g,rv));
+ let b=sub(body);
+ b=b.charAt(0).toUpperCase()+b.slice(1);if(big)b="This was one of your big decisions. "+b;
+ const mul=big?1.3:1;
+ const c=chs.map(x=>x.length===3?{t:sub(x[0]),fx:csqFx(x[1],mul),o:sub(x[2])}:{t:sub(x[0]),p:x[1],win:{fx:csqFx(x[2],mul),o:sub(x[3])},lose:{fx:csqFx(x[4],mul),o:sub(x[5])}});
+ return{from:sub(from)||"The past",t:sub(title),b,c};
+}
+function csqMorning(){
+ if(typeof l5ok!=="function"||!l5ok()||S.day<8||S.placeholder)return;
+ const Q=csqQ();
+ if(Q.next==null){Q.next=S.day+3+Math.floor(rnd()*3);return}
+ if(S.day<Q.next||l5busy(/^(csq|cb)_/))return;
+ if(S.inbox.filter(m=>!m.done).length>=4){Q.next=S.day+1;return}
+ Q.tr=Q.tr.filter(x=>!x.u&&S.day-x.d<=18);
+ const el=Q.tr.filter(x=>S.day-x.d>=3);if(!el.length){Q.next=S.day+1;return}
+ const wt=x=>(x.big?6:1)*(1+(S.day-x.d)/12);
+ let r=rnd()*el.reduce((a,x)=>a+wt(x),0),tr=el[el.length-1];for(const x of el){r-=wt(x);if(r<=0){tr=x;break}}
+ const pg=CSQ_GOOD[tr.k]?.72:tr.k==="risky"?(tr.won?.55:.4):tr.k==="ambitious"?.6:.28;const good=rnd()<pg?1:0;
+ const okReq=T=>{const q=T[2];if(q==="w")return!!(tr.w&&tr.w.n&&tr.w.r!=="partner");if(q==="boss")return!!(S.boss&&!soloJob()&&S.rank<4&&!tr.lf);if(q==="rival")return!!S.rival&&!tr.lf;return true};
+ let pool=CSQ_T.filter(T=>T[0]===tr.k&&T[1]===good&&okReq(T));if(!pool.length)pool=CSQ_T.filter(T=>T[0]===tr.k&&okReq(T));if(!pool.length){tr.u=1;return}
+ const fresh=pool.filter(T=>S.day-(Q.seen[T[4]]??-999)>=36);const T=pick(fresh.length?fresh:pool);
+ const ev=csqBuild(T,tr,!!tr.big),id="csq_"+S.day;
+ pushDyn(Object.assign({id,life:tr.lf?1:undefined},ev));const m=S.inbox.find(x=>x.id===id);
+ Q.next=S.day+3+Math.floor(rnd()*3);
+ if(!m)return;
+ tr.u=1;Q.seen[T[4]]=S.day;Q.n=(Q.n||0)+1;
+ m.vars=Object.assign(m.vars||{},{how:`Met because of "${tr.t}"`},tr.w?{wn:tr.w.n,wr:tr.w.r,pid:tr.w.pid}:{});m.csqBig=tr.big?1:0;m.csqLife=tr.lf?1:0;
+}
+{const _wmC=willMorning;willMorning=function(){const r=_wmC.apply(this,arguments);try{csqMorning()}catch(e){}return r}}
+/* Inbox cards: mark Big decisions and remembered stories */
+function csqDecorate(){
+ const pane=document.getElementById("pane-inbox");if(!pane||typeof pane.querySelectorAll!=="function")return;
+ const arts=Array.from(pane.querySelectorAll("article.mail")||[]);if(!arts.length)return;
+ const items=S.inbox.filter(m=>{try{return!!getEv(m)}catch(x){return false}}),zip=arts.length===items.length;
+ arts.forEach((a,j)=>{let m=null;const b=a.querySelector('[data-act="choose"][data-i]');if(b)m=S.inbox[+b.getAttribute("data-i")];else if(zip)m=items[j];if(!m)return;
+  const from=a.querySelector(".from");if(!from||a.dataset.csq)return;a.dataset.csq="1";
+  let pill="";
+  if(!m.done){const e=getEv(m);if(csqIsBig(m,e)){a.classList.add("big");pill='<span class="pill bd-pill">Big decision</span> ';const h=a.querySelector("h3");if(h)h.insertAdjacentHTML("afterend",'<div class="bd-stakes">Big decision · this one will be remembered. Bigger effects than usual, and every option has a price.</div>')}}
+  else if(m.bd){a.classList.add("big");pill='<span class="pill bd-pill">Big decision</span> '}
+  if(/^csq_/.test(m.id)&&!m.csqLife)Array.from(from.querySelectorAll(".pill")).forEach(p=>{if(p.textContent==="Life")p.remove()});
+  if(/^csq_/.test(m.id))pill=`<span class="pill csq-pill">${m.csqBig?"Big decision, remembered":"Remembered"}</span> `+pill;
+  if(pill)from.insertAdjacentHTML("afterbegin",pill)});
+}
+{const _csqRI=renderInbox;renderInbox=function(){const r=_csqRI.apply(this,arguments);try{csqDecorate()}catch(e){}return r}}
+
+/* ============ Consequences you can see: stat badges, thresholds, your month in choices, and a reputation that tells a story ============ */
+/* ---- Which stats we track after an inbox choice ---- */
+const FXV=[
+ ["homeLife",()=>isSingle()?"Social life":"Home life",1,()=>isSingle()?"Social life":"Home life"],
+ ["rep",()=>R().repName,1,()=>R().repName],
+ ["stress",()=>"Stress",0,()=>"Stress"],
+ ["heat",()=>CAR_().heatShort,0,()=>CAR_().heatName],
+ ["morale",()=>"Morale",1,()=>S.path==="foot"?"Dressing room":"Team morale"],
+ ["health",()=>"Health",1,()=>"Health"],
+ ["skill",()=>"Skill",1,()=>"Skill"],
+ ["form",()=>"Form",1,()=>"Form"],
+ ["fit",()=>"Fitness",1,()=>"Fitness"]];
+function fxSnap(){return{path:S.path,homeLife:S.homeLife,rep:S.rep,stress:S.stress,heat:S.heat,morale:isTeam()?S.morale:null,health:S.health,skill:S.skill,form:S.fb?S.fb.form:null,fit:S.fb?S.fb.fit:null,wealth:S.wealth,out:S.evPnl||0}}
+function fxDiff(a,b){const d={};if(!a||!b||a.path!==b.path)return d;for(const k in a){if(k==="path"||a[k]==null||b[k]==null)continue;const v=b[k]-a[k];if(Math.abs(v)>1e-9)d[k]=v}return d}
+/* Turns a set of changes into [text, good?] pairs, biggest first */
+function fxParts(d,lower){const out=[];
+ for(const[k,lab,up]of FXV){const v=Math.round(d[k]||0);if(!v)continue;const n=lab();out.push([`${v>0?"+":"−"}${Math.abs(v)} ${lower?n.toLowerCase():n}`,up?v>0:v<0,Math.abs(v)])}
+ if(Math.abs(d.wealth||0)>=50)out.push([`${money(d.wealth,true)}${lower?"":" cash"}`,d.wealth>0,.5]);
+ if(Math.abs(d.out||0)>=1)out.push([`${fmtOut(d.out,true)} ${(n=>/^[A-Z&]+$/.test(n)?n:n.toLowerCase())(String(CAR_().outName))}`,d.out>0,.4]);
+ return out.sort((a,b)=>b[2]-a[2])}
+const fxQuiet=()=>typeof document==="undefined"||!!window.__noMoments||!S||S.placeholder;
+function fxBox(){let b=document.getElementById("fxFloat");if(!b||!b.appendChild){b=document.createElement("div");b.id="fxFloat";b.className="fx-float";b.setAttribute("role","status");b.setAttribute("aria-live","polite");document.body.appendChild(b)}return b}
+function fxPush(cls,text,ms){try{const b=fxBox(),el=document.createElement("div");el.className=cls;el.textContent=text;b.appendChild(el);while(b.children&&b.children.length>6)b.removeChild(b.firstChild);setTimeout(()=>{try{el.remove()}catch(e){}},ms)}catch(e){}}
+function fxShow(d){if(fxQuiet())return;const parts=fxParts(d).slice(0,5);if(!parts.length)return;
+ parts.forEach(([t,g],i)=>setTimeout(()=>fxPush(`fx-badge ${g?"up":"down"}`,t,2700),i*120));
+ setTimeout(()=>{try{const want={};for(const[k,,up,ml]of FXV){const v=Math.round(d[k]||0);if(v)want[ml()]=(up?v>0:v<0)?"up":"down"}
+  document.querySelectorAll(".meter").forEach(el=>{const s=el.querySelector("span");const w=s&&want[s.textContent];if(!w)return;const c="fx-pulse-"+w;el.classList.remove("fx-pulse-up","fx-pulse-down");void el.offsetWidth;el.classList.add(c);setTimeout(()=>el.classList.remove(c),1400)});
+  if(Math.abs(d.wealth||0)>=50)document.querySelectorAll("#topstats .ts").forEach(el=>{const l=el.querySelector(".label");if(l&&l.textContent==="Cash"){const c="fx-pulse-"+(d.wealth>0?"up":"down");el.classList.add(c);setTimeout(()=>el.classList.remove(c),1400)}})}catch(e){}},40)}
+function fxAlert(text,tone){if(fxQuiet())return;fxPush(`fx-alert ${tone||""}`,text,6200)}
+
+/* ---- Lines that matter: tell the player once when a key stat crosses one ---- */
+const FX_TH=[
+ {k:"home",v:()=>S.homeLife,bands:[["low",x=>x<40,x=>x>=44,"bad"],["high",x=>x>70,x=>x<=66,"good"]],
+  msg:{low:()=>isSingle()?"Social life has dropped below 40: you're seeing too little of anyone, and it's harder to switch off.":`Home life has dropped below 40: ${S.rel&&S.rel.name?S.rel.name.split(" ")[0]:"your partner"} is starting to pull away. Below 15, they may leave.`,
+   high:()=>`${isSingle()?"Social life":"Home life"} is above 70: it eases your stress and helps your health every month.`}},
+ {k:"stress",v:()=>S.stress,bands:[["high",x=>x>75,x=>x<50,"bad"]],
+  msg:{high:()=>"Stress is above 75: it's wearing down your health and slowing your goals. At 100 this career is over."},back:{high:()=>"Stress is back below 50: your health stops taking a battering."}},
+ {k:"rep",v:()=>S.rep,bands:[["low",x=>x<30,x=>x>=34,"bad"],["high",x=>x>72,x=>x<=68,"good"]],
+  msg:{low:()=>S.rank>=4?`${R().repName} has fallen below 30: the board won't back you at review like this, and at 0 you're out.`:`${R().repName} has fallen below 30: below 30 at your next review means a formal warning, and at 0 you're out.`,
+   high:()=>S.rank>=4?`${R().repName} is above 72: the board backs you, as long as you hit your targets.`:!stagesOn()?`${R().repName} is above 72: hit your target and you can be promoted even without beating your rival.`:`${R().repName} is above 72: people trust you, and bigger opportunities start coming your way.`}},
+ {k:"health",v:()=>S.health,bands:[["low",x=>x<35,x=>x>=40,"bad"]],
+  msg:{low:()=>"Health has fallen below 35: your GP is worried and serious illness is more likely. Rest, exercise or cut your stress."},back:{low:()=>"Health is back above 40. Keep it there."}},
+ {k:"heat",v:()=>S.heat,bands:[["high",x=>x>70,x=>x<60,"bad"]],
+  msg:{high:()=>`${CAR_().heatName} is above 70: at 100 this career is over${(S.karma||0)<=-25?", and with your character you could be arrested":""}.`},back:{high:()=>`${CAR_().heatName} is back below 60. Breathe.`}},
+ {k:"karma",v:()=>S.karma||0,bands:[["low",x=>x<-40,x=>x>-35,"bad"],["high",x=>x>40,x=>x<35,"good"]],
+  msg:{low:()=>`Your character has turned dark: it drags down your legacy, and if ${CAR_().heatShort.toLowerCase()} ever hits 100 you could be arrested.`,high:()=>"People see you as a genuinely good person: it adds to your legacy."}},
+ {k:"cash",v:()=>S.wealth,bands:[["neg",x=>x<0,x=>x>=0,"bad"]],
+  msg:{neg:()=>"You're overdrawn: at month end your investments, then your car or home, are sold to cover it. Go too deep and you're bankrupt."},back:{neg:()=>"You're back in the black."}}];
+function kaThresh(){if(!S||S.placeholder||S.over)return;const T=S.cb&&S.cb.path===S.path&&S.cb.b?S.cb:null,cur={};
+ for(const t of FX_TH){const x=t.v();if(x==null||isNaN(x))continue;const prev=T?T.b[t.k]:undefined;let nb=prev||"mid";
+  if(nb!=="mid"){const bd=t.bands.find(b=>b[0]===nb);if(!bd||bd[2](x))nb="mid"}
+  if(nb==="mid")for(const b of t.bands)if(b[1](x)){nb=b[0];break}
+  cur[t.k]=nb;
+  if(T&&prev!==undefined&&nb!==prev){const f=nb!=="mid"?t.msg[nb]:(t.back&&t.back[prev]);if(!f)continue;const s=f(x);const tone=nb!=="mid"?t.bands.find(b=>b[0]===nb)[3]:"good";
+   S.log.unshift({d:S.day,t:s});fxAlert(s,tone)}}
+ S.cb={path:S.path,b:cur}}
+
+/* ---- Your month in choices ---- */
+function mcAdd(d){let M=S.monthChoices;if(!M||M.day!==S.day)M=S.monthChoices={day:S.day,n:0,d:{}};M.n++;for(const k in d)M.d[k]=(M.d[k]||0)+d[k]}
+function monthChoicesLine(d){try{const M=S&&S.monthChoices;if(!M||!d||M.day!==d.day||!M.n)return"";const p=fxParts(M.d,true).slice(0,6);
+ return `<div class="mc-line"><span class="label">Your choices this month</span> ${p.length?p.map(([t,g])=>`<b class="${g?"up":"down"}">${esc(t)}</b>`).join(" · "):"no lasting change"}</div>`}catch(e){return""}}
+
+/* ============ Reputation as a story: "Known as..." ============ */
+const KA_LABS={helps:"the one who always helps",safe:"a safe pair of hands",straight:"straight as an arrow",gambler:"a gambler",ruthless:"a bit ruthless",trouble:"trouble",mixed:"hard to pin down"};
+const KA_REG=["bank","doc","nurse","pilot","police","law","fire","astronaut","soldier","spy","teach","pol"];
+function kaS(){if(!S.ka||typeof S.ka!=="object")S.ka={};const k=S.ka;if(!k.c)k.c={n:0,help:0,ruth:0,gam:0,hot:0,cool:0,safe:0};if(k.esc==null)k.esc=0;if(!k.seen)k.seen={};return k}
+/* Each inbox choice nudges the pattern; older choices fade */
+/* Each inbox choice nudges the pattern, judged against what else was on offer; older choices fade.
+   Only stories with a real fork (a gamble, a kind or unkind option, a risky option) count. */
+function kaFxOf(c){return c?(c.p!=null?[c.win&&c.win.fx,c.lose&&c.lose.fx]:[c.fx]).filter(Boolean):[]}
+function kaNote(c,fx,opts){fx=fx||{};opts=opts&&opts.length?opts:[c];
+ const has=t=>opts.some(o=>kaFxOf(o).some(t)),gamOn=opts.some(o=>o&&o.p!=null),kpOn=has(f=>(f.karma||0)>0||f.act==="give"),knOn=has(f=>(f.karma||0)<0),hOn=has(f=>(f.heat||0)>0),cOn=has(f=>(f.heat||0)<0);
+ if(!(gamOn||kpOn||knOn||hOn||cOn))return;
+ const C=kaS().c;for(const x in C)C[x]*=.94;C.n+=1;const kp=fx.karma||0,h=fx.heat||0,gam=!!(c&&c.p!=null);
+ if(gam)C.gam+=1;
+ if(kp>0||fx.act==="give")C.help+=1+(gbpOf(fx)<0?.5:0);
+ if(kp<0)C.ruth+=1;
+ if(h>0)C.hot+=1;else if(h<0)C.cool+=1;
+ if(!gam&&kp>=0&&h<=0&&(gamOn||knOn||hOn))C.safe+=1}
+function kaCalc(){const k=kaS(),c=k.c,n=c.n;if(n<4)return null;const r=x=>x/n,karma=S.karma||0;
+ if(r(c.hot)>=.2&&((S.heat||0)>=35||r(c.hot)>=.3))return"trouble";
+ if((r(c.ruth)>=.18||(karma<=-25&&r(c.ruth)>=.12))&&c.ruth>=c.help*.8)return"ruthless";
+ if(r(c.gam)>=.5)return"gambler";
+ if(r(c.help)>=.3&&c.help>=c.ruth*3)return"helps";
+ if(r(c.hot)<.05&&r(c.gam)<.35&&karma>=20&&r(c.help+c.cool)>=.35)return"straight";
+ if(r(c.gam)<.3&&r(c.hot)<.08&&r(c.safe)>=.4)return"safe";
+ return"mixed"}
+const kaSolo=()=>soloJob()||["actor","tvchef"].includes(S.path);
+function kaBand(){if(kaSolo())return"solo";if(S.rank>=4)return"top";if(S.rank===0)return"junior";return S.rank>=CAR_().teamFrom?"senior":"mid"}
+const kaNeg=l=>l==="ruthless"||l==="trouble"||(l==="gambler"&&KA_REG.includes(S.path));
+/* Monthly effects by reputation x level. perf = share of a month's target added to (or taken from) results; swing = random +/- */
+const KA_MOD={
+ helps:{junior:{boss:1,stress:.5,perf:-.02,d:"Seniors look out for you, but helping everyone eats into your own work."},
+  mid:{boss:.5,morale:.5,stress:.6,perf:-.01,d:"Colleagues cover for you in return, though you're always the one asked to stay late."},
+  senior:{morale:.8,stress:.8,perf:.03,d:"Your people stay and work hard for you. Being everyone's shoulder to cry on is tiring."},
+  top:{morale:.8,stress:1,perf:.02,rep:-.15,d:"Staff are loyal, but the board wonders if you've gone soft."},
+  solo:{perf:.02,stress:.5,d:"Loyal fans and people book you again. Everyone wants a favour, though."}},
+ safe:{junior:{perf:.02,rep:-.15,d:"Trusted with the steady work, rarely the glamorous stuff."},
+  mid:{perf:.02,heat:-.4,rep:-.1,d:"Fewer mistakes, fewer headlines. Promotions tend to go to louder people."},
+  senior:{perf:.03,heat:-.5,morale:-.2,d:"You're given the important jobs. Some of your team find you over-cautious."},
+  top:{perf:.02,heat:-.6,rep:-.1,d:"The board sleeps well. Investors want more excitement."},
+  solo:{perf:-.03,heat:-.4,d:"Reliable, but fans drift towards edgier acts."}},
+ straight:{junior:{heat:-.6,perf:-.02,boss:-.3,d:"Nobody doubts your honesty, but you won't cut the corners others cut."},
+  mid:{heat:-.6,perf:-.02,d:"A clean record, slightly slower results."},
+  senior:{heat:-.7,perf:-.02,morale:.3,d:"Your team trust you. Some deals go elsewhere because you won't bend."},
+  top:{heat:-.8,perf:-.03,d:"Regulators love you. Some lucrative deals walk away."},
+  solo:{heat:-.6,perf:-.02,d:"No scandals, and fewer brand deals."}},
+ gambler:{junior:{swing:.06,stress:.5,heat:.2,d:"Big wins and big misses, and people are watching."},
+  mid:{swing:.07,stress:.6,heat:.4,d:"Your results swing wildly from month to month."},
+  senior:{swing:.08,stress:.6,heat:.5,morale:-.3,d:"Your team never know if they'll get a bonus or a telling-off."},
+  top:{swing:.1,heat:.6,stress:.6,d:"The board holds its breath every quarter."},
+  solo:{swing:.08,stress:.5,d:"Some nights are triumphs, some are disasters."}},
+ ruthless:{junior:{perf:.03,boss:.3,rep:-.25,d:"You get results, but colleagues have stopped helping you."},
+  mid:{perf:.04,morale:-.8,rep:-.3,d:"Results now, resentment building. Good people avoid your projects."},
+  senior:{perf:.02,morale:-1.5,rep:-.35,stress:.3,d:"Good people are asking to move teams. Morale is sliding."},
+  top:{perf:-.02,morale:-2,rep:-.5,d:"Good people resign, morale drops and it's starting to hurt results. The board is watching."},
+  solo:{perf:.03,rep:-.4,d:"You drive hard bargains. Fans and collaborators are souring on you."}},
+ trouble:{junior:{heat:.8,boss:-1,perf:.01,d:"Your name keeps coming up. Your boss is losing patience."},
+  mid:{heat:.8,boss:-.8,rep:-.3,d:"Every incident seems to lead back to you."},
+  senior:{heat:1,rep:-.4,morale:-.5,d:"Your team are nervous about what you'll do next."},
+  top:{heat:1,rep:-.5,perf:-.02,d:"The board spends more time on your scandals than on strategy."},
+  solo:{heat:.6,perf:.03,d:"Controversy sells, until it doesn't."}}};
+/* Per-career flavour on top of the table */
+const KA_OVR={
+ bank:{gambler:{swing:.12,heat:.7,d:"Huge P&L swings, and Compliance have noticed."}},
+ police:{trouble:{heat:1.2,d:"Professional Standards keep a file on you."},straight:{heat:-1,d:"Professional Standards never hear your name. Some colleagues think you're a bit holy."}},
+ law:{straight:{heat:-1,d:"Clients trust your word. Some walk when you won't stretch the rules."}},
+ pol:{trouble:{heat:1.2,d:"The whips have a folder with your name on it."},straight:{heat:-1,d:"Voters trust you. The whips find you hard to manage."}},
+ teach:{helps:{perf:.04,stress:.9,d:"Your pupils do better because you go the extra mile. Your evenings vanish."}},
+ doc:{safe:{perf:.04,d:"Trusted with the big cases. Never with anything glamorous."}},
+ nurse:{safe:{perf:.04,d:"Trusted with the sickest patients. It's exhausting."}},
+ pilot:{safe:{perf:.04,d:"Trusted with the tricky routes and the nervous passengers."}},
+ astronaut:{safe:{perf:.04,d:"Trusted with the critical tasks on every mission."}},
+ fire:{safe:{perf:.04,d:"Crews want you on the big shouts."}},
+ manager:{ruthless:{morale:-2.5,bands:["senior","top"],d:"You're losing the dressing room."}},
+ foot:{ruthless:{d:"You win the ball, and lose friends in the dressing room."},trouble:{d:"Cards, fines and the manager's patience wearing thin."}},
+ clubowner:{ruthless:{bands:["senior","top"],d:"Staff are leaving and sponsors are getting twitchy."}},
+ cardealer:{ruthless:{bands:["senior","top"],d:"Your best salespeople are leaving for rival dealers."}},
+ influencer:{gambler:{swing:.1,d:"Viral one week, forgotten the next."}},
+ spy:{trouble:{heat:1.2,d:"Internal security watch you more closely than the enemy does."}}};
+function kaMod(lab){const k=kaS();lab=lab===undefined?k.lab:lab;if(!lab||!KA_MOD[lab])return null;const band=kaBand();const base=KA_MOD[lab][band];const O=(KA_OVR[S.path]||{})[lab];
+ if(O&&band!=="solo"&&(!O.bands||O.bands.includes(band))){const r=Object.assign({},base,O);delete r.bands;return r}return base}
+/* Monthly drift: never hands out reputation for free */
+function kaMonth(notes){const k=kaS(),old=k.lab||null,lab=kaCalc();
+ if(lab!==old){k.lab=lab;k.labAt=S.day;
+  if(lab&&lab!=="mixed"){const M=kaMod(lab);notes.push(`People now see you as ${KA_LABS[lab]}. ${M?M.d:""}`);S.log.unshift({d:S.day,t:`People now see you as ${KA_LABS[lab]}.`});fxAlert(`Known as: ${KA_LABS[lab]}`,kaNeg(lab)?"bad":"good")}
+  else if(old&&old!=="mixed"&&lab==="mixed")notes.push("People are no longer sure what to make of you.")}
+ k.clab=k.lab;
+ if(S.prison||S.front||S.sel||S.sabb||S.over)return;
+ const M=kaMod();if(!M)return;
+ if(M.rep)S.rep=clamp(S.rep+M.rep,0,100);
+ if(M.stress)S.stress=clamp(S.stress+M.stress,0,100);
+ if(M.heat)S.heat=clamp(S.heat+M.heat,0,100);
+ if(M.morale&&isTeam())S.morale=clamp(S.morale+M.morale,0,100);
+ if(M.boss&&S.boss&&S.rank<4&&!kaSolo())S.boss.mood=clamp((S.boss.mood||50)+M.boss,0,100);
+ if(lab===old&&lab!=="mixed"&&S.day-(k.noteAt??-99)>=6){k.noteAt=S.day;notes.push(`Known as ${KA_LABS[lab]}: ${M.d}`)}}
+/* Results: added as a line on the month's work */
+function kaPerf(W,off){try{if(!W||!S||S.prison||S.front||S.sel||S.sabb)return W;const M=kaMod();if(!M)return W;let p=M.perf||0;if(M.swing)p+=(rnd()<.5?-1:1)*M.swing*(.5+rnd());if(!p)return W;if(off)p*=.5;
+ const amt=p*rankTarget()/REVIEW_DAYS;if(!isFinite(amt)||!amt)return W;W.tot+=amt;(W.lines=W.lines||[]).push([`Known as ${KA_LABS[kaS().lab]}`,amt])}catch(e){}return W}
+/* Special results of reputation choices */
+function kaAct(modes){const k=kaS(),C=k.c;modes=[].concat(modes||[]);const lab=k.lab;
+ for(const md of modes){
+  if(md==="fix"){C.ruth*=.5;C.hot*=.5;C.gam*=.6;C.help+=1.5;C.n+=1}
+  else if(md==="worse"){k.esc=Math.min(2,k.esc+1);k.escAt=S.day;if(lab==="ruthless")C.ruth+=1.5;else if(lab==="trouble")C.hot+=1.5;else if(lab==="gambler")C.gam+=1.5;C.n+=1.5}
+  else if(md==="keep"){k.esc=Math.min(2,k.esc+1);k.escAt=S.day}
+  else if(md==="survive"){k.esc=1;k.escAt=S.day}
+  else if(md==="spend")C.help*=.75;
+  else if(md==="warn"){}
+  else if(md==="fast")S.rankSince=(S.rankSince==null?S.day:S.rankSince)-6;
+  else if(md==="bossup"){if(S.boss)S.boss.mood=clamp((S.boss.mood||50)+10,0,100)}
+  else if(md==="bossdn"){if(S.boss)S.boss.mood=clamp((S.boss.mood||50)-10,0,100)}
+  else if(md==="quit"){if(kaSolo()){S.rep=clamp(S.rep-15,0,100);continue}S.over=S.rank>=4?"ousted":"fired";S.log.unshift({d:S.day,t:S.rank>=4?"Forced out over your reputation.":"Dismissed over your conduct."})}}}
+ACTS.ka=fx=>kaAct(fx.ka);
+ACTS.kaquit=()=>kaAct(["quit"]);
+/* Career flavour for the stories */
+const KA_FLAV={
+ bank:["the desk","Compliance","clients","the board"],elec:["your crew","the safety inspector","customers","the group board"],plumb:["your crew","the safety inspector","customers","the group board"],
+ hair:["the salon team","head office","clients","the investors"],chef:["the brigade","head office","diners","the owners"],tech:["the engineers","HR","users","the board"],
+ foot:["the dressing room","the club's disciplinary panel","fans","the board"],law:["the associates","the firm's risk partner","clients","the partners"],doc:["the ward team","the medical director","patients","the trust board"],
+ teach:["your department","the governors","pupils","the governors"],police:["your team","Professional Standards","the public","the police commissioner"],pol:["your staff","the whips","constituents","the party"],
+ pilot:["the crews","the chief pilot","passengers","the board"],nurse:["the ward","the director of nursing","patients","the trust board"],fire:["the watch","the area manager","the public","the fire authority"],
+ vet:["the practice team","the practice board","pet owners","the investors"],arch:["the studio","the partners","clients","the partners"],music:["the band","your label","fans","your label"],
+ influencer:["your editors","the platform","followers","your agency"],soldier:["your unit","the commanding officer","civilians","the chiefs"],astronaut:["the crew","the flight director","mission control","the agency board"],
+ spy:["your agents","internal security","ministers","the Service's board"],tvchef:["the production team","the channel","viewers","the channel"],clubowner:["the staff","the league","fans","the shareholders"],
+ manager:["the dressing room","the board","fans","the board"],actor:["the cast","your agent","fans","the studio"],dj:["your crew","your agent","crowds","the promoters"],cardealer:["the sales team","head office","customers","the group board"]};
+const KA_BIG={doc:"a complex operation on a very high-profile patient",nurse:"the ward when the inspectors arrive",pilot:"a tricky new route, with the regulator on the flight deck",astronaut:"the spacewalk",fire:"the high-rise incident",bank:"the firm's biggest client",law:"the firm's biggest case",police:"a murder inquiry",spy:"a defector",teach:"the inspection",soldier:"the overseas deployment",arch:"the flagship project"};
+function kaToks(){const f=KA_FLAV[S.path]||["your team","HR","clients","the board"],nm=fullName(),lab=kaS().lab;
+ return{team:f[0],body:f[1],client:f[2],board:f[3],co:S.bank||"the firm",boss:S.boss&&S.rank<4&&!kaSolo()?S.boss.n:f[3],name:nm,first:nm.split(" ")[0],big:KA_BIG[S.path]||"the most important project of the year",
+  why:lab==="trouble"?"your conduct":lab==="gambler"?"the risks you take":"the way you treat people",lab:KA_LABS[lab]||""}}
+function kaTok(s,T){return String(s).replace(/\{(\w+)\}/g,(a,k)=>{const v=T[k.toLowerCase()];if(v==null)return a;return /[A-Z]/.test(k[0])?v[0].toUpperCase()+v.slice(1):v})}
+function kaFxR(fx){const o=Object.assign({},fx||{});if(o.pay!=null){let g=Math.round(salary()/12*o.pay/50)*50;if(Math.abs(g)<200)g=200*Math.sign(o.pay||-1);o.gbp=g;o.fixed=1;delete o.pay}if(o.ka&&!o.act)o.act="ka";return o}
+function kaBuild(tpl){const T=kaToks(),tk=s=>kaTok(s,T);
+ const ch=c=>{const o={t:tk(c.t)};if(c.p!=null){o.p=c.p;o.win={fx:kaFxR(c.win.fx),o:tk(c.win.o)};o.lose={fx:kaFxR(c.lose.fx),o:tk(c.lose.o)}}else{o.fx=kaFxR(c.fx);o.o=tk(c.o)}return o};
+ return{id:`ka_${tpl.k}_${S.day}`,from:tk(tpl.from||"{Boss}"),t:tk(tpl.t),b:tk(tpl.b),c:tpl.c.map(ch)}}
+/* The story bank. lv 0/1/2 = escalating warnings for a bad reputation; "opp" = tests and chances for the rest.
+   Every option costs something: money, results, home life, stress, relationships or the reputation itself. */
+const KA_JM=["junior","mid"],KA_ST=["senior","top"],KA_SO=["solo"],KA_NS=["junior","mid","senior","top"];
+const KA_STORIES=[
+ /* ---- Ruthless ---- */
+ {k:"r0a",lab:["ruthless"],lv:0,bands:KA_JM,from:"{First}, a colleague",t:"People have stopped helping you",b:"{Name} tells you quietly that people are avoiding your projects. \"They say you'd sell anyone out for a win.\"",c:[
+  {t:"Buy everyone lunch and apologise",fx:{pay:-.15,karma:3,rep:-1,ka:"fix"},o:"Awkward, expensive and worth it. A few people thaw."},
+  {t:"Work late to prove you don't need them",fx:{stress:8,home:-4,pnl:.2,ka:"worse"},o:"You hit your numbers. Nobody notices but you."},
+  {t:"Shrug it off: results are what count",fx:{pnl:.15,rep:1,karma:-2,ka:"keep"},o:"{Boss} loves the results. The silence by the kettle gets louder."}]},
+ {k:"r0b",lab:["ruthless"],lv:0,bands:KA_ST,from:"HR",t:"Good people are resigning",b:"{Name}, one of your best, has resigned, and two more are interviewing elsewhere. The exit interview says it plainly: they don't want to work for you.",c:[
+  {t:"Fund retention bonuses from your own pay",fx:{pay:-1,morale:6,karma:3,ka:"fix"},o:"It costs you a month's pay. The interviewing stops."},
+  {t:"Promote {first}'s deputy and move on",fx:{morale:-4,pnl:.2,ka:"worse"},o:"Cheaper and quicker. {Team} clock exactly what you think of them."},
+  {t:"Counter-offer, then quietly pile on the work",fx:{morale:-2,stress:-2,karma:-3,ka:"keep"},o:"{First} stays, for now. Everyone else learns the lesson."}]},
+ {k:"r0m",lab:["ruthless"],lv:0,bands:KA_ST,paths:["manager","foot","clubowner"],from:"The club captain",t:"The dressing room has turned",b:"Senior players have been to {board} about you. \"Nobody wants to play for them any more.\"",c:[
+  {t:"Clear the air and drop your hardest drills",fx:{morale:6,pnl:-.25,rep:-2,ka:"fix"},o:"Training gets softer, and the mood gets better. Results dip."},
+  {t:"Drop the ringleaders",fx:{morale:-6,pnl:.15,karma:-3,ka:"worse"},o:"You make your point. The rest of the squad goes very quiet."},
+  {t:"Tell {board} it's sour grapes",fx:{stress:4,ka:"keep"},o:"{Board} listen politely, and make a note."}]},
+ {k:"r0s",lab:["ruthless"],lv:0,bands:KA_SO,from:"Your phone",t:"Collaborators are walking",b:"{Name}, who you used to work with, says publicly they'd never work with you again. Others are nodding along online.",c:[
+  {t:"Apologise publicly and pay what you owe them",fx:{pay:-.8,rep:-2,karma:4,ka:"fix"},o:"It hurts your pride and your bank balance. The pile-on stops."},
+  {t:"Hit back hard",fx:{rep:2,heat:6,karma:-3,ka:"worse"},o:"The clip goes everywhere. Bookings tick up. So does the bad press."},
+  {t:"Say nothing and keep working",fx:{pnl:.1,rep:-2,ka:"keep"},o:"It blows over online. Not in the industry."}]},
+ {k:"r1a",lab:["ruthless"],lv:1,bands:KA_JM,from:"{Body}",t:"A formal grievance",b:"{Name} has filed a formal grievance about the way you treat {team}. {Body} wants a meeting, and it goes on your file.",c:[
+  {t:"Accept it, apologise and do the training",fx:{rep:-4,stress:5,karma:4,pnl:-.1,ka:"fix"},o:"Two days of workshops and a bruised ego. The grievance is closed."},
+  {t:"Fight it",p:.55,win:{fx:{rep:1,stress:6,karma:-4,ka:"worse"},o:"Dismissed. {First} leaves. Nobody else complains, out loud."},lose:{fx:{rep:-6,stress:8,ka:["worse","warn"]},o:"The grievance is upheld. You're on a formal warning."}},
+  {t:"Blame the pressure from above",fx:{stress:3,ka:["keep","bossdn"]},o:"{Body} sympathise. {Boss} doesn't, when it gets back to them."}]},
+ {k:"r1b",lab:["ruthless"],lv:1,bands:["senior"],from:"{Body}",t:"The 360 review is brutal",b:"Your anonymous 360 review is back. Your bosses rate you highly. {Team} don't: 'cold', 'takes the credit', 'I'm job hunting'. {Board} has seen it.",c:[
+  {t:"Share it with {team} and ask them to hold you to account",fx:{rep:-3,stress:6,morale:5,karma:3,pnl:-.15,ka:"fix"},o:"Humbling. Over the next few weeks, something shifts."},
+  {t:"Bury it and focus on the numbers",fx:{pnl:.3,morale:-5,ka:"worse"},o:"The numbers look great. {Board} adds a note to your file."},
+  {t:"Restructure out the loudest critics",fx:{morale:-6,karma:-6,heat:4,pnl:.15,ka:["worse","warn"]},o:"Quick and brutal. You're put on notice."}]},
+ {k:"r1c",lab:["ruthless","trouble","gambler"],lv:1,bands:["top"],from:"{Board}",t:"A vote of no confidence is tabled",b:"Members of {board} have tabled a motion of no confidence in you, citing {why}.",c:[
+  {t:"Take a pay cut and promise to change",fx:{pay:-2,rep:-4,morale:6,karma:4,ka:"fix"},o:"The motion is withdrawn. Your pay is not."},
+  {t:"Lobby them one by one",p:.55,win:{fx:{rep:2,stress:8,ka:"keep"},o:"You survive by two votes. Everyone knows how close it was."},lose:{fx:{rep:-6,stress:10,ka:"worse"},o:"The motion passes. One more strike and you're gone."}},
+  {t:"Blame your predecessor",fx:{heat:4,karma:-3,stress:-2,ka:"keep"},o:"It buys you a quarter. No more."}]},
+ {k:"r1s",lab:["ruthless","trouble"],lv:1,bands:KA_SO,from:"{Body}",t:"Your agent is worried",b:"Two brands have quietly pulled out of talks. \"People think you're {lab}. Fix it, or I can't sell you.\"",c:[
+  {t:"Do a free charity show to show your better side",fx:{pnl:-.25,stress:5,karma:5,heat:-4,ka:"fix"},o:"A month's best fee gone, and some kind headlines."},
+  {t:"Find a more aggressive agent",fx:{pay:-.3,pnl:.25,heat:4,ka:"worse"},o:"The new agent gets you paid. The old one tells everyone why you left."},
+  {t:"Ignore it",fx:{rep:-3,ka:"keep"},o:"The brands don't come back."}]},
+ /* ---- Trouble ---- */
+ {k:"t0a",lab:["trouble"],lv:0,bands:KA_JM,from:"{Boss}",t:"A quiet word",b:"{Boss} takes you aside. \"Your name keeps coming up. One more incident and it goes formal.\"",c:[
+  {t:"Own it and redo the work in your own time",fx:{pnl:-.2,stress:6,home:-3,heat:-6,ka:"fix"},o:"Weekends gone. {Boss} notices."},
+  {t:"Point out that everyone else does it too",fx:{heat:2,ka:["keep","bossdn"]},o:"That goes down badly."},
+  {t:"Nod, smile and carry on",fx:{pnl:.15,heat:3,ka:"worse"},o:"Easy. For now."}]},
+ {k:"t0p",lab:["trouble"],lv:0,bands:KA_NS,paths:["police"],from:"Professional Standards",t:"Professional Standards have opened a file",b:"A complaint about your conduct on a job has reached Professional Standards. They want an informal chat first.",c:[
+  {t:"Co-operate fully, even where it hurts you",fx:{rep:-3,heat:-7,stress:5,ka:"fix"},o:"You come out of it bruised and on the record as honest."},
+  {t:"Say the complainant is a known liar",fx:{heat:3,karma:-4,ka:"worse"},o:"They might be. The file stays open."},
+  {t:"Ask your Federation rep to handle it",fx:{pay:-.2,stress:-2,ka:"keep"},o:"It drags on. The file gets thicker."}]},
+ {k:"t0b",lab:["trouble"],lv:0,bands:KA_ST,from:"{Body}",t:"{Body} are asking questions",b:"{Body} have noticed a pattern of incidents on your watch, and {team} are talking.",c:[
+  {t:"Pay for an independent review of your own conduct",fx:{pay:-.6,rep:-3,heat:-8,ka:"fix"},o:"Uncomfortable reading, and yours to fix."},
+  {t:"Let a deputy carry the can",fx:{heat:-3,karma:-5,morale:-5,ka:"worse"},o:"The deputy goes. Everyone else watches you closely."},
+  {t:"Stonewall",fx:{heat:4,ka:"keep"},o:"{Body} write it all down."}]},
+ {k:"t0s",lab:["trouble"],lv:0,bands:KA_SO,from:"A journalist",t:"A long article about you",b:"A newspaper runs a long piece on your 'chaotic' year. {Client} are split.",c:[
+  {t:"Cancel a lucrative booking and sort yourself out",fx:{pnl:-.35,heat:-8,stress:-2,ka:"fix"},o:"A big fee gone. The story dies."},
+  {t:"Lean into it",fx:{pnl:.3,heat:7,ka:"worse"},o:"Notoriety pays. For now."},
+  {t:"Issue a bland statement",fx:{heat:2,rep:-1,ka:"keep"},o:"Nobody believes it."}]},
+ {k:"t1a",lab:["trouble"],lv:1,bands:KA_JM,from:"{Body}",t:"A disciplinary hearing",b:"It's gone formal. {Body} have called a disciplinary hearing after another incident.",c:[
+  {t:"Admit it, accept the penalty and pay for the damage",fx:{pay:-.5,rep:-4,heat:-8,ka:["fix","warn"]},o:"A written warning and a lighter wallet. A clean slate if you keep your head down."},
+  {t:"Get a rep and fight it",p:.5,win:{fx:{stress:8,heat:-2,ka:"keep"},o:"Case not proven. Everyone knows what that means."},lose:{fx:{rep:-5,stress:8,ka:["worse","warn"]},o:"Final written warning."}},
+  {t:"Blame a colleague",fx:{karma:-6,heat:-2,morale:-3,ka:"worse"},o:"It works. {Name} gets the warning, and never forgets."}]},
+ {k:"t1p",lab:["trouble"],lv:1,bands:KA_NS,paths:["police"],from:"Professional Standards",t:"A misconduct meeting",b:"Professional Standards have upgraded the complaint. A misconduct meeting is set, and your warrant card is on the line.",c:[
+  {t:"Accept a reflective practice review and a desk job for a while",fx:{pnl:-.4,rep:-3,heat:-10,ka:"fix"},o:"Months of paperwork. Your record starts to heal."},
+  {t:"Fight every point",p:.5,win:{fx:{stress:9,ka:"keep"},o:"No case to answer. This time."},lose:{fx:{rep:-5,stress:9,ka:["worse","warn"]},o:"A final written warning."}},
+  {t:"Lean on a witness",fx:{karma:-8,heat:5,ka:"worse"},o:"The witness goes quiet. Somebody notices."}]},
+ {k:"t1b",lab:["trouble"],lv:1,bands:["senior"],from:"{Board}",t:"A final warning",b:"{Board} has had enough of the headlines. One more incident and you're finished.",c:[
+  {t:"Step back and hand your best project to a rival",fx:{pnl:-.35,rep:-3,heat:-10,ka:"fix"},o:"Someone else gets the glory. The headlines stop."},
+  {t:"Promise to change, and carry on as before",fx:{heat:3,ka:["worse","warn"]},o:"Nobody believes you."},
+  {t:"Hire a crisis PR firm",fx:{pay:-1,heat:-4,ka:"keep"},o:"Expensive spin. It buys time, not trust."}]},
+ /* ---- Gambler, in jobs where risk is regulated ---- */
+ {k:"g0a",lab:["gambler"],lv:0,bands:KA_NS,from:"{Body}",t:"{Body} want a word",b:"{Body} have flagged the risks you've been taking. They want you to accept tighter limits.",c:[
+  {t:"Accept the limits",fx:{pnl:-.25,heat:-5,ka:"fix"},o:"Duller months ahead. {Body} relax."},
+  {t:"Find a way round them",fx:{pnl:.3,heat:6,ka:"worse"},o:"It works, and it's exactly what they were worried about."},
+  {t:"Talk your way out of it",p:.5,win:{fx:{heat:-2,ka:"keep"},o:"They let it go, for now."},lose:{fx:{heat:5,ka:"worse"},o:"They don't buy it."}}]},
+ {k:"g0b",lab:["gambler"],lv:0,bands:KA_NS,paths:["bank"],from:"Compliance",t:"Compliance want a chat",b:"Compliance have pulled your last three months of trades. \"Your risk-taking is outside appetite.\"",c:[
+  {t:"Cut your limits in half",fx:{pnl:-.3,heat:-6,ka:"fix"},o:"Your P&L shrinks. So does Compliance's interest."},
+  {t:"Move the risk into a sister book",fx:{pnl:.35,heat:7,karma:-3,ka:"worse"},o:"Clever. Too clever."},
+  {t:"Get your boss to vouch for you",fx:{heat:-2,ka:["keep","bossdn"]},o:"{Boss} vouches, and reminds you that you owe them."}]},
+ {k:"g1a",lab:["gambler"],lv:1,bands:["junior","mid","senior"],from:"{Body}",t:"Your decisions are under review",b:"{Body} have put your recent decisions under formal review.",c:[
+  {t:"Hand sign-off to a colleague, and the credit with it",fx:{pnl:-.3,rep:-3,heat:-6,ka:"fix"},o:"{Name} gets the credit for your next good month."},
+  {t:"Double down to make it all back",p:.45,win:{fx:{pnl:.6,stress:6,ka:"keep"},o:"It comes good. The review notes that it was luck."},lose:{fx:{pnl:-.6,stress:10,ka:["worse","warn"]},o:"It doesn't. You're on a formal warning."}},
+  {t:"Blame the system",fx:{heat:3,ka:"keep"},o:"The system disagrees."}]},
+ /* ---- The final step, for any bad reputation ---- */
+ {k:"f2a",lab:["ruthless","trouble","gambler"],lv:2,bands:KA_NS,from:"{Body}",t:"A final hearing",b:"It's come to a head. {Body} have called a final hearing about {why}. Lose this and you're out.",c:[
+  {t:"Go quietly",fx:{act:"kaquit"},o:"You clear your desk before lunch."},
+  {t:"Fight for your job",p:.6,win:{fx:{rep:-4,stress:12,ka:"survive"},o:"You keep your job, just. Everyone knows you're on borrowed time."},lose:{fx:{act:"kaquit"},o:"The panel rules against you. You're walked out of the building."}},
+  {t:"Throw yourself on their mercy: pay cut and a public apology",fx:{pay:-2,rep:-8,stress:10,home:-4,karma:6,ka:["fix","survive"]},o:"Humiliating and expensive. You keep your job, and a chance to change."}]},
+ {k:"f2s",lab:["ruthless","trouble"],lv:2,bands:KA_SO,from:"{Body}",t:"They're dropping you",b:"{Body} says they're dropping you unless you change, fast. Bookings are being cancelled over {why}.",c:[
+  {t:"Change, publicly and expensively",fx:{pay:-1.5,rep:-5,stress:8,karma:6,ka:["fix","survive"]},o:"It costs you, and it starts to work."},
+  {t:"Go it alone",p:.45,win:{fx:{rep:3,stress:10,ka:"survive"},o:"Your {client} stick with you. Barely."},lose:{fx:{rep:-15,pnl:-.5,ka:"survive"},o:"Without them, the work dries up. You start again from a lower rung."}},
+  {t:"Let them drop you",fx:{rep:-12,pnl:-.3,stress:-4,ka:"survive"},o:"They drop you. You have time to think, and not much else."}]},
+ /* ---- Chances and tests for a good (or risky) name ---- */
+ {k:"h_mentor",lab:["helps"],lv:"opp",bands:KA_JM,from:"{Name}",t:"An offer to mentor you",b:"{Name}, a senior figure at {co}, has noticed how you look out for people and offers to mentor you. It means early mornings and homework.",c:[
+  {t:"Accept",fx:{skill:5,stress:6,home:-4,ka:"bossup"},o:"Hard work, and doors start opening."},
+  {t:"Decline politely: you're stretched enough",fx:{rep:-1},o:"{First} understands. Mostly."}]},
+ {k:"h_cover",lab:["helps"],lv:"opp",bands:["junior","mid","senior"],from:"{Name}",t:"Can you cover for me?",b:"{Name} has made a mess of a piece of work and asks you to cover. If it comes out, you take the blame.",c:[
+  {t:"Cover for them",fx:{rep:-3,stress:4,karma:4},o:"It does come out, and you take the hit. {First} won't forget it."},
+  {t:"Help them fix it after hours",fx:{stress:6,home:-5,karma:2},o:"Late nights, no credit, and the problem goes away."},
+  {t:"Tell them they're on their own",fx:{karma:-4,pnl:.1},o:"Your own work gets done. The favours stop flowing your way."}]},
+ {k:"h_fast",lab:["helps","safe"],lv:"opp",bands:KA_JM,when:()=>S.rank<4,from:"{Boss}",t:"A fast-track place",b:"{Co} has one place on its fast-track scheme. People keep putting your name forward. So does {name}, who needs it more than you.",c:[
+  {t:"Take the place",fx:{stress:8,home:-5,karma:-1,ka:"fast"},o:"Six months knocked off your wait for promotion. {First} is gracious about it, in public."},
+  {t:"Give it to {first}",fx:{karma:5,rep:-2},o:"{First} is promoted ahead of you. You'll wait longer, and they owe you."}]},
+ {k:"h_pot",lab:["helps"],lv:"opp",bands:KA_ST,from:"{Team}",t:"The bonus pot has been cut",b:"{Board} has cut the bonus pot for {team}. They're furious. You could top it up out of your own pay.",c:[
+  {t:"Top it up from your own pay",fx:{pay:-1.2,morale:8,karma:4},o:"Your bank balance takes the hit. {Team} won't forget it."},
+  {t:"Fight {board} for it",fx:{morale:4,stress:6,heat:4,ka:"bossdn"},o:"You win some of it back, and make enemies upstairs."},
+  {t:"Accept the cut",fx:{morale:-6,karma:-2},o:"{Team} see which side you're on."}]},
+ {k:"h_thanks",lab:["helps","straight"],lv:"opp",bands:["top"],from:"{Board}",t:"Too soft?",b:"{Team} have organised a vote of thanks for you. {Board} thinks you've gone soft: results are flat and they want cuts.",c:[
+  {t:"Make the cuts {board} wants",fx:{pnl:.4,morale:-8,karma:-5},o:"{Board} is happy. The thank-you card goes in a drawer."},
+  {t:"Refuse and defend your people",fx:{morale:6,pnl:-.3,rep:-2,karma:3},o:"{Team} cheer. {Board} reminds you who you answer to."}]},
+ {k:"h_teach",lab:["helps"],lv:"opp",bands:KA_NS,paths:["teach"],from:"The head",t:"Your class is flying",b:"Your class has made the best progress in the school, because you give up your evenings for them. Now the head wants you to run the catch-up club too.",c:[
+  {t:"Run the club",fx:{stress:8,home:-6,pnl:.3,karma:2},o:"Results soar. You see your own home in the dark."},
+  {t:"Say no: you need your evenings back",fx:{rep:-2,stress:-3},o:"The head is disappointed, and says so."}]},
+ {k:"h_solo",lab:["helps"],lv:"opp",bands:KA_SO,from:"{Name}",t:"A friend's big break",b:"{Name}, an old friend just starting out, asks if they can share your next big booking.",c:[
+  {t:"Share it",fx:{pnl:-.3,karma:5,rep:1},o:"Half the fee, all of the goodwill."},
+  {t:"Say no",fx:{karma:-3,pnl:.05},o:"{First} says they understand. They tell everyone else otherwise."}]},
+ {k:"s_big",lab:["safe"],lv:"opp",bands:["mid","senior","top"],from:"{Boss}",t:"A safe pair of hands",b:"{Boss} wants a safe pair of hands on {big}. It's high-stakes, and it's yours if you want it.",c:[
+  {t:"Take it on",p:.7,win:{fx:{rep:5,pnl:.3,stress:8},o:"It goes like clockwork. Of course it does."},lose:{fx:{rep:-7,stress:10},o:"It goes wrong. Safe pairs of hands drop things too."}},
+  {t:"Pass: it's not worth the risk",fx:{rep:-2},o:"{Boss} gives it to someone louder."}]},
+ {k:"s_head",lab:["safe","helps","straight"],lv:"opp",bands:["mid","senior"],from:"A headhunter",t:"Headhunters are calling",b:"A headhunter says a rival would pay 25% more for someone with your reputation.",c:[
+  {t:"Use it to push for a raise",p:.5,win:{fx:{act:"raise",stress:4},o:"They match it. {Boss} is a little cooler with you."},lose:{fx:{rep:-3,ka:"bossdn"},o:"{Boss} calls your bluff. Awkward."}},
+  {t:"Stay loyal and say nothing",fx:{stress:2,karma:1},o:"You stay. The extra money goes to someone else."}]},
+ {k:"s_solo",lab:["safe"],lv:"opp",bands:KA_SO,from:"A promoter",t:"A steady residency",b:"A venue offers you a steady residency. Good money, but your edgier {client} will call it selling out.",c:[
+  {t:"Take it",fx:{pay:1.5,rep:-3},o:"Reliable money. Some {client} drift off."},
+  {t:"Turn it down",fx:{pnl:-.15,stress:3},o:"Credibility intact, bills less so."}]},
+ {k:"st_bend",lab:["straight"],lv:"opp",bands:["junior","mid","senior"],from:"{Name}",t:"Just this once?",b:"{Name} suggests a shortcut that's not quite allowed. It would make the month. Everyone assumes you'll say no.",c:[
+  {t:"Say no, and report it",fx:{heat:-4,karma:4,pnl:-.2,morale:-3},o:"{First} gets a warning. Some of {team} think you're a snitch."},
+  {t:"Say no, quietly",fx:{pnl:-.2,karma:2},o:"You lose the month's edge. Your conscience is clear."},
+  {t:"Just this once",fx:{pnl:.4,heat:6,karma:-5},o:"It works. Your name for being straight starts to slip."}]},
+ {k:"st_deal",lab:["straight"],lv:"opp",bands:["top","solo"],from:"{Name}",t:"A deal with strings",b:"A deal on the table would make your year, but {name}, on the other side, has a shady record.",c:[
+  {t:"Walk away",fx:{pnl:-.4,heat:-4,karma:3},o:"The money goes elsewhere. So does the scandal, a year later."},
+  {t:"Take it",fx:{pnl:.6,heat:8,karma:-6},o:"The money's good. The company you keep isn't."}]},
+ {k:"g_punt",lab:["gambler"],lv:"opp",bands:null,from:"{Name}",t:"A big punt",b:"{Name} has a bet-the-month opportunity. Everyone expects you to say yes.",c:[
+  {t:"All in",p:.45,win:{fx:{pnl:.7,stress:-2},o:"It lands. You're insufferable for a week."},lose:{fx:{pnl:-.6,stress:8},o:"It doesn't land. You don't sleep."}},
+  {t:"A small stake",p:.6,win:{fx:{pnl:.2},o:"A tidy win."},lose:{fx:{pnl:-.2},o:"A small loss."}},
+  {t:"Pass",fx:{rep:-2},o:"\"Even you have limits, then.\" Your name loses a little of its shine."}]}];
+function kaStory(lab,lv){const band=kaBand();const L=KA_STORIES.filter(x=>x.lab.includes(lab)&&x.lv===lv&&(!x.bands||x.bands.includes(band))&&(!x.paths||x.paths.includes(S.path))&&(!x.when||x.when()));if(!L.length)return null;
+ const k=kaS(),fresh=L.filter(x=>S.day-(k.seen[x.k]??-99)>=24),P0=fresh.length?fresh:L,own=P0.filter(x=>x.paths),P=own.length&&rnd()<.7?own:P0,x=pick(P);k.seen[x.k]=S.day;return kaBuild(x)}
+function kaMorning(){if(!S||S.placeholder||S.over||S.prison||S.front||S.sel||S.sabb)return;const k=kaS(),lab=k.lab,neg=kaNeg(lab);
+ if(!neg&&k.esc>0&&S.day-(k.escAt??-99)>=8){k.esc--;k.escAt=S.day;S.log.unshift({d:S.day,t:"The talk about you has died down."})}
+ if(!lab||lab==="mixed")return;
+ if(S.inbox.some(m=>!m.done&&/^(ka_|story_)/.test(m.id))||S.inbox.filter(m=>!m.done).length>=4)return;
+ if(S.day-(k.last??-99)<(neg?4:9))return;
+ if(neg&&S.day-(k.labAt??S.day)<2)return;
+ if(rnd()>(neg?.2:.18))return;
+ const ev=neg?(kaStory(lab,Math.min(2,k.esc))||kaStory(lab,"opp")):kaStory(lab,"opp");if(!ev)return;
+ k.last=S.day;pushDyn(ev)}
+/* An extra option on some inbox stories, based on what you're known for. Appended, so existing choices keep their places. */
+const KA_EXTRA={
+ helps:{t:"Call in a favour (you're known for helping)",fx:{stress:-6,act:"ka",ka:"spend"},o:"Someone you once helped sorts it out for you. That's one less favour you're owed."},
+ safe:{t:"Do it by the book, as you always do",fx:{heat:-3,stress:2,pnl:-.15},o:"Nobody can fault how you handled it. It costs you time and money."},
+ straight:{t:"Refuse on principle (you're known for it)",fx:{heat:-4,karma:3,rep:-1,pnl:-.2},o:"You won't budge. Some people respect it; others think it cost them."},
+ gambler:{t:"Double or nothing (you're known for it)",p:.45,win:{fx:{pnl:.35,stress:-2},o:"It comes off. Of course it does."},lose:{fx:{pnl:-.35,stress:6,heat:2},o:"It doesn't come off. People sigh: typical."}},
+ ruthless:{t:"Lean on someone to make it go away",fx:{stress:-6,karma:-4,heat:2,pnl:.1},o:"Someone more junior takes the hit. It works, and people notice."},
+ trouble:{t:"Make it someone else's problem, as usual",fx:{stress:-5,heat:4,karma:-3},o:"It goes away for now. Your file gets a little thicker."}};
+function kaHash(s){let h=7;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h}
+function kaExtra(e){if(!S||!S.ka||!e||!Array.isArray(e.c)||e.c.length<2)return null;const X=KA_EXTRA[S.ka.clab];if(!X)return null;const id=String(e.id||"");
+ if(/^(ka_|story_|trial|callup|offer|fund|legend|js_focus)/.test(id)||e.ill||e.front||e.chat||e.c.some(c=>c&&[c.fx,c.win&&c.win.fx,c.lose&&c.lose.fx].some(f=>f&&/die|wound|retire|quit|trial|redundan|switch/.test(f.act||""))))return null;
+ if(kaHash(id+":"+S.day)%100>=22)return null;return Object.assign({kaX:1},X)}
+function kaRowHTML(){const k=kaS(),lab=k.lab,M=kaMod();
+ return `<div class="label">Known as</div><div class="ka-name">${lab&&lab!=="mixed"?esc(KA_LABS[lab][0].toUpperCase()+KA_LABS[lab].slice(1)):lab==="mixed"?"Hard to pin down":"Not known for anything yet"}</div><p class="hint" style="margin:4px 0 0">${M?esc(M.d):"How you handle what lands in your inbox shapes how people see you."}${k.esc&&kaNeg(lab)?` <b class="down">${k.esc>=2?"Final warning: one more step and you're out.":"People are talking. You've had a warning."}</b>`:""}</p>`}
+function kaCareerRow(){if(typeof document==="undefined")return;const p=document.getElementById("pane-career");if(!p||!p.querySelector)return;const sec=p.querySelector(".pane-sec");if(!sec||!sec.appendChild)return;
+ const el=document.createElement("div");el.className="ka-row";el.innerHTML=kaRowHTML();sec.appendChild(el)}
+/* ---- Hooks ---- */
+{const _chK=choose;choose=function(i,ci){let m,was,before,c,opts;
+ try{m=S&&S.inbox[i];was=m&&m.done;if(m&&!was){before=fxSnap();const e=getEv(m);opts=e?choicesOf(e):[];c=opts[ci]}}catch(x){}
+ const r=_chK.apply(this,arguments);
+ try{if(m&&!was&&m.done&&before&&S&&!S.placeholder){const d=fxDiff(before,fxSnap());mcAdd(d);kaNote(c,m.fx,opts);if(!S.over){fxShow(d);kaThresh()}}}catch(x){}
+ return r}}
+{const _cdK=closeDay;closeDay=function(){const d0=S&&S.day;const r=_cdK.apply(this,arguments);try{if(S&&S.day!==d0)kaThresh()}catch(x){}return r}}
+{const _ldK=lifeDay;lifeDay=function(notes){const r=_ldK.apply(this,arguments);try{kaMonth(notes||[])}catch(x){}return r}}
+{const _smK=storyMorning;storyMorning=function(){const r=_smK.apply(this,arguments);try{kaMorning()}catch(x){}return r}}
+{const _mcK=marketsClose;marketsClose=function(off){return kaPerf(_mcK.apply(this,arguments),off)}}
+{const _jcK=jobsClose;jobsClose=function(off){return kaPerf(_jcK.apply(this,arguments),off)}}
+{const _fcK=fbClose;fbClose=function(off){return kaPerf(_fcK.apply(this,arguments),off)}}
+{const _coK=choicesOf;choicesOf=function(e){const base=_coK.apply(this,arguments);try{const x=kaExtra(e);if(x)return base.concat([x])}catch(err){}return base}}
+{const _tsK=traitScale;traitScale=function(k,v){v=_tsK.apply(this,arguments);try{const l=S&&S.ka&&S.ka.lab;if(v>0){if(l==="trouble"&&k==="heat")v*=1.15;else if(l==="straight"&&k==="heat")v*=.9;else if(l==="helps"&&(k==="home"||k==="morale"))v*=1.1;else if(l==="ruthless"&&k==="rep")v*=.85}}catch(e){}return v}}
+{const _rcK=renderCareer;renderCareer=function(){const r=_rcK.apply(this,arguments);try{kaCareerRow()}catch(x){}return r}}
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
