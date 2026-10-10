@@ -15717,7 +15717,7 @@ Object.assign(ACTS,{shmore:fx=>{const c=shCur();if(c){c.total=fx.m;c.left=fx.m}}
 function shMorning(){
  if(!l5ok()||S.day<10||l5busy(/^sh_/))return;const c=shCur();
  if(!c){if(S.day-(S.shEndAt??0)>=12&&S.day-(S.shNudge??-99)>=24&&(S.shNudges||0)<3&&!S.shDone&&rnd()<.12){S.shNudge=S.day;S.shNudges=(S.shNudges||0)+1;const ids=Object.keys(HUSTLES).filter(id=>!shAvail(id));if(ids.length<2)return;const a=pick(ids),b=pick(ids.filter(x=>x!==a));
-  pushDyn({id:"sh_nudge_"+S.day,life:1,from:"An idea",t:"Fancy a side hustle?",b:`A friend has been making good money on the side. You could try ${HUSTLES[a].n.toLowerCase()}, or ${HUSTLES[b].n.toLowerCase()}. Three months, to see how it goes.`,c:[{t:`Try ${HUSTLES[a].n.toLowerCase()}`,fx:{act:"shstart",k:a},o:"New project. New spreadsheet."},{t:`Try ${HUSTLES[b].n.toLowerCase()}`,fx:{act:"shstart",k:b},o:"New project. New spreadsheet."},{t:"Not right now",fx:{},o:"Your evenings are precious."}]})}return}
+  pushDyn({id:"sh_nudge_"+S.day,life:1,from:"An idea",t:"Fancy a side hustle?",b:`A friend has been making good money on the side. You could try ${HUSTLES[a].n.toLowerCase()}, or ${HUSTLES[b].n.toLowerCase()}. Three months, to see how it goes.`,c:[{t:`Try ${HUSTLES[a].n.toLowerCase()}`,fx:{act:"shstart",k:a},o:HUSTLES[a].start?`You put ${money(HUSTLES[a].start)} into it. New project, new spreadsheet.`:"New project. New spreadsheet."},{t:`Try ${HUSTLES[b].n.toLowerCase()}`,fx:{act:"shstart",k:b},o:HUSTLES[b].start?`You put ${money(HUSTLES[b].start)} into it. New project, new spreadsheet.`:"New project. New spreadsheet."},{t:"Not right now",fx:{},o:"Your evenings are precious."}]})}return}
  if(c.storied||c.total-c.left<1||rnd()>.25)return;c.storied=1;const H=HUSTLES[c.id],S0={
   etsy:["A big order",`A shop in Brighton wants 200 of your things by Friday.`,[{t:"Pull three all-nighters",p:.7,win:{fx:{gbp:1200,stress:8},o:"You make it. Your fingers may never recover."},lose:{fx:{gbp:300,stress:10},o:"You deliver 140. They take them, grumpily."}},{t:"Say you can do 50",fx:{gbp:350},o:"They take 50, and come back for more next month."}]],
   podcast:["A famous guest","A minor celebrity has agreed to come on your podcast. Their agent wants a fee.",[{t:"Pay the £300",p:.5,win:{fx:{gbp:-300,fixed:1,act:"shboost",v:.3},o:"Your downloads triple overnight."},lose:{fx:{gbp:-300,fixed:1},o:"They spend 40 minutes plugging their book."}},{t:"Stick with your regular guests",fx:{},o:"Your loyal 200 listeners are delighted."}]],
@@ -44564,6 +44564,14 @@ XCLICK.tpsub=t=>{tpSub=t.dataset.k||"";openShops.showroom=true;render()};
 function phVehicle(ph,x){try{const id=(ph&&ph.v)||(S&&S.car&&S.car.id);const c=carOf(id);if(!c||c.id==="none")return null;
  let a=carArt(c.shape,x||"#3E6FB0");a=a.replace(/<svg class="[^"]*" viewBox="0 0 200 90"[^>]*>/,'<svg x="106" y="108" width="108" height="49" viewBox="0 0 200 90">').replace(/<rect x="0" y="74" width="200" height="16"[^>]*\/>/,"");
  return a.startsWith('<svg x=')?a:null}catch(e){return null}}
+
+/* ============ Side hustles from the inbox: the cost counts, and you can't start one you can't pay for ============ */
+{const _cc=choiceCost;choiceCost=function(c){const k=_cc.apply(this,arguments);try{const fx=c&&c.fx;if(fx&&fx.act==="shstart"&&HUSTLES[fx.k])return Math.max(k,HUSTLES[fx.k].start||0)}catch(e){}return k}}
+ACTS.shstart=fx=>{const H=HUSTLES[fx.k];if(!H||shCur())return;
+ const need=H.need&&H.need();const cost=H.start||0;
+ if(need||S.wealth+Math.max(2000,salary()/12)<cost){S.log.unshift({d:S.day,t:`Couldn't start ${H.n.toLowerCase()}: ${need||"not enough money"}.`});try{toastMsg(need||`You can't afford ${H.n.toLowerCase()} right now.`)}catch(e){}return}
+ S.wealth-=cost;S.sh={id:fx.k,total:3,left:3,since:S.day,earned:0,lvl:(S.shLvl&&S.shLvl[fx.k])||0,dep:H.dep?cost:0};
+ S.log.unshift({d:S.day,t:`Started a side hustle: ${H.n.toLowerCase()}${cost?` (${money(cost)})`:""}.`})};
 
 function start(data){
  S=(data&&data.S)||load();
