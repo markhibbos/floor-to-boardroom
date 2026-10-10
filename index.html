@@ -46507,6 +46507,23 @@ const affairE=p=>p.role==="lover"?12:p.role==="openlover"?8:0;
 {const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(!S.over&&!S.prison)for(const p of (S.people||[]))if(p.alive!==false&&affairE(p))L.push({cat:"dating",n:(p.role==="lover"?"Sneaking around with ":"Seeing ")+p.n.split(" ")[0],e:affairE(p)})}catch(e){}return L}}
 {const _ps=peopleSec;peopleSec=function(){let h=_ps.apply(this,arguments);try{for(const p of (S.people||[]))if(p.alive!==false&&affairE(p)){const n=esc(p.n),i=h.indexOf("<b>"+n+"</b>");if(i<0)continue;const j=h.indexOf("</span>",i);if(j<0)continue;h=h.slice(0,j)+" · ⚡ "+affairE(p)+"/month"+(p.role==="lover"?" (all the lying is exhausting)":"")+h.slice(j)}}catch(e){}return h}}
 
+/* ENERGY gaps */
+/* ============ Big life moments, dates, babies, court, new jobs and break-ups all take energy ============ */
+const GAP_SCENE={day:[25,"family","Your wedding day"],"do":[18,"fun","The stag or hen do"],birth:[20,"family","A new baby"],move:[15,"home","Moving day"],kidwed:[12,"family","Your child's wedding"],funeral:[10,"family","A funeral"],birthday:[6,"family","A birthday party"],leaving:[6,"work","A leaving do"],school:[4,"family","First day at school"]};
+const gapCat=c=>(typeof EN_CATS!=="undefined"&&EN_CATS.includes(c))?c:"family";
+function gapCharge(cat,e,n){try{if(typeof enCharge==="function"&&typeof enS==="function"&&enS())enCharge(gapCat(cat),e,n)}catch(x){}}
+{const _wf=wsFinish;wsFinish=function(){const w=S.wscene;const r=_wf.apply(this,arguments);try{const g=w&&GAP_SCENE[w.kind];if(g&&!w.enCharged){w.enCharged=1;gapCharge(g[1],g[0],g[2])}}catch(x){}return r}}
+{const _df=dgFinish;dgFinish=function(){const r=_df.apply(this,arguments);try{gapCharge("dating",10,"A date")}catch(x){}return r}}
+{const _sc=switchCareer;switchCareer=function(){const was=S&&S.path;const r=_sc.apply(this,arguments);try{if(S&&S.path!==was){S.newJobAt=S.day}}catch(x){}return r}}
+{const _er=endRel;endRel=function(){const r=_er.apply(this,arguments);try{S.splitAt=S.day}catch(x){}return r}}
+for(const k of ["breakup","divorce"]){try{if(ACTS[k]){const _a=ACTS[k];ACTS[k]=function(){const r=_a.apply(this,arguments);try{S.splitAt=S.day}catch(x){}return r}}}catch(x){}}
+{const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(!S.over&&!S.prison){
+ const babies=(S.children||[]).filter(k=>typeof kidAge==="function"&&kidAge(k)<1).length;if(babies)L.push({cat:gapCat("family"),n:"Sleepless nights (a baby under one)",e:10*babies});
+ if(S.trialPending)L.push({cat:"work",n:"Your court case",e:15});
+ if(S.newJobAt!=null&&S.day-S.newJobAt<1)L.push({cat:"work",n:"Learning the ropes in a new job",e:12});
+ if(S.splitAt!=null&&S.day-S.splitAt<1)L.push({cat:gapCat("family"),n:"The break-up",e:15});
+}}catch(x){}return L}}
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
