@@ -657,6 +657,7 @@ html,body{overflow-x:clip}
 .buy-house{position:relative;max-width:300px;margin:4px auto 34px}.buy-house>svg{width:100%;height:auto;border-radius:14px}.buy-faces{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%);display:flex;gap:4px}.buy-faces svg{width:62px;height:62px;border-radius:50%;border:3px solid var(--surface,#fff);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .en-now{display:block;font-size:12px;color:var(--accent);font-weight:600;margin-top:1px}
 .help-quick{list-style:none;padding:0;margin:10px 0 6px;display:flex;flex-direction:column;gap:9px}.help-quick li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.35}.hq-i{font-size:20px;line-height:1;flex:none;width:26px;text-align:center}.help-more{margin:6px 0 4px}.help-more summary{cursor:pointer;color:var(--muted);font-size:13.5px;padding:4px 0}
+.life-en{color:var(--accent);font-weight:600}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -1259,11 +1260,14 @@ const INV=[
  {id:"crypto",n:"Crypto",sub:"Huge swings either way",mu:.05,vol:3.8}
 ];
 const LIFESTYLE=[
- {id:"gym",n:"Gym membership",c:220,d:"Eases stress a little every month"},
+ {id:"gym",n:"Gym membership",c:220,d:"Eases stress every month"},
  {id:"nanny",n:"Cleaner and nanny",c:1800,d:"Lifts home life every month"},
  {id:"club",n:"Private members' club",c:450,d:"Networking lifts your reputation"},
  {id:"hins",n:"Private health insurance",c:160,d:"Covers private treatment if you fall seriously ill: faster, safer and free"},
- {id:"lins",n:"Life insurance",c:45,d:"Pays your family 10× your salary (at least £500k) if you die"}
+ {id:"lins",n:"Life insurance",c:45,d:"Pays your family 10× your salary (at least £500k) if you die"},
+ {id:"botox",n:"Botox and fillers",c:150,d:"You look rested, so you feel it. Slows the energy you lose with age a little"},
+ {id:"bio",n:"Biohacking programme",c:350,d:"Sleep tracking, supplements and cold plunges (⚡3 a month). Slows the energy you lose with age"},
+ {id:"longevity",n:"Longevity clinic",c:2500,d:"Scans, a personal doctor and the latest treatments. Slows the energy you lose with age a lot"}
 ];
 function calEvent(day){
  if(S&&S.path&&S.path!=="bank")return null;
@@ -14661,7 +14665,7 @@ function renderLife(){
   ${goalSec()}
   <div class="pane-sec">
    <div class="sec-head"><h2 style="font-size:18px">Lifestyle</h2><span class="label">Monthly</span></div>
-   <ul class="shop" style="list-style:none;margin:0;padding:0">${LIFESTYLE.map(l=>`<li><span class="nm">${l.n} <span class="mono" style="font-weight:400">${money(l.c)}/month</span></span><span class="sub">${l.d}</span><button class="btn sm ${S.life[l.id]?"primary":""}" data-act="life" data-id="${l.id}" aria-pressed="${!!S.life[l.id]}">${S.life[l.id]?"On":"Off"}</button></li>`).join("")}</ul>
+   <ul class="shop" style="list-style:none;margin:0;padding:0">${LIFESTYLE.map(l=>`<li><span class="nm">${l.n} <span class="mono" style="font-weight:400">${money(l.c)}/month</span></span><span class="sub">${l.d}</span>${LIFE_EN[l.id]?`<span class="sub life-en">⚡ ${LIFE_EN[l.id]}</span>`:""}<button class="btn sm ${S.life[l.id]?"primary":""}" data-act="life" data-id="${l.id}" aria-pressed="${!!S.life[l.id]}">${S.life[l.id]?"On":"Off"}</button></li>`).join("")}</ul>
   </div>
   <div class="pane-sec">
    <div class="sec-head"><h2 style="font-size:18px">Milestones</h2>${nw>=15e6||age()>=PENSION_ACCESS?`<button class="btn sm primary" data-act="qretire">${age()>=PENSION_ACCESS?"Retire":"Retire early"}</button>`:`<span class="label">Retire at ${PENSION_ACCESS} or £15m</span>`}</div>
@@ -44246,7 +44250,7 @@ function wizYouRedraw(){const sh=document.getElementById("sheet"),y=sh?sh.scroll
 XCLICK.wizav=t=>{const k=t.dataset.k,v=t.dataset.v;if(k==="random"){const sx=wizAvGet().sex;pickAv=avDefault(undefined,sx)}else wizAvSet(k,v);wizYouRedraw()};
 XCLICK.wizpref=t=>{pickPref=t.dataset.k;wizYouRedraw()};
 XCLICK.wizavtab=t=>{wizAvTab=t.dataset.k;wizYouRedraw()};
-function wizYouApply(){try{if(!S)return;const av=avUp(JSON.parse(JSON.stringify(wizAvGet())));S.av=av;S.pref=wizPrefOf();
+function wizYouApply(){try{if(!S)return;const av=avUp(JSON.parse(JSON.stringify(wizAvGet())));S.av=av;S.pref=wizPrefOf();S.flags=S.flags||{};S.flags.lookAsk=1;
  try{localStorage.setItem("ftb-look",JSON.stringify({v:2,av,pref:pickPref}))}catch(e){}
  pickAv=null;pickPref=null;save();render()}catch(e){}}
 
@@ -46529,6 +46533,29 @@ for(const k of ["breakup","divorce"]){try{if(ACTS[k]){const _a=ACTS[k];ACTS[k]=f
  if(S.newJobAt!=null&&S.day-S.newJobAt<1)L.push({cat:"work",n:"Learning the ropes in a new job",e:12});
  if(S.splitAt!=null&&S.day-S.splitAt<1)L.push({cat:gapCat("family"),n:"The break-up",e:15});
 }}catch(x){}return L}}
+
+/* GLOW-UP */
+/* ============ Glow-ups every few years, and paying to hold back the years ============ */
+function ageBack(){try{const a=age();if(a<33)return 0;const pen=Math.max(0,enBase(30)-enBase(a));const L=S.life||{};let f=0;
+ if(L.botox)f+=.1;if(L.bio)f+=.3;if(L.longevity)f+=.45;f+=Math.min(.25,(S.surg||0)*.08*Math.max(.3,1-(S.day-(S.surgAt??S.day))/180));
+ return Math.round(pen*Math.min(.7,f))}catch(e){return 0}}
+{const _ea=enAllowance;enAllowance=function(E,o){const r=_ea.apply(this,arguments);try{const b=ageBack();if(b){r.parts.push(["Holding back the years",b]);r.v+=b}}catch(e){}return r}}
+{const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(S.life&&S.life.bio&&!S.over)L.push({cat:"fitness",n:"Cold plunges and sleep routine",e:3})}catch(e){}return L}}
+{const _ld=lifeDay;lifeDay=function(notes){const r=_ld.apply(this,arguments);try{if(S.life&&S.life.botox&&age()>=30)S.stress=clamp(S.stress-.2,0,100)}catch(e){}return r}}
+function glowMorning(){if(!S||S.placeholder||S.over||S.prison||S.daily)return;const a=age();if(a<24)return;
+ if(S.glowNext==null){S.glowNext=S.day+36+Math.floor(rnd()*36);return}if(S.day<S.glowNext||S.inbox.some(m=>!m.done&&/^glow_/.test(m.id)))return;
+ S.glowNext=S.day+36+Math.floor(rnd()*36);const sc=typeof priceScale==="function"?priceScale():1,make=Math.round(600*Math.max(.5,sc)/50)*50,surg=Math.round(9000*Math.max(.6,sc)/500)*500;
+ const c=[{t:"Change how I look",fx:{act:"avopen",stress:-2},o:"New you. Same you, but better."},
+  {t:"A fresh haircut and a new wardrobe ("+money(make)+")",fx:{gbp:-make,fixed:1,stress:-6,home:3,act:"avopen"},o:"You catch yourself in a shop window and do a double take. In a good way."}];
+ if(a>=35)c.push({t:"Something more serious: a cosmetic procedure ("+money(surg)+")",fx:{gbp:-surg,fixed:1,act:"glowsurg"},o:"A week of hiding behind sunglasses, then you look ten years younger."});
+ c.push({t:"I'm happy as I am",fx:{stress:-1},o:"Laughter lines are earned."});
+ pushDyn({id:"glow_"+S.day,life:1,from:"The mirror",t:pick(["Time for a glow-up?","New year, new you?","A fresh look?"]),b:pick(["You catch sight of yourself in a lift mirror. Is it time for a change?","A friend has had a glow-up and looks fantastic. You wonder.","Your photo on the work website is very out of date. So is the haircut."]),c})}
+ACTS.glowsurg=()=>{S.surg=(S.surg||0)+1;S.surgAt=S.day;if(rnd()<.07){S.health=clamp(S.health-8,0,100);S.stress=clamp(S.stress+8,0,100);S.log.unshift({d:S.day,t:"A cosmetic procedure went wrong. Months of fixing it."})}else{S.stress=clamp(S.stress-5,0,100);S.homeLife=clamp(S.homeLife+2,0,100);S.log.unshift({d:S.day,t:"Had a cosmetic procedure. You look years younger."})}};
+{const _wmG=willMorning;willMorning=function(){const r=_wmG.apply(this,arguments);try{glowMorning()}catch(e){}return r}}
+
+/* LIFESTYLE energy */
+const LIFE_EN={gym:"Sessions use 5 a month, but you get 8 more energy: you come out 3 ahead",nanny:"Takes the housework and childcare off you: saves energy every month",club:"Networking evenings use 4 a month",botox:"Gives back a little of the energy you lose with age (from 33)",bio:"Uses 3 a month, and gives back a good chunk of the energy you lose with age",longevity:"Gives back a lot of the energy you lose with age"};
+{const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(S.life&&S.life.club&&!S.over&&!S.prison)L.push({cat:"friends",n:"Members' club evenings",e:4})}catch(e){}return L}}
 
 function start(data){
  S=(data&&data.S)||load();
