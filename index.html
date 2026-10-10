@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Floor to Boardroom</title>
+<title>One Life</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -892,7 +892,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
 
 <header class="top">
   <div class="top-in">
-    <div class="brand"><b>Floor to Boardroom</b><small id="bankName">Ashby Grange &amp; Co.</small></div>
+    <div class="brand"><b>One Life</b><small id="bankName">Ashby Grange &amp; Co.</small></div>
     <div class="top-stats" id="topstats"></div>
     <button class="icon-btn" id="menuBtn" data-act="menu" aria-label="Career menu">Menu</button>
   </div>
@@ -925,7 +925,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
   <div class="home-in">
     <div class="home-icons" id="homeIcons" aria-hidden="true"></div>
     <div class="label home-kicker">A career and life simulator</div>
-    <h1 class="home-title">Floor to<br>Boardroom</h1>
+    <h1 class="home-title">One Life</h1>
     <p class="home-lede">Pick a career. Start at the bottom. Climb to the top, and try to keep your money, your health and your family together on the way.</p>
     <div class="home-btns" id="homeBtns"></div>
   </div>
@@ -2850,7 +2850,7 @@ async function fetchSlot(n){
 async function deleteSlot(n){try{localStorage.removeItem(slotKey(n))}catch(e){}if(cloudCode)await apiCall("DELETE",`saves/${cloudCode}/${n}`)}
 function adopt(data){
  const s=data&&(data.S||data);
- if(!s||typeof s!=="object"||!s.v||!s.path||!CAREERS[s.path]||!s.home)throw new Error("That file isn't a Floor to Boardroom save.");
+ if(!s||typeof s!=="object"||!s.v||!s.path||!CAREERS[s.path]||!s.home)throw new Error("That file isn't a One Life save.");
  S=s;ensure(S);delete S.placeholder;rngState=S.daily&&S.rs!=null?S.rs:null;modalQueue=[];tab="desk";save();hideHome();render();
  if(S.over)endModal();else hideModal();
 }
@@ -2890,7 +2890,7 @@ async function savesModal(msg){
    <div class="btn-row"><button class="btn sm" data-act="export" ${S&&!S.placeholder?"":"disabled"}>Download save file</button><label class="btn sm file-btn">Load from file<input type="file" id="importFile" accept=".json,application/json" hidden></label></div></div>
   <div class="btn-row"><button class="btn" data-act="${homeOpen()?"hide":"menu"}">Back</button></div>`);
  const fi=document.getElementById("importFile");
- fi.addEventListener("change",()=>{const f=fi.files&&fi.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);confirmLoad(()=>adopt(d))}catch(e){savesModal(e instanceof SyntaxError?"That file isn't a Floor to Boardroom save.":e.message)}};rd.readAsText(f)});
+ fi.addEventListener("change",()=>{const f=fi.files&&fi.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);confirmLoad(()=>adopt(d))}catch(e){savesModal(e instanceof SyntaxError?"That file isn't a One Life save.":e.message)}};rd.readAsText(f)});
  const L=await listSlots(),el=document.getElementById("slotList");if(!el)return;
  el.innerHTML=(L.auto?slotRow(Object.assign(L.auto,{slot:"auto"}),"Cloud autosave"):"")+L.slots.map(x=>slotRow(x,"Slot "+x.slot)).join("")+(L.err?`<li><span class="sub down">${esc(L.err)} Showing saves on this device.</span></li>`:"");
 }
@@ -3758,7 +3758,7 @@ async function shareLife(e){
  const W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
  const disp='"Big Shoulders Display","Arial Narrow",Impact,sans-serif',body='"IBM Plex Sans",system-ui,sans-serif';
  x.fillStyle="#13212A";x.fillRect(0,0,W,H);x.fillStyle="#D7A744";x.fillRect(0,0,W,14);x.fillRect(0,H-14,W,14);
- x.fillStyle="#D7A744";x.font=`700 34px ${body}`;x.fillText("FLOOR TO BOARDROOM",80,110);
+ x.fillStyle="#D7A744";x.font=`700 34px ${body}`;x.fillText("ONE LIFE",80,110);
  x.fillStyle="#E3E9E7";x.font=`800 92px ${disp}`;let y=230;for(const l of wrapText(x,e.name.toUpperCase(),920).slice(0,2)){x.fillText(l,80,y);y+=92}
  x.fillStyle="#8A99A1";x.font=`500 40px ${body}`;x.fillText(`${e.title} at ${e.age}`,80,y+10);y+=60;
  if(e.epitaph){x.fillStyle="#C9CDD1";x.font=`italic 34px ${body}`;for(const l of wrapText(x,`“${e.epitaph}”`,920).slice(0,2)){x.fillText(l,80,y+20);y+=46}}
@@ -3769,7 +3769,7 @@ async function shareLife(e){
  x.fillStyle="#8A99A1";x.font=`500 32px ${body}`;x.fillText("Can you live a better life?",80,H-70);
  const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob))return;
  const file=new File([blob],"my-life.png",{type:"image/png"});
- try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in Floor to Boardroom",text:`${e.name}: ${e.title}, legacy ${e.legacy}. Can you beat it?`});return}}catch(err){if(err&&err.name==="AbortError")return}
+ try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in One Life",text:`${e.name}: ${e.title}, legacy ${e.legacy}. Can you beat it?`});return}}catch(err){if(err&&err.name==="AbortError")return}
  const url=URL.createObjectURL(blob);
  showModal(`<div class="label">Share my life</div><h2 style="margin-top:4px">Your life card</h2><p class="hint">Press and hold the image to save or share it, or download it below.</p><img src="${url}" alt="A card summarising ${esc(e.name)}'s life" style="width:100%;border-radius:10px;margin:8px 0"><div class="btn-row"><a class="btn primary" href="${url}" download="my-life.png">Download</a><button class="btn" data-act="${S&&S.over&&!homeOpen()?"backtoend":"hide"}">Back</button></div>`);
 }
@@ -6863,7 +6863,7 @@ async function sharePaper(){
  x.font="italic 40px Georgia,serif";let y2=y+60;for(const l of wrapText(x,p.lead[1],600).slice(0,7)){x.fillText(l,400,y2);y2+=52}
  y=Math.max(y+360,y2+30);x.fillRect(60,y,W-120,2);y+=60;x.font="700 26px system-ui,sans-serif";x.fillStyle="#7A1F2B";x.fillText("ALSO IN TODAY'S PAPER",70,y);x.fillStyle="#1A1A1A";y+=48;x.font="34px Georgia,serif";
  for(const[k,t]of(p.briefs||[]).slice(0,3)){for(const l of wrapText(x,`${k}: ${t}`,W-140).slice(0,2)){x.fillText(l,70,y);y+=44}y+=10}
- x.font="500 30px system-ui,sans-serif";x.fillStyle="#555";x.fillText("Floor to Boardroom · markhibbos.github.io/floor-to-boardroom",70,H-60);
+ x.font="500 30px system-ui,sans-serif";x.fillStyle="#555";x.fillText("One Life · markhibbos.github.io/floor-to-boardroom",70,H-60);
  const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob))return;const file=new File([blob],"front-page.png",{type:"image/png"});
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"The Daily Grind",text:p.lead[0]});return}}catch(err){if(err&&err.name==="AbortError")return}
  const url=URL.createObjectURL(blob);
@@ -7054,7 +7054,7 @@ const recAvatar=(rec,size)=>{try{return avatarSVG(size,{av:rec.av||avDefault(),p
 const recLink=rec=>{const r=Object.assign({},rec);delete r.when;return (window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()?"https://markhibbos.github.io/floor-to-boardroom/":location.origin+location.pathname)+"#life="+b64e(JSON.stringify(r))};
 function recordHTML(rec,viewer){
  const died=rec.e==="died";
- return `<div class="life-rec"><div class="label">${viewer?"A life in Floor to Boardroom":"Your life record"}</div>
+ return `<div class="life-rec"><div class="label">${viewer?"A life in One Life":"Your life record"}</div>
   <div class="lr-head">${recAvatar(rec,92)}<div><h2 style="margin:0">${esc(rec.n)}</h2><div class="hint" style="margin:2px 0 0">${died?esc(rec.r):`${esc(rec.t)} at ${rec.a} · ${esc(rec.r)}`}</div></div></div>
   <div class="lr-end ${died?"died":""}"><b>${died?`Died aged ${rec.a}`:esc(rec.t)}</b>${rec.d?`<span>${esc(rec.d)}</span>`:""}</div>
   ${rec.ep?`<p class="epitaph" style="margin:10px 0">“${esc(rec.ep)}”</p>`:""}
@@ -7069,8 +7069,8 @@ function recordModal(rec,back){
 }
 async function shareRecLink(rec){
  const url=recLink(rec),text=`${rec.n}: ${rec.t} at ${rec.a}. Legacy ${(rec.l||0).toLocaleString("en-GB")}. Can you live a better life?`;
- if(await nativeShareText("My life in Floor to Boardroom",text,url))return;
- try{if(navigator.share){await navigator.share({title:"My life in Floor to Boardroom",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+ if(await nativeShareText("My life in One Life",text,url))return;
+ try{if(navigator.share){await navigator.share({title:"My life in One Life",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
  try{await navigator.clipboard.writeText(url);toastMsg("Link copied. Paste it to your friends.")}catch(e){prompt("Copy this link:",url)}
 }
 function toastMsg(t){const el=document.createElement("div");el.className="toast-msg";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
@@ -7079,7 +7079,7 @@ async function shareRecImage(rec){
  const W=1080,AH=rec.al&&rec.al.filter(p=>!p.sad).length?330:0,H=1500+AH,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
  const disp='"Big Shoulders Display","Arial Narrow",Impact,sans-serif',body='"IBM Plex Sans",system-ui,sans-serif',died=rec.e==="died";
  x.fillStyle="#13212A";x.fillRect(0,0,W,H);x.fillStyle="#D7A744";x.fillRect(0,0,W,14);x.fillRect(0,H-14,W,14);
- x.fillStyle="#D7A744";x.font=`700 30px ${body}`;x.fillText("FLOOR TO BOARDROOM",80,90);
+ x.fillStyle="#D7A744";x.font=`700 30px ${body}`;x.fillText("ONE LIFE",80,90);
  try{const img=new Image(),svg=recAvatar(rec,240).replace("var(--accent-soft, #F3E2BD)",died?"#C9CED1":"#F3E2BD").replace("<svg ","<svg xmlns=\"http://www.w3.org/2000/svg\" ");img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);await new Promise((ok,bad)=>{img.onload=ok;img.onerror=bad});x.drawImage(img,80,130,240,240)}catch(e){}
  x.fillStyle="#E3E9E7";x.font=`800 78px ${disp}`;let y=200;for(const l of wrapText(x,rec.n.toUpperCase(),640).slice(0,2)){x.fillText(l,360,y);y+=78}
  x.fillStyle="#8A99A1";x.font=`500 34px ${body}`;for(const l of wrapText(x,died?rec.r:`${rec.t} at ${rec.a} · ${rec.r}`,640).slice(0,2)){x.fillText(l,360,y+6);y+=42}
@@ -7096,7 +7096,7 @@ async function shareRecImage(rec){
  if(AH)await drawAlbumRow(x,rec,H-AH-60);
  x.fillStyle="#8A99A1";x.font=`500 28px ${body}`;x.fillText("Can you live a better life? markhibbos.github.io/floor-to-boardroom",80,H-50);
  const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob))return;const file=new File([blob],"my-life.png",{type:"image/png"});
- try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in Floor to Boardroom",text:`${rec.n}: ${rec.t}. Can you beat my legacy of ${(rec.l||0).toLocaleString("en-GB")}?`});return}}catch(err){if(err&&err.name==="AbortError")return}
+ try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"My life in One Life",text:`${rec.n}: ${rec.t}. Can you beat my legacy of ${(rec.l||0).toLocaleString("en-GB")}?`});return}}catch(err){if(err&&err.name==="AbortError")return}
  const url=URL.createObjectURL(blob);
  showModal(`<div class="label">Share my life</div><h2 style="margin-top:4px">Your life card</h2><p class="hint">Press and hold the image to save or share it, or download it below.</p><img src="${url}" alt="A card summarising ${esc(rec.n)}'s life" style="width:100%;border-radius:10px;margin:8px 0"><div class="btn-row"><a class="btn primary" href="${url}" download="my-life.png">Download</a><button class="btn" data-act="reclink">Share a link instead</button><button class="btn" data-act="hide">Close</button></div>`);
 }
@@ -8063,7 +8063,7 @@ function showAuth(mode,msg){
    <button class="btn primary big" data-auth="signin" ${authBusy?"disabled":""}>Sign in</button>
    <p class="auth-alt"><button class="linkbtn" data-auth="mode" data-v="reset">Forgotten your password?</button></p>
    <p class="auth-alt">New here? <button class="linkbtn" data-auth="mode" data-v="up">Create an account</button></p>`;
- el.innerHTML=`<div class="auth-card"><div class="label home-kicker">${isAdminView()?"Admin":"A career and life simulator"}</div><h1 class="home-title" style="font-size:44px">Floor to<br>Boardroom</h1>
+ el.innerHTML=`<div class="auth-card"><div class="label home-kicker">${isAdminView()?"Admin":"A career and life simulator"}</div><h1 class="home-title" style="font-size:44px">One Life</h1>
   <h2 style="margin:10px 0 4px">${authMode==="up"?"Create your account":authMode==="reset"?"Reset your password":authMode==="newpass"?"Choose a new password":"Sign in to play"}</h2>
   ${authMsg?`<div class="note" role="status">${esc(authMsg)}</div>`:""}<form onsubmit="return false">${body}</form></div>`;
  const first=el.querySelector("input");if(first)setTimeout(()=>{try{first.focus()}catch(e){}},50);
@@ -8713,7 +8713,7 @@ async function nativeShareBlob(blob,text){
  const F=capPlugin("Filesystem"),Sh=capPlugin("Share");if(!F||!Sh||!blob)return false;
  try{const b64=await new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=bad;r.readAsDataURL(blob)});
   const name="floor-to-boardroom-"+Date.now()+".png",w=await F.writeFile({path:name,data:b64,directory:"CACHE"});
-  await Sh.share({title:"Floor to Boardroom",text:text||"My life in Floor to Boardroom",files:[w.uri]});return true}
+  await Sh.share({title:"One Life",text:text||"My life in One Life",files:[w.uri]});return true}
  catch(e){return !!(e&&/cancel/i.test(e.message||""))}
 }
 async function nativeShareText(title,text,url){const Sh=capPlugin("Share");if(!Sh)return false;try{await Sh.share({title,text,url});return true}catch(e){return !!(e&&/cancel/i.test(e.message||""))}}
@@ -9201,7 +9201,7 @@ ACTS.notifyes=()=>{notifEnable(true).then(ok=>{if(ok)toastMsg("Reminders on. You
 function notifOffer(){
  if(!isNative()||!capPlugin("LocalNotifications")||S.over||S.day<4)return;
  try{if(localStorage.getItem(NOTIF_KEY)!=null||localStorage.getItem("ftb-notif-asked"))return;localStorage.setItem("ftb-notif-asked","1")}catch(e){return}
- pushDyn({id:"notif_ask",life:0,from:"Floor to Boardroom",t:"Want a nudge now and then?",b:"The game can remind you when a decision is waiting, the markets are moving or a birthday is coming up. The reminders come from your phone itself, nothing is sent anywhere, and you can turn them off in the menu.",c:[{t:"Yes, remind me",fx:{act:"notifyes"},o:"Reminders on."},{t:"No thanks",fx:{},o:"No reminders. You can change your mind in the menu."}]});
+ pushDyn({id:"notif_ask",life:0,from:"One Life",t:"Want a nudge now and then?",b:"The game can remind you when a decision is waiting, the markets are moving or a birthday is coming up. The reminders come from your phone itself, nothing is sent anywhere, and you can turn them off in the menu.",c:[{t:"Yes, remind me",fx:{act:"notifyes"},o:"Reminders on."},{t:"No thanks",fx:{},o:"No reminders. You can change your mind in the menu."}]});
 }
 
 /* ============ The shape of a long life: chapters, rare wildcard years, takeovers, postings abroad and decade reviews ============ */
@@ -9301,7 +9301,7 @@ function decadeReview(n){
  const ms=(S.memories||[]).filter(m=>m.d>=a.day);
  S.decLast={n,a,b,big:ms.filter(m=>!m.quiet&&m.ph).slice(-3).map(m=>({t:m.t,ph:m.ph})),photos:ms.length,trips:S.log.filter(l=>l.d>=a.day&&/^Holiday:/.test(l.t)).length};
  S.decSnap=b;
- pushDyn({id:"dec_"+S.day,life:1,from:"Floor to Boardroom",t:`Your ${DECADE_N(n-1)} in review`,b:`You're ${n}. Ten years, summed up.`,c:[{t:"Let's see it",fx:{act:"decopen"},o:"Here's your decade."}]});
+ pushDyn({id:"dec_"+S.day,life:1,from:"One Life",t:`Your ${DECADE_N(n-1)} in review`,b:`You're ${n}. Ten years, summed up.`,c:[{t:"Let's see it",fx:{act:"decopen"},o:"Here's your decade."}]});
 }
 ACTS.decopen=()=>{setTimeout(()=>{try{decadeModal()}catch(e){}},350)};
 function decadeQuote(d){
@@ -9323,7 +9323,7 @@ function decadeModal(){
 }
 async function decShare(){
  const d=S.decLast;if(!d)return;const dec=DECADE_N(d.n-1),dn=d.b.nw-d.a.nw;
- const text=`My ${dec} in Floor to Boardroom: ${d.a.path===d.b.path?`${d.a.role} to ${d.b.role}`:`${CAREERS[d.a.path].n} to ${CAREERS[d.b.path].n}`}, ${dn>=0?"made":"lost"} ${money(Math.abs(dn))}, ${d.photos} photos. ${decadeQuote(d)[0]}`;
+ const text=`My ${dec} in One Life: ${d.a.path===d.b.path?`${d.a.role} to ${d.b.role}`:`${CAREERS[d.a.path].n} to ${CAREERS[d.b.path].n}`}, ${dn>=0?"made":"lost"} ${money(Math.abs(dn))}, ${d.photos} photos. ${decadeQuote(d)[0]}`;
  if(await nativeShareText(`My ${dec}`,text,PUBLIC_URL))return;
  try{if(navigator.share){await navigator.share({title:`My ${dec}`,text,url:PUBLIC_URL});return}}catch(e){if(e&&e.name==="AbortError")return}
  try{await navigator.clipboard.writeText(text+" "+PUBLIC_URL);toastMsg("Copied. Paste it to your friends.")}catch(e){}
@@ -9378,7 +9378,7 @@ function duelLink(rec){
  return PUBLIC_URL+"#duel="+b64e(JSON.stringify({st,by}));
 }
 async function shareDuel(rec){
- const url=duelLink(rec),text=`I scored a legacy of ${(rec.l||0).toLocaleString("en-GB")} in Floor to Boardroom. Same start, same career: can you beat my life?`;
+ const url=duelLink(rec),text=`I scored a legacy of ${(rec.l||0).toLocaleString("en-GB")} in One Life. Same start, same career: can you beat my life?`;
  if(await nativeShareText("Beat my life",text,url))return;
  try{if(navigator.share){await navigator.share({title:"Beat my life",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
  try{await navigator.clipboard.writeText(text+" "+url);toastMsg("Challenge link copied. Send it to a mate.")}catch(e){prompt("Copy this link:",url)}
@@ -9511,7 +9511,7 @@ function treeModal(){
 async function treeShare(){
  try{const svg=treeSVG().replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" ').replace('width="100%"','width="720"');const img=new Image();img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);await new Promise((ok,bad)=>{img.onload=ok;img.onerror=bad});
   const c=document.createElement("canvas");c.width=img.width||720;c.height=img.height||900;c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-  const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob,"Our family tree, from Floor to Boardroom"))return;
+  const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)return;if(await nativeShareBlob(blob,"Our family tree, from One Life"))return;
   const file=new File([blob],"family-tree.png",{type:"image/png"});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Our family tree"});return}}catch(e){if(e&&e.name==="AbortError")return}
   const url=URL.createObjectURL(blob);showModal(`<div class="label">Family tree</div><h2 style="margin-top:4px">Save your tree</h2><img src="${url}" alt="Family tree" style="width:100%;border-radius:10px"><div class="btn-row"><a class="btn primary" href="${url}" download="family-tree.png">Download</a><button class="btn" data-act="hide">Close</button></div>`)}catch(e){toastMsg("Couldn't make the picture.")}
 }
@@ -15075,7 +15075,7 @@ const wizSave=()=>{const ni=document.getElementById("nameIn");if(ni)window.__pic
 function lockedCard(c){return `<button class="locked" disabled aria-label="A secret career, still locked">${careerIcon("lock")}<span><b style="font-size:16px">Secret career</b><span>${esc(SECRETS[c.id].hint)} to unlock.</span></span></button>`}
 function startModal0(){
  const has=!!S&&!S.over&&!S.placeholder;
- showModal(`<div class="label">Floor to Boardroom · London</div><h2 style="margin-top:4px">From the bottom to the top</h2>
+ showModal(`<div class="label">One Life · London</div><h2 style="margin-top:4px">From the bottom to the top</h2>
   <p>Pick a career and start at the bottom in a Bethnal Green flatshare. Make the calls nobody wants to make, jump ship when the offers come, buy the house and the car, try to keep a marriage together, and climb to the top. Or retire rich.</p>
   <div class="field"><label class="label" for="nameIn">Your name</label><input id="nameIn" maxlength="28" placeholder="Alex Morgan" autocomplete="off"></div>
   <div class="label">Choose your career</div>

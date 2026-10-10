@@ -1,4 +1,4 @@
-# Floor to Boardroom
+# One Life
 
 A career and life simulator. Play it here: https://markhibbos.github.io/floor-to-boardroom/
 
