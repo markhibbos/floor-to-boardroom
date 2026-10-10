@@ -523,6 +523,7 @@ html,body{overflow-x:clip}
 .op-opts button.op-locked{opacity:.6;border-style:dashed;cursor:not-allowed}.pill.lockpill{background:rgba(0,0,0,.06);color:var(--muted);margin-top:4px;display:inline-block}
 .country-pick button b{display:block}.crs-rec{margin-top:12px;padding:10px 12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}
 .crs-done{list-style:none;margin:6px 0;padding:0;display:grid;gap:4px}.crs-done small{color:var(--muted);margin-left:4px}.perk-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.pill.perkpill{background:rgba(46,139,87,.12);color:var(--up,#2E8B57)}
+.op-src{display:block;margin-top:6px;font-size:12.5px;line-height:1.35;color:var(--muted)}.op-src.ok{color:var(--up,#2E8B57)}.op-src.rum{font-style:italic}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -8769,7 +8770,7 @@ function opsSec(){
  const opt=(k,list)=>`<div class="op-opts">${list.map((x,i)=>`<button data-act="opset" data-k="${k}" data-v="${i}" class="${o[k]===i?"on":""}"><b>${esc(x[0])}</b>${x[1]?`<span>${esc(x[1])}</span>`:""}${k==="kit"&&x[3]?`<span class="pill">Softens a failure</span>`:""}</button>`).join("")}</div>`;
  return `<div class="ops ${o.on?"on":""}"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.diff!=null?OP_DIFF[o.diff]+" · ":""}${o.h}h of your month</span></div>
   <p class="hint" style="margin:0 0 8px">Read the briefing, then pick a plan and your ${esc(T.kitN.toLowerCase())}: read each option carefully and match it to what you know. Confirmed intel is right ${Math.round(opAcc(o)*10)} times in 10${(o.diff||0)>=2?" at this level":""}; unconfirmed is barely better than a guess.</p>
-  <div class="op-brief">${T.brief.map(([k,n,vals,srcs],i)=>{const c=o.conds[i];return `<div><span class="label">${esc(n)}</span><b>${esc(vals[c.shown])}</b><span class="pill ${c.conf?"":"rum"}">${esc(srcs[c.conf?0:1])}: ${c.conf?"confirmed":"unconfirmed"}</span></div>`}).join("")}</div>
+  <div class="op-brief">${T.brief.map(([k,n,vals,srcs],i)=>{const c=o.conds[i];return `<div><span class="label">${esc(n)}</span><b>${esc(cap1(vals[c.shown]))}</b><span class="op-src ${c.conf?"ok":"rum"}">${c.conf?"✓ Confirmed":"? Unconfirmed"} · ${esc(srcs[c.conf?0:1])}</span></div>`}).join("")}</div>
   <div class="label" style="margin-top:10px">1. The plan</div>${opt("plan",T.plans)}
   <div class="label" style="margin-top:10px">2. ${esc(T.kitN)}</div>${opt("kit",T.kits)}
   <div class="label" style="margin-top:10px">3. How bold?</div>${opt("risk",OP_RISK)}
@@ -14927,7 +14928,8 @@ function startModal(step){
  else if(k==="chal")h=`<h2 style="margin-top:4px">A challenge?</h2><p>Optional. Set yourself a goal for this life and earn a badge on your life record.</p><div class="trait-pick" id="chalPick">${[{id:"",n:"No challenge",d:"Just live your life."},...CHALLENGES].map(c=>`<button data-act="chal" data-k="${c.id}" class="${pickChallenge===c.id?"on":""}" aria-pressed="${pickChallenge===c.id}"><b>${esc(c.n)}</b><span>${esc(c.d)}</span></button>`).join("")}</div>`;
  const skip=k==="traits"?`<button class="btn" data-act="wizskip">Skip</button>`:"";
  b=`<div class="btn-row wiz-btns">${last?`<button class="btn primary big" data-act="begin">Start your life</button>`:`<button class="btn primary big" data-act="wiznext">Next</button>`}${skip}${wizStep?`<button class="btn" data-act="wizback">Back</button>`:homeOpen()?'<button class="btn" data-act="hide">Cancel</button>':has?'<button class="btn" data-act="hide">Back to my career</button>':""}</div>`;
- showModal(`<div class="label">New life · step ${wizStep+1} of ${st.length}${wizStep>0?` · ${esc(c.n)}`:""}</div>${bar}${h}${b}`);
+ const _ci=st.indexOf("country"),_ki=st.indexOf("career"),_cf=typeof COUNTRIES!=="undefined"&&COUNTRIES[pickCountry];
+ showModal(`<div class="label">New life · step ${wizStep+1} of ${st.length}${_ci>=0&&wizStep>_ci&&_cf?` · ${_cf.flag} ${esc(_cf.n)}`:""}${_ki>=0&&wizStep>_ki?` · ${esc(c.n)}`:""}</div>${bar}${h}${b}`);
  if(k==="name")setTimeout(()=>{const i=document.getElementById("nameIn");if(i)try{i.focus()}catch(e){}},60);
  if(k==="career")setTimeout(()=>{const o=document.querySelector('.career-pick .on');if(o)o.scrollIntoView({block:"nearest"})},60);
 }
