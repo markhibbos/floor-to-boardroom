@@ -601,6 +601,24 @@ html,body{overflow-x:clip}
 .vt.warm .vt-b i{background:#E9A23B}.vt.hot .vt-b i{background:var(--down,#B3262E)}.vt.hot .vt-n{color:var(--down,#B3262E)}
 .desk-tape{overflow:hidden;white-space:nowrap;border:1px solid var(--line);border-radius:10px;background:var(--surface2);margin:0 0 12px}
 .desk-tape .tape-track{padding:6px 0}
+.en-top{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;width:100%;margin:0 0 8px;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;color:inherit;font:inherit;cursor:pointer;text-align:left;min-width:0}
+.en-top .en-bar{flex:1;min-width:48px}
+.en-top .en-ic{font-size:15px}.en-top .en-num b{font-family:var(--f-display);font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}.en-top .en-num small{color:var(--muted);font-size:12px}
+.en-top .en-num b.down{color:var(--down)}
+.en-bar{display:inline-block;width:64px;height:7px;border-radius:4px;background:var(--surface2);border:1px solid var(--line);overflow:hidden;vertical-align:middle}
+.en-bar i{display:block;height:100%;border-radius:3px;background:var(--up)}.en-bar.amber i{background:var(--warn)}.en-bar.red i{background:var(--down)}
+.en-bar.big{display:block;width:100%;height:10px;margin:8px 0}
+.en-fc{font-size:11px;color:var(--muted);white-space:nowrap}.en-fc.warn{color:var(--down);font-weight:600}
+.en-seg button{font-size:11.5px}.en-seg3 button{height:34px;font-size:11.5px}
+.en-row{display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.en-who b{display:block}.en-who span{display:block;font-size:12px;color:var(--muted);line-height:1.35}
+.en-c{font-style:normal;font-size:11.5px;color:var(--muted);margin-right:6px}.en-c.up{color:var(--up)}
+.en-trip{display:block;font-size:12px;margin-top:2px}.en-trip.up{color:var(--up)}.en-trip.down{color:var(--warn)}
+.en-oncall{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:6px 0}
+.en-line{border-left:3px solid var(--accent)}
+
+@media (max-width:420px){.en-row{grid-template-columns:1fr}.en-fc{font-size:10.5px}}
+.en-seg button,#pane-life .seg button,#pane-desk .seg button:not(.seg-jobs button){font-family:var(--f-body);font-size:13px}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -5308,7 +5326,7 @@ const itemNote=(it,t)=>{it.notes.unshift(`${shortDate(S.day)}: ${t}`);if(it.note
 const hasItem=k=>(S.items||[]).find(i=>i.k===k);
 /* Free time: up to two things a month */
 const FREE_PER_MONTH=2;
-const freeLeft=()=>FREE_PER_MONTH-(S.free&&S.free.d===S.day?S.free.n:0);
+let freeLeft=()=>FREE_PER_MONTH-(S.free&&S.free.d===S.day?S.free.n:0);
 const ACTIVITIES=[
  {k:"swipr",g:"Dating",ok2:1,n:"Swipe on Swipr",d:"The dating app everyone pretends they don't use. Three matches land in your inbox.",cost:0,ok:()=>isSingle()||inLove()},
  {k:"speed",g:"Dating",ok2:1,n:"Go speed dating",d:"Twelve dates, three minutes each, one very loud bell.",cost:30,ok:()=>isSingle()||inLove()},
@@ -14831,7 +14849,7 @@ function nextModal(){
    <table class="rep-table">${rows}</table>
    ${d.gross!=null?`<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Living costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div><details class="me-more"><summary>Pay breakdown</summary><table class="rep-table"><tr><td>${d.self?"Your earnings (self-employed)":"Salary this month"}</td><td>${moneyX(d.gross)}</td></tr><tr><td>Income tax and National Insurance</td><td class="down">${moneyX(-d.tax)}</td></tr>${d.you?`<tr><td>Your pension contribution</td><td class="down">${moneyX(-d.you)}</td></tr>`:""}<tr><td><b>Take-home pay</b></td><td><b>${moneyX(d.pay)}</b></td></tr>${d.pen?`<tr><td>Into your pension (with tax relief and employer)</td><td class="up">${moneyX(d.pen,true)}</td></tr>`:""}</table></details>`:
    `<div class="me-strip"><div><span class="label">Take-home</span><b>${moneyX(d.pay)}</b></div><div><span class="label">Living costs</span><b class="down">${moneyX(-d.cost)}</b></div><div><span class="label">Left over</span><b class="${d.pay-d.cost>=0?"up":"down"}">${moneyX(d.pay-d.cost,true)}</b></div></div>`}
-   ${dl?`<div class="chips">${dl}</div>`:""}${typeof monthChoicesLine==="function"?monthChoicesLine(d):""}
+   ${dl?`<div class="chips">${dl}</div>`:""}${typeof monthChoicesLine==="function"?monthChoicesLine(d):""}${typeof enMonthLine==="function"?enMonthLine(d):""}
    ${d.notes.length?`<div class="me-notes">${d.notes.map(n=>`<div class="note">${esc(n)}</div>`).join("")}</div>`:""}
    <div class="btn-row me-go"><button class="btn primary big" data-act="next">${modalQueue.length?"Continue":"Next month"}</button></div>`);
   countUp(document.querySelector("#sheet .big-num"),d.tot);if(d.tot>0)sfx.coin();else if(d.tot<0)sfx.bad();
@@ -15042,7 +15060,10 @@ function helpModal(){
  showModal(`<div class="label">Guide</div><h2 style="margin-top:4px">How to play</h2>
   <table class="rep-table help">
    ${HELP12[CAR_().mech]}
-   <tr><td><b>3. Clear your inbox</b><br>Every decision moves your stats. Some shortcuts come back to bite you months later.</td></tr>
+   <tr><td><b>Energy</b><br>Each month you get a batch of energy (the ⚡ bar at the top). Work, operations, courses, dates, friends, family, the gym, hobbies and holidays all use it. Set your work hours on the Desk, from Coasting to All-in. You can overspend, but the overspend comes off next month with interest, and months of it lead to burnout. Rest, quiet months and the right holiday recharge you. You get less energy, and recover more slowly, as you get older.</td></tr>
+   <tr><td><b>Time for people</b><br>On the Life tab, choose how much of your time your partner, children, parents and friends get. Ignore people and they drift. Some recharge you, others need a lot of you. Anyone on your People list can be contacted with Get in touch, and old flames can get a second chance.</td></tr>
+   <tr><td><b>3. Clear your inbox</b><br>Every decision moves your stats, and the change pops up so you can see it. Choices are remembered, and some come back months later. About one in five is a Big decision: bigger effects, and every option has a price. Your choices also build a reputation ("Known as…" on the Career tab), and what it does depends on your job and level. Get known as ruthless at the top and people quit, the board loses patience, and you can be sacked.</td></tr>
+   <tr><td><b>Holidays</b><br>You get a number of days off a year, set by your country and career (teachers in school holidays, footballers in the off-season). Use them or lose most of them. A beach week recharges you; a week in Ibiza is fun but you come back more tired.</td></tr>
    <tr><td><b>4. Close the month</b><br>Every 15 months you're reviewed. Hit the target, keep your reputation at 55+ and beat your named rival to be promoted. Five rungs take you from the bottom to the top job.</td></tr>
    <tr><td><b>5. Live your life</b><br>Buy a home and a car, invest, fall in love, raise a family. Stress and long hours wear down your home life. Overspend and you'll be forced to sell.</td></tr>
    <tr><td><b>6. Build a pension, guard your health</b><br>Pay into your pension to unlock your employer's contribution. Stress drains your health, and poor health invites serious illness. Accidents can strike anyone. Health and life insurance help if the worst happens.</td></tr>
@@ -17000,15 +17021,17 @@ Object.assign(CASE_GROUP,{pol:"pol",clubowner:"owner",manager:"dugout",influence
 
 
 /* ============ First-time guide: Mags the mentor shows you round ============ */
-const TOUR_KEY="ftb-tour";
+const TOUR_KEY="ftb-tour2";
 const tourSeen=()=>{try{return localStorage.getItem(TOUR_KEY)==="1"}catch(e){return false}};
 const navBtn=re=>[...document.querySelectorAll(".nav button,.nav a")].find(b=>re.test(b.textContent.trim()));
 const TOUR=[
  {t:"Hi, I'm Mags",b:"I've watched a thousand careers start. Let me show you round. It takes thirty seconds.",el:null},
  {t:"Your life at a glance",b:"Your age, what you've earned this year, the cash in your pocket and everything you own.",el:()=>document.querySelector(".top-stats")},
- {t:"Your work",b:"This is your desk. Each month, pick the work you'll do. Bigger jobs pay more, but they take more hours.",el:()=>{const w=[...document.querySelectorAll("#pane-desk button")].find(b=>b.textContent.trim()==="Work");return w?w.parentElement:document.querySelector("#pane-desk")}},
- {t:"Your inbox",b:"Life happens here. Read each message and choose what to do. There's no wrong answer, just a different life.",el:()=>navBtn(/^Inbox/)},
- {t:"Your life",b:"Home, family, friends, money, dating and free time. It all lives in here.",el:()=>navBtn(/^Life/)},
+ {t:"Your vital signs",b:"Energy, reputation, stress and trouble. Watch these bars. Stress or trouble at 100, or reputation at 0, ends this career.",el:()=>document.querySelector(".vitals")},
+ {t:"Energy is everything",b:"You get a fresh batch each month. Work, dates, friends, family, the gym and holidays all use it. Overspend and you start next month tired. The older you get, the less you have.",el:()=>document.querySelector(".vitals .vt")},
+ {t:"Your work",b:"This is your desk. Set your hours, from Coasting to All-in, then pick the work you'll do. More hours means more money and promotions, and less of you for everything else.",el:()=>{const d=document.querySelector(".en-seg");if(d)return d.closest(".pane-sec,section,.card")||d.parentElement;const w=[...document.querySelectorAll("#pane-desk button")].find(b=>b.textContent.trim()==="Work");return w?w.parentElement:document.querySelector("#pane-desk")}},
+ {t:"Your inbox",b:"Life happens here. Choices are remembered and some come back months later. Big decisions are marked: they matter more, and every option has a price.",el:()=>navBtn(/^Inbox/)},
+ {t:"Your life",b:"Home, family, friends, money, dating and free time. Decide who gets your time each month. People drift if you ignore them, and some recharge you while others wear you out.",el:()=>navBtn(/^Life/)},
  {t:"The big button",b:"It always tells you what to do next. When everything's done, tap it to finish the month.",el:()=>document.getElementById("navClose")},
  {t:"The menu",b:"Saved games, settings, the full guide and your trophies are in here.",el:()=>document.querySelector('[data-act="menu"]')},
  {t:"That's it!",b:"Make good choices. Or at least interesting ones. I'll be cheering you on.",el:null}
@@ -45615,6 +45638,358 @@ function vitalsHTML(){
  const pd=document.getElementById("pane-desk");
  if(pd&&S&&!S.placeholder&&CAR_().mech==="markets"&&t.innerHTML){let dt=pd.querySelector(".desk-tape");if(!dt){dt=document.createElement("div");dt.className="desk-tape";dt.setAttribute("aria-hidden","true");pd.prepend(dt)}dt.innerHTML='<div class="tape-track mono">'+t.innerHTML+'</div>'}
  }catch(e){}return r}}
+
+/* EN: energy module. One monthly energy budget for work, people, free time and holidays.
+   S.en = {v, dial, d (month it belongs to), al (this month's allowance), sp (spent by category), log, debt, rested, streak, strain,
+           hist (last 24 months), life (lifetime totals), tm (time for people), bs (burnout stages), lv (annual leave), mo (leave this month)} */
+const EN_CATS=["work","dating","friends","fitness","family","fun","rest"];
+const EN_CAT_N={work:"Work",dating:"Dating",friends:"Friends",fitness:"Fitness",family:"Family",fun:"Fun",rest:"Rest"};
+const EN_DIAL=[
+ {k:"coast",n:"Coasting",cap:.7,int:.85,out:.75,e:28,st:-1,rep:-.4,d:"Fewer hours and an easier month. Work pays and counts for less."},
+ {k:"normal",n:"Normal",cap:1,int:1,out:1,e:45,st:0,rep:0,d:"A normal working month."},
+ {k:"push",n:"Pushing",cap:1.25,int:1.12,out:1.15,e:63,st:.6,rep:.3,d:"Longer days. More work, more pay and a better shot at promotion."},
+ {k:"allin",n:"All-in",cap:1.5,int:1.35,out:1.3,e:92,st:2.5,rep:.6,d:"Every hour you have. Big results, and it will catch up with you."}];
+const EN_HARD=1.3,EN_WK=45;let EN_STRAIN_MAX=3,EN_DEBT_CAP=.35;const enDebt=(over,streak,a)=>Math.min(Math.round(enBase(a)*EN_DEBT_CAP),Math.round(over*enRate(streak,a)));let EN_REST_ST=.25;
+let EN_RAW=0,EN_CTX=null;
+const enHas=()=>!!(S&&!S.placeholder);
+function enBase(a){const P=[[0,115],[25,115],[35,100],[45,90],[55,80],[65,70],[80,62],[200,62]];for(let i=1;i<P.length;i++)if(a<=P[i][0]){const[x0,y0]=P[i-1],[x1,y1]=P[i];return y0+(y1-y0)*(a-x0)/(x1-x0)}return 62}
+const enRecov=a=>clamp(1-Math.max(0,a-35)*.012,.6,1);
+const enRate=(streak,a)=>1.2+.1*Math.max(0,streak-1)+Math.max(0,a-30)*.01;
+function enAllowance(E,o){o=o||{};const a=age(),parts=[];let v=0;const add=(n,x)=>{x=Math.round(x);if(x){parts.push([n,x]);v+=x}};
+ add(`Your age (${Math.floor(a)})`,enBase(a));
+ add("Health",(S.health-60)*.2);
+ if(S.stress>60)add("Stress",-(S.stress-60)*.2);
+ if(S.life&&S.life.gym)add("Gym membership",8);
+ try{if(hasMod("gym"))add("Home gym",4)}catch(e){}
+ if(S.hobby&&S.hobby.k==="run"&&S.hobby.lvl>=1)add("Running",3);
+ try{if(perkN("fitness"))add("Fitness course",2*perkN("fitness"))}catch(e){}
+ if(hasT("laidback"))add("Laid-back",5);if(hasT("ambitious"))add("Driven",3);if(hasT("party"))add("Late nights",-3);
+ if(S.sick>0)add("Unwell",-15);
+ const debt=o.debt!=null?o.debt:(E.debt||0),rest=o.rested!=null?o.rested:(E.rested||0);
+ if(debt)add("Energy debt from last month",-debt);if(rest)add("Well rested",rest);
+ return{v:Math.max(Math.round(enBase(a)*.6),v),parts};
+}
+function enS(){
+ if(!enHas())return null;let E=S.en;
+ if(!E||typeof E!=="object")E=S.en={v:1,dial:1,d:-1,al:0,sp:{},log:[],debt:0,rested:0,streak:0,strain:0,hist:[],life:{},tm:{},bs:{},lv:null};
+ if(E.d!==S.day){E.d=S.day;E.sp={};E.log=[];E.al=enAllowance(E).v;enLeaveRoll(E)}
+ return E;
+}
+const enDial=()=>{const E=S.en;if(!E)return 1;if(E.pt&&E.pt.until>S.day)return 0;return clamp(E.dial??1,0,3)};
+/* ---- Work ---- */
+function enWorkE(){
+ if(S.over)return 0;if(S.prison)return 25;if(S.front||S.sel)return 70;if(S.sabb)return S.sabb.kind==="travel"?8:30;
+ const E=S.en||{};if(E.bsab&&E.bsab.until>S.day)return 8;
+ if(S.lastOff===S.day)return 10;
+ const D=EN_DIAL[enDial()];let e;
+ if(CAR_().mech==="jobs"&&S.cards){const rk=R(),c0=rk._cap0||rk.cap||1;e=Math.max(6,(jobsUsed()-(enOpOn()?S.op.h:0))/c0*EN_WK*D.int)}else e=D.e;
+ if(S.sick>0)e*=.4;
+ const lv=E.mo&&E.mo.d===S.day?E.mo:null;if(lv)e*=1-Math.min(1,lv.days/21)*(lv.oncall?.5:1);
+ return Math.round(e);
+}
+/* ---- Operations: an up-front energy cost, options that cost more or less, delegation and passing ---- */
+const enOpOn=()=>!!(S.op&&S.op.on&&S.op.d===S.day);
+const EN_OP_CAREFUL=/check|rehears|prepar|plan|careful|test|brief|double|thorough|safe|wait|slow|research|practi|recce|consult|second opinion|backup|back-up/i;
+function enOptE(x){if(!x)return 0;const d=x.d||0;let e=d>=.1?5:d>.04?3:d<-.04?-2:0;if(EN_OP_CAREFUL.test(x.t||""))e+=2;return e}
+function enOpBase(o){if(!o)return 0;const tier=clamp(o.diff!=null?o.diff:(S.rank|0),0,4);let e=10+5*tier;
+ const kit=Math.min(.3,(cx().gear||0)*.06);let crs=0;try{crs=Math.min(.15,crsList().filter(c=>crsDone(c.id)).length*.03)}catch(x){}
+ return e*(1-kit-crs)}
+function enOpE(o){o=o||S.op;if(!o)return 0;let e=enOpBase(o);try{const sc=opScen(o);if(sc&&o.path)for(const p of o.path){const g=sc.stages[p.k];if(g)e+=enOptE(g.o[p.i])}}catch(x){}
+ if(o.dlg)e*=.3;return Math.max(2,Math.round(e))}
+function enOpPen(){const E=S.en;if(!E)return 0;const left=E.al-enUsed();return(left<0?.08:left<E.al*.1?.04:0)+(E.debt>0?.04:0)}
+{const _of=opFit;opFit=function(o,useTruth){let f=_of.apply(this,arguments);try{if(o&&enHas()&&S.en){f-=enOpPen();if(o.dlg){f*=.5;if(useTruth)f+=gauss()*.12}}}catch(e){}return f}}
+{const _or=opResolve;opResolve=function(W){const o=S.op;if(!o||!o.on||!o.dlg)return _or.apply(this,arguments);const r0=S.rep,t0=W.tot;const r=_or.apply(this,arguments);
+ S.rep=clamp(r0+(S.rep-r0)*.5,0,100);W.tot=t0+(W.tot-t0)*.7;W.notes.push("You delegated it: less of the credit is yours.");return r}}
+{const _ost=opSet;opSet=function(k,v){try{const o=S.op;if(enHas()&&o&&k==="on"&&!o.on&&o.d===S.day){if(o.pass)return;const e=enOpE(o);if(e>enRoom()){toastMsg(`It needs ⚡ ${e} and you don't have it this month. Delegate it or pass.`);return}}}catch(e){}return _ost.apply(this,arguments)}}
+XCLICK.endlg=()=>{const o=S.op;if(!o||o.d!==S.day||!isTeam())return;o.dlg=o.dlg?0:1;save();render()};
+XCLICK.enpass=()=>{const o=S.op;if(!o||o.d!==S.day||o.pass)return;o.pass=1;o.on=false;if(S.boss)S.boss.mood=clamp(S.boss.mood-5,0,100);S.rep=clamp(S.rep-1,0,100);S.log.unshift({d:S.day,t:`Passed on ${o.name}.`});save();render()};
+{const _os=opsSec;opsSec=function(){const o=S.op;if(o&&o.d===S.day&&o.pass)return `<div class="ops"><p class="hint" style="margin:0">You passed on ${esc(o.name)} this month. Your boss noticed.</p></div>`;let h=_os.apply(this,arguments);
+ try{if(!h||!o||o.d!==S.day||!enHas())return h;const e=enOpE(o);
+  h=h.replace(/(<span class="label">[^<]*?)(<\/span><\/div>)/,`$1 · ⚡ ${e}$2`);
+  h=h.replace(/data-act="opsc" data-i="(\d+)"([^>]*)>(<b>[\s\S]*?<\/b>)/g,(m,i,attr,b)=>{let x=null;try{x=opScen(o).stages[o.stage].o[+i]}catch(z){}const d=Math.round(enOptE(x)*(o.dlg?.3:1));return `data-act="opsc" data-i="${i}"${attr}>${b}<em class="en-c ${d<0?"up":""}">⚡ ${d>0?"+"+d:d<0?"−"+(-d):"±0"}</em>`});
+  h=h.replace(/Take it on \(([\d.]+)h\)/,`Take it on ($1h · ⚡ ${e})`);
+  const pen=enOpPen(),extra=`${pen?`<p class="hint keep down" style="margin:6px 0 0">You're running on empty: mistakes are more likely.</p>`:""}${o.on?"":`<div class="btn-row en-opbtns">${isTeam()?`<button class="btn sm ${o.dlg?"primary":""}" data-act="endlg">${o.dlg?"Delegated ✓ (⚡ ×0.3, less credit)":"Delegate it"}</button>`:""}<button class="btn sm" data-act="enpass">Pass on it</button></div>`}`;
+  h=h.replace(/<\/div>\s*$/,extra+"</div>")}catch(e){}return h}}
+const enJobHourE=()=>{const rk=R(),c0=rk._cap0||rk.cap||1;return EN_WK*EN_DIAL[enDial()].int/c0};
+const EN_MV_CAT={Learn:8,Courses:8,People:5,Train:6,Mind:-4,Team:3,You:-12,Kit:0};
+function enMoveE(mv){if(!mv)return 0;if(/^crs_/.test(mv.id))return 8;if(mv.id==="study"||mv.id==="mentor")return 8;if(mv.id==="rest")return -12;const v=EN_MV_CAT[mv.cat];return v==null?4:v}
+/* ---- People: who needs your time, and what they give back ---- */
+const EN_PT={adventurous:{n:"Adventurous",need:10,fade:1.5,give:3},homebody:{n:"Easy-going homebody",need:7,fade:1,give:5},ambitious:{n:"Independent",need:5,fade:.8,give:1},funny:{n:"Easy-going",need:7,fade:1,give:6},romantic:{n:"Needs a lot of you",need:14,fade:2.5,give:3}};
+const EN_PT0={n:"Steady",need:9,fade:1.2,give:3};
+const EN_FR=[{k:"low",n:"Low-key",need:4,fade:.8,give:3},{k:"easy",n:"Easy-going",need:6,fade:1.2,give:4},{k:"high",n:"High-maintenance",need:10,fade:2.5,give:1},{k:"needy",n:"Needs a lot of you",need:12,fade:3,give:-2}];
+const EN_LV=["None","Some","Plenty"],EN_LVM=[0,1,1.7],EN_GVM=[0,1,1.3];
+function enPeople(scope){
+ const E=S.en||{},tm=E.tm||{},L=[];const lvl=(k,d)=>tm[k]!=null?tm[k]:d;
+ if(scope!=="people"){
+  if(inLove()){const t=EN_PT[S.rel.trait]||EN_PT0;L.push({k:"p",name:S.rel.name,who:"partner",lab:t.n,need:t.need,give:t.give,fade:t.fade,lv:lvl("p",1),cat:"family"})}
+  const kids=(S.children||[]).filter(k=>kidAge(k)<18);
+  if(kids.length){let need=0;for(const k of kids){const a=kidAge(k);need+=a<5?8:a<13?6:4}need=Math.min(20,need);const little=kids.some(k=>kidAge(k)<13);
+   const ages=kids.map(k=>kidAge(k));const lab=ages.every(a=>a>=13)?"Teenagers: lifts, not chats":ages.some(a=>a<5)?"Little ones need you all the time":"Busy children";
+   L.push({k:"kids",name:kids.length>1?"The kids":kids[0].n,who:"kids",sub:kids.map(k=>`${k.n} (${Math.floor(kidAge(k))})`).join(", "),lab,need,give:little?2:0,fade:1.5,lv:lvl("kids",1),cat:"family"})}
+  try{ensureFolks();const al=(S.folks||[]).filter(f=>f.alive);if(al.length){const oa=Math.max(...al.map(folkAge));const t=oa>=80?{lab:"Needs care",need:10,give:-1}:oa>=70?{lab:"Slowing down",need:6,give:1}:{lab:"Independent",need:3,give:2};
+   L.push(Object.assign({k:"folks",name:al.length>1?"Mum and Dad":folkName(al[0]),who:"folks",fade:.5,lv:lvl("folks",1),cat:"family"},t))}}catch(e){}
+ }
+ if(scope!=="family"){
+  if(S.friend){const t=EN_FR[h32(S.friend.n)%4];L.push({k:"f",name:S.friend.n,who:"friend",lab:t.n,need:t.need,give:t.give,fade:t.fade,lv:lvl("f",1),cat:"friends",sub:"Best friend"})}
+  const fr=alivePeople().filter(p=>p.role==="friend").sort((a,b)=>b.bond-a.bond).slice(0,3);
+  for(const p of fr){const t=EN_FR[h32(p.id+p.n)%4];L.push({k:"id:"+p.id,pid:p.id,name:p.n,who:"pal",lab:t.n,need:Math.max(3,Math.round(t.need*.7)),give:t.give>0?Math.round(t.give*.7):t.give,fade:t.fade,lv:lvl("id:"+p.id,0),cat:"friends",sub:"Friend"})}
+ }
+ return L;
+}
+const enPersonCost=r=>Math.round(r.need*EN_LVM[r.lv]);
+const enPersonGive=r=>r.lv?Math.round(r.give>0?r.give*EN_GVM[r.lv]:r.give):0;
+/* ---- This month's commitments ---- */
+function enPlan(){
+ const L=[],add=(cat,n,e)=>{e=Math.round(e);if(e)L.push({cat,n,e})};
+ add("work",S.prison?"Prison routine":S.sabb?"Your year out":`Work (${EN_DIAL[enDial()].n.toLowerCase()})`,enWorkE());
+ if(!S.prison&&!S.front&&!S.sel&&!S.sabb&&!S.over){
+  try{if(enOpOn())add("work",(S.op.dlg?"Delegated: ":"")+S.op.name,enOpE(S.op))}catch(e){}
+  try{const ids=mvPicked();if(ids.length){const list=careerMoves();for(const id of ids){const mv=list.find(m=>m.id===id);if(mv){const e=enMoveE(mv);add(e<0?"rest":"work",mv.n,e)}}}}catch(e){}
+  try{if(S.course&&SPECS[S.course.id])add("work",SPECS[S.course.id].n,6)}catch(e){}
+  try{const c=typeof shCur==="function"&&shCur();if(c&&HUSTLES[c.id])add("work","Side hustle: "+HUSTLES[c.id].n.toLowerCase(),12)}catch(e){}
+ }
+ if(S.life&&S.life.gym)add("fitness","Gym sessions",5);
+ const E=S.en||{};if(E.ther&&E.ther.until>S.day)add("fitness","Therapy sessions",6);
+ if(!S.prison&&!S.over)for(const r of enPeople()){if(!r.lv)continue;add(r.cat,"Time for "+r.name,enPersonCost(r));const g=enPersonGive(r);if(g)add("rest",g>0?`${r.name.split(" ")[0]} recharges you`:`${r.name.split(" ")[0]} wears you out`,-g)}
+ return L;
+}
+function enUsed(){const E=enS();if(!E)return 0;let t=0;for(const p of enPlan())t+=p.e;for(const k in E.sp)t+=E.sp[k];return Math.round(t)}
+function enRoom(){const E=enS();if(!E)return 0;return Math.floor(E.al*EN_HARD)-enUsed()}
+function enCharge(cat,e,n){const E=enS();if(!E||!e)return;e=Math.round(e);E.sp[cat]=(E.sp[cat]||0)+e;E.log.unshift({n:n||EN_CAT_N[cat],e,cat});if(E.log.length>14)E.log.length=14}
+const enWith=(ctx,fn)=>{const was=EN_CTX;EN_CTX=ctx;try{return fn()}finally{EN_CTX=was}};
+function enForecast(){
+ const E=enS(),used=enUsed(),over=used-E.al,a=age();
+ const debt=over>0?enDebt(over,(E.streak||0)+1,a):0,rested=over>0?0:Math.min(Math.round(10*enRecov(a)),Math.round(-over*.5));
+ return{next:enAllowance(E,{debt,rested}).v,debt,rested,over,used};
+}
+/* ---- Free time: energy replaces the old two-evenings limit ---- */
+freeLeft=function(){if(!enHas())return 0;const E=enS();const per=EN_CTX?EN_CTX.per:12;if(per<=0)return 99;return Math.max(0,Math.floor(enRoom()/per))};
+{const _uf=useFree;useFree=function(){const r=_uf.apply(this,arguments);try{const c=EN_CTX||{cat:"fun",per:12,n:"Free time"};if(c.per>0)enCharge(c.cat,c.per,c.n)}catch(e){}return r}}
+const EN_ACT={swipr:[5,"dating"],speed:[14,"dating"],blind:[14,"dating"],singles:[24,"dating"],openask:[5,"family"],weekend:[6,"family"],dayout:[16,"family"],quiz:[12,"friends"],karaoke:[14,"fun"],festival:[28,"fun"],cook:[12,"fun"],golf:[14,"friends"],volunteer:[14,"fun"],standup:[16,"fun"],skydive:[18,"fun"],dinner:[18,"friends"],bbq:[18,"friends"],xmas:[26,"family"],sleepover:[22,"family"],roadtrip:[26,"family"]};
+const EN_BIG=["festival","karaoke","singles","standup","quiz"];
+const EN_GRP={Dating:[14,"dating"],Together:[12,"family"],"Out and about":[14,"fun"],"At home":[12,"family"],Getaways:[14,"rest"]};
+function enActCost(k){const a=ACTIVITIES.find(x=>x.k===k);if(!a)return{per:8,cat:"fun",n:"Free time"};let[e,cat]=EN_ACT[k]||EN_GRP[a.g]||[10,"fun"];
+ if(a.gen&&a.gen.fx&&a.gen.fx.stress<=-8)e=Math.round(e*.6);
+ if(EN_BIG.includes(k)){e*=1+Math.max(0,age()-35)*.02;if(hasT("party"))e*=.7}
+ return{per:Math.max(1,Math.round(e)),cat,n:a.n}}
+{const _da=doActivity;doActivity=function(k){if(!enHas())return _da.apply(this,arguments);const c=enActCost(k);
+ if(k!=="holiday"&&c.per>enRoom()){try{toastMsg("Not enough energy left this month for that.")}catch(e){}return}
+ const n0=S.en.log.length,sp0=JSON.stringify(S.en.sp);const r=enWith(c,()=>_da.apply(this,arguments));
+ try{if(k==="singles"&&JSON.stringify(S.en.sp)!==sp0)enUseLeave(5,false,"A singles holiday")}catch(e){}return r}}
+{const _hg=hobbyGo;hobbyGo=function(){const h=S&&S.hobby&&HOBBIES[S.hobby.k];if(!h)return _hg.apply(this,arguments);if(10>enRoom()){try{toastMsg("Not enough energy left this month to practise.")}catch(e){}return}return enWith({cat:S.hobby.k==="run"?"fitness":"fun",per:10,n:"Practising: "+h.n.toLowerCase()},()=>_hg.apply(this,arguments))}}
+{const _fv=folksVisit;folksVisit=function(){return enWith({cat:"family",per:10,n:"Visiting your parents"},()=>_fv.apply(this,arguments))}}
+if(typeof XCLICK!=="undefined"&&XCLICK.sibsee){const _sb=XCLICK.sibsee;XCLICK.sibsee=t=>enWith({cat:"family",per:8,n:"Seeing your brother or sister"},()=>_sb(t))}
+{const _kd=ktDo;ktDo=function(key,what){const per={catch:10,invite:14,help:14}[what];if(!per)return _kd.apply(this,arguments);return enWith({cat:"friends",per,n:{catch:"Catching up",invite:"Having people round",help:"Helping a friend"}[what]},()=>_kd.apply(this,arguments))}}
+{const _km=ktModal;ktModal=function(){const r=_km.apply(this,arguments);try{document.querySelectorAll("#sheet .kt-opt").forEach(b=>{const o=b.dataset.o,per={catch:10,invite:14,help:14}[o],sp=b.querySelector("span");if(!per||!sp)return;
+ sp.textContent=sp.textContent.replace("Uses a free evening","⚡ "+per).replace("No free evenings left this month","Not enough energy this month");if(per>enRoom()&&!b.disabled){b.disabled=true;sp.textContent="Not enough energy this month"}})}catch(e){}return r}}
+{const _cc=customClick;customClick=function(a,t){try{if(enHas()){
+ if(a==="catchup2"&&10>enRoom()){toastMsg("Not enough energy left this month.");return true}
+ if(a==="catchup2"){EN_CTX={cat:"friends",per:10,n:"Catching up",once:1}}
+ if(a==="catchup"&&S.friend&&S.friendLast!==S.day){if(10>enRoom()){toastMsg("Not enough energy left this month.");return true}enCharge("friends",10,"Catching up with "+S.friend.n.split(" ")[0])}}}catch(e){}
+ const r=_cc.apply(this,arguments);return r}}
+{const _uf2=useFree;useFree=function(){const r=_uf2.apply(this,arguments);if(EN_CTX&&EN_CTX.once)EN_CTX=null;return r}}
+/* ---- Work hours dial: the hours cap moves with the dial for job-board careers ---- */
+function enCapInstall(){for(const c of Object.values(CAREERS)){if(!c||!Array.isArray(c.ranks))continue;for(const rk of c.ranks){if(!rk||typeof rk.cap!=="number"||Object.prototype.hasOwnProperty.call(rk,"_cap0"))continue;
+ const v=rk.cap;Object.defineProperty(rk,"_cap0",{value:v,writable:true,enumerable:false,configurable:true});
+ Object.defineProperty(rk,"cap",{configurable:true,enumerable:true,get(){if(EN_RAW||!enHas()||!S.en)return this._cap0;return Math.round(this._cap0*EN_DIAL[enDial()].cap*2)/2},set(x){this._cap0=x}})}}}
+try{enCapInstall()}catch(e){}
+{const _jk=jobK;jobK=function(){EN_RAW++;try{return _jk.apply(this,arguments)}finally{EN_RAW--}}}
+function enTrimPicks(){if(CAR_().mech!=="jobs"||!S.cards||!S.pick)return;const cap=R().cap;let g=0;
+ while(jobsUsed()>cap+.01&&g++<20){if(S.op&&S.op.on&&S.op.d===S.day&&jobsUsed()-S.op.h<=cap+.01){S.op.on=false;break}const ks=Object.keys(S.pick);if(!ks.length)break;delete S.pick[ks[ks.length-1]]}}
+function enW(W,off){try{const E=enS();if(!E||!W)return W;const D=EN_DIAL[enDial()];let m=1;const notes=W.notes||(W.notes=[]);
+ if(CAR_().mech!=="jobs")m*=D.out;
+ if(E.bsab&&E.bsab.until>S.day){m*=.25;notes.push("You're on a break to recover from burnout. Work barely moves.")}
+ const lv=E.mo&&E.mo.d===S.day?E.mo:null;
+ if(lv&&!lv.oncall){const f=Math.min(1,lv.days/21)*(selfPaid()?1:.5);m*=1-f;notes.push(selfPaid()?`${lv.days} days off: you don't earn while you're away.`:`${lv.days} days of annual leave: colleagues covered some of your work.`)}
+ if(m!==1){W.tot*=m;(W.lines||[]).forEach(l=>l[1]*=m)}
+ if(D.rep){if(W.repD!=null)W.repD+=D.rep;else S.rep=clamp(S.rep+D.rep,0,100)}
+ return W}catch(e){return W}}
+{const _jc=jobsClose;jobsClose=function(off){return enW(_jc.apply(this,arguments),off)}}
+{const _mc=marketsClose;marketsClose=function(off){return enW(_mc.apply(this,arguments),off)}}
+{const _fc=fbClose;fbClose=function(off){return enW(_fc.apply(this,arguments),off)}}
+/* ---- Annual leave ---- */
+const EN_LEAVE={uk:[25,"plus bank holidays"],usa:[12,""],france:[30,""],japan:[20,"though taking it all is frowned on"],australia:[20,""],india:[18,""],nigeria:[20,""],russia:[28,""]};
+const EN_ROTA=["nurse","doc","police","fire","soldier","pilot"];
+const EN_SCHOOL=[3,6,7,9,11];
+function enLeaveEnt(){const c=EN_LEAVE[S.country||"uk"]||EN_LEAVE.uk;return c[0]+Math.min(5,Math.floor(Math.max(0,S.day-(S.careerStart||1))/24))}
+function enLeaveRoll(E){const y=Math.floor((S.day-1)/12);
+ if(!E.lv){E.lv={y,left:enLeaveEnt(),carried:0,taken:0,lost:0};return}
+ if(E.lv.y!==y){const left=Math.max(0,E.lv.left),car=Math.min(5,left);E.lv={y,left:enLeaveEnt()+car,carried:car,taken:0,lost:left-car};
+  if(left-car>0&&!selfPaid())try{S.log.unshift({d:S.day,t:`Lost ${left-car} days of unused annual leave. ${car?`${car} carried over.`:""}`})}catch(e){}}}
+function enLeaveRule(){
+ const m=monthOf(S.day),self=selfPaid(),r={ok:true,why:"",peak:false,busy:false,self};
+ if(S.prison||S.front||S.sel||S.over){r.ok=false;r.why="You can't take a holiday right now.";return r}
+ if(S.path==="teach"){if(!EN_SCHOOL.includes(m)){r.ok=false;r.why="Teachers can only go away in the school holidays.";return r}r.peak=true}
+ else if((S.path==="foot"||(S.path==="manager"&&S.rank<4))&&inSeason(S.day)){r.ok=false;r.why="Not during the season. Wait for the summer break.";return r}
+ else if(EN_ROTA.includes(S.path)&&(m===7||m===11)){r.ok=false;r.why="The rota is full this month. Put in for another month.";return r}
+ else if(!self&&(m===11||(typeof calEvent==="function"&&calEvent(S.day))))r.busy=true;
+ return r;
+}
+function enUseLeave(days,oncall,what){const E=enS();if(!E||!days)return"";const self=selfPaid();let unpaid=0,txt="";
+ if(self)txt=`${days} days away, unpaid: you're your own boss.`;
+ else{if(E.lv.left>=days){E.lv.left-=days;txt=`Used ${days} days of annual leave (${E.lv.left} left this year).`}else{unpaid=days-Math.max(0,E.lv.left);E.lv.left=0;const cost=Math.round(unpaid/21*salary()/12/10)*10;S.wealth-=cost;txt=`Out of annual leave: ${unpaid} unpaid days cost you ${money(cost)}.`}}
+ E.lv.taken+=days;E.mo=E.mo&&E.mo.d===S.day?{d:S.day,days:E.mo.days+days,oncall:E.mo.oncall&&oncall}:{d:S.day,days,oncall:!!oncall};
+ const rule=enLeaveRule();
+ if(!oncall&&rule.busy&&S.boss){S.boss.mood=clamp(S.boss.mood-6,0,100);S.rep=clamp(S.rep-1,0,100);txt+=" Your boss isn't happy: it's a busy month."}
+ if(!oncall&&(S.country==="japan")&&E.lv.taken>10&&!self){if(S.boss)S.boss.mood=clamp(S.boss.mood-5,0,100);S.rep=clamp(S.rep-1,0,100);txt+=" Colleagues raise their eyebrows at so much time off."}
+ if(what)try{S.log.unshift({d:S.day,t:`${what}: ${days} days off.`})}catch(e){}
+ return txt}
+/* ---- Holidays: some recharge you, some wear you out ---- */
+TRIPS.push(
+ {k:"spa",n:"Spa retreat in the countryside",cost:900,sv:"A fluffy robe you definitely didn't steal",st:["Massages, a silent pool and a nap every afternoon.","You read a whole book. A whole one."],bad:"A wedding party books out the spa. The hot tub is full of groomsmen."},
+ {k:"ibiza",n:"Party week in Ibiza-ish",cost:1100,sv:"A neon wristband",st:["Sunrise on a beach after a night you'll half remember.","A boat party with a DJ you've actually heard of."],bad:"You sleep through the flight home."},
+ {k:"trek",n:"Trekking in Nepal",cost:2600,sv:"A prayer flag",st:["Ten days on foot and a view of Everest at dawn.","You make it over the pass with legs like jelly and a huge grin."],bad:"Altitude sickness sends you back down after two days."},
+ {k:"inlaws",n:"A week with the in-laws",cost:200,sv:"A tea towel from their village",st:["Long lunches and a lot of opinions about your parking.","Your in-laws are on their best behaviour. Mostly."],bad:"Their dog eats your passport. You're there an extra two days."},
+ {k:"stag",n:"A friend's stag or hen week",cost:700,sv:"A matching T-shirt with a rude slogan",st:["Go-karts, a boat trip and a night nobody will talk about.","You give a toast that makes the whole group cry."],bad:"Someone loses the groom. For six hours."});
+try{Object.assign(TRIP_PH,{spa:["lake",""],ibiza:["rio","party"],trek:["highlands","beanie"],inlaws:["lake",""],stag:["rio","party"]})}catch(e){}
+/* days, type (R recharging, N neutral, A adventure, P party, F family), long-haul */
+const EN_TRIP={beach:[5,"R"],paris:[3,"N"],safari:[10,"A",1],ski:[5,"A"],thai:[10,"A",1],cruise:[10,"R"],wales:[3,"N"],iceland:[4,"A"],nyc:[4,"N",1],japan:[10,"N",1],rome:[3,"N"],greece:[5,"R"],venice:[3,"N"],egypt:[5,"N",1],dubai:[5,"R",1],rio:[5,"P",1],festival:[2,"P"],highlands:[5,"N"],lake:[3,"R"],london:[2,"N"],spa:[2,"R"],ibiza:[5,"P"],trek:[10,"A",1],inlaws:[3,"F"],stag:[3,"P"]};
+const EN_TT={R:"Recharging",N:"A change of scene",A:"Adventure",P:"Party",F:"Family duty"};
+function enTripInfo(t,oncall){const x=EN_TRIP[t.k]||[5,"N"],days=x[0],a=age(),adv=hasT("reckless")||(inLove()&&S.rel.trait==="adventurous");let type=x[1],e;
+ if(type==="R")e=-Math.min(40,10+3*days);else if(type==="N")e=-(4+1.5*days);else if(type==="A")e=adv?-(10+2.5*days):6;else if(type==="P")e=hasT("party")?-4:8+days;else e=6+days;
+ if(e<0){e*=enRecov(a);if(oncall)e*=.5}
+ const why=[];if(x[2]){const j=6*(a>50?1.5:1);e+=j;why.push("jet lag")}
+ if(type!=="F"&&(S.children||[]).some(k=>kidAge(k)<5)){e+=6;why.push("toddlers")}
+ if(type==="A"&&adv)why.push("you love this");
+ return{days,type,e:Math.round(e),why,label:EN_TT[type]}}
+{const _tt=takeTrip;takeTrip=function(k){const t=TRIPS.find(x=>x.k===k);if(!enHas()||!t)return _tt.apply(this,arguments);const E=enS();
+ const rule=enLeaveRule();if(!rule.ok){try{toastMsg(rule.why)}catch(e){}return}
+ if(k==="inlaws"&&!inLove()){try{toastMsg("You need a partner for in-laws.")}catch(e){}return}
+ const oncall=!!E.oncall,info=enTripInfo(t,oncall);
+ if(info.e>0&&info.e>enRoom()){try{toastMsg("Not enough energy left this month for that trip.")}catch(e){}return}
+ const extra=rule.peak?Math.round(tripCost(t)*.4/10)*10:0;if(S.wealth<tripCost(t)+extra)return;
+ const was=S.lastTrip;enWith({cat:"rest",per:0,n:""},()=>_tt.apply(this,arguments));if(S.lastTrip!==S.day||was===S.day)return;
+ S.wealth-=extra;enCharge(info.e<0?"rest":"fun",info.e,t.n);
+ if(info.type==="P"){S.stress=clamp(S.stress-6,0,100);S.homeLife=clamp(S.homeLife+4,0,100);if(S.friend)S.friend.bond=clamp(S.friend.bond+6,0,100)}
+ if(info.type==="F"){S.homeLife=clamp(S.homeLife+8,0,100)}if(info.type==="A")S.stress=clamp(S.stress-4,0,100);
+ if(oncall&&S.boss)S.boss.mood=clamp(S.boss.mood+2,0,100);
+ const lt=enUseLeave(info.days,oncall,"Holiday");
+ try{toastMsg(`${info.e<0?`⚡ +${-info.e} energy back`:`⚡ ${info.e} energy used`}. ${lt}${extra?` School-holiday prices: ${money(extra)} extra.`:""}`)}catch(e){}save();render()}}
+{const A=ACTIVITIES.find(a=>a.k==="holiday");if(A){A.d="Uses annual leave. Some trips recharge you, others wear you out but are worth it.";A.ok=()=>S.day-(S.lastTrip??-99)>=6}}
+{const _hm=holidayModal;holidayModal=function(){const r=_hm.apply(this,arguments);try{const E=enS(),rule=enLeaveRule(),sh=document.getElementById("sheet");if(!E||!sh)return r;
+ const lab=sh.querySelector(".label");if(lab)lab.textContent=selfPaid()?"Holiday · self-employed: as long as you like, unpaid":`Annual leave: ${E.lv.left} of ${enLeaveEnt()+E.lv.carried} days left this year`;
+ sh.querySelectorAll('[data-act="trip"]').forEach(b=>{const t=TRIPS.find(x=>x.k===b.dataset.k);if(!t)return;if(t.k==="inlaws"&&!inLove()){const rw=b.closest(".shop-row");if(rw)rw.remove();return}const i=enTripInfo(t,!!E.oncall);const row=b.closest(".shop-row");const nm=row&&row.querySelector("b");
+  if(nm)nm.insertAdjacentHTML("afterend",`<span class="en-trip ${i.e<0?"up":"down"}">${i.days} days · ${esc(i.label)} · ⚡ ${i.e<0?"+"+(-i.e):i.e}${i.why.length?` (${esc(i.why.join(", "))})`:""}</span>`);
+  if(!rule.ok)b.disabled=true});
+ const shop=sh.querySelector(".shop");if(shop)shop.insertAdjacentHTML("beforebegin",`<div class="en-hol">${rule.ok?"":`<p class="hint keep down">${esc(rule.why)}</p>`}${rule.busy?`<p class="hint keep">It's a busy month at work: going away now will annoy your boss.</p>`:""}${rule.peak?`<p class="hint keep">School holidays: prices are 40% higher.</p>`:""}
+  <label class="en-oncall"><input type="checkbox" data-act="enoncall" ${E.oncall?"checked":""}> Stay on call: work carries on and your boss is happier, but you only get half the rest.</label>
+  <p class="hint keep">${esc((EN_LEAVE[S.country||"uk"]||EN_LEAVE.uk)[1]?`${enLeaveEnt()} days a year, ${(EN_LEAVE[S.country||"uk"]||EN_LEAVE.uk)[1]}.`:`${enLeaveEnt()} days a year.`)} Up to 5 unused days carry over into January; the rest are lost. Out of days? You can still go, unpaid.</p></div>`)}catch(e){}return r}}
+XCLICK.enoncall=t=>{const E=enS();if(!E)return;E.oncall=!E.oncall;save();holidayModal()};
+/* ---- Month end: settle the energy budget ---- */
+function enPeopleApply(notes){
+ for(const r of enPeople()){const L=r.lv;
+  if(r.who==="partner"){S.homeLife=clamp(S.homeLife+[-r.fade,.15,1][L],0,100);if(L===2)S.stress=clamp(S.stress-.5,0,100);if(L===0&&S.day%4===0)notes.push(`${r.name.split(" ")[0]} says you're never around.`)}
+  else if(r.who==="kids"){S.homeLife=clamp(S.homeLife+[-1.5,.2,1][L],0,100)}
+  else if(r.who==="folks"){if(L===0){if(r.need>=6){S.stress=clamp(S.stress+.6,0,100);S.homeLife=clamp(S.homeLife-.3,0,100)}}else{S.homeLife=clamp(S.homeLife+[0,.2,.6][L],0,100);S.folkSeen=S.day}}
+  else if(r.who==="friend"&&S.friend){S.friend.bond=clamp(S.friend.bond+[-r.fade,.6,2.5][L],0,100);if(L===2)S.stress=clamp(S.stress-.5,0,100)}
+  else if(r.who==="pal"){const p=alivePeople().find(x=>x.id===r.pid);if(p){if(L)p.last=S.day;p.bond=clamp(p.bond+[p.bond>=40?-r.fade*.3:0,1.5,3.5][L],0,100)}}}
+}
+function enSettle(notes){
+ const E=enS();if(!E||E.setD===S.day||S.over)return;E.setD=S.day;notes=notes||[];
+ const plan=enPlan(),c={};EN_CATS.forEach(k=>c[k]=0);let used=0;
+ for(const p of plan){c[p.cat]=(c[p.cat]||0)+p.e;used+=p.e}for(const k in E.sp){c[k]=(c[k]||0)+E.sp[k];used+=E.sp[k]}
+ used=Math.round(used);try{enPeopleApply(notes)}catch(e){}
+ const al=E.al,a=age(),rec=enRecov(a),over=used-al;
+ if(over>0){E.streak=(E.streak||0)+1;E.debt=enDebt(over,E.streak,a);E.rested=0;E.strain=Math.min(15,(E.strain||0)+Math.min(EN_STRAIN_MAX,E.debt/10));
+  S.stress=clamp(S.stress+over*.12,0,100);if(used>al*1.15)S.health=clamp(S.health-.4,0,100);
+  notes.push(`You ran on empty: ${over} energy over your limit. Next month starts ${E.debt} down${E.streak>1?`, and it's ${E.streak} months in a row`:""}.`)}
+ else{E.streak=0;E.debt=0;const under=-over;E.rested=Math.min(Math.round(10*rec),Math.round(under*.5));if(under>=al*.2)S.stress=clamp(S.stress-EN_REST_ST*rec,0,100);E.strain=Math.max(0,(E.strain||0)-(1.5+under/12)*rec)}
+ if(!S.prison&&!S.sabb&&!(E.bsab&&E.bsab.until>S.day))S.stress=clamp(S.stress+EN_DIAL[enDial()].st,0,100);
+ if(E.ther&&E.ther.until>S.day){E.strain=Math.max(0,E.strain-1.5);S.stress=clamp(S.stress-2,0,100)}
+ if(E.pt&&E.pt.until>S.day&&!selfPaid()&&!S.prison){const cut=Math.round(salary()/12*.3/10)*10;S.wealth-=cut;notes.push(`Part-time: ${money(cut)} less pay this month.`)}
+ const h={d:S.day,al,used,c:{}};let rch=0;for(const k of EN_CATS){if(k!=="rest"&&c[k]>0)h.c[k]=Math.round(c[k]);else if(c[k]<0)rch+=-c[k]}
+ h.c.rest=Math.round(Math.max(al-used,rch,0));
+ if(over>0)h.over=over,h.debt=E.debt;else if(E.rested)h.rested=E.rested;
+ E.hist=(E.hist||[]).concat(h).slice(-24);E.life=E.life||{};for(const k in h.c)E.life[k]=(E.life[k]||0)+h.c[k];E.life.months=(E.life.months||0)+1;
+}
+{const _ld=lifeDay;lifeDay=function(notes){const r=_ld.apply(this,arguments);try{enSettle(notes)}catch(e){try{window.__hbErr&&window.__hbErr(e,"enSettle")}catch(x){}}return r}}
+/* ---- Burnout: warning signs, then a choice ---- */
+function enMorning(){
+ const E=enS();if(!E||S.over||S.prison||S.front||S.sel)return;const st=E.strain||0,bs=E.bs||(E.bs={});
+ if(E.push&&st>=9&&rnd()<.22&&!S.inbox.some(m=>!m.done&&/^en_col/.test(m.id))){E.push=null;pushDyn({id:"en_col_"+S.day,from:"Your body",t:"You collapse",b:"Halfway through an ordinary day, your legs go. You wake up on the floor with a crowd around you. The doctor is blunt: you've been running on nothing for months.",c:[
+  {t:"Finally, rest",fx:{act:"en_collapse",health:-12,stress:12,home:-4},o:"Two months off, signed by a doctor. Nobody argues."}]});return}
+ if(S.inbox.some(m=>!m.done&&/^en_/.test(m.id)))return;const cool=(k,m)=>S.day-(bs[k]??-99)>=m;
+ const who=inLove()?S.rel.name.split(" ")[0]:S.friend?S.friend.n.split(" ")[0]:"a colleague";
+ if(st>=9&&cool("s3",8)){bs.s3=S.day;const ther=Math.round(1500*Math.max(.5,priceScale()*1.5)/100)*100;
+  pushDyn({id:"en_s3_"+S.day,from:"Your doctor",t:"Something has to give",b:"Your doctor listens for ten minutes, then uses the word 'burnout'. You can't keep going like this. What changes?",c:[
+   {t:"Take three months off work",fx:{act:"en_sabb",rep:-8,stress:-18},o:"Your career stalls for a while, but you start sleeping again."},
+   {t:"Go part-time for six months",fx:{act:"en_pt",stress:-10},o:selfPaid()?"Fewer clients, fewer hours, more life.":"A 30% pay cut, and your evenings back."},
+   {t:`Start therapy (${money(ther)})`,fx:{act:"en_ther",gbp:-ther,fixed:1,stress:-8},o:"An hour a week with someone who asks good questions. It's slow, but it works."},
+   {t:"Push through",fx:{act:"en_push",stress:4},o:"You tell yourself it's just a busy patch."}]})}
+ else if(st>=6&&cool("s2",6)){bs.s2=S.day;S.homeLife=clamp(S.homeLife-3,0,100);
+  pushDyn({id:"en_s2_"+S.day,from:"At home",t:"Snapping at people",b:`You bit ${who}'s head off over nothing today. Everyone has noticed you're not yourself.`,c:[
+   {t:"Apologise and take a long weekend",fx:{act:"en_ease",v:12,days:2,home:4,stress:-5},o:"Two days of doing nothing at all. It helps more than you expected."},
+   {t:"Say you're fine",fx:{home:-4,stress:4},o:"You're not fine."}]})}
+ else if(st>=3&&cool("s1",6)){bs.s1=S.day;
+  pushDyn({id:"en_s1_"+S.day,from:"Your body",t:"Sleeping badly",b:"You've been running on empty for a while. You wake at 4am thinking about work, and coffee has stopped working.",c:[
+   {t:"Early nights for a fortnight",fx:{act:"en_ease",v:6,stress:-4,rep:-1},o:"In bed by nine like a toddler. It helps."},
+   {t:"More coffee",fx:{stress:3},o:"Jittery, but upright."}]})}
+}
+Object.assign(ACTS,{
+ en_ease:fx=>{const E=enS();if(!E)return;E.al+=fx.v||0;E.strain=Math.max(0,(E.strain||0)-1);if(fx.days)enUseLeave(fx.days,false,"A long weekend")},
+ en_sabb:()=>{const E=enS();if(!E)return;E.bsab={until:S.day+3};E.debt=0;E.strain=0;E.push=null;S.log.unshift({d:S.day,t:"Took three months off to recover from burnout."})},
+ en_pt:()=>{const E=enS();if(!E)return;E.pt={until:S.day+6};E.debt=0;E.strain=Math.max(0,(E.strain||0)-6);E.push=null;try{enTrimPicks()}catch(e){}S.log.unshift({d:S.day,t:"Went part-time for six months."})},
+ en_ther:()=>{const E=enS();if(!E)return;E.ther={until:S.day+4};E.strain=Math.max(0,(E.strain||0)-5);E.push=null;S.log.unshift({d:S.day,t:"Started therapy."})},
+ en_push:()=>{const E=enS();if(E)E.push=S.day},
+ en_collapse:()=>{const E=enS();goSick(2,-5);if(E){E.strain=Math.max(0,(E.strain||0)-5);E.debt=0}S.log.unshift({d:S.day,t:"Collapsed from exhaustion."})}
+});
+{const _wmE=willMorning;willMorning=function(){const r=_wmE.apply(this,arguments);try{enMorning()}catch(e){}return r}}
+/* ---- Showing it ---- */
+function enColour(left,al){const p=left/Math.max(1,al);return left<0?"red":p<.2?"red":p<.5?"amber":"green"}
+/* The header's vitals strip shows energy first; the forecast sits next to the dial and the time-for-people lists */
+function enSumHtml(){const E=enS();if(!E)return"";const used=enUsed(),left=E.al-used,f=enForecast(),warn=f.next<E.al-4||f.over>0,col=enColour(left,E.al);
+ return `<button class="en-top" data-act="enopen" aria-label="Your energy this month: details"><span class="en-ic" aria-hidden="true">⚡</span><span class="en-num"><b class="${left<0?"down":""}">${left<0?"−"+(-left):left}</b><small> / ${E.al} left</small></span><span class="en-bar ${col}"><i style="width:${Math.round(clamp(left/E.al,0,1)*100)}%"></i></span><span class="en-fc ${warn?"warn":""}">At this pace: ⚡ ${f.next} next month${warn?" ⚠️":""}</span></button>`}
+window.vitalsExtra=window.vitalsExtra||[];
+window.vitalsExtra.push(()=>{if(!enHas()||S.over)return null;const E=enS();if(!E)return null;const left=E.al-enUsed();return{lab:"Energy",v:clamp(left/E.al*100,0,100),kind:"good",txt:left<0?"−"+(-left):`${left}/${E.al}`}});
+function enDialHtml(inModal){const E=enS();if(!E)return"";const d=enDial(),locked=E.pt&&E.pt.until>S.day,jobs=CAR_().mech==="jobs";
+ return `<div class="${inModal?"":"pane-sec "}en-dial"><div class="sec-head"><h2 style="font-size:18px">Work hours</h2><span class="label">⚡ ${enWorkE()} this month</span></div>
+  ${inModal?"":enSumHtml()}<div class="seg en-seg" role="group" aria-label="Work hours">${EN_DIAL.map((x,i)=>`<button data-act="${inModal?"endialm":"endial"}"data-v="${i}" class="${d===i?"on":""}" ${locked&&i>0?"disabled":""}>${esc(x.n)}</button>`).join("")}</div>
+  <p class="hint keep" style="margin:6px 0 0">${esc(EN_DIAL[d].d)} ${jobs?`Your working day: ${R().cap}h.`:`Results ×${EN_DIAL[d].out}.`}${locked?" You're part-time until "+esc(shortDate(E.pt.until))+".":""}${E.bsab&&E.bsab.until>S.day?" You're on a break to recover until "+esc(shortDate(E.bsab.until))+".":""}</p></div>`}
+XCLICK.endial=t=>{const E=enS();if(!E)return;const v=clamp(+t.dataset.v||0,0,3);if(E.pt&&E.pt.until>S.day&&v>0)return;E.dial=v;try{enTrimPicks()}catch(e){}save();render()};
+{const _rd=renderDesk;renderDesk=function(){const r=_rd.apply(this,arguments);try{if(!enHas()||deskTabNow()!=="work"||deskLocked())return r;const p=document.getElementById("pane-desk");const a=p&&(p.querySelector(".subtabs-wrap")||p.querySelector(".work-banner"));if(a&&a.insertAdjacentHTML)a.insertAdjacentHTML("afterend",enDialHtml())}catch(e){}return r}}
+{const _rj=renderJobs;renderJobs=function(){const o=_rj.apply(this,arguments);try{if(!enHas())return o;const ph=enJobHourE();
+ o.body=o.body.replace(/<small>([\d.]+)h · (?!too)/g,(m,h)=>`<small>${h}h · ⚡ ${Math.round(+h*ph)} · `)
+  .replace('<div class="hint" id="limitMsg"',`<div class="hint en-wk">Work energy this month: <b>⚡ ${enWorkE()}</b> at ${esc(EN_DIAL[enDial()].n.toLowerCase())}. Fewer hours, less energy.</div><div class="hint" id="limitMsg"`)}catch(e){}return o}}
+{const _ms=movesSec;movesSec=function(){let h=_ms.apply(this,arguments);try{if(!h||!enHas())return h;const L=careerMoves();
+ h=h.replace(/data-act="move" data-id="([^"]+)"([\s\S]*?)<span class="mv-f">/g,(m,id,mid)=>{const e=enMoveE(L.find(x=>x.id===id));return `data-act="move" data-id="${id}"${mid}<span class="mv-f"><em class="en-c ${e<0?"up":""}">⚡ ${e<0?"+"+(-e):e}${e?"/month":""}</em>`})}catch(e){}return h}}
+{const _tm=toggleMove;toggleMove=function(id){try{if(enHas()&&!(S.mv&&S.mv.d===S.day&&S.mv.ids.includes(id))){const e=enMoveE(careerMoves().find(m=>m.id===id));if(e>0&&e>enRoom()){toastLimit("Not enough energy left this month for that.");return}}}catch(e){}return _tm.apply(this,arguments)}}
+{const _fs=freeSec;freeSec=function(){let h=_fs.apply(this,arguments);try{if(!h||!enHas())return h;const E=enS(),room=enRoom(),left=E.al-enUsed();
+ h=h.replace(/<span class="label">\d+ of \d+ evenings left this month<\/span>/,`<span class="label">⚡ ${left} left this month${room>left?` (up to ${room} if you push it)`:""}</span>`);
+ h=h.replace(/<button class="act-card" data-act="doact" data-k="([^"]+)"( disabled)?>([\s\S]*?)<em>([\s\S]*?)<\/em><\/button>/g,(m,k,dis,inner,em)=>{const a=ACTIVITIES.find(x=>x.k===k);if(!a)return m;
+  if(k==="holiday"){const ok=a.ok()&&enLeaveRule().ok;return `<button class="act-card" data-act="doact" data-k="holiday"${ok?"":" disabled"}>${inner}<em>${esc(em)} · ${E.lv?`${E.lv.left} days' leave`:"leave"}</em></button>`}
+  const c=enActCost(k),money0=a.cost&&S.wealth<a.cost*(a.cost>=300?1:Math.max(1,priceScale()*2));return `<button class="act-card" data-act="doact" data-k="${k}"${money0||c.per>room?" disabled":""}>${inner}<em>${em} · ⚡ ${c.per}</em></button>`})}catch(e){}return h}}
+{const _hs=hobbySec;hobbySec=function(){let h=_hs.apply(this,arguments);try{if(h&&enHas()){h=h.replace("Practise (1 evening)","Practise · ⚡ 10");if(10>enRoom())h=h.replace('data-act="hobbygo" ','data-act="hobbygo" disabled ')}}catch(e){}return h}}
+{const _frs=friendSec;friendSec=function(){let h=_frs.apply(this,arguments);try{if(h&&enHas())h=h.replace(/(Catch up \([^)]*\))/,"$1 · ⚡ 10")}catch(e){}return h}}
+{const _ss=sideSec;sideSec=function(){let h=_ss.apply(this,arguments);try{if(h&&enHas())h=h.replace("Each one takes a few evenings a month, so it adds a little stress.","Each one takes ⚡ 12 of your energy a month and adds a little stress.").replace(/(<span class="label">Month \d+ of \d+)/,"$1 · ⚡ 12/month")}catch(e){}return h}}
+if(typeof XCLICK!=="undefined"&&XCLICK.shgo){const _sg=XCLICK.shgo;XCLICK.shgo=t=>{try{if(enHas()&&12>enRoom()){toastMsg("Not enough energy left this month for a side hustle.");return}}catch(e){}return _sg(t)}}
+function enTimeSec(scope){const rows=enPeople(scope);if(!rows.length)return"";const tot=rows.reduce((t,r)=>t+enPersonCost(r)-enPersonGive(r),0);
+ return `<div class="pane-sec en-time"><div class="sec-head"><h2 style="font-size:18px">Time for ${scope==="family"?"family":"friends"}</h2><span class="label">⚡ ${tot} a month</span></div>
+  ${enSumHtml()}<p class="hint keep" style="margin:0 0 6px">Everyone needs some of you. Give them none and they drift; give them plenty and it shows. Some people recharge you, others wear you out.</p>
+  ${rows.map(r=>{const g=r.give>0?` · recharges you +${Math.round(r.give)}`:r.give<0?` · wears you out ${-r.give}`:"";return `<div class="en-row"><div class="en-who"><b>${esc(r.name)}</b><span>${r.sub?esc(r.sub)+" · ":""}${esc(r.lab)} · ⚡ ${r.need}/month${g}</span></div>
+   <div class="seg en-seg3" role="group" aria-label="Time for ${esc(r.name)}">${EN_LV.map((n,i)=>`<button data-act="entime" data-k="${esc(r.k)}" data-v="${i}" class="${r.lv===i?"on":""}">${n}</button>`).join("")}</div></div>`}).join("")}</div>`}
+XCLICK.entime=t=>{const E=enS();if(!E)return;E.tm=E.tm||{};E.tm[t.dataset.k]=clamp(+t.dataset.v||0,0,2);save();render()};
+{const _ps=peopleSec;peopleSec=function(){const h=_ps.apply(this,arguments);try{if(enHas()&&!S.over&&!S.prison)return enTimeSec("people")+h}catch(e){}return h}}
+{const _fo=folksSec;folksSec=function(){const h=_fo.apply(this,arguments);try{if(enHas()&&!S.over&&!S.prison)return enTimeSec("family")+(h||"").replace("(1 free evening)","· ⚡ 10")}catch(e){}return h}}
+function enMonthLine(d){try{const E=S&&S.en;if(!E||!d)return"";const h=(E.hist||[]).find(x=>x.d===d.day);if(!h)return"";
+ const parts=EN_CATS.filter(k=>h.c[k]>0).map(k=>`${EN_CAT_N[k]} ${h.c[k]}`);
+ return `<div class="mc-line en-line"><span class="label">⚡ Where your energy went</span> ${h.used} of ${h.al} · ${parts.join(" · ")}${h.over?` · <b class="down">Overspent by ${h.over}: next month starts ${h.debt} down</b>`:h.rested?` · <b class="up">Well rested: +${h.rested} next month</b>`:""}</div>`}catch(e){return""}}
+function enModal(){const E=enS();if(!E)return;const A=enAllowance(E),plan=enPlan(),f=enForecast(),left=E.al-f.used;
+ const row=(n,v,cls)=>`<tr><td>${esc(n)}</td><td class="${cls||""}">${v>0?"":"+"}${-v}</td></tr>`;
+ const hist=(E.hist||[]).slice(-6);const life=E.life||{},lt=EN_CATS.reduce((t,k)=>t+(life[k]||0),0)||1;
+ showModal(`<div class="label">Energy · ${esc(fmtDate(S.day))}</div><h2 style="margin-top:4px">⚡ ${left<0?"−"+(-left):left} of ${E.al} left</h2>
+  <div class="en-bar big ${enColour(left,E.al)}"><i style="width:${Math.round(clamp(left/E.al,0,1)*100)}%"></i></div>
+  <p class="hint keep">You can push to ${Math.floor(E.al*EN_HARD)} this month, but overspending carries into next month with interest${E.streak?`, and it's worse when you do it month after month`:""}. Spend less than your allowance and you start next month well rested.</p>
+  <p class="${f.over>0?"down":""}" style="margin:6px 0"><b>At this pace: ⚡ ${f.next} next month${f.over>0?" ⚠️":""}</b>${f.over>0?` (overspent by ${f.over}, costing ${f.debt})`:f.rested?` (well rested: +${f.rested})`:""}</p>
+  <details class="me-more" open><summary>This month: ${f.used} used</summary><table class="rep-table">${plan.map(p=>`<tr><td>${esc(p.n)}</td><td class="${p.e<0?"up":""}">${p.e<0?"+"+(-p.e):"−"+p.e}</td></tr>`).join("")}${E.log.map(l=>`<tr><td>${esc(l.n)}</td><td class="${l.e<0?"up":""}">${l.e<0?"+"+(-l.e):"−"+l.e}</td></tr>`).join("")}</table></details>
+  <details class="me-more"><summary>Your allowance: ${E.al}</summary><table class="rep-table">${enAllowance(E).parts.map(([n,v])=>`<tr><td>${esc(n)}</td><td class="${v<0?"down":""}">${v<0?"−"+(-v):v}</td></tr>`).join("")}</table><p class="hint keep">Allowance falls with age. Good health, a gym habit and some traits add to it; stress and illness take it away. The older you are, the harder debt bites and the slower you recover.</p></details>
+  ${E.lv?`<details class="me-more"><summary>Annual leave: ${selfPaid()?"self-employed, unpaid":E.lv.left+" days left"}</summary><p class="hint keep">${selfPaid()?"You can take as much time as you like, but you don't earn while you're away.":`${enLeaveEnt()} days a year${E.lv.carried?` plus ${E.lv.carried} carried over`:""}. ${E.lv.taken} taken this year. Up to 5 days carry over into January.`}</p></details>`:""}
+  ${hist.length?`<details class="me-more"><summary>Recent months</summary><table class="rep-table">${hist.slice().reverse().map(h=>`<tr><td>${esc(shortDate(h.d))}</td><td class="${h.over?"down":""}">${h.used} / ${h.al}</td></tr>`).join("")}</table>
+   <p class="hint keep">A lifetime so far: ${EN_CATS.filter(k=>life[k]).map(k=>`${EN_CAT_N[k]} ${Math.round(life[k]/lt*100)}%`).join(" · ")}</p></details>`:""}
+  ${enDialHtml(1)}
+  <div class="btn-row"><button class="btn" data-act="enpeople">Time for people</button><button class="btn primary" data-act="hide">Done</button></div>`)}
+XCLICK.enopen=()=>enModal();
+XCLICK.endialm=t=>{XCLICK.endial(t);enModal()};
+XCLICK.enpeople=()=>{hideModal();try{lifeTab="people";localStorage.setItem("ftb-lifetab","people")}catch(e){}setTab("life");render()};
 
 function start(data){
  S=(data&&data.S)||load();
