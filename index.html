@@ -8763,7 +8763,7 @@ function opsSec(){
   <div class="label" style="margin-top:10px">1. The plan</div>${opt("plan",T.plans)}
   <div class="label" style="margin-top:10px">2. ${esc(T.kitN)}</div>${opt("kit",T.kits)}
   <div class="label" style="margin-top:10px">3. How bold?</div>${opt("risk",OP_RISK)}
-  <div class="op-est">${ready?`Your estimate: <b>${Math.round(p*100)}% chance of success</b> · worth about <b>${fmtOut(worth)}</b> if it works`:"Choose a plan and your "+esc(T.kitN.toLowerCase())+" to see your chances."}</div>
+  <div class="op-est">${ready?`Worth about <b>${fmtOut(worth)}</b> if it works. Whether it does is down to how well you read the briefing.`:"Choose a plan and your "+esc(T.kitN.toLowerCase())+"."}</div>
   <div class="btn-row"><button class="btn ${o.on?"":"primary"}" data-act="opset" data-k="on">${o.on?"Drop it this month":`Take it on (${o.h}h)`}</button></div></div>`;
 }
 /* Once you've committed, the operation shrinks to a summary so the desk is shorter */
@@ -8771,7 +8771,7 @@ function opsSec(){
  const p=opP(o,false),worth=o.base*OP_RISK[o.risk][3];
  return `<div class="ops on"><div class="sec-head"><h2>${esc(T.kind)}: ${esc(o.name)}</h2><span class="label">${o.h}h · on</span></div>
   <div class="op-pills"><span class="pill">${esc(T.plans[o.plan][0])}</span><span class="pill">${esc(T.kits[o.kit][0])}</span><span class="pill">${esc(OP_RISK[o.risk][0])}</span></div>
-  <div class="op-est" style="margin-top:6px"><b>${Math.round(p*100)}% chance</b> · worth about <b>${fmtOut(worth)}</b></div>
+  <div class="op-est" style="margin-top:6px">Worth about <b>${fmtOut(worth)}</b> if it works</div>
   <div class="btn-row"><button class="btn sm" data-act="opset" data-k="edit" data-v="1">Change the plan</button><button class="btn sm" data-act="opset" data-k="on">Drop it</button></div></div>`}}
 {const _ost=opSet;opSet=function(k,v){if(k==="edit"||k==="done"){if(S.op)S.op.edit=k==="edit"?1:0;save();render();return}const was=S.op&&S.op.on;_ost.apply(this,arguments);if(S.op&&k==="on"&&S.op.on&&!was)S.op.edit=0}}
 function opResolve(W){
