@@ -4321,13 +4321,13 @@ const roundsSoFar=day=>{const m=monthOf(day);return m>=7?(m-7)*3:m<=4?(m+5)*3:0}
 function ensureLeague(){if(!S.lg||!S.lg.teams||!S.lg.teams.some(t=>t.n===S.bank))S.lg=newLeague(S.lg?S.lg.div:1,S.bank,S.lg?S.lg.round:roundsSoFar(S.day))}
 /* The featured match: your rating and goals shape the score */
 function fbScore(rating,goals,opp,bench){
- const me=lgMe(),o=S.lg.teams[opp.ix]||{str:me.str},w=bench?.12:.3;
+ ensureLeague();const me=lgMe(),o=S.lg.teams[opp.ix]||{str:me.str},w=bench?.12:.3;
  let us=poisson(1.35+(me.str-o.str)*.4+(opp.home?.15:0)+w*(rating-6.3)),them=poisson(1.2+(o.str-me.str)*.4+(opp.home?0:.15)-w*.5*(rating-6.3));
  us=Math.max(us,goals);return{us,them,res:us>them?"won":us===them?"drew":"lost"};
 }
 /* Plays the month's three rounds. featured: {sc, ix} from your match, or null if you didn't play. */
 function lgMonth(featured){
- const L=S.lg,T=L.teams,mi=T.findIndex(t=>t.n===S.bank),lines=[];L.last=[];
+ ensureLeague();const L=S.lg,T=L.teams,mi=T.findIndex(t=>t.n===S.bank),lines=[];L.last=[];
  for(let r=0;r<3;r++){
   if(r===0){const oix=featured?featured.ix:(mi+1+Math.floor(rnd()*19))%20,me=T[mi],o=T[oix];
    let g1,g2;if(featured){g1=featured.sc.us;g2=featured.sc.them;simMatchFixed(me,o,g1,g2)}else[g1,g2]=simMatch(me,o);
