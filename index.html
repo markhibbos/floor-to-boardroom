@@ -655,6 +655,7 @@ html,body{overflow-x:clip}
 .lb-row.off .en-who b{color:var(--muted)}.lb-row .btn{min-width:52px}
 .lb-lt .label.up{color:var(--up)}.lb-lt .label.down{color:var(--down)}
 .buy-house{position:relative;max-width:300px;margin:4px auto 34px}.buy-house>svg{width:100%;height:auto;border-radius:14px}.buy-faces{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%);display:flex;gap:4px}.buy-faces svg{width:62px;height:62px;border-radius:50%;border:3px solid var(--surface,#fff);box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.en-now{display:block;font-size:12px;color:var(--accent);font-weight:600;margin-top:1px}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -45774,7 +45775,7 @@ function enPeople(scope){
  return L;
 }
 const enPersonCost=r=>Math.round(r.need*EN_LVM[r.lv]);
-const enPersonGive=r=>r.lv?Math.round(r.give>0?r.give*EN_GVM[r.lv]:r.give):0;
+const enPersonGive=r=>r.lv?(r.give>0?Math.min(Math.round(r.give*EN_GVM[r.lv]),Math.floor(enPersonCost(r)*.6)):Math.round(r.give)):0;
 /* ---- This month's commitments ---- */
 function enPlan(){
  const L=[],add=(cat,n,e)=>{e=Math.round(e);if(e)L.push({cat,n,e})};
@@ -46002,7 +46003,7 @@ if(typeof XCLICK!=="undefined"&&XCLICK.shgo){const _sg=XCLICK.shgo;XCLICK.shgo=t
 function enTimeSec(scope){const rows=enPeople(scope);if(!rows.length)return"";const tot=rows.reduce((t,r)=>t+enPersonCost(r)-enPersonGive(r),0);
  return `<div class="pane-sec en-time"><div class="sec-head"><h2 style="font-size:18px">Time for ${scope==="family"?"family":"friends"}</h2><span class="label">⚡ ${tot} a month</span></div>
   ${enSumHtml()}<p class="hint keep" style="margin:0 0 6px">Everyone needs some of you. Give them none and they drift; give them plenty and it shows. Some people recharge you, others wear you out.</p>
-  ${rows.map(r=>{const g=r.give>0?` · recharges you +${Math.round(r.give)}`:r.give<0?` · wears you out ${-r.give}`:"";return `<div class="en-row"><div class="en-who"><b>${esc(r.name)}</b><span>${r.sub?esc(r.sub)+" · ":""}${esc(r.lab)} · ⚡ ${r.need}/month${g}</span></div>
+  ${rows.map(r=>{const g=r.give>0?` · recharges you +${Math.round(r.give)}`:r.give<0?` · wears you out ${-r.give}`:"";return `<div class="en-row"><div class="en-who"><b>${esc(r.name)}</b><span>${r.sub?esc(r.sub)+" · ":""}${esc(r.lab)} · ⚡ ${r.need}/month${g}</span><span class="en-now">${r.lv?`This month: ⚡ ${enPersonCost(r)-enPersonGive(r)} (${EN_LV[r.lv].toLowerCase()})`:"This month: nothing. They’ll drift."}</span></div>
    <div class="seg en-seg3" role="group" aria-label="Time for ${esc(r.name)}">${EN_LV.map((n,i)=>`<button data-act="entime" data-k="${esc(r.k)}" data-v="${i}" class="${r.lv===i?"on":""}">${n}</button>`).join("")}</div></div>`}).join("")}</div>`}
 XCLICK.entime=t=>{const E=enS();if(!E)return;E.tm=E.tm||{};E.tm[t.dataset.k]=clamp(+t.dataset.v||0,0,2);save();render()};
 {const _ps=peopleSec;peopleSec=function(){const h=_ps.apply(this,arguments);try{if(enHas()&&!S.over&&!S.prison)return enTimeSec("people")+h}catch(e){}return h}}
@@ -46499,6 +46500,12 @@ document.addEventListener("click",e=>{try{const t=e.target&&e.target.closest?e.t
  try{if(S.home&&S.home.n!==was&&!window.__noMoments){const H=S.home,ht=HT[H.t]||{};
   setTimeout(()=>{try{showModal('<div class="label">Keys in hand</div>'+(typeof houseArt==="function"&&ht.art?'<div class="buy-house">'+houseArt(ht.art,H.v)+'<div class="buy-faces">'+avatarSVG(62)+(inLove()&&typeof partnerFace==="function"?partnerFace(62):"")+'</div></div>':momentPhoto({sc:"house",c:castNow({pt:1,kids:1,pet:1}),pr:"keys"},"home"))+'<h2 style="margin-top:8px;text-align:center">'+(inLove()?"Our":"My")+' new home</h2><p style="text-align:center"><b>'+esc(H.n)+'</b><br>'+esc(pick(["You stand in the empty living room and grin.","The keys feel heavier than they look.","You've already picked where the sofa goes.","You walk round every room twice. It's yours.","The first night, you can't sleep for excitement."]))+'</p><div class="btn-row" style="justify-content:center"><button class="btn primary big" data-act="hide">Brilliant</button></div>')}catch(e){}},60)}}catch(e){}
  return r}}
+
+/* TIME+AFFAIR */
+/* ============ Affairs take energy every month ============ */
+const affairE=p=>p.role==="lover"?12:p.role==="openlover"?8:0;
+{const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(!S.over&&!S.prison)for(const p of (S.people||[]))if(p.alive!==false&&affairE(p))L.push({cat:"dating",n:(p.role==="lover"?"Sneaking around with ":"Seeing ")+p.n.split(" ")[0],e:affairE(p)})}catch(e){}return L}}
+{const _ps=peopleSec;peopleSec=function(){let h=_ps.apply(this,arguments);try{for(const p of (S.people||[]))if(p.alive!==false&&affairE(p)){const n=esc(p.n),i=h.indexOf("<b>"+n+"</b>");if(i<0)continue;const j=h.indexOf("</span>",i);if(j<0)continue;h=h.slice(0,j)+" · ⚡ "+affairE(p)+"/month"+(p.role==="lover"?" (all the lying is exhausting)":"")+h.slice(j)}}catch(e){}return h}}
 
 function start(data){
  S=(data&&data.S)||load();
