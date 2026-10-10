@@ -4088,7 +4088,7 @@ function townSec(){
  const pinSvg=pins.map((p,i)=>`<g class="town-pin" data-act="townpin" data-go="${p.go}" tabindex="0" role="button" aria-label="${esc(p.n)}, ${esc(p.sub)}"><circle cx="${p.x}" cy="${p.y}" r="11" fill="${p.c}" stroke="#fff" stroke-width="2"/><text x="${p.x}" y="${p.y+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Arial,sans-serif">${p.g}</text></g>`).join("");
  const route=!S.over?`<path d="M${h[0]} ${h[1]} L${w[0]} ${w[1]}" stroke="#D7A744" stroke-width="2.5" stroke-dasharray="4 4" fill="none"/>`:"";
  const abroad=S.abroad&&!S.abroad.forever?"":"";
- return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Your town</h2><span class="label">${S.abroad?esc(S.abroad.city):"London"}</span></div>
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Map</h2><span class="label">${S.abroad?esc(S.abroad.city):"London"}</span></div>
   ${S.abroad?`<div class="note">You're living in ${esc(S.abroad.city)}. The map shows home, waiting for you.</div>`:""}
   <svg class="town-map" viewBox="0 0 360 250" role="img" aria-label="Map of your town">${rc(0,0,360,250,"#E3EADF")}${parks}${river}${roads}${blocks}${route}${pinSvg}${abroad}</svg>
   <ul class="town-key">${pins.map(p=>`<li><span class="dot" style="background:${p.c}"></span><b>${esc(p.n)}</b> <span class="sub">${esc(p.sub)}</span></li>`).join("")}</ul>
@@ -14675,7 +14675,7 @@ function renderLife(){
 }
 const openShops={};
 /* Life sub-tabs keep the pane short. The choice is a per-device preference. */
-const LIFE_TABS=[["money","Money"],["home","Home"],["family","Family"],["people","People"],["things","Things"],["lifestyle","Lifestyle"],["town","Town"],["album","Album"]];
+const LIFE_TABS=[["money","Money"],["home","Home"],["family","Family"],["people","People"],["things","Things"],["lifestyle","Lifestyle"],["town","Map"],["album","Album"]];
 let lifeTab="money";try{const v=localStorage.getItem("ftb-lifetab");if(LIFE_TABS.some(t=>t[0]===v))lifeTab=v}catch(e){}
 /* ---- Life badges: a dot where there's something worth doing, cleared once you've looked this month ---- */
 function lifeTodo(){
