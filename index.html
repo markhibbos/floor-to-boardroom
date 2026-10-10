@@ -7539,7 +7539,7 @@ function phProps(ph,me){
   case"flowers":out.push(`<g transform="translate(${mx+ms*.26} ${my+ms*.72})">${AVL("M0 0 L-3 18 M0 0 L3 18 M0 0 L0 18","#4E8A4A",1.5)}${[[-6,-2],[0,-6],[6,-2],[-3,-8],[4,-9]].map(([a,b],i)=>pC(a,b,3.6,["#E86A7A","#F6D44A","#F2F4F5","#E86A7A","#9CC8EE"][i])).join("")}</g>`);break;
   case"gift":out.push(`<g transform="translate(${Math.min(176,mx+ms*.5)} 124)">${pR(-12,0,24,20,"#3E6FB0")}${pR(-2,0,4,20,"#F6D44A")}${pR(-12,6,24,4,"#F6D44A")}${pP("M0 0 Q-10 -10 -8 0 M0 0 Q10 -10 8 0","none",'stroke="#F6D44A" stroke-width="2"')}</g>`);break;
   case"cheque":out.push(`<g transform="translate(100 128) rotate(-4)">${pR(-60,-10,120,30,"#F7F4EC",'stroke="#7FB2E5" stroke-width="2"')}<text x="0" y="10" font-size="13" font-weight="800" fill="#2B3A50" text-anchor="middle" font-family="system-ui">${esc(String(x||"£1,000,000"))}</text></g>`);out.push(conf());break;
-  case"car":{const c=x||"#3E6FB0";out.push(`<g transform="translate(118 104)"><path d="M0 34 V22 Q2 16 12 14 L26 4 H58 L72 14 Q80 16 80 22 V34Z" fill="${c}"/>${pR(30,8,14,9,"#9CC0D2")}${pR(46,8,14,9,"#9CC0D2")}${pC(18,36,8,"#1B1B1B")}${pC(64,36,8,"#1B1B1B")}${pC(18,36,3,"#ccc")}${pC(64,36,3,"#ccc")}</g>`);break}
+  case"car":{const vv=phVehicle(ph,x);if(vv){out.push(vv);break}const c=x||"#3E6FB0";out.push(`<g transform="translate(118 104)"><path d="M0 34 V22 Q2 16 12 14 L26 4 H58 L72 14 Q80 16 80 22 V34Z" fill="${c}"/>${pR(30,8,14,9,"#9CC0D2")}${pR(46,8,14,9,"#9CC0D2")}${pC(18,36,8,"#1B1B1B")}${pC(64,36,8,"#1B1B1B")}${pC(18,36,3,"#ccc")}${pC(64,36,3,"#ccc")}</g>`);break}
   case"stone":out.push(`<g transform="${(ph.c||[]).length?"translate(34 86) scale(.68)":"translate(100 62)"}"><path d="M-36 88 V10 Q0 -22 36 10 V88Z" fill="#9AA0A6" stroke="#7F868A" stroke-width="2"/><text x="0" y="16" font-size="10" font-weight="700" fill="#3A3F44" text-anchor="middle" font-family="serif">R.I.P.</text><text x="0" y="34" font-size="8" fill="#3A3F44" text-anchor="middle" font-family="serif">${esc(String(x||"").slice(0,18))}</text>${pC(-18,82,4,"#E86A7A")}${pC(-12,84,4,"#F6D44A")}${pC(16,83,4,"#F2F4F5")}</g>`);break;
   case"boxes":out.push(pR(130,110,34,30,"#C9A87A",'stroke="#9A7A4E"')+pR(150,88,30,24,"#C9A87A",'stroke="#9A7A4E"')+AVL("M134 120 H160","#9A7A4E",1));break;
   case"mic":out.push(AVL(`M${mx+ms*.42} ${my+ms*.62} V150`,"#555",2)+`<ellipse cx="${mx+ms*.42}" cy="${my+ms*.58}" rx="3.5" ry="5" fill="#333"/>`);break;
@@ -7906,7 +7906,7 @@ function willEndHTML(){if(S.over!=="died")return"";try{willSettle()}catch(e){}re
 /* ---- More photos: first days, promotions, homes, cars, holidays, pets and retirement ---- */
 {const _p=promote;promote=function(){_p.apply(this,arguments);try{if(!S.over)snap({i:"star",k:"Promoted",t:`First day as ${R().t}`,s:S.bank||"",ph:{sc:PH_WORK[S.path]||"office",c:["me"],pr:S.rank>=3?"champ":"",h:S.path==="arch"||S.path==="elec"?"hardhat":S.path==="chef"?"chef":""}})}catch(e){}}}
 {const _bh=buyHome;buyHome=function(id){const was=S.home&&S.home.n;_bh(id);try{if(S.home&&S.home.n!==was)snap({i:"home",k:"New home",t:inLove()?"Our new home":"My new home",s:S.home.n,ph:{sc:"house",c:castNow({pt:1,kids:1,pet:1}),pr:"keys"}})}catch(e){}}}
-{const _bc=buyCar;buyCar=function(id){const was=S.car&&S.car.id;_bc(id);try{if(S.car&&S.car.id===id&&id!==was&&id!=="none")snap({i:"key",k:"New wheels",t:`The new ${carOf(id).n}`,s:"",ph:{sc:"road",c:castNow({}),pr:"car",x:S.car.color}})}catch(e){}}}
+{const _bc=buyCar;buyCar=function(id){const was=S.car&&S.car.id;_bc(id);try{if(S.car&&S.car.id===id&&id!==was&&id!=="none")snap({i:"key",k:"New wheels",t:`The new ${carOf(id).n}`,s:"",ph:{sc:"road",c:castNow({}),pr:"car",x:S.car.color,v:id}})}catch(e){}}}
 {const _tt=takeTrip;takeTrip=function(k){const was=S.lastTrip;_tt(k);try{if(S.lastTrip===S.day&&was!==S.day){const t=TRIPS.find(x=>x.k===k),tp=TRIP_PH[k]||["beach",""];snap({i:"star",k:"Holiday",t:t.n,s:"",ph:{sc:tp[0],c:castNow({pt:1,kids:1}),o:"hols",h:tp[1],pr:k==="cruise"?"champ":"case"}})}}catch(e){}}}
 {const _pet=ACTS.pet;ACTS.pet=fx=>{_pet(fx);try{snap({i:"heart",k:"New arrival",t:`Meet ${S.pet.n}`,s:`Your new ${S.pet.kind}.`,ph:{sc:"park",c:castNow({pt:1,kids:1,pet:1})}})}catch(e){}}}
 {const _em=endModal;endModal=function(){try{if(S.over==="retired"&&!S.flags.snapRet){S.flags.snapRet=1;snap({i:"gift",k:"Retirement",t:"My retirement do",s:`Leaving ${S.bank}.`,ph:{sc:"party",c:castNow({pt:1,fr:1}),pr:"gift"}})}}catch(e){}_em.apply(this,arguments)}}
@@ -44559,6 +44559,11 @@ function transportShop(){
 }
 XCLICK.tpcat=t=>{tpCat=t.dataset.k||"car";tpSub="";openShops.showroom=true;render()};
 XCLICK.tpsub=t=>{tpSub=t.dataset.k||"";openShops.showroom=true;render()};
+
+/* ============ Photos show the vehicle you actually had ============ */
+function phVehicle(ph,x){try{const id=(ph&&ph.v)||(S&&S.car&&S.car.id);const c=carOf(id);if(!c||c.id==="none")return null;
+ let a=carArt(c.shape,x||"#3E6FB0");a=a.replace(/<svg class="[^"]*" viewBox="0 0 200 90"[^>]*>/,'<svg x="106" y="108" width="108" height="49" viewBox="0 0 200 90">').replace(/<rect x="0" y="74" width="200" height="16"[^>]*\/>/,"");
+ return a.startsWith('<svg x=')?a:null}catch(e){return null}}
 
 function start(data){
  S=(data&&data.S)||load();
