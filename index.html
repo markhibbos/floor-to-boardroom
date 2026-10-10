@@ -658,6 +658,62 @@ html,body{overflow-x:clip}
 .en-now{display:block;font-size:12px;color:var(--accent);font-weight:600;margin-top:1px}
 .help-quick{list-style:none;padding:0;margin:10px 0 6px;display:flex;flex-direction:column;gap:9px}.help-quick li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.35}.hq-i{font-size:20px;line-height:1;flex:none;width:26px;text-align:center}.help-more{margin:6px 0 4px}.help-more summary{cursor:pointer;color:var(--muted);font-size:13.5px;padding:4px 0}
 .life-en{color:var(--accent);font-weight:600}
+.sx-row .sx-main{flex:1;min-width:0}.sx-row .btn{flex:none;white-space:nowrap;align-self:center}
+.sx-g{font-size:11px;color:var(--muted);font-weight:500;white-space:nowrap}
+.sx-fx{font-size:11.5px;line-height:1.35;color:var(--muted);font-weight:600;margin-top:3px}
+.tm-wrap{position:relative}.tm-filt{margin:2px 0 4px}
+.town-map{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tm-zoom{position:absolute;right:6px;top:6px;display:flex;flex-direction:column;gap:4px;z-index:1}
+.tm-zoom button{width:30px;height:30px;padding:0;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 16px/1 system-ui,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.18);cursor:pointer}
+.tm-zoom button:disabled{opacity:.45;cursor:default}
+.town-pin.tm-could{opacity:.62}.town-pin.tm-could:hover,.town-pin.tm-could:focus{opacity:1}
+.town-key li.tm-ck{opacity:.72}.town-key .tm-ic{flex:none;width:14px;text-align:center;font-size:12px;line-height:1}
+@media (max-width:420px){.sx-row{padding:9px 10px;gap:8px}.sx-row .item-pic{width:38px;height:38px}}
+/* RS: life restructure */
+@media (min-width:720px){#pane-map{grid-area:side;display:none}body[data-side="map"] #pane-map{display:block}}
+@media (max-width:719px){body[data-tab="map"] #pane-map{display:block}}
+.vt[data-act="vitalgo"]{cursor:pointer;border-radius:6px;outline-offset:3px}
+.vt[data-act="vitalgo"]:hover .vt-l{color:var(--ink)}
+.vt[data-act="vitalgo"]:focus-visible{outline:2px solid var(--accent)}
+.rs-vs{padding:10px 0 12px;border-top:1px solid var(--line);scroll-margin-top:170px;scroll-margin-bottom:170px}
+.rs-vitals .sec-head+.rs-vs{border-top:0;padding-top:0}
+.rs-vs>.label{margin-bottom:6px}
+.rs-vs .en-top{margin:0}
+.rs-vs .btn-row{margin-top:8px}
+.rs-ka{margin-top:6px;font-size:14px}.rs-ka .label{margin-right:4px}
+#vs-health,#vs-top{scroll-margin-top:170px;scroll-margin-bottom:170px}
+@keyframes rsFlash{0%{background:var(--accent-soft,#F3E2BD)}100%{background:transparent}}
+.rs-flash{animation:rsFlash 1.6s ease-out}
+.menu-lab{margin:16px 0 -6px;font-size:10.5px}
+.menu-grid .btn{position:relative}
+.menu-end{margin-top:22px!important;padding-top:14px;border-top:1px solid var(--line)}
+@media (max-width:460px){.subtabs.life-tabs{grid-template-columns:repeat(12,minmax(0,1fr))!important}.subtabs.life-tabs button{grid-column:span 3;padding:8px 2px}.subtabs.life-tabs button:nth-child(n+5){grid-column:span 4}}
+.wb-card{padding-top:10px;padding-bottom:10px}
+.wb-card summary{list-style:none;cursor:pointer}.wb-card summary::-webkit-details-marker{display:none}
+.wb-top{display:flex;align-items:center;gap:10px;min-width:0}
+.wb-svg{flex:none;max-width:46%;height:auto;overflow:visible}
+.wb-txt{flex:1;min-width:0}
+.wb-verdict{font-weight:600;line-height:1.35;margin-top:2px}
+.wb-more{font-size:12px;margin-top:4px;text-decoration:underline;text-underline-offset:2px}
+.wb-grid{fill:none;stroke:var(--line);stroke-width:1}
+.wb-area{fill:var(--accent);fill-opacity:.22;stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
+.wb-dot{stroke:var(--surface,#fff);stroke-width:1.5}.wb-dot.up{fill:var(--up)}.wb-dot.mid{fill:var(--warn)}.wb-dot.down{fill:var(--down)}
+.wb-lab{font-size:12.5px;fill:var(--muted);font-family:var(--f-body,inherit);font-weight:600}
+.wb-rows{margin-top:8px}.wb-v{font-family:var(--f-display);font-weight:800;font-size:17px}.wb-v.up{color:var(--up)}.wb-v.mid{color:var(--warn)}.wb-v.down{color:var(--down)}
+.wb-end{margin:10px 0 14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.wb-end-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wb-end-sc{display:flex;flex-direction:column}.wb-end-sc .big-num{color:var(--accent);line-height:1}
+.wb-grades{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:8px;text-align:center}
+.wb-grades span{display:block;font-size:11.5px;color:var(--muted)}
+.wb-g{font-family:var(--f-display);font-weight:800;font-size:20px}.wb-g.gA,.wb-g.gB{color:var(--up)}.wb-g.gC{color:var(--warn)}.wb-g.gD,.wb-g.gE{color:var(--down)}
+.wb-ep{margin:10px 0 0}.wb-sp{margin:6px 0 0}
+.hof-card .sub.wb-hof{color:var(--accent)}.hof-card .sub.wb-hof-ep{font-style:italic}
+.mm-sum{margin:0 0 6px}.mm-sum b{color:var(--down)}.mm-sum.up{color:var(--up)}
+.mm-sec .lb-list li.mm-g{border-top:none;padding-top:10px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.pill.lf-pill{color:var(--accent);border-color:var(--accent);background:var(--accent-soft,transparent);font-weight:700}
+.mail.lf-mail{border-left:4px solid var(--accent)}
+.lf-stakes{font-size:12.5px;color:var(--muted);margin:2px 0 6px;font-weight:600}
+@media (max-width:420px){.wb-grades{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -907,6 +963,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
     <section class="pane" id="pane-inbox" aria-label="Inbox"></section>
     <section class="pane" id="pane-life" aria-label="Life"></section>
     <section class="pane" id="pane-log" aria-label="Log"></section>
+    <section class="pane" id="pane-map" aria-label="Map"></section>
   </main>
 </div>
 
@@ -917,7 +974,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
     <button data-tab="inbox">Inbox</button>
     <button data-tab="career">Career</button>
     <button data-tab="life">Life</button>
-    <button data-tab="log">Log</button>
+    <button data-tab="map">Map</button>
   </div>
 </nav>
 
@@ -2744,8 +2801,8 @@ EV.push(
   {t:"Offer to help with childcare one day a week",fx:{act:"grandkid",home:12,stress:-4,rep:-2},o:"Tiny socks, story time and a whole new kind of love."},
   {t:"Send a generous gift",fx:{act:"grandkid",gbp:-2000,fixed:1,home:6},o:"A gorgeous pram, and a thank-you card in shaky crayon a few years later."}]},
  {id:"fam_partner_ill",life:1,again:60,cond:s=>s.rel.st==="married"&&ageAt(s)>=32&&rnd()<.2,from:"{p}",t:"{p} has cancer",b:"{p} has been diagnosed with cancer. The doctors are hopeful, but it's serious.",c:[
-  {t:"Pay for private treatment and cut back at work (£40k)",p:.9,win:{fx:{gbp:-40000,fixed:1,home:15,stress:8,rep:-4},o:"A brutal year, side by side. {p} is in remission."},lose:{fx:{gbp:-40000,fixed:1,act:"widow"},o:"Despite everything, {p} died. The house is unbearably quiet."}},
-  {t:"NHS treatment, and keep working",p:.8,win:{fx:{home:2,stress:10},o:"{p} pulls through, though they felt alone at times."},lose:{fx:{act:"widow"},o:"{p} died. You wish you'd been there more."}}]},
+  {t:"Pay for private treatment and cut back at work (£40k)",p:.95,win:{fx:{gbp:-40000,fixed:1,home:15,stress:8,rep:-4},o:"A brutal year, side by side. {p} is in remission."},lose:{fx:{gbp:-40000,fixed:1,act:"widow"},o:"Despite everything, {p} died. The house is unbearably quiet."}},
+  {t:"NHS treatment, and keep working",p:.9,win:{fx:{home:2,stress:10},o:"{p} pulls through, though they felt alone at times."},lose:{fx:{act:"widow"},o:"{p} died. You wish you'd been there more."}}]},
  {id:"par_care",life:1,again:48,cond:s=>ageAt(s)>=46&&(s.parentsAlive??2)>0&&!s.care,from:"Your brother",t:"Mum can't live alone any more",b:"Your mum's dementia is getting worse. She left the gas on twice this week.",c:[
   {t:"A good care home (£4,500 a month)",fx:{act:"care",amt:4500,home:-2},o:"She's safe and well looked after. You visit on Sundays."},
   {t:"Move her in with you",fx:{home:-10,stress:8,flag:"parent_home"},o:"Chaotic, exhausting and sometimes lovely."},
@@ -3101,7 +3158,7 @@ const ACCIDENTS=[
  {t:"You fell off the stage mid-solo.",days:1,c:"music"},
  {t:"You sprained your ankle filming a dance trend.",days:1,c:"influencer"}
 ];
-function illChance(){return .0005*clamp((100-S.health)/40,.3,3)*(S.flags.heart_warn!=null?1.6:1)*(1+Math.max(0,age()-40)/12)*(S.world?wld().ill||1:1)}
+function illChance(){return .0004*clamp((100-S.health)/40,.3,3)*(S.flags.heart_warn!=null?1.6:1)*(1+Math.max(0,age()-40)/12)*(S.world?wld().ill||1:1)}
 
 /* ============ Growing older ============ */
 function pushDyn(ev){if(S.inbox.some(m=>m.id===ev.id))return;S.inbox.push({id:ev.id,dyn:Object.assign({dyn:1},ev),done:false,vars:{}})}
@@ -4237,7 +4294,7 @@ EV.push(
   {t:"Take the £500",fx:{gbp:500,fixed:1,flag:"cr_pkg",karma:-6},o:"Easy money. You put it in the wardrobe and try not to think about it."},
   {t:"Absolutely not",fx:{},o:"They find someone else. Probably for the best."}]},
  {id:"cr_pkg2",life:1,again:999,req:"cr_pkg",cond:s=>since(s,"cr_pkg",2)&&!s.prison,from:"Your front door, 6am",t:"Police raid",b:"Armed police are at the door. The package was full of drugs.",c:[
-  {t:"Tell them everything",p:.55,win:{fx:{heat:10,stress:12,unflag:"cr_pkg"},o:"You're released without charge as a witness. Shaken."},lose:{fx:{act:"trial",crime:"possession with intent to supply",months:36,unflag:"cr_pkg"},o:"They don't believe you didn't know. You're charged."}},
+  {t:"Tell them everything",p:.65,win:{fx:{heat:10,stress:12,unflag:"cr_pkg"},o:"You're released without charge as a witness. Shaken."},lose:{fx:{act:"trial",crime:"possession with intent to supply",months:36,unflag:"cr_pkg"},o:"They don't believe you didn't know. You're charged."}},
   {t:"Say nothing until you see a lawyer",fx:{act:"trial",crime:"possession with intent to supply",months:36,unflag:"cr_pkg"},o:"You're charged."}]},
  {id:"cr_drink",life:1,again:48,cond:s=>!s.prison&&carOf(s.car.id).lvl>=1,from:"The car park",t:"Just a couple",b:"You've had three pints. It's raining and a taxi would take an hour.",c:[
   {t:"Drive home carefully",p:.8,win:{fx:{karma:-3},o:"You get home fine. Your heart's still racing."},lose:{fx:{gbp:-3000,heat:10,act:"sellcar",karma:-5},o:"Blue lights. Over the limit. A big fine and a driving ban. You sell the car."}},
@@ -4751,7 +4808,7 @@ function mkIllness(){
 function hazards(notes){
  if(S.over)return;
  const c=carOf(S.car.id),road=(c.lvl>=5?3:vKind(c)==="moto"?2.4:c.lvl>=3?1.6:vKind(c)==="cycle"?2:1)*(1+.25*((S.car.mods&&S.car.mods.tune)||0)),job=(CAR_().acc||ACC_RISK[S.path]||1)*(hasT("reckless")?1.5:1),tired=S.stress>80||S.health<25?1.5:1;
- if(rnd()<.00004*road*job*tired){const cause=fatalCause();notes.push(cause);die(cause);return}
+ if(rnd()<.00002*road*job*tired){const cause=fatalCause();notes.push(cause);die(cause);return}
  if(absurdDeath(notes))return;
  if(S.sick<=0&&rnd()<.003*job){const pool=ACCIDENTS.filter(a=>(!a.c||a.c===S.path)&&(!a.when||a.when())),a=pick(pool);
   goSick(a.days,-8);S.stress=clamp(S.stress+4,0,100);if(a.gbp)S.wealth+=a.gbp;
@@ -5546,7 +5603,7 @@ function peopleSec(){
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">People in your life</h2><span class="label">${ps.length+core.length}</span></div>
   <div class="people">${core.join("")}${(peopleAll?ps:ps.slice(0,6)).map(p=>`<div class="person"><div><b>${esc(p.n)}</b><span class="role">${esc(ROLE_N[p.role]||"Friend")} · ${esc(p.how)}${p.owed?` · owes you ${money(p.owed)}`:""}</span>${ktLineHtml(p)}</div>${meterMini(p.bond)}${p.role==="lover"||p.role==="openlover"?`<button class="btn sm" data-act="endlover" data-p="${p.id}">End it</button>`:""}${p.role!=="lover"&&p.role!=="openlover"?`<button class="btn sm" data-act="ktopen" data-p="${p.id}">Get in touch</button>`:""}</div>`).join("")}</div>
   ${!peopleAll&&ps.length>6?`<div class="btn-row"><button class="btn sm" data-act="peopleall">Show all ${ps.length} people</button></div>`:""}
-  ${!ps.length?`<p class="hint" style="margin:8px 0 0">Meet people through your free time below. Friends can lend a hand, ask for one, invite you to weddings, set you up on dates or tip you off about jobs.</p>`:""}
+  ${!ps.length?`<p class="hint" style="margin:8px 0 0">Meet people in your free time (the Free time tab). Friends can lend a hand, ask for one, invite you to weddings, set you up on dates or tip you off about jobs.</p>`:""}
   ${ktLostHtml()}${gone.length?rememberedHTML():""}</div>`;
 }
 const bondWord=v=>v>=80?"Very close":v>=60?"Close":v>=40?"Friendly":v>=20?"Distant":"Cold";
@@ -7160,7 +7217,7 @@ const ABSURD=[
 ];
 /* About 1 life in 40 ends this way */
 function absurdDeath(notes){
- if(S.over||S.prison||rnd()>.00006)return false;
+ if(S.over||S.prison||rnd()>.00004)return false;
  const ok=ABSURD.filter(([t,w])=>{try{return w()}catch(e){return false}});if(!ok.length)return false;
  const t=pick(ok)[0];S.flags.absurd=S.day;notes.push(t);die(t);return true;
 }
@@ -14255,7 +14312,7 @@ function stageSec(compact){
  return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Next stage: ${esc(next.t)}</h2><span class="label">${d} of ${n} done</span></div>
   <ul class="goals">${gs.map(g=>{const[v,need,l]=goalVal(g),ok=v>=need,p=clamp(v/need*100,0,100);
    return `<li class="${ok?"ok":""}"><span class="tick">${ok?"✓":""}</span><span class="gl"><b>${esc(l)}</b>${g.k==="qual"&&!ok?`<small>Study for it in <button class="linkbtn" data-act="deskgo" data-v="moves">Career moves</button> on your Desk.</small>`:""}${need>1&&!ok?`<span class="bar mini"><i style="width:${p}%"></i></span><small class="mono">${g.k==="earn"?fmtOut(v):g.k==="fans"?fmtNum(v):Math.floor(v)} / ${g.k==="earn"?fmtOut(need):g.k==="fans"?fmtNum(need):need}</small>`:""}</span></li>`}).join("")}</ul>
-  <p class="hint" style="margin:8px 0 0">Finish every goal and you step up straight away. ${CAR_().mech!=="football"?"Career moves on your work tab help with many of these. ":""}Reviews every ${REVIEW_DAYS} months still pay your bonus and can bring warnings.</p></div>`;
+  <p class="hint" style="margin:8px 0 0">${S.rank===3?"Finish every goal, then you wait for the top job to come up. When it does, the board picks: the better your reputation, the better your chances. ":"Finish every goal and you step up straight away. "}${CAR_().mech!=="football"?"Career moves on your work tab help with many of these. ":""}Reviews every ${REVIEW_DAYS} months still pay your bonus and can bring warnings.</p></div>`;
 }
 
 /* ---------- Career moves ---------- */
@@ -14605,6 +14662,7 @@ function homeQuote(h){
 }
 function carQuote(c){const trade=S.car.value*.9;const need=c.p-trade;return{trade,need,ok:need<=S.wealth,why:need>S.wealth?`Need ${money(need)} in cash`:""}}
 function renderLife(){
+ lifeTab=lifeKey(lifeTab);
  if(S&&!S.placeholder&&typeof tab!=="undefined"&&tab==="life"){S.lifeSeen=S.lifeSeen||{};S.lifeSeen[lifeTab]=S.day}
  if(!S.market||S.day-S.marketDay>=10)genMarket();
  const c=carOf(S.car.id),rel=S.rel,single=isSingle(),hart=HT[S.home.t].art;
@@ -14620,7 +14678,7 @@ function renderLife(){
    ${lifeTab==="money"?"":`<div class="hint">Cash ${money(S.wealth)} · outgoings ${money(monthly())} a month${S.chapter&&CHAPTERS[S.chapter.k]?` · This chapter: ${CHAPTERS[S.chapter.k].icon} ${CHAPTERS[S.chapter.k].n}`:""}</div>`}<div class="kv" ${lifeTab==="money"?"":"hidden"}><span>Cash</span><span class="${S.wealth<0?"down":""}">${money(S.wealth)}</span><span>Investments</span><span>${money(invTotal())}</span><span>Pension</span><span>${money(S.pension.pot)}</span><span>Home equity</span><span>${money(equity())}</span><span>Car</span><span>${money(S.car.value)}</span><span>${selfPaid()?"Earnings (12-month average)":"Salary"}</span><span>${money(salary())} a year</span><span>Take-home after tax</span><span>${money((salary()-ukTax(salary()))/YEAR)} a month</span><span>Outgoings</span><span class="down">${money(monthly())} a month</span></div>
   </div>
   ${lifeTabsBar()}
-  ${lifeTab==="family"?`
+  ${lifeTab==="love"?`
   <div class="pane-sec">
    <div class="rel">${single?`<div class="ring ring-face">${avatarSVG(52,S)}</div>`:`<div class="ring ring-face">${partnerFace(52)}</div>`}<div><div class="label">Relationship</div><div style="font-weight:600">${relLine}</div>${kidFaces()}${!single&&rel.trait&&PT[rel.trait]?`<div class="hint">${esc(rel.name)}: ${esc(PT[rel.trait].n.toLowerCase())}, ${esc(PT[rel.trait].d)}.${rel.stepkids?` ${rel.stepkids} stepchild${rel.stepkids>1?"ren":""}.`:""}</div>`:""}${S.children.length?`<div class="hint">${S.children.map(k=>`${esc(k.n)} (${Math.max(0,Math.floor(kidAge(k)))}${k.p?`, ${KID_TYPES[k.p]}`:""}${k.job?`, ${k.job}`:""})`).join(", ")}${S.grandkids?` · ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}</div>`:""}${S.care?`<div class="hint">Care home for your mum: ${money(S.care)} a month</div>`:""}${S.pet?`<div class="hint">${esc(S.pet.n)} the ${S.pet.kind}, ${Math.floor((S.day-S.pet.born)/YEAR)} years old</div>`:""}</div></div>
    <div class="meters">${meter(single?"Social life":"Home life",S.homeLife,"good")}</div>
@@ -14628,20 +14686,25 @@ function renderLife(){
    ${loveSec()}
    <div class="btn-row" style="margin-top:10px">${S.rel.st==="dating"&&S.day-(S.rel.since||S.day)>=6?`<button class="btn sm primary" data-act="proposenow">Propose</button>`:""}${inLove()?`<button class="btn sm" data-act="endrel">${S.rel.st==="married"?"Ask for a divorce":"End the relationship"}</button>`:""}<button class="btn sm" data-act="prefcycle">Interested in: ${PREF_N[S.pref]||"not set"}</button></div>
   </div>
-  ${friendSec()}
-  <div class="pane-sec">
+  `:""}
+  ${lifeTab==="you"?rsVitalsSec()+`
+  <div class="pane-sec" id="vs-health">
    <div class="meters">${meter("Health",S.health,"good")}</div>
    ${S.sick>0?`<div class="note">Off sick: ${S.sick} more month${S.sick>1?"s":""} to recover. Your work output is cut while you heal.</div>`:""}
    <p class="hint" style="margin:8px 0 0">High stress drains your health. Exercise, rest and a good home life rebuild it. Low health raises the risk of serious illness, and accidents can happen to anyone.${S.life.hins?" Your health insurance covers private treatment.":""}${S.life.lins?" Your life insurance protects your family.":""}</p>
   </div>
-  `:""}
+  `+healthSec():""}
   ${lifeTab==="home"?`
   <div class="pane-sec">
    <div class="label" style="margin-bottom:6px">Home</div>
    <div class="own-art">${S.home.value>0?homeArtNow():houseArt(hart,S.home.v||0,"art art-big")}
    <div class="own"><span class="nm">${esc(S.home.name?`${S.home.name} · ${S.home.n}`:S.home.n)}</span><span class="sub mono">${S.home.value<=0?money(S.home.rent)+"/month rent":`Worth ${money(S.home.value)} · ${S.home.loan>0?`mortgage ${money(S.home.loan)}, ${money(homePay())} a month, ${Math.ceil((S.home.left||0)/12)} years left`:"no mortgage"}`}${S.home.style?` · ${esc(S.home.style)} interior`:""}${Object.keys(S.home.mods||{}).length?` · ${Object.keys(S.home.mods).length} upgrade${Object.keys(S.home.mods).length>1?"s":""}`:""}</span>${(S.home.value>0)?'<span class="own-btns"><button class="btn sm primary" data-act="hcustom">Customise</button><button class="btn sm" data-act="sellhome">Sell</button></span>':""}</div></div>
    <details class="shop" id="estate"><summary>Estate agent · ${S.market.length} listings</summary><p class="hint" style="margin:4px 0">New listings every 10 months (next in ${10-(S.day-S.marketDay)}). 20% deposit, 1% fees, UK stamp duty, mortgage up to 5.5× salary. Your current home is sold as part of the move.</p><ul>${homes}</ul></details>
-   <div class="label" style="margin:16px 0 6px">Transport</div>
+  </div>
+  `:""}
+  ${lifeTab==="stuff"?`
+  <div class="pane-sec">
+   <div class="label" style="margin-bottom:6px">Transport</div>
    <div class="own-art">${carArt(c.shape,S.car.color,"art art-big",carOpts())}
    <div class="own"><span class="nm">${esc(c.n)}${S.car.mods&&S.car.mods.plate?` · ${esc(S.car.mods.plate)}`:""}</span><span class="sub mono">${S.car.id==="none"?"£180/month on the Tube and buses":`Worth ${money(S.car.value)} · ${money(c.run)}/month${S.car.mods&&S.car.mods.tune?` · Stage ${S.car.mods.tune} tune`:""}`}</span>${S.car.id!=="none"?'<span class="own-btns"><button class="btn sm primary" data-act="ccustom">Customise</button><button class="btn sm" data-act="sellcar">Sell</button></span>':""}</div></div>
    ${transportShop()}
@@ -14654,14 +14717,15 @@ function renderLife(){
   </div>
   ${pensionSec()}
   ${bizSec()}
+  ${sideSec()}
   `:""}
-  ${lifeTab==="town"?townSec():""}
-  ${lifeTab==="people"?peopleSec()+hobbySec()+freeSec()+luckSec():""}
+  ${lifeTab==="friends"?friendSec()+peopleSec():""}
+  ${lifeTab==="free"?freeSec()+hobbySec()+petSec()+luckSec():""}
   ${lifeTab==="home"?homeLifeSec():""}
-  ${lifeTab==="things"?itemsSec():""}
+  ${lifeTab==="stuff"?itemsSec():""}
   ${lifeTab==="album"?albumSec():""}
-  ${lifeTab==="family"?folksSec()+willSec():""}
-  ${lifeTab==="lifestyle"?`
+  ${lifeTab==="love"?folksSec()+willSec():""}
+  ${lifeTab==="you"?`
   ${goalSec()}
   <div class="pane-sec">
    <div class="sec-head"><h2 style="font-size:18px">Lifestyle</h2><span class="label">Monthly</span></div>
@@ -14675,8 +14739,11 @@ function renderLife(){
 }
 const openShops={};
 /* Life sub-tabs keep the pane short. The choice is a per-device preference. */
-const LIFE_TABS=[["money","Money"],["home","Home"],["family","Family"],["people","People"],["things","Things"],["lifestyle","Lifestyle"],["town","Map"],["album","Album"]];
-let lifeTab="money";try{const v=localStorage.getItem("ftb-lifetab");if(LIFE_TABS.some(t=>t[0]===v))lifeTab=v}catch(e){}
+const LIFE_TABS=[["you","You"],["love","Love"],["friends","Friends"],["free","Free time"],["money","Money"],["home","Home"],["stuff","Stuff"]];
+/* Old tab keys (saved on the device or set by older code) map onto the new tabs. "album" is a hidden view opened from the menu. */
+const LIFE_OLD={family:"love",people:"friends",things:"stuff",lifestyle:"you",town:"you",map:"you"};
+const lifeKey=v=>v==="album"||LIFE_TABS.some(t=>t[0]===v)?v:(LIFE_OLD[v]||"you");
+let lifeTab="you";try{const v=localStorage.getItem("ftb-lifetab");if(v)lifeTab=lifeKey(v)}catch(e){}
 /* ---- Life badges: a dot where there's something worth doing, cleared once you've looked this month ---- */
 function lifeTodo(){
  const o={money:0,home:0,family:0,people:0,things:0,lifestyle:0,town:0,album:0};
@@ -14691,7 +14758,7 @@ function lifeTodo(){
  return o;
 }
 const lifeBadge=()=>Object.values(lifeTodo()).filter(Boolean).length;
-function lifeTabsBar(){return `<div class="pane-sec subtabs-wrap"><div class="subtabs" role="tablist" aria-label="Life sections">${LIFE_TABS.map(([k,n])=>`<button role="tab" data-act="lifetab" data-v="${k}" class="${lifeTab===k?"on":""}" aria-selected="${lifeTab===k}">${n}${lifeTodo()[k]?'<span class="dot-badge" aria-label="Something to do"></span>':""}</button>`).join("")}</div></div>`}
+function lifeTabsBar(){return `<div class="pane-sec subtabs-wrap"><div class="subtabs life-tabs" role="tablist" aria-label="Life sections">${LIFE_TABS.map(([k,n])=>`<button role="tab" data-act="lifetab" data-v="${k}" class="${lifeTab===k?"on":""}" aria-selected="${lifeTab===k}">${n}${lifeTodo()[k]?'<span class="dot-badge" aria-label="Something to do"></span>':""}</button>`).join("")}</div></div>`}
 function pensionSec(){
  const P=penOf(),sp=penSplit(),you=sp.you,emp=sp.emp,self=P.self&&P.self.includes(S.rank);
  const empTxt=self||!P.emp?"Nothing: you're self-employed":penEmp()?`${(P.emp*100).toFixed(1).replace(/\.0$/,"")}% (${money(emp)}/month)`:`None until you pay 5%+`;
@@ -14856,7 +14923,7 @@ function renderLog(){
 function renderNav(){
  document.body.dataset.tab=tab;document.body.dataset.side=side;
  const pending=S.inbox.filter(m=>!m.done).length;
- document.getElementById("sideTabs").innerHTML=[["inbox","Inbox"],["life","Life"],["career","Career"],["log","Log"]].map(([k,n])=>`<button data-tab="${k}" class="${side===k?"on":""}" aria-pressed="${side===k}">${n}${k==="inbox"&&pending?`<span class="badge">${pending}</span>`:""}${k==="life"&&lifeBadge()?`<span class="badge">${lifeBadge()}</span>`:""}</button>`).join("");
+ document.getElementById("sideTabs").innerHTML=[["inbox","Inbox"],["life","Life"],["career","Career"],["map","Map"]].map(([k,n])=>`<button data-tab="${k}" class="${side===k?"on":""}" aria-pressed="${side===k}">${n}${k==="inbox"&&pending?`<span class="badge">${pending}</span>`:""}${k==="life"&&lifeBadge()?`<span class="badge">${lifeBadge()}</span>`:""}</button>`).join("");
  document.querySelectorAll("#tabs button").forEach(b=>{b.classList.toggle("on",b.dataset.tab===tab);b.innerHTML=b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1)+(b.dataset.tab==="inbox"&&pending?`<span class="badge">${pending}</span>`:"")+(b.dataset.tab==="life"&&lifeBadge()?`<span class="badge">${lifeBadge()}</span>`:"")});
  {const lab=closeLabel();document.getElementById("navClose").textContent=lab;const dc=document.querySelector(".desk-close [data-act=\"close\"]");if(dc)dc.textContent=lab}
 }
@@ -15093,7 +15160,11 @@ function startModal0(){
 }
 function menuModal(){
  showModal(`<h2>Menu</h2><p>${esc(S.name)}, ${esc(R().t)}, age ${ageInt()}. Your game saves automatically on this device${cloudCode?" and in the cloud":""}.</p>
-  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album</button><button class="btn" data-act="collection">Collection book</button><a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="friends">Friends</button><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="settings">Settings</button><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
+  <div class="menu-grid"><button class="btn primary" data-act="hide">Resume</button></div>
+  <div class="label menu-lab">Your life</div><div class="menu-grid menu-sub"><button class="btn" data-act="menulog">Log</button><button class="btn" data-act="tiyl" data-i="0">Your story so far</button><button class="btn" data-act="menualbum">Photo album${typeof rsAlbumNew==="function"&&rsAlbumNew()?'<span class="dot-badge" aria-label="New photos"></span>':""}</button><button class="btn" data-act="trophies">Trophy cabinet</button><button class="btn" data-act="collection">Collection book</button></div>
+  <div class="label menu-lab">You and friends</div><div class="menu-grid menu-sub"><button class="btn" data-act="avatar">Your look</button><button class="btn" data-act="friends">Friends</button></div>
+  <div class="label menu-lab">Game</div><div class="menu-grid menu-sub"><button class="btn" data-act="saves">Saved games</button><button class="btn" data-act="help">How to play</button><button class="btn" data-act="settings">Settings</button><a class="btn" href="https://markhibbos.github.io/floor-to-boardroom/privacy.html" target="_blank" rel="noopener">Privacy</a></div>
+  <div class="menu-grid menu-end"><button class="btn" data-act="home">Main menu</button><button class="btn" data-act="confirmnew">Start a new career</button></div>`);
 }
 const HELP12={
  markets:`<tr><td><b>1. Read the brief</b><br>Each month's headlines carry a desk read. Wire stories are right about 7 times in 10. Unconfirmed rumours are a coin flip. On data days, moves are twice as big.</td></tr><tr><td><b>2. Size your risk</b><br>Tap a cell to set each position. Go long the bullish, short the bearish, and stay inside your risk limit. From Head of Global Markets up you allocate capital instead.</td></tr>`,
@@ -15101,14 +15172,14 @@ const HELP12={
  football:`<tr><td><b>1. Train well</b><br>On training days, balance fitness and form. Double sessions build you up but can injure you. Rest when you're tired. Below 35 fitness the manager rests you.</td></tr><tr><td><b>2. Win on match day</b><br>Two matches a week. Choose how to play: safe, team player or go for glory. Your rating, goals and assists earn performance points. Cards raise your discipline score.</td></tr>`};
 function helpModal(){
  const workLine={markets:"Read the news, then take your positions on the Desk.",jobs:"Pick this month's work on the Desk.",football:"Train, then play the match on the Desk."}[CAR_().mech]||"Do this month's work on the Desk.";
- const quick=[["💼","Work",workLine],["✉️","Inbox","Answer every message. Your choices are remembered."],["⚡","Energy","Everything uses it. Overspend and next month starts tired."],["❤️","People","Give them your time, or they drift away."],["🏁","Next month","Tap the big button at the bottom when you're done."],["🎯","Climb","Hit your targets to get promoted. Stress or trouble at 100 ends your career."]];
+ const quick=[["💼","Work",workLine],["✉️","Inbox","Answer every message. Your choices are remembered."],["⚡","Energy","Everything uses it. Overspend and next month starts tired. Tap any bar at the top to see what it means."],["❤️","People","Give them your time on Life → Love and Friends, or they drift away."],["🗺️","Map","Your town. Tap a pin to jump there. Your log is in the menu."],["🏁","Next month","Tap the big button at the bottom when you're done."],["🎯","Climb","Hit your targets to get promoted. Stress or trouble at 100 ends your career."]];
  showModal(`<div class="label">Guide</div><h2 style="margin-top:4px">How to play</h2>
   <ul class="help-quick">${quick.map(([i,t,d])=>`<li><span class="hq-i" aria-hidden="true">${i}</span><span><b>${t}</b> ${d}</span></li>`).join("")}</ul>
   <details class="help-more"><summary>Tell me more</summary>
   <table class="rep-table help">
    ${HELP12[CAR_().mech]}
    <tr><td><b>Energy</b><br>Each month you get a batch of energy (the ⚡ bar at the top). Work, operations, courses, dates, friends, family, the gym, hobbies and holidays all use it. Set your work hours on the Desk, from Coasting to All-in. You can overspend, but the overspend comes off next month with interest, and months of it lead to burnout. Rest, quiet months and the right holiday recharge you. You get less energy, and recover more slowly, as you get older.</td></tr>
-   <tr><td><b>Time for people</b><br>On the Life tab, choose how much of your time your partner, children, parents and friends get. Ignore people and they drift. Some recharge you, others need a lot of you. Anyone on your People list can be contacted with Get in touch, and old flames can get a second chance.</td></tr>
+   <tr><td><b>Time for people</b><br>On Life → Love and Life → Friends, choose how much of your time your partner, children, parents and friends get. Ignore people and they drift. Some recharge you, others need a lot of you. Anyone on your People list can be contacted with Get in touch, and old flames can get a second chance.</td></tr>
    <tr><td><b>3. Clear your inbox</b><br>Every decision moves your stats, and the change pops up so you can see it. Choices are remembered, and some come back months later. About one in five is a Big decision: bigger effects, and every option has a price. Your choices also build a reputation ("Known as…" on the Career tab), and what it does depends on your job and level. Get known as ruthless at the top and people quit, the board loses patience, and you can be sacked.</td></tr>
    <tr><td><b>Holidays</b><br>You get a number of days off a year, set by your country and career (teachers in school holidays, footballers in the off-season). Use them or lose most of them. A beach week recharges you; a week in Ibiza is fun but you come back more tired.</td></tr>
    <tr><td><b>4. Close the month</b><br>Every 15 months you're reviewed. Hit the target, keep your reputation at 55+ and beat your named rival to be promoted. Five rungs take you from the bottom to the top job.</td></tr>
@@ -15156,7 +15227,7 @@ document.addEventListener("click",e=>{
  if(a==="propgo"){proposeGo();return}
  if(a==="petpat"){petPat(false);return}
  if(a==="pettreat"){petPat(true);return}
- if(a==="godating"){freeGrp="Dating";lifeTab="people";render();setTimeout(()=>{const c=document.querySelector(".free-chips");if(c){const y=c.getBoundingClientRect().top+window.scrollY-140;document.documentElement.scrollTop=y;document.body.scrollTop=y;window.scrollTo(0,y)}},250);return}
+ if(a==="godating"){freeGrp="Dating";lifeTab="free";render();setTimeout(()=>{const c=document.querySelector(".free-chips");if(c){const y=c.getBoundingClientRect().top+window.scrollY-140;document.documentElement.scrollTop=y;document.body.scrollTop=y;window.scrollTo(0,y)}},250);return}
  if(a==="peopleall"){peopleAll=true;render();return}
  if(a==="addfriendrec"){const p=addFriendLife(window.__hashRec);save();render();toastMsg(p?`${p.n} is now in your game.`:"Start a game first.");t.disabled=true;return}
  if(a==="obit"){obitModal();return}
@@ -17074,13 +17145,14 @@ const navBtn=re=>[...document.querySelectorAll(".nav button,.nav a")].find(b=>re
 const TOUR=[
  {t:"Hi, I'm Mags",b:"I've watched a thousand careers start. Let me show you round. It takes thirty seconds.",el:null},
  {t:"Your life at a glance",b:"Your age, what you've earned this year, the cash in your pocket and everything you own.",el:()=>document.querySelector(".top-stats")},
- {t:"Your vital signs",b:"Energy, reputation, stress and trouble. Watch these bars. Stress or trouble at 100, or reputation at 0, ends this career.",el:()=>document.querySelector(".vitals")},
+ {t:"Your vital signs",b:"Energy, reputation, stress and trouble. Watch these bars. Stress or trouble at 100, or reputation at 0, ends this career. Tap any bar to see what it means and what helps.",el:()=>document.querySelector(".vitals")},
  {t:"Energy is everything",b:"You get a fresh batch each month. Work, dates, friends, family, the gym and holidays all use it. Overspend and you start next month tired. The older you get, the less you have.",el:()=>document.querySelector(".vitals .vt")},
  {t:"Your work",b:"This is your desk. Set your hours, from Coasting to All-in, then pick the work you'll do. More hours means more money and promotions, and less of you for everything else.",el:()=>{const d=document.querySelector(".en-seg");if(d)return d.closest(".pane-sec,section,.card")||d.parentElement;const w=[...document.querySelectorAll("#pane-desk button")].find(b=>b.textContent.trim()==="Work");return w?w.parentElement:document.querySelector("#pane-desk")}},
  {t:"Your inbox",b:"Life happens here. Choices are remembered and some come back months later. Big decisions are marked: they matter more, and every option has a price.",el:()=>navBtn(/^Inbox/)},
- {t:"Your life",b:"Home, family, friends, money, dating and free time. Decide who gets your time each month. People drift if you ignore them, and some recharge you while others wear you out.",el:()=>navBtn(/^Life/)},
+ {t:"Your life",b:"You, love, friends, free time, money, home and your stuff, each on its own tab. Decide who gets your time each month. People drift if you ignore them, and some recharge you while others wear you out.",el:()=>navBtn(/^Life/)},
+ {t:"Your map",b:"The map shows your home, work, family and favourite places. Tap a pin to jump straight there.",el:()=>navBtn(/^Map/)},
  {t:"The big button",b:"It always tells you what to do next. When everything's done, tap it to finish the month.",el:()=>document.getElementById("navClose")},
- {t:"The menu",b:"Saved games, settings, the full guide and your trophies are in here.",el:()=>document.querySelector('[data-act="menu"]')},
+ {t:"The menu",b:"Your log, photos, trophies, saved games, settings and the full guide are in here.",el:()=>document.querySelector('[data-act="menu"]')},
  {t:"That's it!",b:"Make good choices. Or at least interesting ones. I'll be cheering you on.",el:null}
 ];
 let tourI=-1;
@@ -46034,10 +46106,10 @@ function enModal(){const E=enS();if(!E)return;const A=enAllowance(E),plan=enPlan
   ${hist.length?`<details class="me-more"><summary>Recent months</summary><table class="rep-table">${hist.slice().reverse().map(h=>`<tr><td>${esc(shortDate(h.d))}</td><td class="${h.over?"down":""}">${h.used} / ${h.al}</td></tr>`).join("")}</table>
    <p class="hint keep">A lifetime so far: ${EN_CATS.filter(k=>life[k]).map(k=>`${EN_CAT_N[k]} ${Math.round(life[k]/lt*100)}%`).join(" · ")}</p></details>`:""}
   ${enDialHtml(1)}
-  <div class="btn-row"><button class="btn" data-act="enpeople">Time for people</button><button class="btn primary" data-act="hide">Done</button></div>`)}
+  <div class="btn-row"><button class="btn" data-act="enpeople" data-v="love">Time for family</button><button class="btn" data-act="enpeople" data-v="friends">Time for friends</button><button class="btn primary" data-act="hide">Done</button></div>`)}
 XCLICK.enopen=()=>enModal();
 XCLICK.endialm=t=>{XCLICK.endial(t);enModal()};
-XCLICK.enpeople=()=>{hideModal();try{lifeTab="people";localStorage.setItem("ftb-lifetab","people")}catch(e){}setTab("life");render()};
+XCLICK.enpeople=t=>{const v=(t&&t.dataset&&t.dataset.v)||"love";hideModal();try{lifeTab=v;localStorage.setItem("ftb-lifetab",v)}catch(e){}setTab("life");render()};
 
 /* INBOX energy */
 /* ============ Inbox choices use energy too: big nights, extra shifts, travel and helping out ============ */
@@ -46556,6 +46628,1020 @@ ACTS.glowsurg=()=>{S.surg=(S.surg||0)+1;S.surgAt=S.day;if(rnd()<.07){S.health=cl
 /* LIFESTYLE energy */
 const LIFE_EN={gym:"Sessions use 5 a month, but you get 8 more energy: you come out 3 ahead",nanny:"Takes the housework and childcare off you: saves energy every month",club:"Networking evenings use 4 a month",botox:"Gives back a little of the energy you lose with age (from 33)",bio:"Uses 3 a month, and gives back a good chunk of the energy you lose with age",longevity:"Gives back a lot of the energy you lose with age"};
 {const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(S.life&&S.life.club&&!S.over&&!S.prison)L.push({cat:"friends",n:"Members' club evenings",e:4})}catch(e){}return L}}
+
+/* ST: shop and town module */
+/* ST: town maps by country. The map background follows your country (and a little of your home); pins never sit in water. */
+const TM_F=n=>Math.round(n*10)/10;
+/* Smooth curve through points (Catmull-Rom as cubic Beziers), plus sampled points for hit tests */
+function tmCurve(pts,closed){const n=pts.length,P=i=>closed?pts[(i+n)%n]:pts[Math.max(0,Math.min(n-1,i))];
+ let d=`M${TM_F(pts[0][0])} ${TM_F(pts[0][1])}`;const samp=[pts[0]];const segs=closed?n:n-1;
+ for(let i=0;i<segs;i++){const p0=P(i-1),p1=P(i),p2=P(i+1),p3=P(i+2);
+  const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+  d+=` C${TM_F(c1[0])} ${TM_F(c1[1])} ${TM_F(c2[0])} ${TM_F(c2[1])} ${TM_F(p2[0])} ${TM_F(p2[1])}`;
+  for(let t=1;t<=10;t++){const u=t/10,v=1-u;samp.push([v*v*v*p1[0]+3*v*v*u*c1[0]+3*v*u*u*c2[0]+u*u*u*p2[0],v*v*v*p1[1]+3*v*v*u*c1[1]+3*v*u*u*c2[1]+u*u*u*p2[1]])}}
+ return{d:d+(closed?"Z":""),samp}}
+function tmSegD(s,x,y,closed){let m=1e9;const n=s.length;for(let i=0;i<(closed?n:n-1);i++){const a=s[i],b=s[(i+1)%n],dx=b[0]-a[0],dy=b[1]-a[1],L=dx*dx+dy*dy;let t=L?((x-a[0])*dx+(y-a[1])*dy)/L:0;t=Math.max(0,Math.min(1,t));m=Math.min(m,Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy))}return m}
+function tmIn(s,x,y){let c=false;for(let i=0,j=s.length-1;i<s.length;j=i++){const a=s[i],b=s[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
+/* Water: river {p,w} / sea {p} (closed) / ell {c:[x,y],r:[rx,ry]}; isles are land drawn on top of water */
+function tmGeo(code){const D=TM_DEF[code]||TM_DEF.uk;if(D._g)return D._g;
+ const water=(D.water||[]).map(s=>s.p?Object.assign({},s,tmCurve(s.p,s.t==="sea")):Object.assign({},s));
+ const isles=(D.isles||[]).map(s=>Object.assign({},s,tmCurve(s.p,true)));
+ return D._g={D,water,isles}}
+function tmWet(G,x,y,m){let w=false;
+ for(const s of G.water){if(s.t==="river"){if(tmSegD(s.samp,x,y,false)<s.w/2+m){w=true;break}}
+  else if(s.t==="sea"){if(tmIn(s.samp,x,y)||tmSegD(s.samp,x,y,true)<m){w=true;break}}
+  else if(s.t==="ell"){const rx=s.r[0]+m,ry=s.r[1]+m;if(((x-s.c[0])/rx)**2+((y-s.c[1])/ry)**2<1){w=true;break}}}
+ if(w)for(const s of G.isles)if(tmIn(s.samp,x,y)&&tmSegD(s.samp,x,y,true)>m)return false;
+ return w}
+/* Move a pin off the water to the nearest dry spot */
+const TM_NUDGE={};
+function tmNudge(code,x,y){const key=code+":"+x+":"+y;if(TM_NUDGE[key])return TM_NUDGE[key];const G=tmGeo(code);let r=[x,y];
+ if(tmWet(G,x,y,3)){let done=false;for(let d=4;d<=90&&!done;d+=3)for(let a=0;a<24&&!done;a++){const t=a/24*Math.PI*2+(d%2?.13:0),nx=Math.round(x+Math.cos(t)*d),ny=Math.round(y+Math.sin(t)*d);
+  if(nx<13||nx>347||ny<13||ny>237)continue;if(!tmWet(G,nx,ny,7)){r=[nx,ny];done=true}}}
+ return TM_NUDGE[key]=r}
+const tmHash=(i,j)=>{let h=(i*73856093)^(j*19349663)^(i*j*83492791);h=(h^(h>>>13))*1274126177;return((h^(h>>>16))>>>0)/4294967296};
+/* Building blocks on a grid, skipping water and keep-out boxes */
+function tmBlocks(G,o){let out="";const sk=o.skip||[];
+ for(let j=0;o.y0+j*o.sy<=o.y1;j++)for(let i=0;o.x0+i*o.sx<=o.x1;i++){const r=tmHash(i+(o.seed||0),j);if(r<(o.gap||.12))continue;
+  const w=o.w+Math.round(tmHash(j,i+7)*(o.wj||0)),h=o.h+Math.round(tmHash(i+3,j+5)*(o.hj||0));
+  let cx=o.x0+i*o.sx+(o.stag&&j%2?o.sx/2:0),cy=o.y0+j*o.sy;
+  if(o.rot){const a=o.rot*Math.PI/180,u=i*o.sx+(o.stag&&j%2?o.sx/2:0),v=j*o.sy;cx=o.x0+u*Math.cos(a)-v*Math.sin(a);cy=o.y0+u*Math.sin(a)+v*Math.cos(a)}
+  if(cx<-10||cx>370||cy<-10||cy>260)continue;
+  const R=Math.max(w,h)/2,pts=[[cx,cy],[cx-w/2,cy-h/2],[cx+w/2,cy-h/2],[cx-w/2,cy+h/2],[cx+w/2,cy+h/2]];
+  if(o.rot){const a=o.rot*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a);for(const p of pts){const dx=p[0]-cx,dy=p[1]-cy;p[0]=cx+dx*ca-dy*sa;p[1]=cy+dx*sa+dy*ca}}
+  if(pts.some(p=>tmWet(G,p[0],p[1],1.5)))continue;
+  if(sk.some(b=>cx+R>b[0]&&cx-R<b[0]+b[2]&&cy+R>b[1]&&cy-R<b[1]+b[3]))continue;
+  const col=o.cols?o.cols[Math.floor(tmHash(i+11,j+13)*o.cols.length)]:o.col;
+  out+=`<rect x="${TM_F(cx-w/2)}" y="${TM_F(cy-h/2)}" width="${w}" height="${h}" rx="${o.rx??1.5}" fill="${col}" opacity="${o.op??.6}"${o.rot?` transform="rotate(${o.rot} ${TM_F(cx)} ${TM_F(cy)})"`:""}/>`}
+ return out}
+const tmRoad=(d,w)=>`<path d="${d}" stroke="#C9CED1" stroke-width="${w||5}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`+(w&&w<5?"":`<path d="${d}" stroke="#F2F4F5" stroke-width="1" stroke-dasharray="5 5" fill="none"/>`);
+const tmRail=d=>`<path d="${d}" stroke="#7D838A" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#E9ECEE" stroke-width="1.4" stroke-dasharray="2.5 2.5" fill="none"/>`;
+const tmPalm=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 Q1 -6 0 -12" stroke="#8A5A2A" stroke-width="1.6" fill="none"/><path d="M0 -12 Q-6 -14 -8 -9 M0 -12 Q6 -14 8 -9 M0 -12 Q-4 -17 -7 -16 M0 -12 Q4 -17 7 -16" stroke="#3F8A4A" stroke-width="2" fill="none" stroke-linecap="round"/></g>`;
+const tmTree=(x,y,r=4,c="#7FAF6E")=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+const tmBoat=(x,y,c="#F2F4F5",k="#2F7A3E",flip)=>`<g transform="translate(${x} ${y})${flip?" scale(-1 1)":""}"><path d="M-12 1 Q-18 2 -22 1" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity=".8"/><path d="M-8 -2 H8 L6 3 H-6Z" fill="${k}"/><rect x="-5" y="-5.5" width="9" height="3.5" rx="1" fill="${c}"/></g>`;
+const tmOnion=(x,y,s,c)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-3" y="0" width="6" height="9" fill="#F2EBDD"/><path d="M0 -10 C4 -6 6 -3 4 0 H-4 C-6 -3 -4 -6 0 -10Z" fill="${c}"/><path d="M0 -10 V-14 M-1.5 -12.5 H1.5" stroke="#D7A744" stroke-width=".9"/></g>`;
+/* Per-country map designs. Coordinates share the original 360 x 250 frame, so every pin keeps its place. */
+const TM_DEF={
+ uk:{land:"#E3EADF",wc:"#7FB2E5",
+  water:[{t:"river",w:11,p:[[-6,168],[45,170],[95,170],[140,158],[183,150],[192,184],[206,220],[245,232],[272,204],[285,170],[315,156],[366,148]]},{t:"ell",c:[94,73],r:[10,3]}],
+  art(G){const B=tmBlocks(G,{x0:8,y0:10,x1:352,y1:240,sx:24,sy:20,w:16,h:10,wj:6,hj:4,col:"#C9C2B4",skip:[[62,54,62,36],[138,16,26,28],[52,206,86,40],[122,226,60,24],[318,190,40,32],[300,120,48,22],[148,196,26,28],[2,90,30,40]]});
+   const terr=(x,y,n)=>{let s="";for(let i=0;i<n;i++)s+=`<rect x="${x+i*7}" y="${y}" width="6.4" height="6" fill="#B8735A"/><path d="M${x+i*7} ${y} l3.2 -3 l3.2 3Z" fill="#7A4A3A"/>`;return s};
+   return `${rc(66,58,54,28,"#9FC58F",'rx="8"')}${tmTree(150,30,13,"#9FC58F")}<ellipse cx="335" cy="208" rx="16" ry="12" fill="#9FC58F"/><ellipse cx="18" cy="110" rx="12" ry="18" fill="#9FC58F" opacity=".8"/>${B}
+   ${TM_WATER(G)}
+   ${tmRoad("M0 110 Q90 102 175 118 T360 112")}${tmRoad("M150 0 Q160 60 168 130 T176 250")}${tmRoad("M0 205 Q110 196 200 204 T360 196")}${tmRoad("M228 0 Q242 120 228 250")}${tmRoad("M40 0 L90 250",3)}${tmRoad("M300 0 Q290 120 330 250",3)}${tmRoad("M300 131 H360",3)}
+   ${terr(58,218,10)}${terr(58,232,10)}${terr(126,238,7)}${terr(70,10,8)}${terr(236,12,7)}
+   <g fill="none" stroke="#9AA0A6" stroke-width="1.4"><circle cx="160" cy="214" r="10"/><path d="M160 204 V224 M150 214 H170 M153 207 L167 221 M167 207 L153 221" stroke-width=".6"/></g><path d="M156 228 L160 216 L164 228" stroke="#9AA0A6" stroke-width="1.4" fill="none"/>
+   <path d="M262 182 H302" stroke="#9AA0A6" stroke-width="2.4"/><rect x="267" y="176" width="5" height="11" fill="#B9AE97"/><rect x="290" y="176" width="5" height="11" fill="#B9AE97"/><path d="M267 176 l2.5 -3 l2.5 3Z M290 176 l2.5 -3 l2.5 3Z" fill="#6E7B8A"/>
+   <g transform="translate(314 125)"><rect x="0" y="0" width="18" height="11" rx="1.5" fill="#C8242B"/><rect x="2" y="2" width="14" height="2.6" fill="#E9F1F7"/><rect x="2" y="6" width="14" height="2.4" fill="#E9F1F7"/><circle cx="4" cy="11" r="1.7" fill="#2B2B2B"/><circle cx="14" cy="11" r="1.7" fill="#2B2B2B"/></g>`}},
+ usa:{land:"#E6E8E0",wc:"#78AEDF",
+  water:[{t:"river",w:15,p:[[86,-6],[78,30],[55,80],[25,125],[12,165],[-6,196]]},{t:"river",w:12,p:[[332,-6],[338,45],[322,95],[330,140],[342,180],[330,222],[312,256]]},{t:"ell",c:[262,24],r:[5,4]}],
+  art(G){const B=tmBlocks(G,{x0:-60,y0:-30,x1:420,y1:300,sx:22,sy:10,w:17,h:6,col:"#C2BDB2",gap:.08,rot:22,skip:[[248,6,30,56],[136,214,34,20]]});
+   const ax=x=>`M${x} 250 L${x+101} 0`,st=y=>`M0 ${y} L360 ${y+145}`;
+   return `${B}<rect x="253" y="9" width="18" height="50" rx="3" fill="#9FC58F" transform="rotate(22 262 34)"/>
+   ${TM_WATER(G)}
+   ${tmRoad(ax(120))}${tmRoad(ax(190))}${tmRoad(ax(255),3)}${tmRoad("M70 250 Q160 130 300 -6")}${tmRoad(st(-60))}${tmRoad(st(40),3)}${tmRoad(st(-140),3)}${tmRoad("M300 70 H360",3)}
+   <path d="M306 240 H344" stroke="#9AA0A6" stroke-width="2.6"/><rect x="313" y="232" width="3" height="10" fill="#8C7F6B"/><rect x="332" y="232" width="3" height="10" fill="#8C7F6B"/><path d="M306 240 Q314 231 314.5 232 Q324 245 333.5 232 Q334 231 344 240" stroke="#6B7178" stroke-width=".9" fill="none"/>
+   <g transform="translate(140 222)"><rect x="0" y="2" width="15" height="5" rx="1.5" fill="#F2C230"/><path d="M3 2 L5 -1.5 H11 L13 2Z" fill="#F2C230"/><rect x="5.8" y="-1" width="4.4" height="2.4" fill="#E9F1F7"/><rect x="6.5" y="-3" width="3" height="1.4" fill="#2B2B2B"/><circle cx="3.5" cy="7.2" r="1.6" fill="#2B2B2B"/><circle cx="11.5" cy="7.2" r="1.6" fill="#2B2B2B"/></g>
+   <g transform="translate(40 232)"><rect x="0" y="0" width="16" height="5" rx="1.5" fill="#F2C230"/><path d="M3 0 L5 -3 H11 L13 0Z" fill="#F2C230"/><circle cx="3.5" cy="5.2" r="1.5" fill="#2B2B2B"/><circle cx="12.5" cy="5.2" r="1.5" fill="#2B2B2B"/></g>`}},
+ france:{land:"#ECE6D8",wc:"#82B4E0",
+  water:[{t:"river",w:11,p:[[366,162],[328,160],[298,146],[275,138],[248,148],[222,152],[195,150],[160,158],[125,166],[80,174],[45,184],[-6,196]]},{t:"ell",c:[198,151],r:[22,8]}],
+  isles:[{p:[[180,151],[190,147.5],[202,149],[196,154],[184,154]]},{p:[[208,149],[214,147.5],[220,150],[213,152.5]]}],
+  art(G){const B=tmBlocks(G,{x0:10,y0:12,x1:352,y1:240,sx:20,sy:17,w:14,h:10,wj:5,hj:4,col:"#D3C7AE",stag:1,skip:[[62,64,36,36],[132,214,34,36]]});
+   let rad="";for(let i=0;i<12;i++){const a=i/12*Math.PI*2;rad+=`M${TM_F(80+Math.cos(a)*15)} ${TM_F(82+Math.sin(a)*15)} L${TM_F(80+Math.cos(a)*95)} ${TM_F(82+Math.sin(a)*95)} `}
+   return `${B}<rect x="136" y="216" width="28" height="34" fill="#A9C98F"/><ellipse cx="300" cy="44" rx="20" ry="13" fill="#A9C98F"/><rect x="250" y="196" width="40" height="18" rx="4" fill="#A9C98F"/>
+   ${TM_WATER(G)}
+   <path d="${rad}" stroke="#C9CED1" stroke-width="3" fill="none"/><circle cx="80" cy="82" r="15" stroke="#C9CED1" stroke-width="4" fill="none"/>${tmRoad("M0 128 Q120 112 220 120 T360 104")}${tmRoad("M160 0 Q168 90 150 250")}${tmRoad("M258 0 Q270 130 300 250",3)}${tmRoad("M95 92 L360 60",3)}
+   <path d="M75 86 V77 H85 V86 H82.6 V81.5 Q80 79 77.4 81.5 V86Z" fill="#E9DFC9" stroke="#B9AE97" stroke-width=".6"/>
+   <rect x="184" y="149" width="9" height="3" fill="#CFC2A6"/><rect x="185" y="146.4" width="2" height="3" fill="#B9AE97"/><rect x="190" y="146.4" width="2" height="3" fill="#B9AE97"/>
+   <g fill="#6B5A4A"><path d="M150 203 L148.6 214 L146 214 L143.6 228 L138 246 H143.5 Q150 236 156.5 246 H162 L156.4 228 L154 214 L151.4 214Z"/><rect x="144" y="227" width="12" height="2"/><rect x="146.6" y="213" width="6.8" height="1.6"/><rect x="149.5" y="198" width="1" height="6"/></g>`}},
+ japan:{land:"#E8E6E1",wc:"#7DB0DC",
+  water:[{t:"sea",p:[[128,258],[146,240],[190,229],[236,230],[268,238],[288,258]]},{t:"river",w:7,p:[[176,238],[178,196],[190,160],[199,126]]},{t:"ell",c:[262,40],r:[3,3]}],
+  art(G){const B=tmBlocks(G,{x0:6,y0:52,x1:356,y1:240,sx:11,sy:10,w:8,h:7,col:"#C9C6BE",gap:.1,skip:[[2,74,48,104],[240,26,40,26]]})+tmBlocks(G,{x0:160,y0:8,x1:356,y1:48,sx:11,sy:10,w:8,h:7,col:"#C9C6BE",seed:5,skip:[[240,26,40,26]]});
+   return `<path d="M58 48 L106 6 L156 48Z" fill="#9AABC2"/><path d="M106 6 L94 17 L100 15 L106 20 L112 15 L118 17Z" fill="#FFFFFF"/>${B}<rect x="4" y="76" width="44" height="100" rx="8" fill="#A7C796"/><rect x="242" y="28" width="38" height="24" rx="3" fill="#A7C796"/>
+   ${TM_WATER(G)}
+   <ellipse cx="190" cy="122" rx="118" ry="84" stroke="#7D838A" stroke-width="3.4" fill="none"/><ellipse cx="190" cy="122" rx="118" ry="84" stroke="#E9ECEE" stroke-width="1.4" stroke-dasharray="2.5 2.5" fill="none"/>
+   ${tmRail("M0 62 L360 44")}${tmRoad("M0 196 Q150 186 360 200",3)}${tmRoad("M120 0 Q130 130 110 250",3)}${tmRoad("M300 0 L250 250",3)}
+   <g transform="translate(212 49.6) rotate(-2.9)"><path d="M0 0 H30 Q38 0 40 3 H0Z" fill="#F7F7F2" stroke="#9AA0A6" stroke-width=".5"/><rect x="0" y="1.2" width="36" height="1" fill="#3E6FB0"/></g>
+   <g transform="translate(26 132)" fill="#C8242B"><rect x="-8" y="-9" width="16" height="2"/><rect x="-6.5" y="-6" width="13" height="1.4"/><rect x="-5.5" y="-8" width="1.6" height="14"/><rect x="3.9" y="-8" width="1.6" height="14"/></g>`}},
+ australia:{land:"#EDE6CF",wc:"#5FA7D9",
+  water:[{t:"river",w:15,p:[[366,158],[330,166],[300,170],[272,166],[244,161],[215,152],[190,145],[166,150]]},{t:"sea",p:[[366,-8],[346,-8],[342,40],[348,90],[340,130],[338,175],[346,215],[340,258],[366,258]]}],
+  art(G){const B=tmBlocks(G,{x0:10,y0:10,x1:330,y1:240,sx:20,sy:16,w:13,h:9,wj:4,hj:4,col:"#CFC4A8",stag:1,skip:[[302,134,40,22],[64,180,50,30]]});
+   return `${B}<ellipse cx="88" cy="196" rx="24" ry="14" fill="#A9C98F"/><ellipse cx="236" cy="132" rx="14" ry="8" fill="#A9C98F"/>
+   <path d="M341 120 Q333 175 339 230" stroke="#E9D59A" stroke-width="6" fill="none" stroke-linecap="round"/>
+   ${TM_WATER(G)}
+   <path d="M350 160 q3 -2 6 0 M352 196 q3 -2 6 0 M351 226 q3 -2 6 0" stroke="#FFFFFF" stroke-width="1" fill="none" opacity=".8"/>
+   ${tmRoad("M288 100 V230")}${tmRoad("M0 100 Q150 92 260 110 T340 104")}${tmRoad("M0 210 Q160 200 330 214",3)}${tmRoad("M130 0 Q140 120 120 250",3)}${tmRoad("M210 0 Q230 80 205 140",3)}
+   <path d="M288 152 Q307 169 288 186" stroke="#6B7178" stroke-width="2.2" fill="none"/><path d="M288 158 h5 M288 164 h7 M288 170 h7.5 M288 176 h6 M288 182 h3" stroke="#6B7178" stroke-width=".8"/>
+   <g transform="translate(318 152)"><path d="M0 4 L18 4 L16 7 H2Z" fill="#E7DCC4"/><path d="M2 4 Q2 -6 9 -8 Q6 -2 7 4Z M7 4 Q8 -5 14 -6 Q12 -1 13 4Z M12 4 Q13 -2 18 -2 Q17 1 17 4Z" fill="#FFFFFF" stroke="#B9B2A2" stroke-width=".5"/></g>
+   ${tmBoat(205,150,"#F2E6B8","#2F7A3E")}${tmBoat(258,163,"#F2E6B8","#2F7A3E",1)}${tmBoat(354,118,"#FFFFFF","#3E6FB0")}`}},
+ india:{land:"#EFE3CC",wc:"#5FA3D6",
+  water:[{t:"sea",p:[[-8,-8],[14,-8],[12,40],[18,70],[38,96],[46,125],[36,152],[16,178],[8,205],[6,258],[-8,258]]},{t:"sea",p:[[58,258],[66,244],[120,238],[180,240],[240,238],[275,246],[290,258]]}],
+  art(G){const B=tmBlocks(G,{x0:26,y0:10,x1:352,y1:236,sx:15,sy:13,w:11,h:8,wj:3,col:"#D4C3A2",cols:["#D4C3A2","#D9B8A0","#C9C2B4","#E0C9A6"],gap:.1,skip:[[200,40,30,26],[250,150,32,22]]});
+   return `${B}<ellipse cx="214" cy="54" rx="16" ry="11" fill="#A9C98F"/><rect x="250" y="152" width="30" height="18" rx="4" fill="#A9C98F"/>
+   ${TM_WATER(G)}
+   <path d="M22 66 Q40 90 52 120 Q48 150 26 178" stroke="#C9CED1" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M22 66 Q40 90 52 120 Q48 150 26 178" stroke="#F6E7A8" stroke-width="1" stroke-dasharray="1.5 4" fill="none"/>
+   ${tmRail("M150 -6 Q140 120 118 256")}${tmRail("M262 -6 Q248 120 256 256")}${tmRoad("M52 120 Q200 108 360 116")}${tmRoad("M20 30 Q200 20 360 34",3)}${tmRoad("M60 200 Q200 190 360 205",3)}
+   <g transform="translate(148.5 24) rotate(4)"><rect x="-3" y="0" width="6" height="11" rx="1" fill="#8E2C3C"/><rect x="-3" y="12" width="6" height="11" rx="1" fill="#8E2C3C"/><rect x="-3" y="24" width="6" height="11" rx="1" fill="#8E2C3C"/><rect x="-3" y="4" width="6" height="2" fill="#F2C230"/><rect x="-3" y="16" width="6" height="2" fill="#F2C230"/><rect x="-3" y="28" width="6" height="2" fill="#F2C230"/></g>
+   ${tmPalm(30,80)}${tmPalm(50,108)}${tmPalm(55,140)}${tmPalm(40,168)}${tmPalm(90,236)}${tmPalm(206,234)}${tmPalm(250,236)}
+   ${tmBoat(150,246,"#F6D44A","#C0453A")}${tmBoat(222,247,"#7FB2E5","#2F7A3E",1)}`}},
+ nigeria:{land:"#E9E2C8",wc:"#6FA9BC",
+  water:[{t:"sea",p:[[-8,74],[20,76],[42,92],[44,120],[46,150],[36,178],[14,192],[-8,192]]},{t:"river",w:9,p:[[40,164],[75,168],[112,163],[142,158],[180,152],[205,146]]},{t:"sea",p:[[-8,258],[-8,246],[60,242],[150,244],[250,242],[330,246],[368,242],[368,258]]}],
+  art(G){const B=tmBlocks(G,{x0:10,y0:10,x1:352,y1:236,sx:17,sy:14,w:12,h:8,wj:4,col:"#D2C2A0",cols:["#D2C2A0","#C9B79A","#D8C8A8"],gap:.14,skip:[[150,196,60,34]]});
+   let tw="";[[154,206,7,22],[164,200,8,28],[175,208,6,20],[184,202,7,26],[194,210,6,18]].forEach(([x,y,w,h])=>{tw+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#8FA3B5"/><rect x="${x+1}" y="${y+2}" width="${w-2}" height="1" fill="#D8E4EE"/><rect x="${x+1}" y="${y+6}" width="${w-2}" height="1" fill="#D8E4EE"/>`});
+   return `${B}<path d="M0 238 Q180 230 360 238" stroke="#E9D59A" stroke-width="7" fill="none"/>
+   ${TM_WATER(G)}
+   ${tmRoad("M34 40 Q20 130 30 236")}<path d="M27 82 v4 M25 100 v4 M24 118 v4 M24 136 v4 M25 154 v4 M26 172 v4" stroke="#7D838A" stroke-width="2"/>${tmRoad("M120 120 V236")}${tmRoad("M0 110 Q160 96 360 112")}${tmRoad("M30 225 Q180 216 360 228",3)}${tmRoad("M210 0 Q230 90 210 150",3)}${tmRoad("M300 0 Q280 120 310 236",3)}
+   ${tw}
+   <g transform="translate(296 146)"><rect x="0" y="0" width="16" height="7" rx="2" fill="#F2C230"/><rect x="0" y="3" width="16" height="1.2" fill="#2B2B2B"/><rect x="2" y="1" width="3" height="1.6" fill="#E9F1F7"/><rect x="6.5" y="1" width="3" height="1.6" fill="#E9F1F7"/><rect x="11" y="1" width="3" height="1.6" fill="#E9F1F7"/><circle cx="3.5" cy="7.4" r="1.5" fill="#2B2B2B"/><circle cx="12.5" cy="7.4" r="1.5" fill="#2B2B2B"/></g>
+   ${tmPalm(80,236)}${tmPalm(110,234)}${tmPalm(232,234)}${tmPalm(276,236)}${tmBoat(20,130,"#F2EBDD","#8A5A2A")}${tmBoat(100,166,"#F2EBDD","#3E6FB0",1)}`}},
+ russia:{land:"#E6E9EC",wc:"#86AFCF",
+  water:[{t:"river",w:11,p:[[-6,100],[30,95],[60,88],[100,118],[122,128],[150,160],[165,200],[190,226],[240,226],[268,198],[285,166],[330,150],[366,140]]}],
+  art(G){const B=tmBlocks(G,{x0:10,y0:10,x1:352,y1:240,sx:22,sy:18,w:16,h:11,wj:5,hj:3,col:"#C7C3BC",skip:[[174,122,46,40],[200,186,40,30],[90,212,42,32]]});
+   return `${B}<ellipse cx="218" cy="200" rx="22" ry="12" fill="#A9C49B"/><ellipse cx="40" cy="150" rx="22" ry="16" fill="#A9C49B"/>
+   ${TM_WATER(G)}
+   <g fill="none" stroke="#C9CED1"><circle cx="195" cy="142" r="44" stroke-width="3"/><circle cx="195" cy="142" r="82" stroke-width="5"/><circle cx="195" cy="142" r="132" stroke-width="4"/></g><circle cx="195" cy="142" r="82" stroke="#F2F4F5" stroke-width="1" stroke-dasharray="5 5" fill="none"/>
+   ${tmRoad("M195 0 V60 M195 224 V250 M0 142 H113 M277 142 H360",3)}${tmRoad("M60 0 L140 84 M330 0 L253 84 M80 250 L137 200",3)}
+   <path d="M178 132 L214 128 L208 160 L182 158Z" fill="#EDE2DA" stroke="#B23A2E" stroke-width="2.4" stroke-linejoin="round"/>
+   ${tmOnion(190,144,.8,"#D7A744")}${tmOnion(198,140,1,"#D7A744")}${tmOnion(206,146,.75,"#D7A744")}
+   <g>${tmOnion(100,232,.8,"#3E8E5A")}${tmOnion(108,228,1.05,"#C8242B")}${tmOnion(116,233,.8,"#3E6FB0")}${tmOnion(124,231,.7,"#D7A744")}</g>`}}
+};
+/* Water and islands, drawn in the country's colours */
+function TM_WATER(G){const D=G.D;let s="";for(const w of G.water){if(w.t==="river")s+=`<path d="${w.d}" stroke="${D.wc}" stroke-width="${w.w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;else if(w.t==="sea")s+=`<path d="${w.d}" fill="${D.wc}"/>`;else s+=`<ellipse cx="${w.c[0]}" cy="${w.c[1]}" rx="${w.r[0]}" ry="${w.r[1]}" fill="${D.wc}"/>`}
+ for(const i of G.isles)s+=`<path d="${i.d}" fill="${D.land}"/>`;return s}
+/* A little picture of your kind of home, beside the home pin */
+function tmHomeArt(code,G){try{const h=homeSpot(),p=tmNudge(code,h[0],h[1]),art=(HT[S.home.t]||{}).art||"",x=p[0]+13,y=p[1]-2;if(x>350||tmWet(G,x+4,y+4,1))return "";
+ if(/block|tower|loft/.test(art))return `<rect x="${x}" y="${y-8}" width="8" height="15" fill="#A9A399"/><path d="M${x+2} ${y-5} h4 M${x+2} ${y-1} h4 M${x+2} ${y+3} h4" stroke="#E9F1F7" stroke-width="1.4"/>`;
+ if(/terrace|georgian|mews/.test(art))return [0,6,12].map(d=>`<rect x="${x+d}" y="${y}" width="5.6" height="6" fill="#B8735A"/><path d="M${x+d} ${y} l2.8 -3 l2.8 3Z" fill="#7A4A3A"/>`).join("");
+ return `<ellipse cx="${x+5}" cy="${y+6}" rx="10" ry="4" fill="#9FC58F"/><rect x="${x}" y="${y-1}" width="9" height="6" fill="#D9C9A8"/><path d="M${x-1} ${y-1} l5.5 -5 l5.5 5Z" fill="#B5582A"/>`}catch(e){return ""}}
+function tmArt(code){const G=tmGeo(code);return rc(0,0,360,250,G.D.land)+G.D.art(G)+tmHomeArt(code,G)}
+
+/* The map's pins: every place in your life (full colour) and places you could go (small and faded).
+   Pins never sit in water, never overlap, filter by type, and tap through to the right screen. The map zooms and pans. */
+let tmFilt="all",tmDragAt=0;const TMZ={z:1,x:0,y:0};
+const TM_CATS=[["all","All"],["people","People"],["services","Services"],["shops","Shops"],["fun","Fun"]];
+const TM_SPOT={gym:[276,84],clinic:[140,52],club:[176,86],hustle:[84,128],estate:[246,196],dealer:[300,150],shops:[190,200],travel:[236,30],pub:[110,150],doctor:[118,96],park:[70,80]};
+const TM_HOBBY={run:[52,160,"Running track","🏃"],golf:[22,186,"Golf course","⛳"],band:[214,36,"Rehearsal studio","🎸"],chess:[150,96,"Chess club","♟"],paint:[108,40,"Art studio","🎨"],bake:[268,212,"Village hall","🧁"]};
+function tmPinList(){const L=[],add=o=>{o.r=o.r||(o.could||o.small?8:11);L.push(o);return o};
+ const h=homeSpot(),w=WORK_SPOT[S.path]||WORK_SPOT.bank,seed=(n,k)=>[60+(seedOf(n+k)%240),60+(seedOf(n+k+"y")%150)];
+ add({x:h[0],y:h[1],c:"#D7A744",g:"H",n:S.home.name||"Home",sub:S.home.area||h[2],go:"home",cat:"home"});
+ if(!S.over)add({x:w[0],y:w[1],c:"#1D5FA8",g:"W",n:S.bank,sub:w[2],go:"desk",cat:"services",work:1});
+ if(dependants()&&S.children.some(k=>kidAge(k)>=4))add({x:130,y:176,c:"#2F7A3E",g:"S",n:"School",sub:S.school?"Private school":"Local school",go:"family",cat:"people"});
+ if((S.parentsAlive??2)>0&&S.home.t!=="parents")add({x:318,y:190,c:"#B9714E",g:"P",n:"Mum and Dad",sub:"Your parents",go:"family",cat:"people"});
+ if(S.care)add({x:300,y:228,c:"#8C8A6E",g:"C",n:"Care home",sub:"Your mum",go:"family",cat:"people"});
+ let hs="";try{hs=healthSec()}catch(e){}const docTo=hs?["you","@Your health"]:["you","@Lifestyle"];
+ if(S.sick>0)add({x:118,y:96,c:"#B3262E",g:"+",n:"Hospital",sub:"Recovering",go:docTo[0],to:docTo[1],cat:"services"});
+ try{if(inLove()&&S.rel&&S.rel.st==="dating"&&S.rel.name){const p=seed(S.rel.name,"rel");add({x:p[0],y:p[1],c:"#D0506E",g:"♥",n:S.rel.name,sub:"Your partner",go:"family",cat:"people"})}}catch(e){}
+ if(S.friend){const fx=60+(seedOf(S.friend.n)%240),fy=60+(seedOf(S.friend.n+"y")%150);add({x:fx,y:fy,c:"#E58BB5",g:"F",n:S.friend.n,sub:"Best friend",go:"friends",cat:"people"})}
+ if(S.biz)add({x:220,y:196,c:"#9C88B8",g:"B",n:S.biz.name,sub:"Your business",go:"money",cat:"services"});
+ const life=S.life||{};
+ if(life.gym)add({x:TM_SPOT.gym[0],y:TM_SPOT.gym[1],c:"#3E8E7A",g:"🏋",e:1,n:"The gym",sub:"Your membership",go:"lifestyle",to:"@Lifestyle",cat:"fun"});
+ if(life.botox||life.bio||life.longevity||S.surg)add({x:TM_SPOT.clinic[0],y:TM_SPOT.clinic[1],c:"#6F8FC0",g:"💉",e:1,n:life.longevity?"Longevity clinic":life.bio?"Biohacking clinic":"The clinic",sub:life.botox||S.surg?"Looking after your looks":"Looking after you",go:"lifestyle",to:"@Lifestyle",cat:"services"});
+ if(life.club)add({x:TM_SPOT.club[0],y:TM_SPOT.club[1],c:"#7A5A8C",g:"🍸",e:1,n:"Members' club",sub:"Drinks and contacts",go:"lifestyle",to:"@Lifestyle",cat:"fun"});
+ try{const c=typeof shCur==="function"&&shCur();if(c&&typeof HUSTLES!=="undefined"&&HUSTLES[c.id])add({x:TM_SPOT.hustle[0],y:TM_SPOT.hustle[1],c:"#B8862B",g:"💼",e:1,n:HUSTLES[c.id].n,sub:"Your side hustle",go:"people",to:"@Side hustle",cat:"services"})}catch(e){}
+ try{const hb=S.hobby&&HOBBIES[S.hobby.k];if(hb){const s=TM_HOBBY[S.hobby.k]||[80,60,"Your hobby","★"];add({x:s[0],y:s[1],c:"#4E8A4A",g:s[3],e:1,n:s[2],sub:hb.n,go:"people",to:"@"+hb.n,cat:"fun"})}}catch(e){}
+ try{const fr=alivePeople().filter(p=>p.bond>=50&&["friend","acq","mentor","contact","exboss","exrival","client"].includes(p.role)&&(!S.friend||p.n!==S.friend.n)).sort((a,b)=>b.bond-a.bond).slice(0,4);
+  for(const p of fr){const q=seed(p.n,"pp");add({x:q[0],y:q[1],c:"#C77BA5",g:(p.n.replace(/^(the|a|an|two) /i,"")[0]||"?").toUpperCase(),small:1,n:p.n,sub:(typeof ROLE_N!=="undefined"&&ROLE_N[p.role])||"Friend",go:"people",cat:"people"})}}catch(e){}
+ const could=(k,o)=>add(Object.assign({x:TM_SPOT[k][0],y:TM_SPOT[k][1],could:1,e:1},o));
+ could("estate",{c:"#6E7F96",g:"🔑",n:"Estate agent",sub:"Homes for sale",go:"home",to:"#estate",cat:"services"});
+ if(!S.sick)could("doctor",{c:"#B3262E",g:"⚕",n:"Doctor's surgery",sub:"Your health",go:docTo[0],to:docTo[1],cat:"services"});
+ could("dealer",{c:"#6E7F96",g:"🚗",n:"Car dealership",sub:"Transport",go:"home",to:"#showroom",cat:"shops"});
+ could("shops",{c:"#C77B3A",g:"🛍",n:"The shops",sub:"Treat yourself",go:"things",to:"@Treat yourself",cat:"shops"});
+ could("travel",{c:"#3E8EB8",g:"✈",n:"Travel agent",sub:"Holidays and getaways",go:"people",to:"@Free time",fg:"Getaways",cat:"fun"});
+ could("pub",{c:"#B5823A",g:"🍺",n:"The pub",sub:"Out and about",go:"people",to:"@Free time",fg:"Out and about",cat:"fun"});
+ could("park",{c:"#4E8A4A",g:"🌳",n:"The park",sub:"Fresh air",go:"people",to:"@Free time",fg:"Out and about",cat:"fun"});
+ return L}
+/* Keep pins on land, inside the frame and apart from each other (in priority order) */
+function tmPlace(code,pins){const G=tmGeo(code),done=[];
+ for(const p of pins){const r=p.r;let[x,y]=tmNudge(code,Math.round(p.x),Math.round(p.y));
+  const ok=(x,y)=>x>=r+2&&x<=358-r&&y>=r+2&&y<=248-r&&!tmWet(G,x,y,3)&&done.every(q=>Math.hypot(q.x-x,q.y-y)>=q.r+r+1.5);
+  if(!ok(x,y)){let f=false;for(let d=3;d<=90&&!f;d+=3)for(let a=0;a<16&&!f;a++){const t=a/16*Math.PI*2+(d%2?.2:0),nx=Math.round(x+Math.cos(t)*d),ny=Math.round(y+Math.sin(t)*d);if(ok(nx,ny)){x=nx;y=ny;f=true}}}
+  p.x=x;p.y=y;done.push(p)}
+ return pins}
+const TM_N=n=>Math.round(n*100)/100;
+function tmClamp(){TMZ.z=clamp(TMZ.z||1,1,3);const w=360/TMZ.z,h=250/TMZ.z;TMZ.x=clamp(TMZ.x||0,0,360-w);TMZ.y=clamp(TMZ.y||0,0,250-h)}
+const tmVB=()=>`${TM_N(TMZ.x)} ${TM_N(TMZ.y)} ${TM_N(360/TMZ.z)} ${TM_N(250/TMZ.z)}`;
+const tmPinT=(x,y)=>`translate(${x} ${y}) scale(${(1/TMZ.z).toFixed(3)})`;
+function tmZoomAt(f,cx,cy){const z0=TMZ.z,z1=clamp(z0*f,1,3);if(Math.abs(z1-z0)<1e-4)return false;const k=z0/z1;TMZ.x=cx-(cx-TMZ.x)*k;TMZ.y=cy-(cy-TMZ.y)*k;TMZ.z=z1;tmClamp();return true}
+function tmApply(svg){if(!svg)return;tmClamp();svg.setAttribute("viewBox",tmVB());svg.style.touchAction=TMZ.z>1.01?"none":"pan-y";
+ svg.querySelectorAll(".town-pin").forEach(g=>g.setAttribute("transform",tmPinT(g.dataset.x,g.dataset.y)));
+ const box=svg.closest(".tm-wrap");if(box){const b=k=>box.querySelector(`[data-z="${k}"]`);if(b("in"))b("in").disabled=TMZ.z>=2.99;if(b("out"))b("out").disabled=TMZ.z<=1.01;if(b("reset"))b("reset").disabled=TMZ.z<=1.01}}
+function tmToMap(svg,cx,cy){const r=svg.getBoundingClientRect();return[TMZ.x+(cx-r.left)/Math.max(1,r.width)*360/TMZ.z,TMZ.y+(cy-r.top)/Math.max(1,r.height)*250/TMZ.z]}
+function tmTown(){
+ const code=TM_DEF[S&&S.country]?S.country:"uk",all=tmPlace(code,tmPinList());tmClamp();
+ if(!TM_CATS.some(c=>c[0]===tmFilt))tmFilt="all";
+ const vis=all.filter(p=>tmFilt==="all"||p.cat===tmFilt||p.cat==="home"),home=all[0],work=all.find(p=>p.work);
+ const route=work&&vis.includes(work)?`<path d="M${home.x} ${home.y} L${work.x} ${work.y}" stroke="#D7A744" stroke-width="2.5" stroke-dasharray="4 4" fill="none" vector-effect="non-scaling-stroke"/>`:"";
+ const pin=p=>{const fs=p.e?(p.r>=11?11:8.5):p.r>=11?11:8.5,ty=p.e?fs*.36:fs*.36;
+  return `<g class="town-pin${p.could?" tm-could":""}" data-act="townpin" data-go="${p.go}"${p.to?` data-to="${esc(p.to)}"`:""}${p.fg?` data-fg="${esc(p.fg)}"`:""} data-x="${p.x}" data-y="${p.y}" transform="${tmPinT(p.x,p.y)}" tabindex="0" role="button" aria-label="${esc(p.n)}, ${esc(p.sub)}"><circle cx="0" cy="0" r="${p.r}" fill="${p.c}" stroke="#fff" stroke-width="${p.could?1.5:2}"/><text x="0" y="${TM_N(ty)}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#fff" font-family="Arial,sans-serif">${p.g}</text></g>`};
+ const pins=vis.filter(p=>p.could).map(pin).join("")+vis.filter(p=>!p.could&&p.cat!=="home").map(pin).join("")+pin(home);
+ const cnt=k=>all.filter(p=>k==="all"||p.cat===k).length;
+ const chips=TM_CATS.map(([k,n])=>`<button class="${tmFilt===k?"on":""}" data-act="tmfilt" data-k="${k}" aria-pressed="${tmFilt===k}">${n} <span class="tp-n">${cnt(k)}</span></button>`).join("");
+ const key=vis.filter(p=>!p.could).concat(vis.filter(p=>p.could)).map(p=>`<li class="${p.could?"tm-ck":""}">${p.e?`<span class="tm-ic" aria-hidden="true">${p.g}</span>`:`<span class="dot" style="background:${p.c}"></span>`}<b>${esc(p.n)}</b> <span class="sub">${esc(p.sub)}</span></li>`).join("");
+ const city=S.abroad?S.abroad.city:((COUNTRIES[code]||{}).city||"London");
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Map</h2><span class="label">${esc(city)}</span></div>
+  ${S.abroad?`<div class="note">You're living in ${esc(S.abroad.city)}. The map shows home, waiting for you.</div>`:""}
+  <div class="tp-subs tm-filt" role="group" aria-label="Show on the map">${chips}</div>
+  <div class="tm-wrap"><svg class="town-map" viewBox="${tmVB()}" role="img" aria-label="Map of your town" style="touch-action:${TMZ.z>1.01?"none":"pan-y"}">${tmArt(code)}${route}${pins}</svg>
+  <div class="tm-zoom"><button type="button" data-act="tmzoom" data-z="in" aria-label="Zoom in" ${TMZ.z>=2.99?"disabled":""}>+</button><button type="button" data-act="tmzoom" data-z="out" aria-label="Zoom out" ${TMZ.z<=1.01?"disabled":""}>−</button><button type="button" data-act="tmzoom" data-z="reset" aria-label="Reset the map" ${TMZ.z<=1.01?"disabled":""}>⟲</button></div></div>
+  <ul class="town-key">${key}</ul>
+  <p class="hint" style="margin:8px 0 0">${!S.over?`Your commute: about ${commuteMins()} minutes each way. `:""}Tap a pin to go there. Faded pins are places you could go. Pinch, scroll or use + and − to zoom.</p></div>`}
+{const _ts=townSec;townSec=function(){try{return tmTown()}catch(e){try{console.warn("map",e)}catch(x){}return _ts.apply(this,arguments)}}}
+XCLICK.tmfilt=t=>{tmFilt=t.dataset.k||"all";render()};
+XCLICK.tmzoom=t=>{const svg=t.closest(".tm-wrap")&&t.closest(".tm-wrap").querySelector(".town-map");const v=t.dataset.z;
+ if(v==="reset"){TMZ.z=1;TMZ.x=0;TMZ.y=0}else tmZoomAt(v==="in"?1.5:1/1.5,TMZ.x+180/TMZ.z,TMZ.y+125/TMZ.z);tmApply(svg)};
+/* Tapping a pin: go to the right tab, open the right panel and scroll it into view. A drag never counts as a tap. */
+XCLICK.townpin=t=>{if(Date.now()-tmDragAt<400)return;const g=t.dataset.go||"home";if(g==="desk"){setTab("desk");return}
+ const to=t.dataset.to||"",fg=t.dataset.fg;
+ if(fg)try{freeGrp=fg}catch(e){}
+ if(to[0]==="#")try{openShops[to.slice(1)]=true}catch(e){}
+ if(to==="@Treat yourself")try{sxCat="all"}catch(e){}
+ lifeTab=g;try{localStorage.setItem("ftb-lifetab",g)}catch(e){}setTab("life");renderLife();
+ let el=null;try{if(to[0]==="#"){el=document.getElementById(to.slice(1));if(el&&"open" in el)el.open=true}
+  else if(to[0]==="@"){const want=to.slice(1).toLowerCase();const h=[...document.querySelectorAll("#pane-life .pane-sec h2")].find(x=>x.textContent.trim().toLowerCase().startsWith(want));el=h&&h.closest(".pane-sec")}}catch(e){}
+ el=el||document.querySelector(".subtabs");if(el&&el.scrollIntoView)el.scrollIntoView({block:"start",behavior:"smooth"})};
+/* Zoom and pan: wheel or trackpad, pinch, and one-finger drag once zoomed in. At 1x the page scrolls as normal. */
+if(typeof document!=="undefined"&&document.addEventListener&&typeof window!=="undefined"&&!window.__tmGest){window.__tmGest=1;
+ const pts=new Map();let moved=false,down=null;
+ const svgOf=e=>e&&e.target&&e.target.closest?e.target.closest(".town-map"):null;
+ document.addEventListener("wheel",e=>{const svg=svgOf(e);if(!svg)return;const f=Math.exp(-e.deltaY*(e.ctrlKey?.01:.0015));const[cx,cy]=tmToMap(svg,e.clientX,e.clientY);if(tmZoomAt(f,cx,cy)){e.preventDefault();tmApply(svg)}},{passive:false});
+ document.addEventListener("pointerdown",e=>{const svg=svgOf(e);if(!svg||(e.pointerType==="mouse"&&e.button!==0))return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY});if(pts.size===1){moved=false;down=svg}});
+ document.addEventListener("pointermove",e=>{const p=pts.get(e.pointerId);if(!p||!down||!down.isConnected)return;const svg=down,r=svg.getBoundingClientRect(),k=360/TMZ.z/Math.max(1,r.width);
+  if(pts.size===1){if(TMZ.z<=1.01)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+   if(!moved&&Math.hypot(e.clientX-p.sx,e.clientY-p.sy)>5){moved=true;try{svg.setPointerCapture(e.pointerId)}catch(x){}}
+   if(moved){TMZ.x-=dx*k;TMZ.y-=dy*k;tmApply(svg);e.preventDefault()}return}
+  const[a,b]=[...pts.values()];const d0=Math.hypot(a.x-b.x,a.y-b.y),m0=[(a.x+b.x)/2,(a.y+b.y)/2];p.x=e.clientX;p.y=e.clientY;
+  const d1=Math.hypot(a.x-b.x,a.y-b.y),m1=[(a.x+b.x)/2,(a.y+b.y)/2];if(!moved){moved=true;try{svg.setPointerCapture(e.pointerId)}catch(x){}}
+  const c=tmToMap(svg,m1[0],m1[1]);if(d0>0)tmZoomAt(d1/d0,c[0],c[1]);TMZ.x-=(m1[0]-m0[0])*360/TMZ.z/Math.max(1,r.width);TMZ.y-=(m1[1]-m0[1])*360/TMZ.z/Math.max(1,r.width);tmApply(svg);e.preventDefault()},{passive:false});
+ const up=e=>{if(!pts.has(e.pointerId))return;pts.delete(e.pointerId);if(moved)tmDragAt=Date.now();if(!pts.size){down=null;moved=false}};
+ document.addEventListener("pointerup",up);document.addEventListener("pointercancel",up);
+ window.addEventListener("click",e=>{if(Date.now()-tmDragAt<400&&svgOf(e)){e.stopPropagation();e.preventDefault()}},true)}
+
+/* ST: Treat yourself. A much bigger shop, grouped like the transport shop.
+   Item fields: g group, st stress relief on purchase, home/hl/rep one-off boosts, ms/mh/mf/mr monthly stress relief, home life, health, reputation while owned,
+   nov months before the novelty wears off (fl = what's left after), rch energy recharge a month, once = a treat or experience (not kept),
+   en energy it costs (ec category), back energy it gives back, cd months before you can book it again, life = once in a lifetime.
+   S.shopX = {key:[months booked]}, S.shopBuys = [months of recent purchases] */
+const SX_GROUPS=[["treats","Treats"],["exp","Experiences"],["tech","Tech & gadgets"],["home","Home comfort"],["well","Wellbeing"],["hobby","Hobbies & kit"],["style","Style"],["coll","Collectables"],["lux","Big luxuries"]];
+/* The original eight keep their stories; they gain a group and a gentle lift */
+Object.entries({watch:{g:"style",rep:1,mr:.03},art:{g:"coll",ms:.15,nov:24,fl:.3},guitar:{g:"hobby",ms:.25,nov:24,fl:.4},wine:{g:"coll",st:1},shirt:{g:"coll",st:1},telescope:{g:"hobby",ms:.2,nov:18,fl:.3},horse:{g:"lux",ms:.2,nov:24,fl:.4,rep:1},boat:{g:"lux",ms:.4,mh:.1,nov:24,fl:.4}})
+ .forEach(([k,x])=>{const d=SHOP.find(i=>i.k===k);if(d)for(const f in x)if(d[f]==null)d[f]=x[f]});
+SHOP.push(
+ /* Treats: small, repeatable, gone by next month */
+ {k:"sx_choc",g:"treats",once:1,cd:1,n:"A box of posh chocolates",d:"Hand-made, individually named, gone by Tuesday.",price:20,st:2,o:"You were going to share them. You didn't."},
+ {k:"sx_flowers",g:"treats",once:1,cd:1,n:"A huge bunch of flowers",d:"The whole house smells like a garden for a week.",price:35,st:1,home:2,o:"Every time you walk past them, you smile a little."},
+ {k:"sx_takeaway",g:"treats",once:1,cd:1,n:"A slap-up takeaway",d:"Far too much food, eaten on the sofa in your comfiest clothes.",price:45,st:2,home:1,o:"You order enough for six. There's no shame in it."},
+ {k:"sx_dinner",g:"treats",once:1,cd:1,n:"Dinner somewhere smart",d:"Linen napkins, tiny portions and a waiter who calls you 'madam' or 'sir' either way.",price:180,st:4,home:3,en:8,o:"Three courses, no washing up and a proper conversation."},
+ {k:"sx_tasting",g:"treats",once:1,cd:3,n:"A twelve-course tasting menu",d:"Foam, smoke and a carrot served four ways.",price:450,st:5,home:2,rep:1,en:10,o:"Course nine was a single pea. It was the best pea of your life."},
+ /* Experiences: one-offs that cost energy, or give some back */
+ {k:"sx_massage",g:"exp",once:1,cd:1,n:"A deep-tissue massage",d:"An hour of someone finding every knot your job put there.",price:80,st:4,hl:1,back:6,o:"You walk out about two inches taller."},
+ {k:"sx_cookery",g:"exp",once:1,cd:3,n:"A cookery masterclass",d:"A whole day with a proper chef and very sharp knives.",price:140,st:3,hl:1,home:2,en:10,o:"You can now make a sauce you can't pronounce."},
+ {k:"sx_gig",g:"exp",once:1,cd:2,n:"Gig tickets, near the front",d:"The band you loved at sixteen, still going.",price:150,st:5,home:2,en:12,o:"You sing every word. Your voice is gone by Monday."},
+ {k:"sx_spa",g:"exp",once:1,cd:2,n:"A spa day",d:"Robes, steam, cucumber water and nobody needing anything from you.",price:220,st:7,en:4,back:14,o:"You fall asleep in the relaxation room and nobody minds."},
+ {k:"sx_musical",g:"exp",once:1,cd:3,n:"Best seats at a big musical",d:"Front stalls. You can see the spit.",price:260,st:5,home:2,en:10,o:"You hum the big number for a week."},
+ {k:"sx_balloon",g:"exp",once:1,cd:12,n:"A hot-air balloon ride",d:"Dawn, champagne and a field full of startled cows.",price:300,st:6,en:12,o:"The whole county laid out below you, silent and gold."},
+ {k:"sx_track",g:"exp",once:1,cd:12,n:"A supercar track day",d:"Six laps in something low, loud and Italian-ish.",price:600,st:6,rep:1,en:14,o:"The instructor stops gripping the door handle by lap four."},
+ {k:"sx_retreat",g:"exp",once:1,cd:6,n:"A silent retreat weekend",d:"No phone, no talking, a lot of lentils.",price:900,st:12,en:6,back:20,o:"Two days of silence. You hear yourself think for the first time in years."},
+ {k:"sx_chef",g:"exp",once:1,cd:6,n:"A private chef for a dinner party",d:"Someone else cooks for your friends while you take the credit.",price:1500,st:4,home:6,rep:2,en:14,ec:"friends",o:"Your friends are still talking about the pudding."},
+ {k:"sx_space",g:"exp",once:1,life:1,n:"A trip to the edge of space",d:"Ten minutes of weightlessness and the curve of the Earth.",price:350000,st:10,rep:6,en:18,o:"The planet, small and blue and very quiet. You come back a little changed."},
+ /* Tech & gadgets: a big lift that fades fast, and they lose value */
+ {k:"sx_buds",g:"tech",n:"Noise-cancelling earbuds",d:"The commute goes quiet. Bliss.",price:180,st:1,ms:.25,nov:6,fl:.2,drift:-.03},
+ {k:"sx_console",g:"tech",n:"A games console",d:"Just one more go. It's half past one.",price:450,st:2,ms:.3,nov:10,fl:.3,rch:2,drift:-.025},
+ {k:"sx_vr",g:"tech",n:"A VR headset",d:"Amazing for a fortnight, then a very expensive dust magnet.",price:550,st:2,ms:.25,nov:4,fl:.1,drift:-.04},
+ {k:"sx_tablet",g:"tech",n:"A top-of-the-range tablet",d:"Thinner than your patience and twice as bright.",price:900,st:1,ms:.2,nov:8,fl:.2,drift:-.03},
+ {k:"sx_drone",g:"tech",n:"A camera drone",d:"Your house, from above. Your neighbours, less keen.",price:1100,st:2,ms:.25,nov:8,fl:.2,drift:-.03},
+ {k:"sx_tv",g:"tech",n:"A wall-sized telly",d:"Film nights will never be the same.",price:2500,st:2,home:2,ms:.3,mh:.08,nov:12,fl:.3,drift:-.025},
+ /* Home comfort: slower to wear off */
+ {k:"sx_robovac",g:"home",n:"A robot hoover",d:"One fewer thing to argue about. The cat is furious.",price:350,ms:.2,mh:.08,nov:12,fl:.5,drift:-.03},
+ {k:"sx_coffee",g:"home",n:"A bean-to-cup coffee machine",d:"Café coffee at home, and a lot of descaling.",price:700,st:1,ms:.2,nov:12,fl:.4,drift:-.02},
+ {k:"sx_mattress",g:"home",n:"A seriously good mattress",d:"You'll wonder how you ever slept before.",price:1400,ms:.35,mf:.05,nov:36,fl:.6,rch:2,drift:-.015},
+ {k:"sx_sofa",g:"home",n:"An enormous squishy sofa",d:"Sit down and it swallows you whole.",price:2800,st:1,ms:.3,mh:.1,nov:24,fl:.5,rch:1,drift:-.015},
+ {k:"sx_hottub",g:"home",n:"A hot tub",d:"Bubbles under the stars. Costs £60 a month to run.",price:6500,st:3,ms:.45,mh:.12,nov:18,fl:.4,rch:3,upkeep:60,drift:-.015},
+ {k:"sx_garden",g:"home",n:"A garden makeover",d:"New lawn, new beds and somewhere lovely to sit.",price:14000,st:3,home:4,ms:.4,mh:.15,nov:36,fl:.5,drift:-.004},
+ {k:"sx_sauna",g:"home",n:"A garden sauna cabin",d:"Twenty minutes of heat and the world goes away. £40 a month to run.",price:22000,st:3,ms:.45,mf:.06,nov:24,fl:.5,rch:3,upkeep:40,drift:-.008},
+ /* Wellbeing */
+ {k:"sx_calm",g:"well",n:"A year of a meditation app",d:"Ten minutes a day of a soothing voice telling you to breathe.",price:60,ms:.3,nov:6,fl:.1,drift:-.08},
+ {k:"sx_yoga",g:"well",n:"A yoga mat and a term of classes",d:"Bendier, calmer, slightly smug.",price:400,ms:.35,mf:.05,nov:6,fl:.15,drift:-.05},
+ {k:"sx_rower",g:"well",n:"A rowing machine",d:"Goes nowhere, very fast.",price:900,ms:.15,mf:.08,nov:10,fl:.3,drift:-.02},
+ {k:"sx_plunge",g:"well",n:"A cold-plunge tub",d:"Three minutes of screaming, then a strange calm.",price:1800,ms:.3,mf:.05,nov:8,fl:.2,drift:-.02},
+ {k:"sx_gym",g:"well",n:"A home gym in the garage",d:"Weights, a bench and a mirror you try not to look at.",price:3500,ms:.25,mf:.12,nov:18,fl:.4,drift:-.015},
+ /* Hobbies & kit */
+ {k:"sx_paints",g:"hobby",n:"An easel and proper paints",d:"Somewhere to put all the thoughts that don't fit in a spreadsheet.",price:250,home:1,ms:.3,nov:18,fl:.3,drift:-.02},
+ {k:"sx_tent",g:"hobby",n:"Camping kit for everyone",d:"Tents, stoves and sleeping bags. Rain guaranteed.",price:600,ms:.15,mh:.1,nov:24,fl:.4,drift:-.02},
+ {k:"sx_clubs",g:"hobby",n:"A full set of golf clubs",d:"Fourteen ways to lose a ball, and a few useful contacts.",price:1100,ms:.15,mr:.04,nov:18,fl:.4,drift:-.01},
+ {k:"sx_piano",g:"hobby",n:"A digital piano",d:"Headphones in, nobody suffers.",price:1400,ms:.3,mh:.05,nov:24,fl:.4,drift:-.015},
+ {k:"sx_kiln",g:"hobby",n:"A pottery wheel and kiln",d:"Every mug is wonky. Every mug is yours.",price:2200,ms:.35,nov:18,fl:.4,drift:-.015},
+ /* Style */
+ {k:"sx_trainers",g:"style",n:"Limited-edition trainers",d:"Queued online for three hours. Worth it.",price:260,st:1,rep:1,drift:.004,vol:.08},
+ {k:"sx_shades",g:"style",n:"Very expensive sunglasses",d:"You look like you own a boat.",price:300,st:1,rep:1,drift:-.02},
+ {k:"sx_coat",g:"style",n:"A cashmere coat",d:"Soft as a cloud and just as impractical in the rain.",price:1200,st:1,rep:1,ms:.1,nov:6,fl:.2,drift:-.015},
+ {k:"sx_suit",g:"style",n:"A made-to-measure suit",d:"Fitted to the millimetre. People notice.",price:2400,rep:3,mr:.04,drift:-.01},
+ {k:"sx_bag",g:"style",n:"A designer-ish handbag",d:"There's a waiting list. You skipped it.",price:3800,st:1,rep:2,drift:.001,vol:.02},
+ {k:"sx_necklace",g:"style",n:"A diamond necklace",d:"It catches the light from across the room.",price:18000,rep:2,home:3,drift:.001,vol:.02},
+ /* Collectables: they hold value, or swing */
+ {k:"sx_cards",g:"coll",n:"A sealed box of trading cards",d:"Could be worth a fortune. Could be cardboard.",price:150,st:1,drift:.004,vol:.14},
+ {k:"sx_comic",g:"coll",n:"A first-edition comic",d:"In a plastic sleeve you must never open.",price:650,drift:.004,vol:.06},
+ {k:"sx_stamps",g:"coll",n:"A Victorian stamp collection",d:"Six albums of tiny queens and one very rare mistake.",price:2000,ms:.1,nov:24,fl:.3,drift:.002,vol:.03},
+ {k:"sx_coins",g:"coll",n:"A tube of gold coins",d:"Heavy, shiny and oddly reassuring.",price:6000,drift:.003,vol:.04},
+ {k:"sx_whisky",g:"coll",n:"A cask of single malt",d:"Twelve years in oak, somewhere damp in the Highlands.",price:9000,drift:.007,vol:.03},
+ {k:"sx_fossil",g:"coll",n:"A giant fossil ammonite",d:"A hundred and fifty million years old and the size of a car tyre.",price:45000,rep:1,drift:.003,vol:.05},
+ {k:"sx_master",g:"coll",n:"A painting by a modern master",d:"Three blue squares and a line. The auction room gasped.",price:1200000,rep:5,drift:.004,vol:.06},
+ /* Big luxuries */
+ {k:"sx_seat",g:"lux",n:"A debenture seat at the stadium",d:"The same seat, every home game, for years.",price:40000,ms:.2,mr:.05,nov:36,fl:.6,drift:0},
+ {k:"sx_cabin",g:"lux",n:"A cabin by a lake",d:"No signal, a wood burner and a jetty. £400 a month to keep.",price:180000,st:4,ms:.45,mh:.15,nov:36,fl:.6,rch:3,upkeep:400,drift:.002},
+ {k:"sx_jet",g:"lux",n:"A share in a private jet",d:"No queues, no shoes off. £9,000 a month in fees.",price:1800000,st:3,rep:4,mr:.1,ms:.3,nov:24,fl:.5,rch:3,upkeep:9000,drift:-.006},
+ {k:"sx_vineyard",g:"lux",n:"A little vineyard abroad",d:"Rows of vines, a stone farmhouse and your own label. £5,000 a month to run.",price:2200000,st:3,rep:4,ms:.3,mh:.1,nov:36,fl:.5,upkeep:5000,drift:.003,vol:.02},
+ {k:"sx_yacht",g:"lux",n:"A superyacht",d:"Crew of twelve, a helipad and £35,000 a month in running costs.",price:4500000,st:5,rep:6,mr:.1,ms:.4,mh:.1,nov:24,fl:.5,upkeep:35000,drift:-.007}
+);
+for(const d of SHOP){if(!d.g)d.g="coll";if(d.drift==null)d.drift=0}
+let sxCat="all";
+const sxDef=k=>SHOP.find(d=>d.k===k);
+const sxEnOn=()=>{try{return typeof enHas==="function"&&enHas()&&!!S.en&&typeof enRoom==="function"}catch(e){return false}};
+const sxDays=k=>((S.shopX||{})[k]||[]);
+/* How much a new purchase still helps: buying lots lately blunts it, and so does repeating the same treat */
+function sxFactor(d){const recent=(S.shopBuys||[]).filter(x=>S.day-x<3).length;let f=1/(1+.8*recent);
+ if(d.once){const rep=sxDays(d.k).filter(x=>S.day-x<12).length;f*=Math.pow(.5,rep)}return Math.max(.15,f)}
+const sxNov=(d,it)=>{if(!d.nov)return 1;const fl=d.fl??.3,age=Math.max(0,S.day-(it.bought??S.day));return fl+(1-fl)*Math.max(0,1-age/d.nov)};
+const sxSoft=(x,cap)=>x>0?cap*(1-Math.exp(-x/cap)):0;
+function sxRecharge(){let r=0;for(const it of S.items||[]){const d=sxDef(it.k);if(d&&d.rch)r+=d.rch}return Math.min(4,r)}
+/* What's stopping you booking a treat or experience right now */
+function sxBlock(d){if(!d.once)return "";const ds=sxDays(d.k);
+ if(d.life&&ds.length)return "Done";
+ if(d.cd&&ds.length&&S.day-ds[ds.length-1]<d.cd){const m=d.cd-(S.day-ds[ds.length-1]);return m<=1?"Next month":`In ${m} months`}
+ if(d.en&&sxEnOn()&&d.en>enRoom())return "Too tired";return ""}
+function sxFx(d){const p=[],en=sxEnOn();
+ if(d.st)p.push(`Stress −${d.st}`);if(d.home)p.push(`Home life +${d.home}`);if(d.hl)p.push(`Health +${d.hl}`);if(d.rep)p.push(`Reputation +${d.rep}`);
+ if(d.ms)p.push(d.nov&&d.nov<=8?"Calmer for a few months":d.nov&&d.nov>=24?"Calmer for years":"Calmer each month");
+ if(d.mh)p.push("Happier home");if(d.mf)p.push("Keeps you fit");if(d.mr)p.push("Status");
+ if(en&&d.rch)p.push(`⚡ +${d.rch} a month`);if(en&&d.en)p.push(`⚡ ${d.en}`);if(en&&d.back)p.push(`⚡ +${d.back} back`);
+ if(d.upkeep&&!/a month/.test(d.d))p.push(`${money(d.upkeep)} a month`);
+ if(!d.once){if(d.vol>=.05)p.push("Value can swing");else if(d.drift>0)p.push("Can gain value");else if(d.drift<=-.015)p.push("Loses value")}
+ if(d.life)p.push("Once in a lifetime");else if(d.cd>=6)p.push(`Once every ${d.cd} months`);
+ return p.join(" · ")}
+function sxShop(){
+ const G=SX_GROUPS.filter(g=>SHOP.some(d=>d.g===g[0]));if(sxCat!=="all"&&!G.some(g=>g[0]===sxCat))sxCat="all";
+ const list=SHOP.filter(d=>sxCat==="all"||d.g===sxCat).slice().sort((a,b)=>a.price-b.price||a.n.localeCompare(b.n)),gn=Object.fromEntries(SX_GROUPS);
+ const chips=[["all","All",SHOP.length]].concat(G.map(g=>[g[0],g[1],SHOP.filter(d=>d.g===g[0]).length])).map(([k,n,c])=>`<button class="${sxCat===k?"on":""}" data-act="sxcat" data-k="${k}" aria-pressed="${sxCat===k}">${esc(n)} <span class="tp-n">${c}</span></button>`).join("");
+ const rows=list.map(d=>{const own=!d.once&&hasItem(d.k),bl=own?"":sxBlock(d),short=!own&&!bl&&S.wealth<d.price;
+  return `<div class="shop-row sx-row">${itemPic(d)}<div class="sx-main"><b>${esc(d.n)}</b>${sxCat==="all"?` <span class="sx-g">${esc(gn[d.g]||"")}</span>`:""}<div class="hint">${esc(d.d)}</div><div class="sx-fx">${esc(sxFx(d))}</div></div><button class="btn sm ${short?"btn-short":""}" data-act="itembuy" data-k="${d.k}" ${own||bl?"disabled":""}>${own?"Owned":bl?esc(bl):money(d.price)}</button></div>`}).join("");
+ return `<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Treat yourself</h2><span class="label">Cash ${money(S.wealth)}</span></div>
+  <p class="hint" style="margin:0 0 6px">From a box of chocolates to a superyacht. Most things ease your stress, but the novelty wears off, and the more you buy, the less each new thing helps.</p>
+  <div class="tp-subs" role="group" aria-label="Type">${chips}</div><div class="shop">${rows||'<p class="hint">Nothing here right now.</p>'}</div></div>`}
+{const _is2=itemsSec;itemsSec=function(){let h=_is2.apply(this,arguments);try{const i=h.indexOf('<div class="pane-sec"><div class="sec-head"><h2 style="font-size:18px">Treat yourself</h2>');if(i>=0)h=h.slice(0,i)+sxShop()}catch(e){}return h}}
+XCLICK.sxcat=t=>{sxCat=t.dataset.k||"all";render()};
+/* Buying: owned things go in Things you own; treats and experiences happen now */
+XCLICK.itembuy=t=>{const d=sxDef(t.dataset.k);if(!d||S.over)return;
+ if(!d.once&&hasItem(d.k)){toastMsg("You already own one.");return}
+ const bl=sxBlock(d);if(bl){toastMsg(bl==="Too tired"?"You haven't got the energy left this month.":bl==="Done"?"You've already done that.":`You can book that again ${bl.toLowerCase()}.`);return}
+ if(S.wealth<d.price){toastMsg(`You need ${money(d.price)} in cash. You have ${money(Math.max(0,S.wealth))}.`);return}
+ const f=sxFactor(d),first=!sxDays(d.k).length,fx=[];S.wealth-=d.price;
+ const st=d.st?Math.max(d.st>=1?1:0,Math.round(d.st*f)):0;if(st){S.stress=clamp(S.stress-st,0,100);fx.push(`Stress −${st}`)}
+ const hm=d.home?Math.max(1,Math.round(d.home*f)):0;if(hm){S.homeLife=clamp(S.homeLife+hm,0,100);fx.push(`Home life +${hm}`)}
+ if(d.hl){S.health=clamp(S.health+d.hl,0,100);fx.push(`Health +${d.hl}`)}
+ if(d.rep&&(first||!d.once)){S.rep=clamp(S.rep+d.rep,0,100);fx.push(`Reputation +${d.rep}`)}
+ try{if(sxEnOn()){if(d.en){enCharge(d.ec||"fun",d.en,d.n.replace(/^An? /,""));fx.push(`⚡ ${d.en}`)}if(d.back){enCharge("rest",-d.back,`${d.n.replace(/^An? /,"")} recharges you`);fx.push(`⚡ +${d.back} back`)}}}catch(e){}
+ S.shopBuys=(S.shopBuys||[]).filter(x=>S.day-x<24);S.shopBuys.push(S.day);
+ S.shopX=S.shopX||{};const ds=(S.shopX[d.k]||[]).filter(x=>S.day-x<24);ds.push(S.day);S.shopX[d.k]=ds;
+ const nm=d.n.replace(/^An? /,"").toLowerCase();let it=null;
+ if(d.once){if(d.price>=150)S.log.unshift({d:S.day,t:`Treated yourself to ${d.n.charAt(0).toLowerCase()+d.n.slice(1)}.`})}
+ else{it=addItem(d.k,d.n,d.price,"Bought it.");S.log.unshift({d:S.day,t:SHOP.indexOf(d)<8?`Bought ${nm}.`:`Treated yourself to ${d.n.charAt(0).toLowerCase()+d.n.slice(1)}.`})}
+ try{sfx.coin()}catch(e){}save();render();
+ const pic=itemPic(it||d).replace('class="item-pic"','class="item-pic" style="width:72px;height:72px"'),less=f<.7&&d.st?" It helps a bit less than it would have: you've been treating yourself a lot lately.":"";
+ showModal(`<div class="label">Treat yourself</div><h2 style="margin-top:4px">${d.once?"Lovely":"Bought it!"}</h2><div style="display:flex;justify-content:center;margin:6px 0">${pic}</div><p>${d.once?esc(d.o||d.d):`${esc(d.n)} is yours. You'll find it under <b>Things you own</b>, where you can give it away or sell it later.`}</p>${fx.length||less?`<p class="hint">${esc(fx.join(" · ")+(fx.length?".":"")+less)}</p>`:""}<div class="btn-row"><button class="btn primary" data-act="hide">Lovely</button></div>`)};
+/* Each month: the things you own keep giving, with the novelty wearing off and a cap on the total */
+function sxMonth(notes){if(S.over||S.prison)return;let ms=0,mh=0,mf=0,mr=0;
+ for(const it of S.items||[]){const d=sxDef(it.k);if(!d)continue;const nv=sxNov(d,it);ms+=(d.ms||0)*nv;mh+=(d.mh||0)*nv;mf+=d.mf||0;mr+=d.mr||0;
+  if(d.vol)it.value=Math.max(0,it.value*(1+(rnd()-.5)*d.vol));
+  if(d.nov&&d.ms&&d.price>=500&&S.day-(it.bought??S.day)===d.nov&&notes&&notes.push)notes.push(`The ${it.n.replace(/^An? /,"").toLowerCase()} doesn't thrill you like it used to.`)}
+ S.stress=clamp(S.stress-sxSoft(ms,.5),0,100);S.homeLife=clamp(S.homeLife+sxSoft(mh,.5),0,100);S.health=clamp(S.health+sxSoft(mf,.3),0,100);S.rep=clamp(S.rep+sxSoft(mr,.2),0,100)}
+{const _iw=itemsWeave;itemsWeave=function(notes){try{sxMonth(notes)}catch(e){}return _iw.apply(this,arguments)}}
+/* Comfortable things at home recharge your energy a little each month */
+if(typeof enPlan==="function"){const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{if(L&&!S.prison&&!S.over){const r=sxRecharge();if(r>0)L.push({cat:"rest",n:"Your comforts at home",e:-r})}}catch(e){}return L}}
+/* Pictures for the new things */
+const SX_PICS={
+ sx_choc:pR(6,14,36,24,"#5A2E1E",'rx="3"')+[0,1,2].map(i=>[0,1].map(j=>pC(14+i*10,22+j*9,3.6,"#3A1A10")+pC(13+i*10,21+j*9,1.2,"#8A5A3A")).join("")).join("")+pR(22,14,4,24,"#C0453A"),
+ sx_flowers:AVL("M24 30 L18 12 M24 30 L24 10 M24 30 L30 13","#3F8A4A",1.6)+pC(18,11,4.5,"#E86A7A")+pC(24,8,4.5,"#F6D44A")+pC(30,12,4.5,"#9C88B8")+pC(18,11,1.5,"#F6D44A")+pC(30,12,1.5,"#F6D44A")+pP("M14 28 L24 46 L34 28Z","#F2EBDD",'stroke="#C9C2B4"'),
+ sx_takeaway:pP("M12 18 H36 L32 42 H16Z","#F2EBDD",'stroke="#C9C2B4"')+pP("M12 18 L16 10 H32 L36 18Z","#E3D8C3")+pR(15,26,18,4,"#C0453A")+AVL("M28 4 L33 22 M32 4 L36 22","#8A5A2A",1.8),
+ sx_dinner:pC(24,26,15,"#F7F4EC",'stroke="#C9CED1"')+pC(24,26,9,"#E9E3D6")+pC(22,25,4,"#B5582A")+pC(27,27,2.4,"#4E8A4A")+AVL("M5 12 V40 M3 12 V18 M7 12 V18","#9AA0A6",1.6)+AVL("M43 12 V40","#9AA0A6",2.4),
+ sx_tasting:pP("M8 34 Q8 14 24 14 Q40 14 40 34Z","#C9CED1")+pP("M12 30 Q13 20 22 17","none",'stroke="#F2F4F5" stroke-width="2"')+pR(5,34,38,3,"#9AA0A6",'rx="1.5"')+pC(24,12,2.5,"#9AA0A6"),
+ sx_massage:pR(6,28,36,5,"#B5823A",'rx="2"')+pR(9,33,3,10,"#8A5A2A")+pR(36,33,3,10,"#8A5A2A")+pC(12,23,4.5,"#E8B999")+pR(17,21,23,7,"#7FB2E5",'rx="3.5"')+pC(34,14,2.5,"#9AA0A6")+pC(40,12,2,"#9AA0A6"),
+ sx_cookery:pC(22,28,12,"#3A3F44")+pR(32,26,14,4,"#3A3F44",'rx="2"')+pC(22,28,7,"#F7F4EC")+pC(22,28,3,"#F6B93B")+AVL("M16 12 q2 -3 0 -6 M22 12 q2 -3 0 -6 M28 12 q2 -3 0 -6","#9AA0A6",1.4),
+ sx_gig:pR(6,14,36,20,"#E86A7A",'rx="2"')+AVL("M31 15 V33","#fff",1,.7)+pC(17,28,3,"#fff")+pR(18.6,17,1.6,11,"#fff")+pP("M20.2 17 L25 19 V21 L20.2 19Z","#fff")+pC(36,20,1.2,"#fff")+pC(36,28,1.2,"#fff"),
+ sx_spa:pR(9,24,10,16,"#F2EBDD",'rx="2" stroke="#C9C2B4"')+pP("M14 13 Q18 19 14 22 Q10 19 14 13Z","#F6B93B")+`<ellipse cx="32" cy="40" rx="10" ry="4" fill="#6B7178"/><ellipse cx="32" cy="33" rx="8" ry="3.5" fill="#8A9097"/><ellipse cx="32" cy="27" rx="6" ry="3" fill="#A4AAB0"/>`+pP("M36 18 Q40 12 44 14 Q40 20 36 18Z","#4E8A4A"),
+ sx_musical:pC(18,22,10,"#F6D44A")+pC(31,28,10,"#7FB2E5")+pC(15,20,1.5,"#333")+pC(21,20,1.5,"#333")+AVL("M14 25 Q18 29 22 25","#333",1.4)+pC(28,26,1.5,"#333")+pC(34,26,1.5,"#333")+AVL("M27 33 Q31 29 35 33","#333",1.4),
+ sx_balloon:pP("M24 4 C10 4 8 20 18 30 L21 34 H27 L30 30 C40 20 38 4 24 4Z","#E86A7A")+pP("M24 4 C19 8 18 22 21 34 H27 C30 22 29 8 24 4Z","#F6D44A")+AVL("M21 34 L21 38 M27 34 L27 38","#555",1)+pR(19,38,10,6,"#8A5A2A",'rx="1"'),
+ sx_track:pR(10,6,2.5,38,"#555")+[0,1,2,3].map(i=>[0,1,2].map(j=>pR(12.5+i*7,7+j*6,7,6,(i+j)%2?"#F2F4F5":"#1C2329")).join("")).join(""),
+ sx_retreat:pC(24,12,5,"#B5823A")+pP("M14 36 Q24 16 34 36Z","#9C88B8")+`<ellipse cx="24" cy="38" rx="15" ry="4" fill="#7E6A9C"/>`+AVL("M17 28 L11 32 M31 28 L37 32","#B5823A",2),
+ sx_chef:pP("M14 22 C8 22 8 12 15 12 C16 6 32 6 33 12 C40 12 40 22 34 22 V32 H14Z","#FFFFFF",'stroke="#9AA0A6" stroke-width="1.5"')+pR(14,32,20,7,"#E9ECEE",'stroke="#9AA0A6" stroke-width="1.5"'),
+ sx_space:pC(8,10,1,"#F6D44A")+pC(40,8,1.2,"#F6D44A")+pC(42,30,1,"#F6D44A")+pP("M24 4 C32 12 32 26 30 32 H18 C16 26 16 12 24 4Z","#F2F4F5",'stroke="#9AA0A6"')+pC(24,18,3.5,"#7FB2E5")+pP("M18 24 L12 36 L18 32Z M30 24 L36 36 L30 32Z","#C0453A")+pP("M20 33 L24 45 L28 33Z","#F6B93B"),
+ sx_buds:pR(10,18,28,20,"#F2F4F5",'rx="10" stroke="#9AA0A6" stroke-width="1.5"')+AVL("M10 26 H38","#9AA0A6",1)+pC(24,31,1.5,"#4BBA85"),
+ sx_console:pP("M10 18 H38 Q46 18 44 32 Q42 40 36 35 L32 30 H16 L12 35 Q6 40 4 32 Q2 18 10 18Z","#3A3F44")+pR(10,23,8,2.4,"#C9CED1")+pR(12.8,20.2,2.4,8,"#C9CED1")+pC(33,22,1.8,"#E86A7A")+pC(37,26,1.8,"#4BBA85")+pC(29,26,1.8,"#7FB2E5"),
+ sx_vr:pR(6,17,36,17,"#2B2B2B",'rx="6"')+pC(16,25.5,4.5,"#3E6FB0")+pC(32,25.5,4.5,"#3E6FB0")+AVL("M6 23 Q1 23 2 16","#555",3)+pP("M21 34 Q24 29 27 34Z","#555"),
+ sx_tablet:pR(10,6,28,36,"#1C2329",'rx="3"')+pR(13,10,22,26,"#9FD0EE")+pP("M13 36 L20 27 L26 32 L30 28 L35 36Z","#4E8A4A")+pC(30,15,2.5,"#F6D44A")+pC(24,39,1.3,"#555"),
+ sx_drone:AVL("M14 16 L34 32 M34 16 L14 32","#3A3F44",2)+`<ellipse cx="12" cy="14" rx="7" ry="2" fill="#9AA0A6"/><ellipse cx="36" cy="14" rx="7" ry="2" fill="#9AA0A6"/><ellipse cx="12" cy="34" rx="7" ry="2" fill="#9AA0A6"/><ellipse cx="36" cy="34" rx="7" ry="2" fill="#9AA0A6"/>`+pR(17,19,14,10,"#E9ECEE",'rx="3" stroke="#3A3F44" stroke-width="1.5"')+pC(24,31,2.4,"#1C2329"),
+ sx_tv:pR(4,8,40,26,"#1C2329",'rx="2"')+pR(6,10,36,22,"#3E6FB0")+pP("M6 32 L18 20 L26 28 L32 22 L42 32Z","#4E8A4A")+pC(34,15,2.5,"#F6D44A")+pR(21,34,6,4,"#555")+pR(14,38,20,2,"#555"),
+ sx_robovac:pC(24,26,16,"#3A3F44")+pC(24,26,11,"#555B61")+pC(24,20,3,"#4BBA85")+AVL("M12 14 Q24 6 36 14","#9AA0A6",2),
+ sx_coffee:pR(10,6,28,34,"#2B2B2B",'rx="3"')+pR(14,10,20,6,"#555")+pR(21,18,6,4,"#888")+pR(18,28,12,9,"#F2F4F5",'rx="1"')+pP("M19 28 h10 v2 h-10z","#6B3E26")+AVL("M22 25 q1.5 -2 0 -3 M26 25 q1.5 -2 0 -3","#9AA0A6",1)+pR(8,40,32,3,"#555"),
+ sx_mattress:pR(4,22,40,14,"#F2F4F5",'rx="4" stroke="#9AA0A6"')+[10,18,26,34].map(x=>pC(x,29,1,"#9AA0A6")).join("")+pR(6,15,14,7,"#BFD8F0",'rx="3"')+AVL("M30 6 h6 l-6 6 h6 M38 2 h4 l-4 4 h4","#7FB2E5",1.4),
+ sx_sofa:pR(8,16,32,12,"#B5582A",'rx="4"')+pR(2,22,10,16,"#9C4A22",'rx="3"')+pR(36,22,10,16,"#9C4A22",'rx="3"')+pR(10,26,28,10,"#C96A38",'rx="2"')+AVL("M24 27 V36","#9C4A22",1)+pR(6,38,3,4,"#5A3A22")+pR(39,38,3,4,"#5A3A22"),
+ sx_hottub:pR(6,24,36,16,"#8A5A2A",'rx="3"')+AVL("M6 30 H42 M6 35 H42","#6B4422",1)+`<ellipse cx="24" cy="24" rx="18" ry="5" fill="#7FD0E5"/>`+pC(18,23,1.5,"#fff")+pC(26,25,1.2,"#fff")+pC(31,22,1.5,"#fff")+AVL("M16 14 q2 -3 0 -6 M24 14 q2 -3 0 -6 M32 14 q2 -3 0 -6","#9AA0A6",1.4),
+ sx_garden:pR(2,30,44,14,"#7CB86A",'rx="2"')+pP("M20 44 L24 30 H28 L30 44Z","#D9C9A3")+pR(30,20,3,12,"#7A4A2A")+pC(31.5,16,8,"#4E8A4A")+pC(8,30,3,"#E86A7A")+pC(14,32,3,"#F6D44A")+pC(40,36,3,"#9C88B8"),
+ sx_sauna:pP("M4 20 L24 6 L44 20Z","#7A4A2A")+pR(8,20,32,22,"#B5823A")+AVL("M8 26 H40 M8 32 H40 M8 38 H40","#8A5A2A",1)+pR(20,28,8,14,"#7A4A2A")+pR(30,24,6,5,"#BFE3F2")+AVL("M14 4 q2 -2 0 -4","#9AA0A6",1.2),
+ sx_calm:pR(14,4,20,40,"#1C2329",'rx="4"')+pR(16,8,16,30,"#E9E3F0")+pP("M24 16 Q28 22 24 30 Q20 22 24 16Z","#9C88B8")+pP("M24 30 Q17 28 17 21 Q22 23 24 30Z M24 30 Q31 28 31 21 Q26 23 24 30Z","#B9A5D6"),
+ sx_yoga:pR(6,20,30,12,"#9C88B8",'rx="6"')+pC(36,26,6.5,"#7E6A9C")+pC(36,26,3,"#9C88B8")+pR(4,36,40,4,"#B9A5D6",'rx="2"'),
+ sx_rower:AVL("M4 38 H44","#555",3)+pC(38,28,8,"#3A3F44")+pC(38,28,3,"#9AA0A6")+pR(14,32,9,4,"#C0453A",'rx="1"')+AVL("M30 22 L22 26","#555",2)+pR(4,38,3,6,"#555")+pR(41,36,3,8,"#555"),
+ sx_plunge:pR(8,18,32,24,"#5E7A8C",'rx="3"')+`<ellipse cx="24" cy="18" rx="16" ry="4" fill="#BFE3F2"/>`+pR(14,14,5,5,"#FFFFFF",'stroke="#9CC8EE" transform="rotate(15 16 16)"')+pR(27,13,5,5,"#FFFFFF",'stroke="#9CC8EE" transform="rotate(-20 29 15)"')+AVL("M8 30 H40","#4A6577",1),
+ sx_gym:pR(5,17,5,16,"#2B2B2B",'rx="1"')+pR(10,19,4,12,"#3A3F44")+pR(14,23.5,20,3,"#9AA0A6")+pR(34,19,4,12,"#3A3F44")+pR(38,17,5,16,"#2B2B2B",'rx="1"')+pP("M18 44 Q14 34 24 34 Q34 34 30 44Z","#3A3F44")+AVL("M20 34 Q24 28 28 34","#3A3F44",2.5),
+ sx_paints:AVL("M24 6 L12 44 M24 6 L36 44 M24 6 V44","#8A5A2A",2)+pR(11,9,26,20,"#F7F4EC",'stroke="#8A5A2A"')+pC(18,16,3,"#E86A7A")+pC(27,21,4,"#7FB2E5")+pR(20,13,6,3,"#F6D44A"),
+ sx_tent:pP("M4 40 L24 8 L44 40Z","#E58A3A")+pP("M24 8 L18 40 H30Z","#B5582A")+AVL("M2 40 H46","#4E8A4A",2)+AVL("M24 8 L24 4","#555",1.4),
+ sx_clubs:pR(16,18,14,26,"#2F5A3E",'rx="4"')+AVL("M19 18 L15 4 M23 18 L23 3 M27 18 L32 5","#9AA0A6",1.6)+pR(12,2,6,3,"#555",'rx="1"')+pR(21,1,5,3,"#555",'rx="1"')+pR(30,3,6,3,"#555",'rx="1"')+pR(16,28,14,3,"#D7A744"),
+ sx_piano:pR(4,18,40,15,"#2B2B2B",'rx="2"')+pR(6,23,36,8,"#F7F4EC")+[10,15,25,30,35].map(x=>pR(x,23,2.6,5,"#2B2B2B")).join("")+AVL("M10 33 V42 M38 33 V42","#2B2B2B",2),
+ sx_kiln:`<ellipse cx="24" cy="40" rx="18" ry="4" fill="#6B7178"/>`+pP("M18 38 Q13 28 20 21 Q18 15 21 12 H27 Q30 15 28 21 Q35 28 30 38Z","#C47A4A")+AVL("M18 27 H30","#A35F38",1.2),
+ sx_trainers:pP("M4 30 Q4 22 12 22 L20 24 L28 17 Q34 15 36 21 L44 27 V33 H4Z","#F2F4F5",'stroke="#9AA0A6"')+pR(4,33,40,5,"#E86A7A",'rx="2"')+AVL("M22 27 L26 23 M26 28 L30 24 M30 29 L34 25","#3E6FB0",1.6),
+ sx_shades:pP("M4 20 H21 Q21 32 13 32 Q4 32 4 20Z M27 20 H44 Q44 32 35 32 Q27 32 27 20Z","#1C2329")+AVL("M21 22 Q24 19 27 22","#1C2329",2)+AVL("M7 23 L11 23","#7FB2E5",1.4)+AVL("M30 23 L34 23","#7FB2E5",1.4),
+ sx_coat:pP("M14 6 L20 4 L24 12 L28 4 L34 6 L40 16 L36 22 L34 18 V44 H14 V18 L12 22 L8 16Z","#C9A06A")+AVL("M24 12 V44","#A07C4C",1.2)+pC(21,24,1.2,"#5A3A22")+pC(21,32,1.2,"#5A3A22"),
+ sx_suit:pP("M12 8 L20 6 L24 14 L28 6 L36 8 L42 44 H6Z","#2B3A44")+pP("M20 6 L24 14 L28 6Z","#F2F4F5")+pP("M23 14 H25 L27 30 L24 34 L21 30Z","#C0453A")+pP("M20 6 L17 20 L24 14Z M28 6 L31 20 L24 14Z","#1E2A33"),
+ sx_bag:pP("M8 20 H40 L36 42 H12Z","#9C3B2E")+AVL("M16 20 Q16 8 24 8 Q32 8 32 20","#7A2E22",3)+pR(21,24,6,4,"#D7A744",'rx="1"'),
+ sx_necklace:AVL("M8 8 Q24 34 40 8","#D7A744",2)+pP("M24 26 L30 32 L24 42 L18 32Z","#BFE3F2",'stroke="#7FB2E5"')+AVL("M18 32 H30","#7FB2E5",.8),
+ sx_cards:pR(10,10,28,30,"#3E6FB0",'rx="2"')+pP("M24 15 L27 22 L34 22 L28 27 L30 34 L24 30 L18 34 L20 27 L14 22 L21 22Z","#F6D44A")+pR(10,36,28,3,"#C9CED1"),
+ sx_comic:pR(10,6,28,36,"#F6D44A")+pR(10,6,28,7,"#C0453A")+pP("M24 17 L27 23 L34 22 L29 27 L33 33 L26 31 L24 38 L22 31 L15 33 L19 27 L14 22 L21 23Z","#E86A7A")+pR(12,8,16,3,"#fff"),
+ sx_stamps:pR(10,10,28,28,"#F7F4EC",'stroke="#C9C2B4" stroke-dasharray="2 2"')+pR(14,14,20,20,"#B3262E")+pC(24,23,5,"#F2D7C9")+pP("M17 34 Q24 26 31 34Z","#F2D7C9"),
+ sx_coins:[34,28,22,16].map((y,i)=>`<ellipse cx="${20+(i%2)*3}" cy="${y+4}" rx="12" ry="4" fill="#B8862B"/><ellipse cx="${20+(i%2)*3}" cy="${y}" rx="12" ry="4" fill="#D7A744"/>`).join("")+`<ellipse cx="36" cy="38" rx="8" ry="3" fill="#B8862B"/><ellipse cx="36" cy="35" rx="8" ry="3" fill="#E9C46A"/>`,
+ sx_whisky:pP("M12 8 Q8 24 12 40 H36 Q40 24 36 8Z","#8A5A2A")+AVL("M10.5 16 H37.5 M9.5 32 H38.5","#3A3F44",2)+AVL("M18 9 V39 M24 9 V39 M30 9 V39","#6B4422",.8)+pC(24,24,2.5,"#3A2A1A"),
+ sx_fossil:pC(24,24,17,"#D9C9A3")+AVL("M24 24 m0 -3 a3 3 0 1 1 -3 3 a6 6 0 1 1 6 6 a10 10 0 1 1 -10 -10 a14 14 0 1 1 14 14","#A08A60",1.6),
+ sx_master:pR(4,6,40,34,"#B8862B")+pR(7,9,34,28,"#F7F4EC")+pR(10,12,10,10,"#3E6FB0")+pR(22,14,8,8,"#3E6FB0")+pR(13,25,9,9,"#3E6FB0")+AVL("M26 26 L38 34","#C0453A",2),
+ sx_seat:`<ellipse cx="24" cy="26" rx="21" ry="14" fill="#7A7F86"/><ellipse cx="24" cy="26" rx="14" ry="8" fill="#4E9A4A"/>`+AVL("M24 18 V34","#fff",1)+pC(24,26,3,"none",'stroke="#fff" stroke-width="1"')+pR(30,38,8,6,"#C0453A",'rx="1"'),
+ sx_cabin:pR(0,34,48,14,"#7FB2E5")+pP("M6 22 L18 12 L30 22Z","#5A3A22")+pR(8,22,20,12,"#9C6A3A")+AVL("M8 26 H28 M8 30 H28","#7A4A2A",1)+pR(16,26,5,8,"#5A3A22")+pP("M38 8 L32 26 H44Z","#3F7A4A")+pR(37,26,2,6,"#5A3A22"),
+ sx_jet:pP("M4 26 Q4 22 10 22 H38 Q46 22 46 25 Q46 28 38 28 H10 Q4 28 4 26Z","#F2F4F5",'stroke="#9AA0A6"')+pP("M20 22 L28 10 H32 L28 22Z M20 28 L28 38 H32 L28 28Z","#C9CED1")+pP("M6 22 L4 14 H8 L12 22Z","#3E6FB0")+[30,34,38].map(x=>pC(x,24.5,1,"#3E6FB0")).join(""),
+ sx_vineyard:pP("M0 30 Q24 12 48 30 V48 H0Z","#7CB86A")+AVL("M4 36 Q24 22 44 36 M4 42 Q24 28 44 42","#4E8A4A",2)+[[30,10],[34,10],[32,13],[36,13],[34,16],[32,7]].map(([x,y])=>pC(x,y,2.2,"#7A3E8C")).join("")+pP("M33 4 Q38 2 40 6Z","#4E8A4A"),
+ sx_yacht:pP("M2 30 H46 L40 40 H8Z","#F2F4F5",'stroke="#9AA0A6"')+pP("M10 30 L14 22 H36 L40 30Z","#F2F4F5",'stroke="#9AA0A6"')+pP("M17 22 L20 16 H32 L34 22Z","#F2F4F5",'stroke="#9AA0A6"')+pR(15,25,22,2.4,"#1C2329")+pR(9,33,32,2,"#3E6FB0")+AVL("M2 44 q4 -2 8 0 q4 2 8 0 q4 -2 8 0 q4 2 8 0 q4 -2 8 0","#3D8CC8",1.6)
+};
+{const _ip=itemPic;itemPic=function(it){const k=it&&it.k;if(k&&SX_PICS[k])return IT(SX_PICS[k]);return _ip.apply(this,arguments)}}
+
+/* RS: life restructure. Life tabs You, Love, Friends, Free time, Money, Home, Stuff; the map gets its own bottom tab; Log moves to the menu;
+   tapping a vital-signs bar opens Life > You at that stat. Old lifeTab keys are mapped by lifeKey() (defined next to LIFE_TABS). */
+const RS={inF:0,inH:0,album:0};
+/* Split the combined blocks: pets and health leave the family list, the side hustle leaves the hobby block. They are shown on their own tabs. */
+{const _f=folksSec;folksSec=function(){RS.inF++;try{return _f.apply(this,arguments)}finally{RS.inF--}}}
+{const _p=petSec;petSec=function(){if(RS.inF)return"";return _p.apply(this,arguments)}}
+{const _h=healthSec;healthSec=function(){if(RS.inF)return"";return _h.apply(this,arguments)}}
+{const _hb=hobbySec;hobbySec=function(){RS.inH++;try{return _hb.apply(this,arguments)}finally{RS.inH--}}}
+{const _sd=sideSec;sideSec=function(){if(RS.inH)return"";return _sd.apply(this,arguments)}}
+
+/* ---- Red dots: the old keys mapped onto the new tabs ---- */
+{const _lt=lifeTodo;lifeTodo=function(){const o=_lt.apply(this,arguments)||{};const n={you:0,love:0,friends:0,free:0,money:0,home:0,stuff:0};RS.album=0;
+ if(!S||S.placeholder)return n;
+ RS.album=o.album?1:0;
+ n.money=o.money?1:0;
+ if(o.home){if(S.home&&S.home.value<=0&&S.wealth>=35000)n.home=1;else n.stuff=1}
+ if(o.things)n.stuff=1;
+ n.love=o.family?1:0;
+ n.free=o.people?1:0;
+ n.you=o.lifestyle?1:0;
+ for(const k of Object.keys(o))if(n[k]===undefined&&k!=="album"&&LIFE_TABS.some(t=>t[0]===k))n[k]=o[k]?1:0;
+ const seen=S.lifeSeen||{};for(const k in n)if(seen[k]===S.day)n[k]=0;
+ return n}}
+const rsAlbumNew=()=>{try{lifeTodo();return!!RS.album}catch(e){return false}};
+try{LIFE_TAB_N.album="Photo album"}catch(e){}
+/* "Next up" on the Life tab, pointing at the new tabs */
+lifeNext=function(){
+ if(!S||S.placeholder||S.over||S.prison)return[];
+ const t=lifeTodo(),L=[],add=(pri,k,icon,txt,go)=>L.push({pri,k,icon,txt,go:go||k});
+ let lifeMail=0;try{lifeMail=S.inbox.filter(m=>{if(m.done)return false;const e=getEv(m);return e&&e.life}).length}catch(e){}
+ if(lifeMail)add(9,"inbox","✉️",lifeMail===1?"A decision about your life is waiting in your inbox.":`${lifeMail} decisions about your life are waiting in your inbox.`,"inbox");
+ if(t.money)add(S.wealth<0?10:4,"money","💷",S.wealth<0?"You're overdrawn. Sort out your money before it gets worse.":"You're not paying into a pension. Your employer adds money when you do.");
+ if(t.love)add(S.homeLife<40?8:!S.pref?7:5,"love","❤️",S.homeLife<40?"Home life is suffering. Spend some time with the people you love.":!S.pref?"Tell the game who you're interested in, so you meet the right people.":"You haven't seen your parents in a while.");
+ if(t.free)add(6,"free","👋","You've got free time this month. See a friend, do something fun or meet someone new.");
+ if(t.home)add(5,"home","🏠","You've saved enough for a deposit. Have a look at buying a home.");
+ if(t.you)add(3,"you","🎯","Pick a life goal to aim for.");
+ if(t.stuff){const car=S.car&&S.car.id==="none"&&S.wealth>=15000&&!(S.home&&S.home.value<=0&&S.wealth>=35000);add(car?4:2,"stuff",car?"🚗":"🛍️",car?"You can afford a car now.":"You've got some spare cash. Treat yourself.")}
+ if(t.friends)add(4,"friends","👋","Your friends would like to see you.");
+ if(RS.album)add(1,"album","📷","New photos in your album.");
+ return L.sort((a,b)=>b.pri-a.pri);
+};
+{const _lg=XCLICK.lifego;if(_lg)XCLICK.lifego=t=>{const v=t&&t.dataset?t.dataset.v:"";if(!v||v==="inbox")return _lg(t);return _lg({dataset:{v:lifeKey(v)}})}}
+
+/* ---- Map pins: send each pin to the right new tab ---- */
+function rsPinKey(go,to){to=to||"";
+ if(go==="desk")return"desk";
+ if(to==="#showroom")return"stuff";
+ if(to==="#estate")return"home";
+ if(/^@Side hustle/i.test(to))return"money";
+ if(/^@Your health/i.test(to))return"you";
+ if(/^@Lifestyle/i.test(to))return"you";
+ if(/^@Treat yourself/i.test(to))return"stuff";
+ if(/^@Free time/i.test(to))return"free";
+ if(go==="people")return to[0]==="@"?"free":"friends";
+ return lifeKey(go);
+}
+{const _tp=XCLICK.townpin;if(_tp)XCLICK.townpin=t=>{const d=(t&&t.dataset)||{};return _tp({dataset:{go:rsPinKey(d.go||"home",d.to),to:d.to,fg:d.fg}})}}
+
+/* ---- Life > You: your vital signs ---- */
+function rsKnownAs(){try{if(typeof kaS!=="function")return"";const k=kaS(),lab=k.lab;if(!lab)return"";return lab==="mixed"?"Hard to pin down":KA_LABS[lab]?KA_LABS[lab][0].toUpperCase()+KA_LABS[lab].slice(1):""}catch(e){return""}}
+function rsVitalsSec(){
+ if(!S||S.placeholder)return"";
+ const rk=R(),C=CAR_(),heatN=C.heatName||"Heat",ka=rsKnownAs();
+ let en="";try{if(typeof enS==="function"&&enS()){const d=EN_DIAL[enDial()]||EN_DIAL[1];
+  en=`<div class="rs-vs" id="vs-en"><div class="label">⚡ Energy</div>${enSumHtml()}
+   <p class="hint keep" style="margin:4px 0 0">Work hours: <b>${esc(d.n)}</b>. ${esc(d.d)} Rest, quiet months and the right holiday recharge you; overspending comes off next month with interest.</p>
+   <div class="btn-row"><button class="btn sm" data-act="enopen">Energy details and work hours</button></div></div>`}}catch(e){en=""}
+ return `<div class="pane-sec rs-vitals" id="vs-top">
+  <div class="sec-head"><h2 style="font-size:18px">Your vital signs</h2><button class="btn sm" data-act="avatar">Your look</button></div>
+  ${en}
+  <div class="rs-vs" id="vs-rep"><div class="meters">${meter(esc(rk.repName),S.rep,"good")}</div>
+   ${ka?`<div class="rs-ka"><span class="label">Known as</span> <b>${esc(ka)}</b></div>`:""}
+   <p class="hint keep" style="margin:4px 0 0">Good work and the right choices build it, and you need 55 or more to be promoted. At 0 you're fired.</p></div>
+  <div class="rs-vs" id="vs-stress"><div class="meters">${meter("Stress",S.stress,"bad")}</div>
+   <p class="hint keep" style="margin:4px 0 0">What eases it: a good home life (above 65), the gym, rest and holidays, easier work hours, hobbies and pets. At 100 you burn out and this career ends.</p></div>
+  <div class="rs-vs" id="vs-heat"><div class="meters">${meter(esc(heatN),S.heat,"bad")}</div>
+   <p class="hint keep" style="margin:4px 0 0">Risky choices, cut corners and shady offers push it up. It cools a little each month you keep out of trouble. At 100 this career is over: you're banned${(S.karma||0)<=-25?", and with your record you could be arrested":""}.</p></div>
+  ${typeof isTeam==="function"&&isTeam()?`<div class="rs-vs" id="vs-morale"><div class="meters">${meter(S.path==="foot"?"Dressing room":"Team morale",S.morale,"good")}</div>
+   <p class="hint keep" style="margin:4px 0 0">How your team feels about working for you. Good months and looking after people lift it; low morale drags down your results.</p></div>`:""}
+ </div>`;
+}
+/* Tapping a bar in the top strip opens Life > You at that stat */
+function rsVitalKeys(){const rk=R(),C=CAR_(),hl=C.heatShort||C.heatName||"Heat";return vitalsList().map(x=>({k:x.lab==="Energy"?"en":x.lab===rk.repName?"rep":x.lab==="Stress"?"stress":x.lab===hl?"heat":/morale|dressing/i.test(x.lab)?"morale":"top",lab:`${x.lab} ${x.txt||Math.round(x.v||0)}`}))}
+{const _vh=vitalsHTML;vitalsHTML=function(){let h=_vh.apply(this,arguments);try{const K=rsVitalKeys();let i=0;
+ h=h.replace(/<div class="vt [^"]*"/g,m=>{const x=K[i++]||{k:"top",lab:"Your vital signs"};return m+` data-act="vitalgo" data-vk="${x.k}" role="button" tabindex="0" aria-label="${esc(x.lab)}: what it means"`})}catch(e){}return h}}
+function rsGoYou(k){lifeTab="you";try{S.lifeSeen=S.lifeSeen||{};S.lifeSeen.you=S.day;localStorage.setItem("ftb-lifetab","you")}catch(e){}
+ setTab("life");renderLife();
+ const go=()=>{try{const el=document.getElementById("vs-"+(k||"top"))||document.getElementById("vs-top");if(!el||!el.scrollIntoView)return;el.scrollIntoView({block:"center",behavior:"smooth"});el.classList.remove("rs-flash");void el.offsetWidth;el.classList.add("rs-flash")}catch(e){}};
+ try{requestAnimationFrame(go)}catch(e){go()}}
+XCLICK.vitalgo=t=>rsGoYou(t&&t.dataset?t.dataset.vk:"top");
+if(typeof document!=="undefined"&&document.addEventListener&&typeof window!=="undefined"&&!window.__rsKeys){window.__rsKeys=1;
+ document.addEventListener("keydown",e=>{try{const t=e.target;if((e.key==="Enter"||e.key===" ")&&t&&t.matches&&t.matches('[data-act="vitalgo"]')){e.preventDefault();t.click()}}catch(x){}})}
+
+/* ---- The map is its own tab now ---- */
+function renderMapPane(){if(typeof document==="undefined")return;const p=document.getElementById("pane-map");if(!p||!S)return;
+ const wide=typeof innerWidth!=="undefined"&&innerWidth>=720;if(!(tab==="map"||(wide&&side==="map")))return;
+ try{p.innerHTML=S.placeholder?"":townSec()}catch(e){try{console.warn("map pane",e)}catch(x){}}}
+{const _r=render;render=function(){const r=_r.apply(this,arguments);try{renderMapPane()}catch(e){}return r}}
+{const _st=setTab;setTab=function(t){const r=_st.apply(this,arguments);try{if(t==="map")renderMapPane()}catch(e){}return r}}
+XCLICK.menulog=()=>{hideModal();setTab("log");try{renderLog()}catch(e){}};
+
+/* WB: life balance wheel, missed moments, life forks and an end-of-life balance score. Builds on the energy (S.en), life balance (S.lt, child.tt, S.svc) and people modules.
+   State (all optional, so old saves just pick it up):
+   S.missed = [{d, t, who, kind, w}] the moments you missed (last 60), S.mmc = {kind: [missed, total]} lifetime counts, S.mm = {at, cb:{story: day}}
+   S.wh = {n, t:[6 sums], y:[[6 yearly averages]], cy:[6], cn, lo:[6 months low], nd:{slice: day}, nda}  wheel history (compact)
+   S.fk = {done:{id: day}, at, next, on:[{n, cat, e, until, m, end}]}  life forks and the long tails they leave
+   S.wbF = cached end-of-life balance */
+const WB_K=["career","money","family","friends","health","fun"];
+const WB_N={career:"Career",money:"Money",family:"Family",friends:"Friends",health:"Health",fun:"Fun"};
+const wbOk0=()=>{try{return!!(S&&!S.placeholder&&!S.over)}catch(e){return false}};
+const wbEn=()=>{try{return typeof enHas==="function"&&enHas()&&!!S.en}catch(e){return false}};
+const wbFirst=n=>String(n||"").split(" ")[0];
+const wbKids=(lo,hi)=>(S.children||[]).filter(k=>k&&k.alive!==false&&!k.dead&&kidAge(k)>=lo&&kidAge(k)<hi);
+const wbFolks=()=>{try{ensureFolks();return(S.folks||[]).filter(f=>f.alive)}catch(e){return[]}};
+const wbBump=(k,v)=>{if(k==="homeLife")S.homeLife=clamp(S.homeLife+v,0,100);else S[k]=clamp((S[k]||0)+v,0,100)};
+
+/* ================= 1. Missed moments ================= */
+const MM_K={play:["school play or concert","school plays and concerts","kids"],sports:["sports day or match","sports days and matches","kids"],kbday:["child's birthday","children's birthdays","kids"],
+ results:["results day","results days","kids"],kidday:["big day for your child","other big days for your children","kids"],talk:["late-night talk","times they wanted to talk","kids"],
+ anniv:["anniversary","anniversaries","partner"],pbday:["partner's birthday","partner's birthdays","partner"],parents:["visit to your parents","visits to your parents","parents"],
+ hosp:["hospital visit","hospital visits","parents"],funeral:["funeral","funerals","friends"],wedding:["friend's wedding","friends' weddings","friends"],fbday:["friend's big day","friends' birthdays and big days","friends"]};
+const MM_G={kids:"Your children",partner:"Your partner",parents:"Your parents",friends:"Friends"};
+function mmRec(kind,miss,who,t,why){try{if(!wbOk0()||!MM_K[kind])return;const c=S.mmc=S.mmc||{},x=c[kind]=c[kind]||[0,0];x[1]++;
+ if(miss){x[0]++;S.missed=(S.missed||[]).concat({d:S.day,t:String(t||MM_K[kind][0]).slice(0,70),who:String(who||""),kind,w:why||"work"}).slice(-60)}
+ else{const a=S.mmA=S.mmA||{};a[who||"?"]=(a[who||"?"]||[]).concat(S.day).slice(-6)}}catch(e){}}
+/* How likely a moment slips because of work hours or running on empty (0 on a normal, well-rested month) */
+function mmTiredP(){try{if(S.prison)return 1;if(!wbEn()||S.sabb)return 0;const E=S.en;if(E.bsab&&E.bsab.until>S.day)return 0;const d=enDial();let p=d===3?.4:d===2?.12:0;
+ if(E.al-enUsed()<0)p+=.2;if((E.strain||0)>=6)p+=.1;return Math.min(.65,p)}catch(e){return 0}}
+const mmWhy=()=>{try{if(S.prison)return"away";return enDial()>=2?"work":"tired"}catch(e){return"work"}};
+const MM_WHY={work:"you were working",tired:"you were too worn out",away:"you weren't there to go"};
+function mmWhoIn(t,kind){t=String(t||"");const g=MM_K[kind]?MM_K[kind][2]:"";
+ if(g==="kids"){const k=(S.children||[]).find(k=>t.includes(k.n));return k?k.n:""}
+ if(g==="partner")return S.rel&&S.rel.name?wbFirst(S.rel.name):"";
+ if(g==="parents")return /\bDad\b/.test(t)&&!/\bMum\b/.test(t)?"Dad":/\bMum\b/.test(t)&&!/\bDad\b/.test(t)?"Mum":"your parents";
+ if(S.friend&&t.includes(wbFirst(S.friend.n)))return S.friend.n;
+ const p=(S.people||[]).find(p=>p.n&&t.includes(wbFirst(p.n)));return p?p.n:""}
+const mmN=(f,since)=>(S.missed||[]).filter(x=>(!since||S.day-x.d<=since)&&f(x)).length;
+const mmGrp=x=>MM_K[x.kind]?MM_K[x.kind][2]:"";
+/* The diary: clashes you let work win, and moments you'd planned to make but were too tired for */
+const MM_DIARY={play:"play",lh_nursery:"play",lh_concert:"play",sports:"sports",lh_swim:"sports",anniv:"anniv",partnerbday:"pbday",parents:"parents",lh_annivpar:"parents",lh_carehome:"parents",
+ friend40:"fbday",lh_friendbaby:"fbday",lh_marathon:"fbday",wedding:"wedding",lh_wedding3:"wedding",lh_funeral:"funeral",lh_parentsev:"kidday",lh_graduation:"kidday",lh_driving:"kidday",lh_uniopen:"kidday",lh_movekid:"kidday"};
+{const _de=diaryEval;diaryEval=function(notes){const D=S&&S.diary,rec=[];
+ try{if(D&&D.d===S.day&&wbOk0()&&D.items){const p=mmTiredP(),why=mmWhy();
+  for(const x of D.items){const kind=MM_DIARY[x.k];if(!kind)continue;if(x.go===true&&!x.clash&&p>0&&rnd()<p){x.go=false;x.mmT=why}rec.push([x,kind])}}}catch(e){}
+ const r=_de.apply(this,arguments);
+ try{for(const[x,kind]of rec){const miss=x.go===false;mmRec(kind,miss,mmWhoIn(x.t,kind),x.t,x.mmT||"work");
+  if(x.mmT&&notes)notes.push(`You missed ${x.t.charAt(0).toLowerCase()+x.t.slice(1)}: ${MM_WHY[x.mmT]||MM_WHY.tired}.`)}}catch(e){}
+ return r}}
+/* Inbox stories that are really about turning up */
+const MM_EV=[
+ [/^lb_play_/,"play",(ci)=>ci===0?"a":"m"],[/^lb_match_/,"sports",(ci)=>ci===0?"a":"m"],[/^xs_nativity/,"play",(ci)=>ci===0?"a":"m"],
+ [/^lb_advice_/,"talk",(ci)=>ci===0?"a":"m"],[/^sch_\d/,"kidday",(ci)=>ci===0?"a":"m"],[/^anniversary$/,"anniv",()=>"m"],
+ [/^pp_wedding_/,"wedding",(ci,n)=>ci===n-1?"m":"a"],[/^pp_passing_/,"funeral",(ci)=>ci===0?"a":"m"],
+ [/^fk_frail/,"hosp",(ci,n)=>ci===n-1?"m":"a"],[/^fk_miss/,"parents",(ci,n)=>ci===n-1?"m":"a"],[/^ls_parents/,"hosp",(ci)=>ci===0?"a":null],
+ [/^kbd5_/,"kbday",()=>"a"],[/^ks_gcse_/,"results",()=>"t"]];
+const MM_SKIP=/^(mm_|lf_|wb_|csq_|en_|lb_gp|lb_skip|lb_help|lb_call|g2_|ktin_|fun_|kw_|bd_|lev_)/;
+function mmHomeOf(c){if(!c)return 0;if(c.p!=null){const w=(c.win&&c.win.fx&&c.win.fx.home)||0,l=(c.lose&&c.lose.fx&&c.lose.fx.home)||0;return w*c.p+l*(1-c.p)}return(c.fx&&c.fx.home)||0}
+function mmClassify(m,e,ci){try{const id=String(m.id||"");if(MM_SKIP.test(id))return null;const ch=choicesOf(e)||[];
+ for(const[re,kind,f]of MM_EV)if(re.test(id)){const r=f(ci,ch.length);return r?{kind,r}:null}
+ /* Career stories: a family moment against work, judged by what each option does to home life */
+ const from=fill(e.from||"",m),txt=fill((e.t||"")+" "+(e.b||""),m);
+ const pn=[S.rel&&S.rel.name&&wbFirst(S.rel.name),S.friend&&wbFirst(S.friend.n),...(S.children||[]).map(k=>k.n)].filter(Boolean);
+ if(!(/^(your (partner|family|wife|husband|child|son|daughter|kids|mum|dad|parents|best friend)|the school)/i.test(from)||pn.some(n=>from.includes(n))))return null;
+ let kind=null;if(/school play|nativity|school concert|recital/i.test(txt))kind="play";else if(/parents' evening|graduation/i.test(txt))kind="kidday";else if(/anniversary/i.test(txt))kind="anniv";
+ else if(/birthday/i.test(txt))kind=/partner|wife|husband/i.test(from+txt)?"pbday":/child|son|daughter|kid/i.test(txt)?"kbday":"fbday";else if(/sports day|on the touchline|school match/i.test(txt))kind="sports";
+ else if(/funeral/i.test(txt)&&!/gig|play at|song for|recognised/i.test(txt))kind="funeral";else if(/wedding/i.test(txt)&&/friend/i.test(from+txt)&&!/gig|playing at|for 200/i.test(txt))kind="wedding";
+ else if(/hospital|surgery|operation/i.test(txt)&&/partner|mum|dad|wife|husband/i.test(from+txt))kind="hosp";
+ if(!kind)return null;const hs=ch.map(mmHomeOf),mine=hs[ci]||0,best=Math.max(...hs);
+ if(mine>0)return{kind,r:"a"};if(best>0&&mine<=0)return{kind,r:"m"};return null}catch(x){return null}}
+{const _ch=choose;choose=function(i,ci){let m=null,cl=null,was=true;try{m=S.inbox[i];was=!m||m.done;if(m&&!was){const e=getEv(m);cl=e?mmClassify(m,e,ci):null}}catch(x){}
+ const r=_ch.apply(this,arguments);
+ try{if(cl&&m&&!was&&m.done&&m.ci===ci){const e=getEv(m),t=fill(e.t||"",m),who=mmWhoIn(fill((e.t||"")+" "+(e.b||"")+" "+(e.from||""),m),cl.kind);
+  if(cl.r==="t"){const p=mmTiredP(),miss=p>0&&rnd()<p,N=who||"your child";mmRec(cl.kind,miss,who,t,mmWhy());
+   if(miss){const k=(S.children||[]).find(x=>x.n===who);if(k)k.kb=clamp((k.kb||0)-3,-50,50);S.log.unshift({d:S.day,t:`You weren't there when ${N} opened the envelope: ${MM_WHY[mmWhy()]}.`})}}
+  else mmRec(cl.kind,cl.r==="m",who,t,"work")}}catch(x){}
+ return r}}
+/* Birthdays and anniversaries come round every year; a hard month means you miss some */
+function mmMonth(notes){if(!wbOk0()||S.front||S.sel)return;const p=mmTiredP(),why=mmWhy();
+ for(const k of wbKids(0,18)){const a=Math.floor(kidAge(k)+1e-9);if(k.mmB==null){k.mmB=a;continue}if(a<=k.mmB)continue;k.mmB=a;if(a<1)continue;
+  const miss=p>=1||(p>0&&rnd()<p*.8);mmRec("kbday",miss,k.n,`${k.n}'s ${ord(a)} birthday`,why);
+  if(miss){k.tt=clamp((k.tt??50)-6,0,100);k.kb=clamp((k.kb||0)-2,-50,50);S.homeLife=clamp(S.homeLife-2,0,100);notes.push(`You missed ${k.n}'s ${ord(a)} birthday: ${MM_WHY[why]}.`)}}
+ if(typeof inLove==="function"&&inLove()&&S.rel.name){const yr=Math.floor((S.day-1)/12),P=wbFirst(S.rel.name);
+  if(monthOf(S.day)===h32(S.rel.name)%12&&S.rel.mmBy!==yr){S.rel.mmBy=yr;const miss=p>=1||(p>0&&rnd()<p*.7);mmRec("pbday",miss,P,`${P}'s birthday`,why);
+   if(miss){S.homeLife=clamp(S.homeLife-(S.rel.trait==="romantic"?6:4),0,100);notes.push(`${P}'s birthday came and went: ${MM_WHY[why]}. It was noticed.`)}}
+  if(S.rel.st==="married"&&S.rel.since!=null&&S.day>S.rel.since&&(S.day-S.rel.since)%12===0&&S.rel.mmAy!==yr){S.rel.mmAy=yr;const n=(S.day-S.rel.since)/12,miss=p>=1||(p>0&&rnd()<p*.7);
+   mmRec("anniv",miss,P,`Your ${ord(n)} wedding anniversary`,why);if(miss){S.homeLife=clamp(S.homeLife-5,0,100);notes.push(`You missed your ${ord(n)} wedding anniversary: ${MM_WHY[why]}.`)}}}}
+/* The past catches up: stories that bring missed moments back */
+function mmStory(){if(!wbOk0()||S.prison||S.front||S.sel||S.wscene)return;
+ if(S.inbox.some(m=>!m.done&&/^(mm_|lf_)/.test(m.id)))return;const M=S.mm=S.mm||{cb:{}};M.cb=M.cb||{};if(S.day-(M.at??-99)<10||rnd()>.09)return;
+ const cool=(k,n)=>S.day-(M.cb[k]??-999)>=n,opts=[],push=(k,ev)=>opts.push(()=>{M.at=S.day;M.cb[k]=S.day;pushDyn(Object.assign({id:`mm_${k}_${S.day}`,life:1,noBig:1},ev))});
+ const ex=(f,n)=>(S.missed||[]).filter(f).slice(-n).map(x=>x.t.charAt(0).toLowerCase()+x.t.slice(1));
+ const list=a=>a.length>1?a.slice(0,-1).join(", ")+" and "+a[a.length-1]:a[0]||"";
+ /* A teenager who has been keeping count */
+ const teens=wbKids(13,18).map(k=>[k,mmN(x=>x.who===k.n)]).filter(x=>x[1]>=3).sort((a,b)=>b[1]-a[1]);
+ if(teens.length&&cool("never_"+teens[0][0].n,60)){const[k,n]=teens[0],N=k.n,e=ex(x=>x.who===N,2);push("never_"+N,{from:N,t:"You were never there",b:`${N} slams a door, then opens it again to finish the sentence. "You missed ${list(e)}. You've missed ${n} things this year alone. You're never there." It isn't strictly true. It isn't far off.`,c:[
+  {t:"Clear time for them: more of you for the next four months",fx:{act:"mm_kid",n:N,kb:8,tt:12,plenty:4,home:2},o:`Pizza on Fridays, lifts everywhere and no phone at dinner. ${N} pretends not to notice. They notice.`},
+  {t:"Explain that it's all for them",p:.35,win:{fx:{act:"mm_kid",n:N,kb:2,stress:2},o:"A long pause, then a shrug. \"I suppose.\""},lose:{fx:{act:"mm_kid",n:N,kb:-8,home:-3},o:`"I never asked you to." ${N} doesn't speak to you for a week.`}},
+  {t:"Let it blow over",fx:{act:"mm_kid",n:N,kb:-5,stress:2},o:"It blows over. It also gets filed away."}]})}
+ /* A partner keeping score */
+ const pm=mmN(x=>mmGrp(x)==="partner"||mmGrp(x)==="kids",36);
+ if(inLove()&&S.rel.st!=="dating"&&pm>=4&&cool("score",48)){const P=wbFirst(S.rel.name),e=ex(x=>mmGrp(x)==="partner"||mmGrp(x)==="kids",3),cost=Math.round(1400*Math.max(.5,priceScale()*1.5)/100)*100;
+  push("score",{from:P,t:"Keeping score",b:`${P} has a list. Not written down, but a list all the same: ${list(e)}. "I've stopped expecting you. That's what worries me."`,c:[
+   {t:`A proper weekend away, phones off (${money(cost)})`,fx:{gbp:-cost,fixed:1,act:"mm_en",cat:"family",v:10,n:`A weekend away with ${P}`,home:10,stress:-4},o:"Two days of long walks and longer lunches. The list gets shorter."},
+   {t:"Couples counselling for six months (⚡ 4 a month)",fx:{act:"lf",home:3,on:[{n:`Counselling with ${P}`,cat:"family",e:4,mo:6,m:{home:1.2,gbp:-Math.round(120*Math.max(.5,priceScale()*1.5)/10)*10}}]},o:"An hour a week of hard, honest conversations. It helps more than you thought it would."},
+   {t:"\"It's not a competition\"",fx:{home:S.rel.trait==="romantic"?-12:-8,stress:3},o:`${P} goes quiet. The kind of quiet that lasts.`}]})}
+ /* A friend who has stopped asking */
+ const fm=(S.missed||[]).filter(x=>mmGrp(x)==="friends"&&S.day-x.d<=48);
+ if(fm.length>=3&&cool("friend",96)){const who=fm[fm.length-1].who,p=(S.friend&&S.friend.n===who)?null:(S.people||[]).find(q=>q.n===who&&q.alive!==false),F=wbFirst(who||(S.friend&&S.friend.n)||"");
+  if(F)push("friend",{from:who||F,t:`${F} has stopped inviting you`,b:`You hear about ${F}'s night out afterwards, from someone else. After ${list(ex(x=>mmGrp(x)==="friends",2))}, they've stopped asking.`,c:[
+   {t:"Turn up on their doorstep with a takeaway (⚡ 6)",fx:{act:"mm_fr",who,d:14,e:6,stress:-2},o:"An awkward minute, then a big hug and a very late night."},
+   {t:"Send a long, honest message",fx:{act:"mm_fr",who,d:5},o:"\"Means a lot. Pint soon?\" It's a start."},
+   {t:"Let it go: people drift",fx:{act:"mm_fr",who,d:-12,stress:2},o:"They do drift. You notice the gap more than you expected."}]})}
+ /* Parents: a calendar on the kitchen wall */
+ const fl=wbFolks(),parM=mmN(x=>mmGrp(x)==="parents",60);
+ if(fl.length&&parM>=3&&cool("folks",72)){const N=fl.length>1?"Mum":folkName(fl[0]);push("folks",{from:N,t:"The calendar on the fridge",b:`You notice the calendar on ${N==="Mum"?"your parents'":N+"'s"} fridge. The days you visited are circled. There aren't many circles this year.`,c:[
+  {t:"See them more for a few months",fx:{act:"mm_folk",home:4,karma:2},o:"Sunday lunches, the same stories, and more circles on the calendar."},
+  {t:"Set up a weekly video call",fx:{act:"folkseen",home:2},o:"Mostly ceiling and ear. It still counts."},
+  {t:"They understand: you're busy",fx:{home:-3,karma:-2,stress:2},o:"They do understand. That's the worst part."}]})}
+ /* Grown-up children remember */
+ if(age()>=55){const ad=wbKids(21,80).map(k=>[k,mmN(x=>x.who===k.n)]).filter(x=>x[1]>=3).sort((a,b)=>b[1]-a[1]);
+  if(ad.length&&cool("adult",120)){const[k,n]=ad[0],N=k.n;push("adult",{from:N,t:"What you missed",b:`Christmas, and ${N} has had a glass of wine. "Do you know how many of my things you missed? I counted once. ${n}." Everyone laughs. ${N} doesn't.`,c:[
+   {t:"Say sorry properly, without excuses",p:.6,win:{fx:{act:"mm_kid",n:N,kb:12,home:4},o:`A long silence, then ${N} hugs you. "Thank you for saying it."`},lose:{fx:{act:"mm_kid",n:N,kb:3,stress:3},o:"It's stiff and short. But it's said."}},
+   ...(S.grandkids?[{t:"Promise to be there for the grandchildren (⚡ 5 a month for two years)",fx:{act:"lf",home:4,on:[{n:"Being there for the grandchildren",cat:"family",e:5,mo:24,m:{home:.3}}],act2:"mm_kid",n:N,kb:6},o:"School pick-ups on Tuesdays. Nativity plays. Every single one."}]:[]),
+   {t:"Laugh it off",fx:{act:"mm_kid",n:N,kb:-6,home:-2},o:"The laugh doesn't land. The subject changes."}]})}}
+ /* And sometimes, turning up gets noticed */
+ for(const k of wbKids(6,18)){const A=(S.mmA&&S.mmA[k.n])||[],mm=mmN(x=>x.who===k.n);if(mm>=2&&A.length>=3&&A.slice(-3).every(d=>S.day-d<=24)&&mmN(x=>x.who===k.n,24)===0&&cool("noticed_"+k.n,72)){const N=k.n;
+  push("noticed_"+N,{from:N,t:"You came",b:`${N} says it on the way home, looking out of the car window: "You've come to everything lately." Then, quickly: "It's fine. Whatever." It isn't whatever.`,c:[
+   {t:"\"I wouldn't miss it\"",fx:{act:"mm_kid",n:N,kb:6,tt:6,home:3,stress:-2},o:"They don't reply. They do turn the radio up to your song."}]});break}}
+ if(opts.length)pick(opts)()}
+Object.assign(ACTS,{
+ mm_kid:fx=>{const c=(S.children||[]).find(x=>x.n===fx.n);if(c){if(fx.kb)c.kb=clamp((c.kb||0)+fx.kb,-50,50);if(fx.tt)c.tt=clamp((c.tt??50)+fx.tt,0,100)}
+  if(fx.plenty)wbTemp("kids",fx.plenty,"the children")},
+ mm_en:fx=>{try{if(fx.v&&wbEn())enCharge(fx.cat||"family",fx.v,fx.n||"Time together")}catch(e){}},
+ mm_fr:fx=>{let p=null;if(S.friend&&(!fx.who||S.friend.n===fx.who))S.friend.bond=clamp(S.friend.bond+fx.d,0,100);else if((p=(S.people||[]).find(q=>q.n===fx.who))){p.bond=clamp((p.bond||0)+fx.d,0,100);if(fx.d>0)p.last=S.day}
+  try{if(fx.e&&wbEn())enCharge("friends",fx.e,"Seeing an old friend")}catch(e){}},
+ mm_folk:()=>{S.folkSeen=S.day;wbTemp("folks",4,"your parents")}});
+/* Promises of more time: people go up to Plenty for a while, then back to what you had before (unless you've changed it yourself) */
+function wbTemp(k,mo,who){try{if(!wbEn())return;const E=enS();E.tm=E.tm||{};const F=lfS();const cur=E.tm[k]!=null?E.tm[k]:1;if(cur>=2)return;F.tmT=(F.tmT||[]).filter(x=>x.k!==k);F.tmT.push({k,prev:E.tm[k]!=null?E.tm[k]:null,until:S.day+mo,who,lv:cur+1});E.tm[k]=cur+1}catch(e){}}
+function wbTempEnd(notes){const F=S.fk;if(!F||!F.tmT||!F.tmT.length||!S.en)return;const E=S.en;E.tm=E.tm||{};
+ F.tmT=F.tmT.filter(x=>{if(S.day+1<x.until)return true;if(E.tm[x.k]===(x.lv||2)){if(x.prev==null)delete E.tm[x.k];else E.tm[x.k]=x.prev;notes.push(`The extra time you promised ${x.who} is over: back to how things were. You can change it in Life → Love.`)}return false})}
+/* Life → Family: what you've missed, and what you made */
+function mmSec(){const c=S.mmc||{},ks=Object.keys(MM_K).filter(k=>c[k]&&c[k][1]);if(!ks.length)return"";
+ const tot=ks.reduce((t,k)=>t+c[k][1],0),miss=ks.reduce((t,k)=>t+c[k][0],0);
+ const groups={};for(const k of ks)(groups[MM_K[k][2]]=groups[MM_K[k][2]]||[]).push(k);
+ const rows=Object.keys(MM_G).filter(g=>groups[g]).map(g=>`<li class="mm-g"><span><b>${esc(MM_G[g])}</b></span></li>`+groups[g].map(k=>{const[m,t]=c[k],r=m/t;return `<li><span>${esc(cap1(MM_K[k][1]))}</span><b class="${r>=.5?"down":m===0?"up":""}">${m?`Missed ${m} of ${t}`:`All ${t}`}</b></li>`}).join("")).join("");
+ const recent=(S.missed||[]).slice(-5).reverse();
+ const top=ks.filter(k=>c[k][0]).sort((a,b)=>c[b][0]/c[b][1]-c[a][0]/c[a][1])[0];
+ return `<div class="pane-sec mm-sec"><div class="sec-head"><h2 style="font-size:18px">Missed moments</h2><span class="label ${miss/tot>=.4?"down":""}">${miss} of ${tot}</span></div>
+  ${top?`<p class="mm-sum">Missed moments: <b>${c[top][0]} of ${c[top][1]}</b> ${esc(MM_K[top][1])}.</p>`:`<p class="mm-sum up">You've made every one so far.</p>`}
+  <ul class="lb-list">${rows}</ul>
+  ${recent.length?`<details class="me-more"><summary>Most recently missed</summary><ul class="lb-list">${recent.map(x=>`<li><span>${esc(x.t)}<small>${esc(cap1(MM_WHY[x.w]||MM_WHY.work))}</small></span><b>${esc(shortDate(x.d))}</b></li>`).join("")}</ul></details>`:""}
+  <p class="hint keep" style="margin:6px 0 0">Plays, matches, birthdays, anniversaries and the days that matter to the people around you. Work clashes, Pushing or All-in hours and running on empty all make you miss them, and people remember: some of these come back years later.</p></div>`}
+{const _ets=enTimeSec;enTimeSec=function(scope){const h=_ets.apply(this,arguments)||"";try{if(scope==="family"&&wbOk0())return h+mmSec()}catch(e){}return h}}
+
+/* ================= 2. The life balance wheel ================= */
+function wbHist(n){const E=S.en;return E&&E.hist?E.hist.slice(-n):[]}
+function wbScores(){const a=age(),why={},v={};
+ /* Career: how far up you are for your age, and how you're seen */
+ {const C=CAR_(),mx=Math.max(1,((C&&C.ranks)||[]).length-1),rf=clamp((S.rank||0)/mx,0,1),exp=clamp((a-21)/30,.05,.85);
+  let x=30+rf*40+(rf-exp)*20+((S.rep||50)-50)*.25+Math.min(8,(S.fame||0)/8);const w=[];
+  try{w.push(`${R().t}${(S.rep||0)>=70?", highly rated":(S.rep||0)<35?", on thin ice":""}`)}catch(e){}
+  if(S.prison){x=6;w.length=0;w.push("In prison")}else if(S.sabb){x-=6;w.push("on a year out")}
+  const E=S.en||{};if(E.bsab&&E.bsab.until>S.day){x-=8;w.push("off with burnout")}else if(E.pt&&E.pt.until>S.day){x-=4;w.push("part-time")}
+  v.career=x;why.career=w.join(", ")}
+ /* Money: net worth against what's typical for your age, and cash in hand */
+ {let nw=0;try{nw=netWorth()}catch(e){}const bench=(20000+Math.pow(Math.max(0,a-22),1.6)*2500)*Math.max(.35,Math.min(1.2,priceScale()*1.4));let x;
+  if(nw<=0)x=clamp(18+nw/bench*20,0,18);else x=50+15*Math.log2(clamp(nw/bench,1/8,16));
+  let mo=0;try{mo=monthly()}catch(e){}const w=[`Net worth ${money(Math.round(nw/1000)*1000)}`];
+  if(S.wealth<0){x-=15;w.push("overdrawn")}else if(mo&&S.wealth>=mo*6){x+=5;w.push("savings in the bank")}else if(mo&&S.wealth<mo*2){x-=5;w.push("little cash to spare")}
+  v.money=x;why.money=w.join(", ")}
+ /* Family: home life, time with the kids, how close the grown-up ones are, and your parents */
+ {const P=[[S.homeLife,1]],w=[`${isSingle()?"Social life":"Home life"} ${Math.round(S.homeLife)}`];
+  const kids=wbKids(0,18);if(kids.length){const tt=kids.reduce((t,k)=>t+(k.tt??50),0)/kids.length;P.push([tt,.8]);w.push(`time with the kids: ${tt>=65?"lots":tt>=40?"some":"little"}`)}
+  const ad=wbKids(18,90);if(ad.length){const kb=ad.reduce((t,k)=>t+clamp(55+(k.kb||0)*1.2,0,100),0)/ad.length;P.push([kb,.6]);w.push(`grown-up children ${kb>=65?"close":kb>=40?"in touch":"distant"}`)}
+  if(wbFolks().length){const gap=S.day-(S.folkSeen??S.day),x=clamp(88-gap*3,10,88);P.push([x,.3]);if(gap>=12)w.push("you rarely see your parents")}
+  let x=P.reduce((t,p)=>t+p[0]*p[1],0)/P.reduce((t,p)=>t+p[1],0);const m=mmN(x=>["kids","partner","parents"].includes(mmGrp(x)),24);if(m){x-=Math.min(16,m*3);w.push(`${m} missed moment${m>1?"s":""} lately`)}
+  v.family=x;why.family=w.join(", ")}
+ /* Friends: your best friend, your circle, and time actually spent with them */
+ {const bf=S.friend?S.friend.bond:null,pals=(typeof alivePeople==="function"?alivePeople():[]).filter(p=>p.role==="friend").map(p=>p.bond||0).sort((a,b)=>b-a).slice(0,3);let x;const w=[];
+  const avg=pals.length?pals.reduce((t,b)=>t+b,0)/pals.length:null;
+  if(bf==null&&avg==null){x=12;w.push("No close friends right now")}else if(bf!=null){x=bf*.55+(avg!=null?avg:bf*.6)*.45;w.push(`${wbFirst(S.friend.n)} ${bf>=70?"is a rock":bf>=45?"is still close":"is drifting"}`)}else{x=avg*.8;w.push("no best friend")}
+  if(pals.length)w.push(`${pals.length} other friend${pals.length>1?"s":""}`);
+  const h=wbHist(6);if(h.length){const ae=h.reduce((t,m)=>t+((m.c&&m.c.friends)||0),0)/h.length;x+=clamp(ae-6,-8,8)*.8;if(ae<3)w.push("no time for them lately")}
+  const m=mmN(x=>mmGrp(x)==="friends",24);if(m){x-=Math.min(15,m*5);w.push(`${m} missed`)}
+  v.friends=x;why.friends=w.join(", ")}
+ /* Health: today's health, long-term wear, stress and fitness */
+ {const lw=(S.lt&&S.lt.w)||0;let fit=false;try{fit=lbFit().on}catch(e){}let x=S.health*.5+(100-lw)*.2+(100-S.stress)*.3+(fit?5:0)-(S.sick>0?10:0);
+  const w=[`Health ${Math.round(S.health)}`];if(S.stress>=60)w.push("very stressed");if(lw>=45)w.push("worn down");if(fit)w.push("keeping fit");if(S.sick>0)w.push("off sick");
+  v.health=x;why.health=w.join(", ")}
+ /* Fun: energy spent on fun, hobbies, holidays and rest over the last year */
+ {const h=wbHist(12),w=[];let x=45;if(h.length){const al=h.reduce((t,m)=>t+(m.al||0),0)||1,fun=h.reduce((t,m)=>t+((m.c&&m.c.fun)||0),0),rest=h.reduce((t,m)=>t+((m.c&&m.c.rest)||0),0);
+   x=18+fun/al*260+rest/al*110;w.push(`${Math.round(fun/al*100)}% of your energy on fun, ${Math.round(rest/al*100)}% left for rest`)}
+  if(S.lastTrip!=null&&S.day-S.lastTrip<=12){x+=10;w.push("a holiday this year")}
+  if(S.hobby&&S.hobby.last!=null&&S.day-S.hobby.last<=3){x+=8;w.push("time for "+(HOBBIES[S.hobby.k]?HOBBIES[S.hobby.k].n.toLowerCase():"your hobby"))}
+  const st=(S.en&&S.en.strain)||0;if(st>=3){x-=Math.min(12,st*1.5);w.push("running on empty")}
+  v.fun=x;why.fun=w.join(", ")}
+ for(const k of WB_K)v[k]=Math.round(clamp(v[k],0,100));return{v,why}}
+const wbCls=x=>x>=65?"up":x<35?"down":"mid";
+const WB_HI={career:"Career is flying",money:"money's sorted",family:"home is a happy place",friends:"your friends are close",health:"you're in good shape",fun:"you're having fun"};
+const WB_LO={career:"work is going nowhere",money:"money is tight",family:"family feels neglected",friends:"friends are fading",health:"your health is suffering",fun:"there's no fun left in it"};
+function wbVerdict(v){const s=WB_K.slice().sort((a,b)=>v[b]-v[a]),hi=s[0],lo=s[5];
+ if(WB_K.every(k=>v[k]>=58))return"A rare thing: a life in balance.";if(WB_K.every(k=>v[k]<=40))return"Everything's a struggle at the moment.";
+ const H=v[hi]>=62?cap1(WB_HI[hi]):null,L=v[lo]<=38?WB_LO[lo]:null;
+ if(H&&L)return `${H}; ${L}.`;if(H)return `${H}, and nothing is badly neglected.`;if(L)return `Ticking along, but ${L}.`;return"Ticking along: nothing great, nothing terrible."}
+function wbSvg(v,size,lab){const N=6,c=100,Rr=68,pt=(i,r)=>{const a=-Math.PI/2+i*2*Math.PI/N;return[c+Math.cos(a)*r,c+Math.sin(a)*r]},f=p=>p.map(x=>x.toFixed(1)).join(",");
+ let g="";for(const q of[.25,.5,.75,1])g+=`<polygon class="wb-grid" points="${[0,1,2,3,4,5].map(i=>f(pt(i,Rr*q))).join(" ")}"/>`;
+ for(let i=0;i<N;i++)g+=`<line class="wb-grid" x1="100" y1="100" x2="${f(pt(i,Rr)).replace(",",'" y2="')}"/>`;
+ const P=WB_K.map((k,i)=>pt(i,Rr*clamp(v[k],5,100)/100));
+ g+=`<polygon class="wb-area" points="${P.map(f).join(" ")}"/>`+P.map((p,i)=>`<circle class="wb-dot ${wbCls(v[WB_K[i]])}" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4"/>`).join("");
+ if(lab!==false)WB_K.forEach((k,i)=>{const[x,y]=pt(i,Rr+13);g+=`<text class="wb-lab" x="${x.toFixed(1)}" y="${(y+(y>110?9:y<90?-1:4)).toFixed(1)}" text-anchor="${x<92?"end":x>108?"start":"middle"}">${WB_N[k]}</text>`});
+ return `<svg class="wb-svg" viewBox="-34 -6 268 214" width="${size}" height="${Math.round(size*214/268)}" role="img" aria-label="Life balance: ${WB_K.map(k=>WB_N[k]+" "+v[k]).join(", ")}">${g}</svg>`}
+let wbOpen=false;try{wbOpen=localStorage.getItem("ftb-wheel")==="1"}catch(e){}
+function wbCard(){if(!wbOk0())return"";try{if(typeof LIFE_TABS!=="undefined"&&LIFE_TABS.some(t=>t[0]==="you")&&lifeTab!=="you")return""}catch(e){}let W;try{W=wbScores()}catch(e){return""}const v=W.v;
+ return `<div class="pane-sec wb-card"><details id="wbD" ${wbOpen?"open":""}><summary class="wb-top">${wbSvg(v,148)}<div class="wb-txt"><div class="label">Life balance</div><div class="wb-verdict">${esc(wbVerdict(v))}</div><div class="wb-more hint">${wbOpen?"Hide details":"What's behind it"}</div></div></summary>
+  <ul class="lb-list wb-rows">${WB_K.map(k=>`<li><span><b>${WB_N[k]}</b><small>${esc(W.why[k]||"")}</small></span><b class="wb-v ${wbCls(v[k])}">${v[k]}</b></li>`).join("")}</ul>
+  <p class="hint keep" style="margin:6px 0 0">Each slice is out of 100 and comes from your real life: your job and reputation, money for your age, home life and time with family, your friends, your health, and the energy you spend on fun and rest. Your whole life is graded on it at the end.</p></details></div>`}
+{const _ln=lifeNextCard;lifeNextCard=function(){const r=_ln.apply(this,arguments)||"";try{return r+wbCard()}catch(e){return r}}}
+{const _rl=renderLife;renderLife=function(){const r=_rl.apply(this,arguments);try{const d=document.getElementById("wbD");if(d&&d.addEventListener)d.addEventListener("toggle",()=>{wbOpen=d.open;try{localStorage.setItem("ftb-wheel",wbOpen?"1":"0")}catch(e){}const m=d.querySelector(".wb-more");if(m)m.textContent=wbOpen?"Hide details":"What's behind it"})}catch(e){}return r}}
+/* Monthly: keep a compact history for the end-of-life grades, and nudge gently when a slice stays very low */
+const WB_NUDGE={
+ career:["Going nowhere at work","It's been a long time since work felt like it was going anywhere. You catch yourself scrolling job adverts in meetings.",[
+  {t:"Ask your boss what it would take to move up",fx:{rep:3,stress:2},o:"An honest conversation. You come away with a plan and a deadline."},{t:"Not now",fx:{},o:"Maybe next year."}]],
+ money:["Money on your mind","You check your bank balance three times a day. Money has been tight for months.",[
+  {t:"Sit down and go through every bill",fx:{stress:-3,home:1},o:"Two cancelled subscriptions and a better deal on the insurance. Small, but it helps."},{t:"Not now",fx:{stress:1},o:"You close the banking app and try not to think about it."}]],
+ family:["Strangers at breakfast","You realise you don't know what's going on in the lives of the people you live with.",[
+  {t:"Give family more of your time for a few months",fx:{act:"wb_fam",home:4},o:"Proper dinners, at the table. It's like meeting them again."},{t:"Not now",fx:{},o:"There's always next month."}]],
+ friends:["Nobody to call","Something good happens and you go to message someone about it, and can't think who.",[
+  {t:"Message a few old friends (⚡ 6)",fx:{act:"wb_fr"},o:"Three replies within the hour. One of them calls."},{t:"Not now",fx:{},o:"You put the phone down."}]],
+ health:["Your body is keeping score","Stairs leave you puffed. You've had the same cold for a month. Something needs to change.",[
+  {t:"Book a check-up and a week of early nights",fx:{health:3,stress:-3},o:"Nothing serious, says the GP. Yet. You sleep better already."},{t:"Not now",fx:{},o:"You're fine. Probably."}]],
+ fun:["When did you last have fun?","Someone asks what you do for fun. You open your mouth and nothing comes out.",[
+  {t:"Book something just for the joy of it (⚡ 8)",fx:{act:"wb_fun",stress:-4},o:"A ridiculous, brilliant day out. You laugh until your face hurts."},{t:"Not now",fx:{},o:"Fun can wait. It's been waiting a while."}]]};
+Object.assign(ACTS,{
+ wb_fam:()=>{if(!wbEn())return;for(const r of enPeople("family"))if(r.k==="p"||r.k==="kids")wbTemp(r.k,3,r.k==="p"?wbFirst(r.name):"the children")},
+ wb_fr:()=>{if(S.friend)S.friend.bond=clamp(S.friend.bond+5,0,100);for(const p of(typeof alivePeople==="function"?alivePeople():[]).filter(p=>p.role==="friend").slice(0,3)){p.bond=clamp((p.bond||0)+5,0,100);p.last=S.day}try{if(wbEn())enCharge("friends",6,"Messaging old friends")}catch(e){}},
+ wb_fun:()=>{try{if(wbEn()){enCharge("fun",8,"A day out just for fun");enCharge("rest",-6,"It recharges you")}}catch(e){}}});
+function wbMonth(){if(!wbOk0()||S.day<2)return;let v;try{v=wbScores().v}catch(e){return}const H=S.wh=S.wh&&typeof S.wh==="object"?S.wh:{n:0,t:[0,0,0,0,0,0],y:[],cy:[0,0,0,0,0,0],cn:0,lo:[0,0,0,0,0,0],nd:{}};
+ const a=WB_K.map(k=>v[k]);H.n++;H.cn=(H.cn||0)+1;H.cy=H.cy||[0,0,0,0,0,0];H.lo=H.lo||[0,0,0,0,0,0];H.nd=H.nd||{};
+ a.forEach((x,i)=>{H.t[i]+=x;H.cy[i]+=x;H.lo[i]=x<25?H.lo[i]+1:0});
+ if(H.cn>=12){H.y.push(H.cy.map(x=>Math.round(x/H.cn)));H.y=H.y.slice(-90);H.cy=[0,0,0,0,0,0];H.cn=0}
+ /* A gentle nudge, once, then a long cooldown for that slice */
+ if(S.prison||S.front||S.sel||S.day-(H.nda??-99)<8||S.inbox.some(m=>!m.done&&/^wb_/.test(m.id)))return;
+ const i=H.lo.findIndex((x,j)=>x>=8&&S.day-(H.nd[WB_K[j]]??-99)>=36);if(i<0)return;const k=WB_K[i],N=WB_NUDGE[k];H.nd[k]=S.day;H.nda=S.day;H.lo[i]=0;
+ pushDyn({id:"wb_"+k+"_"+S.day,life:1,noBig:1,from:"Your life balance",t:N[0],b:N[1]+` (${WB_N[k]} has been very low on your life balance wheel for months.)`,c:N[2]});
+ try{if(!window.__noMoments)toastMsg(`Life balance: ${WB_N[k].toLowerCase()} has been very low for a while.`)}catch(e){}}
+
+/* ================= 3. Life forks ================= */
+const LF_FROM="Life fork";
+const lfS=()=>{if(!S.fk||typeof S.fk!=="object")S.fk={done:{},on:[]};const F=S.fk;F.done=F.done||{};F.on=F.on||[];return F};
+const lfSal=()=>{try{return salary()}catch(e){return 30000}};
+const lfR=x=>Math.round(x/100)*100;
+const lfCity=()=>pick(["Manchester","Edinburgh","Bristol","Leeds","Glasgow","Birmingham"]);
+const lfWork=()=>{try{return!S.prison&&!S.sabb&&!S.front&&!S.sel&&!selfPaid()&&age()<STATE_PENSION}catch(e){return false}};
+const lfMx=()=>{try{return Math.max(1,(CAR_().ranks||[]).length-1)}catch(e){return 4}};
+const LF=[
+ {id:"abroad",ok:()=>inLove()&&S.rel.st!=="dating"&&age()>=27&&age()<52&&lfWork()&&S.rank>=1&&S.rank<lfMx()&&!S.abroad,ev:()=>{const P=wbFirst(S.rel.name),city=pick(["Singapore","Toronto","Sydney","Lisbon","Vancouver","Copenhagen"]);
+  return{t:`${P}'s dream job, or yours`,b:`${P} has been offered the job of a lifetime in ${city}: two years at least. The same week, your boss takes you aside. Stay, keep pushing, and the next promotion is probably yours.`,c:[
+   {t:`Go to ${city} with ${P}`,fx:{act:"lf",x:"abroad",home:12,rep:-7,stress:-3,on:[{n:"Settling into a new country",cat:"home",e:6,mo:6},{n:`Life in ${city}`,cat:"home",e:0,mo:24,m:{home:.3},end:"abroad",city}]},o:`A new flat, a new language and ${P} lit up every evening. Your career goes very quiet.`},
+   {t:"Stay and go for the promotion",p:.55,win:{fx:{act:"lf",x:"promo",home:-10,on:[{n:`${P} resents it`,mo:12,m:{home:-.5}}]},o:`The promotion comes through. ${P} says congratulations. It sounds like something else.`},lose:{fx:{act:"lf",home:-10,stress:2,on:[{n:`${P} resents it`,mo:12,m:{home:-.5}}]},o:"The promotion goes to someone else. You stayed for nothing, and you both know it."}},
+   {t:"Try long distance for a year (⚡ 6 a month)",fx:{act:"lf",home:-4,on:[{n:`Long distance with ${P}: flights and late calls`,cat:"family",e:6,mo:12,m:{gbp:-lfR(250*Math.max(.5,priceScale()*1.5))}}]},o:"Video calls at strange hours and a lot of airport goodbyes."}]}}},
+ {id:"care",ok:()=>wbFolks().some(f=>folkAge(f)>=76)&&!(S.care>0)&&age()>=38,ev:()=>{const f=wbFolks().sort((a,b)=>folkAge(b)-folkAge(a))[0],N=folkName(f);let sib=null;try{sib=(ensureSibs()||[]).find(s=>s.alive!==false)}catch(e){}
+  const home=lfR(3200*Math.max(.4,priceScale()*1.2));
+  return{t:`${N} can't manage alone`,b:`${N} can't cope at home any more. Something has to change, and the whole family is looking at you.`,c:[
+   ...(ownsHome()?[{t:`Move ${N} in with you (⚡ 8 a month for two years)`,fx:{act:"lf",x:"carein",karma:6,home:-4,stress:1,on:[{n:`Caring for ${N} at home`,cat:"family",e:8,mo:24,m:{seen:1}}]},o:`${N} moves into the spare room with forty years of stuff and opinions about your cooking. It's hard. It's also precious.`}]:[]),
+   {t:`A good care home (${money(home)} a month)`,fx:{act:"lf",x:"carehome",amt:home,stress:-2,on:[{n:`Visiting ${N} in the care home`,cat:"family",e:3,mo:24,m:{seen:1}}]},o:`${N} hates it for a month, then becomes the life and soul of the lounge.`},
+   sib?{t:`Ask your ${sibWord(sib)} ${sib.n} to take it on`,fx:{act:"lf",x:"sibdo",karma:-4,stress:-2},o:`${sib.n} says yes, tightly. Christmas is frosty for years.`}:{t:"A carer twice a week, and hope",fx:{act:"lf",x:"muddle",karma:-2,home:-3,stress:2},o:"It holds together. Just. You wake up worrying about it."}]}}},
+ {id:"baby",ok:()=>S.rel.st==="married"&&age()>=28&&age()<41&&(S.rel.kids||0)>=1&&(S.rel.kids||0)<3&&S.flags.baby==null&&S.flags.fertility==null&&!wbKids(0,2).length,ev:()=>{const P=wbFirst(S.rel.name),has=(S.rel.kids||0)>0;
+  return{t:has?"One more?":"Is it time?",b:has?`${P} raises it over dinner: one more? The house would be fuller, the nights shorter, and work would have to bend for years.`:`${P} asks you straight out: is it time for a baby? Work's at a crucial point, and you both know what a baby does to sleep, money and ambition.`,c:[
+   {t:"Yes, let's try (more sleepless nights)",fx:{act:"trybaby",home:5},o:"You start looking at prams, and at your bank balance."},
+   {t:"Not yet: in a couple of years",fx:{home:-2,stress:-1},o:`${P} nods. "A couple of years," they repeat, like a promise.`},
+   {t:"We're happy as we are",p:["romantic","homebody"].includes(S.rel.trait)?.3:.65,win:{fx:{home:3,stress:-2},o:`${P} is relieved. You both are.`},lose:{fx:{home:-12,stress:2},o:`${P} agrees, too quickly. It comes up again in every argument.`}}]}}},
+ {id:"passion",ok:()=>age()>=28&&age()<62&&S.wealth>=lfR(6000*Math.max(.4,priceScale()))&&!(typeof shCur==="function"&&shCur()),ev:()=>{const idea=pick(["a pottery studio in a railway arch","a bakery stall at the weekend market","restoring old motorbikes in a rented garage","a tiny record shop that opens on Saturdays","a community choir you'd run yourself"]),cost=lfR(5000*Math.max(.4,priceScale()));
+  return{t:"The thing you've always wanted to do",b:`It's been at the back of your mind for years: ${idea}. A chance has come up. It would eat your evenings and weekends, and you'd love every minute of it.`,c:[
+   {t:`Go for it (${money(cost)}, ⚡ 8 a month for two years)`,fx:{act:"lf",gbp:-cost,fixed:1,stress:-4,on:[{n:"Your passion project",cat:"fun",e:8,mo:24,m:{stress:-.4,home:-.15,gbp:lfR(150*Math.max(.4,priceScale()))},end:"passion"}]},o:"Sawdust, flour or vinyl everywhere. You've never been so tired or so happy."},
+   {t:"Keep it for the odd weekend (⚡ 4 a month)",fx:{act:"lf",on:[{n:"Weekend tinkering",cat:"fun",e:4,mo:12,m:{stress:-.2}}]},o:"Little and often. It's enough to keep the dream alive."},
+   {t:"One day, maybe",fx:{stress:1},o:"Someone else takes the space. You walk past it sometimes."}]}}},
+ {id:"sabb",ok:()=>age()>=30&&age()<56&&lfWork()&&S.wealth>=lfR(25000*Math.max(.4,priceScale()))&&!S.flags.travelled,ev:()=>{const cost=lfR(4000*Math.max(.4,priceScale()));
+  return{t:"A year to see the world",b:"Your employer runs a sabbatical scheme: a year off, unpaid, job held open. It's now or probably never. Your career won't wait for you, but the world won't either.",c:[
+   {t:"Take the year (unpaid)",fx:{act:"sabb",kind:"travel",home:inLove()?6:0,stress:-8},o:"You hand in your laptop and book a one-way ticket."},
+   {t:`Take a month instead (${money(cost)})`,fx:{act:"lf",x:"month",gbp:-cost,fixed:1,stress:-10,home:4},o:"Four weeks, three countries and not one work email."},
+   {t:"The timing's wrong",fx:{stress:1,rep:1},o:"There'll be another time. You tell yourself that."}]}}},
+ {id:"city",ok:()=>age()>=26&&age()<56&&lfWork()&&S.rank>=1&&S.rank<lfMx(),ev:()=>{const city=lfCity();
+  return{t:"The big job in another city",b:`A rival in ${city} wants you: a bigger title and 20% more money. It means moving away from everyone you know, or a brutal weekly commute.`,c:[
+   {t:`Take it and move to ${city}`,fx:{act:"lf",x:"citymove",rep:3,home:-6,on:[{n:"Settling into a new city",cat:"home",e:6,mo:6}]},o:"Boxes, a new postcode and a lot of evenings on your own at first."},
+   {t:"Take it and commute weekly (⚡ 7 a month for two years)",fx:{act:"lf",x:"citypay",rep:3,on:[{n:`The weekly commute to ${city}`,cat:"work",e:7,mo:24,m:{home:-.4}}]},o:"Sunday-night trains and Friday-night trains. The money is good."},
+   {t:"Stay where your life is",fx:{home:4,rep:-1},o:"You turn it down. Your friends buy you a drink to celebrate."}]}}},
+ {id:"parttime",ok:()=>wbKids(0,5).length&&lfWork()&&age()<50&&!(S.en&&S.en.pt&&S.en.pt.until>S.day),ev:()=>{const P=inLove()?wbFirst(S.rel.name):null,cut=lfR(lfSal()/12*.15);
+  return{t:"The early years",b:`They're only small once. You could go part-time for a couple of years and be there for it, at a cost to your pay and your career.${P?` Or ${P} could.`:""}`,c:[
+   {t:"Go part-time for two years",fx:{act:"lf",x:"pt24",home:8,rep:-2,on:[{n:"Afternoons with the little ones",cat:"family",e:4,mo:24,m:{home:.2,tt:1.5}}]},o:"Thirty per cent less pay, and every bathtime."},
+   ...(P?[{t:`${P} goes part-time instead`,fx:{act:"lf",home:4,on:[{n:`${P}'s part-time pay cut`,mo:24,m:{gbp:-cut}}]},o:`${P} is home three days a week. You hear about the milestones by text.`}]:[]),
+   {t:"Keep working: book a childminder",fx:{act:"lf",x:"nursery",home:-3,stress:2},o:"Drop-off at 7.45, pick-up at 6. The kids are fine. You feel it, though."}]}}},
+ {id:"startup",ok:()=>age()>=25&&age()<53&&lfWork()&&!!S.friend&&S.friend.bond>=45,ev:()=>{const F=wbFirst(S.friend.n),inv=lfR(Math.min(20000,Math.max(3000,lfSal()*.2)));
+  return{t:`${F}'s start-up`,b:`${F} is starting a company and wants you in from day one: much less pay, a slice of the business and hours that would make your current job look like a holiday.`,c:[
+   {t:"Jump in (⚡ 8 a month, 40% less pay for two years)",fx:{act:"lf",x:"fbond",d:15,stress:1,on:[{n:`Building the start-up with ${F}`,cat:"work",e:8,mo:24,m:{gbp:-lfR(lfSal()/12*.4)},end:"startup"}]},o:"A desk in a converted warehouse, a beanbag and a whiteboard covered in dreams."},
+   {t:`Invest ${money(inv)} instead`,fx:{act:"lf",x:"fbond",d:5,gbp:-inv,fixed:1,on:[{n:"",mo:36,end:"invest",amt:inv}]},o:`${F} hugs you. "You won't regret this." You hope not.`},
+   {t:"Wish them luck",fx:{act:"lf",x:"fbond",d:-6},o:`${F} understands. Mostly.`}]}}},
+ {id:"dream",ok:()=>ownsHome()&&age()>=35&&age()<63&&S.home.value-S.home.loan>=100000,ev:()=>{const v=S.home.value;
+  return{t:"The dream house",b:`The house you've always wanted has come up two streets away, and it's a stretch. Or there's the other way: sell up, buy smaller and free up a pile of cash.`,c:[
+   {t:`Stretch for it (about ${money(lfR(v*.45))} more mortgage)`,fx:{act:"lf",x:"stretch",home:10,stress:2,on:[{n:"The dream house: more to look after",cat:"home",e:3,mo:36}]},o:"A garden, a study and a kitchen you'll actually cook in. The mortgage statement makes you wince."},
+   {t:`Downsize and free up about ${money(lfR(v*.3*.98))}`,fx:{act:"lf",x:"downsize",home:-4,stress:-4,on:[{n:"Less house to look after",cat:"rest",e:-4,mo:36}]},o:"Smaller rooms, fewer stairs and a much healthier bank balance."},
+   {t:"Stay put",fx:{home:1},o:"Someone else gets the dream house. Yours is fine. It's home."}]}}},
+ {id:"reno",ok:()=>ownsHome()&&age()>=30&&age()<69&&!(lfS().done.dream&&S.day-lfS().done.dream<36),ev:()=>{const c=lfR(Math.max(8000,S.home.value*.08));
+  return{t:"Renovate, or move?",b:"The kitchen is falling apart, the bathroom is from another century and you've outgrown the place. Months of builders, or the upheaval of a move?",c:[
+   {t:`Renovate (${money(c)}, six months of chaos)`,fx:{act:"lf",x:"reno",amt:c,gbp:-c,fixed:1,on:[{n:"Living in a building site",cat:"home",e:8,mo:6,m:{stress:.1,home:-.3},end:"reno"}]},o:"Dust in everything and a builder called Kev who's become part of the family."},
+   {t:`Move somewhere that fits (${money(lfR(c*.6))} in fees)`,fx:{act:"lf",x:"movehome",amt:c,gbp:-lfR(c*.6),fixed:1,home:3,on:[{n:"Moving and settling in",cat:"home",e:10,mo:2}]},o:"Boxes, a new street and the joy of a kitchen where everything works."},
+   {t:"Live with it",fx:{home:-3,stress:1},o:"You learn which cupboard door to hold shut."}]}}},
+ {id:"coach",ok:()=>wbKids(6,14).length&&age()<60,ev:()=>{const k=pick(wbKids(6,14)),N=k.n;
+  return{t:`${N}'s team needs a coach`,b:`${N}'s team has lost its coach and the other parents are all looking at you. Saturday mornings and Tuesday nights, for two seasons.`,c:[
+   {t:"Take the whistle (⚡ 5 a month for two seasons)",fx:{act:"lf",x:"kb",n:N,d:6,on:[{n:`Coaching ${N}'s team`,cat:"family",e:5,mo:20,m:{tt:1.5,stress:-.15}}]},o:`Cones, orange segments and a lot of shouting. ${N} pretends to be embarrassed.`},
+   {t:"Do the odd Saturday (⚡ 3 a month)",fx:{act:"lf",x:"kb",n:N,d:2,on:[{n:`The odd Saturday with ${N}'s team`,cat:"family",e:3,mo:12,m:{tt:.5}}]},o:"You run the line now and then. It counts."},
+   {t:"Work won't allow it",fx:{act:"lf",x:"kb",n:N,d:-4,miss:"sports"},o:`Someone else's dad takes it on. ${N} says it's fine.`}]}}},
+ {id:"coast",ok:()=>inLove()&&S.rel.st==="married"&&age()>=40&&age()<63&&S.flags.downshift==null&&!S.prison,ev:()=>{const P=wbFirst(S.rel.name),c=lfR(15000*Math.max(.4,priceScale()));
+  return{t:"A slower life by the sea",b:`${P} has found a cottage by the sea and can't stop talking about it. Less money, more sky, and a career that would have to take a back seat.`,c:[
+   {t:"Move to the coast and slow down",fx:{act:"downshift"},o:"Less money, more sky. You've never slept better."},
+   {t:`A weekend place by the sea instead (${money(c)})`,fx:{act:"lf",gbp:-c,fixed:1,home:5,on:[{n:"Weekends at the seaside",cat:"rest",e:-6,mo:36,m:{gbp:-lfR(250*Math.max(.4,priceScale())),home:.2}}]},o:"Friday nights on the motorway, Saturday mornings on the beach."},
+   {t:"Not while your career's going well",fx:{home:-6,rep:1},o:`${P} folds up the estate agent's printout. Carefully. Like they might need it again.`}]}}}];
+const LF_X={
+ abroad:()=>{S.salMult=(S.salMult||1)*.9;S.log.unshift({d:S.day,t:"Moved abroad for your partner's job."})},
+ promo:()=>{try{if(S.rank<lfMx())ACTS.promote2()}catch(e){}},
+ carein:()=>{S.folkSeen=S.day;S.log.unshift({d:S.day,t:"Moved your parent in with you."})},
+ carehome:fx=>{S.care=Math.max(S.care||0,fx.amt||3200);S.log.unshift({d:S.day,t:"Found a care home for your parent."})},
+ sibdo:()=>{try{const s=(ensureSibs()||[]).find(s=>s.alive!==false);if(s)s.bond=clamp((s.bond||50)-15,0,100)}catch(e){}},
+ muddle:()=>{S.care=Math.max(S.care||0,lfR(600*Math.max(.4,priceScale())))},
+ month:()=>{try{if(wbEn()){enUseLeave(20,false,"A month away");enCharge("rest",-20,"A month away")}}catch(e){}},
+ citymove:()=>{S.salMult=(S.salMult||1)*1.2;if(S.friend)S.friend.bond=clamp(S.friend.bond-15,0,100);for(const p of(typeof alivePeople==="function"?alivePeople():[]).filter(p=>p.role==="friend"))p.bond=clamp((p.bond||0)-12,0,100);S.log.unshift({d:S.day,t:"Moved to a new city for a bigger job."})},
+ citypay:()=>{S.salMult=(S.salMult||1)*1.2},
+ pt24:()=>{const E=wbEn()&&enS();if(!E)return;E.pt={until:S.day+24};try{enTrimPicks()}catch(e){}S.log.unshift({d:S.day,t:"Went part-time while the children are small."})},
+ nursery:()=>{try{const s=lbSvc("child");if(s&&!s.why()){S.svc=S.svc||{};S.svc.child=S.svc.child||{since:S.day}}}catch(e){}},
+ fbond:fx=>{if(S.friend)S.friend.bond=clamp(S.friend.bond+(fx.d||0),0,100)},
+ stretch:()=>{const h=S.home,x=lfR(h.value*.45);h.value+=x;h.loan+=x;h.pay=0;h.left=Math.max(h.left||0,240);S.wealth-=lfR(x*.03);S.log.unshift({d:S.day,t:"Stretched for the dream house."})},
+ downsize:()=>{const h=S.home,x=lfR(h.value*.3),pay=Math.min(h.loan,lfR(x*.5));h.value-=x;h.loan-=pay;h.pay=0;S.wealth+=lfR(x*.98)-pay;S.log.unshift({d:S.day,t:"Downsized and freed up some cash."})},
+ reno:()=>{},
+ movehome:fx=>{S.home.value+=lfR((fx.amt||0)*.5);S.log.unshift({d:S.day,t:"Moved to a home that fits."})},
+ kb:fx=>{const c=(S.children||[]).find(x=>x.n===fx.n);if(c)c.kb=clamp((c.kb||0)+(fx.d||0),-50,50);if(fx.miss)mmRec(fx.miss,true,fx.n,`Coaching ${fx.n}'s team`,"work")}};
+function lfEnd(o,notes){try{
+ if(o.end==="abroad"){S.homeLife=clamp(S.homeLife+4,0,100);notes.push(`Two years in ${o.city||"another country"}. Whatever happens next, you'll always have it.`)}
+ else if(o.end==="passion"){const r=rnd();if(r<.3){const x=lfR(lfSal()*.25);S.wealth+=x;notes.push(`Your passion project is a hit: someone buys it from you for ${money(x)}.`)}else notes.push("Two years on, your passion project settles into a happy hobby.")}
+ else if(o.end==="startup"){const r=rnd(),s=lfSal();if(r<.3){const x=lfR(s*3);S.wealth+=x;notes.push(`The start-up is bought by a big firm. Your slice is worth ${money(x)}.`);if(S.friend)S.friend.bond=clamp(S.friend.bond+10,0,100)}
+  else if(r<.7){const x=lfR(s*.3);S.wealth+=x;notes.push(`The start-up limps on. You sell your stake for ${money(x)} and go back to a proper salary.`)}else{S.stress=clamp(S.stress+6,0,100);notes.push("The start-up runs out of money. Two years of your life, and a lot of stories.")}}
+ else if(o.end==="invest"){const r=rnd(),a=o.amt||0;if(r<.3){S.wealth+=a*4;notes.push(`Your stake in your friend's start-up pays off: ${money(a*4)}.`)}else if(r<.65){S.wealth+=a;notes.push(`You get your ${money(a)} back from your friend's start-up. No more, no less.`)}else notes.push("Your friend's start-up folds. The money's gone.")}
+ else if(o.end==="reno"){S.homeLife=clamp(S.homeLife+8,0,100);try{S.home.value+=lfR(((S.fk&&S.fk.renoAmt)||10000)*1.2)}catch(e){}notes.push("The builders have gone. The house is beautiful, and it's finally quiet.")}
+ else if(o.n&&o.e)notes.push(`${o.n}: that chapter's over.`)}catch(e){}}
+ACTS.lf=(fx,m)=>{const F=lfS();for(const o of fx.on||[])F.on.push({n:o.n||"",cat:o.cat||"family",e:o.e||0,until:S.day+(o.mo||6),m:o.m||null,end:o.end||"",city:o.city,amt:o.amt});
+ if(fx.x==="reno")F.renoAmt=fx.amt;if(fx.x&&LF_X[fx.x])LF_X[fx.x](fx,m);if(fx.act2&&ACTS[fx.act2])ACTS[fx.act2](fx,m)};
+{const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{const F=S&&S.fk;if(F&&F.on&&!S.over&&!S.prison)for(const o of F.on)if(o.e&&o.until>S.day&&o.n)L.push({cat:typeof EN_CATS!=="undefined"&&EN_CATS.includes(o.cat)?o.cat:"family",n:o.n,e:o.e})}catch(e){}return L}}
+function lfMonth(notes){const F=S.fk;if(!F)return;
+ try{wbTempEnd(notes)}catch(e){}
+ if(!F.on||!F.on.length)return;const keep=[];
+ for(const o of F.on){if(S.day+1>=o.until){lfEnd(o,notes);continue}keep.push(o);const m=o.m;if(!m)continue;
+  if(m.home)S.homeLife=clamp(S.homeLife+m.home,0,100);if(m.stress)S.stress=clamp(S.stress+m.stress,0,100);if(m.gbp)S.wealth+=m.gbp;if(m.rep)S.rep=clamp(S.rep+m.rep,0,100);
+  if(m.tt)for(const k of wbKids(0,18))k.tt=clamp((k.tt??50)+m.tt,0,100);if(m.seen)S.folkSeen=S.day}
+ F.on=keep}
+function lfMorning(){if(!wbOk0()||S.prison||S.front||S.sel||S.sabb||S.wscene||S.daily)return;const F=lfS(),a=age();if(a<24||a>=68)return;
+ if(F.next==null){F.next=S.day+12+Math.floor(rnd()*18);return}
+ if(S.day<F.next||S.inbox.some(m=>!m.done&&/^(lf_|mm_|wb_)/.test(m.id))||rnd()>.25)return;
+ const ok=LF.filter(f=>F.done[f.id]==null&&(()=>{try{return!!f.ok()}catch(e){return false}})());if(!ok.length)return;
+ const f=pick(ok);let ev;try{ev=f.ev()}catch(e){return}F.done[f.id]=S.day;F.at=S.day;F.next=S.day+20+Math.floor(rnd()*22);
+ pushDyn(Object.assign({id:"lf_"+f.id+"_"+S.day,life:1,noBig:1,from:LF_FROM},ev))}
+/* Inbox: mark forks clearly */
+{const _ri=renderInbox;renderInbox=function(){const r=_ri.apply(this,arguments);try{
+ document.querySelectorAll('#pane-inbox article.mail').forEach(a=>{if(a.dataset.lf)return;const b=a.querySelector('[data-act="choose"][data-i]');const m=b&&S.inbox[+b.getAttribute("data-i")];if(!m||!/^lf_/.test(m.id))return;
+  a.dataset.lf="1";a.classList.add("lf-mail");const from=a.querySelector(".from");if(from)from.insertAdjacentHTML("afterbegin",'<span class="pill lf-pill">Life fork</span> ');
+  const h=a.querySelector("h3");if(h)h.insertAdjacentHTML("afterend",'<div class="lf-stakes">Life fork · a big choice that shapes the next few years. Each option costs something, and this one won\'t come round again.</div>')})}catch(x){}return r}}
+
+/* ================= 4. The end of a life: balance graded ================= */
+const WB_GR=x=>x>=72?"A":x>=58?"B":x>=44?"C":x>=30?"D":"E";
+function wbEpitaph(g){const hi=k=>g[k]>=60,lo=k=>g[k]<=40;
+ if(WB_K.every(k=>g[k]>=62))return"Did it all, and somehow slept too.";
+ if(WB_K.every(k=>g[k]>=48))return"Kept everything in proportion, and it showed.";
+ if(WB_K.every(k=>g[k]<=40))return"A hard life, lived the best they could.";
+ if((hi("career")||hi("money"))&&lo("family")&&lo("friends"))return"Successful on paper, lonely in person.";
+ if(hi("career")&&hi("money")&&lo("family"))return"Rich, respected, and mostly absent.";
+ if(lo("money")&&hi("family")&&hi("friends"))return"Never rich, always loved.";
+ if(hi("career")&&lo("health"))return"Climbed to the top and left their health on the stairs.";
+ if(hi("fun")&&lo("money"))return"Spent it all on living, and regretted none of it.";
+ if(hi("family")&&lo("career"))return"Put the family first, and the family knew it.";
+ if(hi("money")&&lo("fun"))return"Made a fortune and forgot to spend any of it on joy.";
+ if(lo("fun")&&lo("health"))return"All work, no play, and not much rest.";
+ if(hi("friends")&&hi("fun"))return"Never short of a friend or an invitation.";
+ if(hi("family")&&hi("friends"))return"Surrounded by people who loved them.";
+ if(lo("family")&&lo("friends"))return"Kept the world at arm's length.";
+ if(hi("career"))return"Gave the best of themselves to work.";
+ if(lo("fun"))return"Always busy, rarely happy.";
+ return"A life with a bit of everything.";}
+/* A grown-up child's verdict at the end: a speech at the retirement do or the funeral */
+function wbSpeech(){try{const ad=(S.children||[]).filter(k=>k.alive!==false&&!k.dead&&kidAge(k)>=18);if(!ad.length)return null;
+ const sc=ad.map(k=>{const m=mmN(x=>x.who===k.n),a=((S.mmA&&S.mmA[k.n])||[]).length;return{k,m,a,kb:k.kb||0}}).sort((x,y)=>(y.m-y.kb/10)-(x.m-x.kb/10));const w=sc[0],N=w.k.n,ret=S.over==="retired"||S.over==="won",at=ret?"At your retirement do":S.over==="died"?"At the funeral":"Afterwards";
+ if(w.m>=4&&w.kb<20)return{d:-5,t:`${at}, ${N} gives a speech. "${ret?"Here's to the hardest worker I know. I should know: I mostly saw the back of their head.":"They were always at work. I used to save my school reports for weekends, just in case."}" Polite laughter. Some of it isn't.`};
+ const best=sc.slice().sort((x,y)=>y.kb-x.kb)[0];if(best.kb>=20&&best.m<=1)return{d:5,t:`${at}, ${best.k.n} gives a speech. "${ret?"Every play, every match, every terrible school concert. They were always there.":"They came to everything. Every play, every match. I never once looked out and saw an empty seat."}" There isn't a dry eye in the room.`};
+ return null}catch(e){return null}}
+function wbFinal(){if(!S)return null;const key=(S.over||"")+":"+S.day;if(S.wbF&&S.wbF.k===key)return S.wbF.b;
+ let avg;const H=S.wh;if(H&&H.n>=6)avg=H.t.map(x=>x/H.n);else{try{const v=wbScores().v;avg=WB_K.map(k=>v[k])}catch(e){return null}}
+ const sp=wbSpeech();if(sp)avg[2]=clamp(avg[2]+sp.d,0,100);
+ const g=avg.map(x=>Math.round(clamp(x,0,100))),mean=g.reduce((t,x)=>t+x,0)/6,sd=Math.sqrt(g.reduce((t,x)=>t+(x-mean)*(x-mean),0)/6),lo=Math.min(...g);
+ const s=Math.round(clamp(mean*.5+lo*.5-sd*.2+5,0,100)),o={};WB_K.forEach((k,i)=>o[k]=g[i]);
+ const b={g,s,ep:wbEpitaph(o),sp:sp?sp.t:""};S.wbF={k:key,b};return b}
+function wbEndHTML(b,title){if(!b||!b.g)return"";const v={};WB_K.forEach((k,i)=>v[k]=b.g[i]);
+ return `<div class="wb-end"><div class="label">${esc(title||"Life balance")}</div><div class="wb-end-top">${wbSvg(v,170)}<div class="wb-end-sc"><b class="big-num mono">${b.s}</b><span class="hint">balance out of 100</span></div></div>
+  <div class="wb-grades">${WB_K.map((k,i)=>`<div><span>${WB_N[k]}</span><b class="wb-g g${WB_GR(b.g[i])}">${WB_GR(b.g[i])}</b></div>`).join("")}</div>
+  <p class="epitaph wb-ep">“${esc(b.ep)}”</p>${b.sp?`<p class="hint keep wb-sp">${esc(b.sp)}</p>`:""}</div>`}
+{const _lr=lifeRecord;lifeRecord=function(){const r=_lr.apply(this,arguments);try{const b=wbFinal();if(b&&r)r.bal={g:b.g,s:b.s,ep:b.ep}}catch(e){}return r}}
+{const _rh=recordHTML;recordHTML=function(rec,viewer){let h=_rh.apply(this,arguments);try{if(rec&&rec.bal&&rec.bal.g){const blk=wbEndHTML(rec.bal,"Life balance, averaged over a whole life");const i=h.indexOf('<div class="target-sum">');h=i>=0?h.slice(0,i)+blk+h.slice(i):h.replace(/<\/div>$/,blk+"</div>")}}catch(e){}return h}}
+{const _rh=recordHof;recordHof=function(){const id0=S&&S.hofId;const r=_rh.apply(this,arguments);try{if(S&&S.hofId&&S.hofId!==id0){const b=wbFinal();const list=hofLocal(),e=list.find(x=>x.id===S.hofId);if(e&&b){e.bal={g:b.g,s:b.s,ep:b.ep};localStorage.setItem(HOF_KEY,JSON.stringify(list))}}}catch(e){}return r}}
+{const _em=endModal;endModal=function(){const r=_em.apply(this,arguments);try{if(!S||!S.over)return r;const sh=document.getElementById("sheet");if(!sh||sh.querySelector(".wb-end")||!sh.querySelector('[data-act="newcareer"]'))return r;
+ const b=wbFinal();if(!b)return r;const ep=sh.querySelector(".epitaph");const html=wbEndHTML(b,"Life balance · averaged over your whole life");if(ep)ep.insertAdjacentHTML("afterend",html);else{const l=sh.querySelector(".big-num");if(l&&l.previousElementSibling)l.previousElementSibling.insertAdjacentHTML("beforebegin",html)}}catch(e){}return r}}
+/* Hall of fame: rank your lives by balance as well as legacy */
+const wbOf=e=>e&&(e.bal||(e.rec&&e.rec.bal))||null;
+{const _hc=hofCard;hofCard=function(e,i,mine,share){let h=_hc.apply(this,arguments);try{const b=wbOf(e);if(b&&b.g){const j=h.lastIndexOf('<div class="sub">'),k=j>=0?h.indexOf("</div>",j):-1;
+ if(k>0)h=h.slice(0,k+6)+`<div class="sub wb-hof">Balance ${b.s} · ${WB_K.map((x,n)=>`${WB_N[x].charAt(0)}${WB_GR(b.g[n])}`).join(" ")}</div>`+h.slice(k+6)}}catch(x){}return h}}
+function wbHofTab(which){const seg=document.querySelector("#sheet .hof-tabs");if(!seg)return;if(!seg.querySelector('[data-v="bal"]'))seg.insertAdjacentHTML("beforeend",'<button role="tab" data-act="hoftab" data-v="bal">Balance</button>');
+ seg.querySelectorAll("button").forEach(b=>{const on=b.dataset.v===which;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)})}
+{const _hm=hofModal;hofModal=async function(which){if(which!=="bal"){const r=await _hm.apply(this,arguments);try{wbHofTab(which||"mine")}catch(e){}return r}
+ await _hm.call(this,"mine");try{wbHofTab("bal");const bd=document.getElementById("hofBadges");if(bd)bd.innerHTML='<p class="hint keep" style="margin:0 0 8px">Your lives ranked by how balanced they were: career, money, family, friends, health and fun, averaged over the whole life.</p>';
+  const el=document.getElementById("hofList");if(!el)return;const list=hofLocal().map(e=>[e,wbOf(e)]).filter(x=>x[1]&&x[1].g).sort((a,b)=>b[1].s-a[1].s);
+  el.innerHTML=list.length?list.map(([e,b],i)=>{let h=hofCard(e,i,false,false);h=h.replace(/<span class="hof-score mono">[^<]*<\/span>/,`<span class="hof-score mono">${b.s}</span>`);return h.replace(/<\/div><span class="hof-score/,`<div class="sub wb-hof-ep">“${esc(b.ep)}”</div></div><span class="hof-score`)}).join(""):'<li class="sub">No graded lives yet. Finish a life and its balance is kept here.</li>'}catch(e){}}}
+
+/* ================= Hooks ================= */
+{const _ld=lifeDay;lifeDay=function(notes){const r=_ld.apply(this,arguments);try{if(wbOk0()){notes=notes||[];try{mmMonth(notes)}catch(e){try{window.__hbErr&&window.__hbErr(e,"mmMonth")}catch(x){}}
+ try{lfMonth(notes)}catch(e){try{window.__hbErr&&window.__hbErr(e,"lfMonth")}catch(x){}}try{wbMonth()}catch(e){try{window.__hbErr&&window.__hbErr(e,"wbMonth")}catch(x){}}}}catch(e){}return r}}
+{const _wm=willMorning;willMorning=function(){const r=_wm.apply(this,arguments);try{lfMorning()}catch(e){try{window.__hbErr&&window.__hbErr(e,"lfMorning")}catch(x){}}try{mmStory()}catch(e){try{window.__hbErr&&window.__hbErr(e,"mmStory")}catch(x){}}return r}}
+
+
+/* CAL: life calibration. Nudges how a typical life plays out towards UK-ish real life (for an ambitious-career game).
+   Every knob is in TUNE so it can be dialled without touching the systems themselves.
+   State (all optional, so old saves just pick it up): S.flags.topjob = month the board picked you for the top job; S.dpAt = month of the last "drifting apart" talk */
+const TUNE={
+ topVac:1/240,    /* chance a month that the top job falls vacant once you've done everything else for the last step (about once every 20 years) */
+ topPick:[.03,.18], /* the board's chance of picking you over the field, from a reputation of 55 up to 85+ */
+ topOffer:.02,    /* share of headhunter approaches at the last step that can be for a top job elsewhere (was every one, 60% of the time) */
+ milestone:.06,   /* chance a month that a waiting proposal or wedding comes up first */
+ drift:.0007,     /* monthly chance a settled marriage hits a rough patch, before the adjustments for time together and home life */
+ kaCalm:18        /* months without a new incident before a bad reputation's warning level steps down a notch */
+};
+/* 1. The top job: one seat, and it only comes up now and then. Finish the goals for the last step, then wait to be picked. */
+{const _gf=goalsFor;goalsFor=function(r){const g=_gf.apply(this,arguments);try{if(r===3&&!S.daily&&g&&g.length&&!g.some(x=>x.f==="topjob"))return g.concat([{k:"sflag",f:"topjob",l:"Be picked when the top job comes up"}])}catch(e){}return g}}
+function calTopMonth(){if(S.over||S.prison||S.front||S.sel||S.sabb||S.daily||S.rank!==3||S.flags.topjob!=null)return;
+ const gs=goalsFor(3).filter(g=>g.f!=="topjob");if(!gs.length||!gs.every(goalDone)||rnd()>=TUNE.topVac)return;
+ const top=RK()[4].t,tl=/^[A-Z][a-z]/.test(top)?top[0].toLowerCase()+top.slice(1):top,[lo,hi]=TUNE.topPick,p=clamp(lo+(hi-lo)*(S.rep-55)/30,lo,hi);
+ if(rnd()<p){S.flags.topjob=S.day;S.log.unshift({d:S.day,t:`Picked for the top job: ${top}.`});
+  pushDyn({id:"cal_top_"+S.day,from:"The chair",t:"The top job is yours",b:`The ${tl} job came up and the board has picked you over the outside candidates.`,c:[{t:"Accept",fx:{stress:3},o:"You read the email three times before you believe it."}]})}
+ else{const who=S.rival&&S.rival.name&&rnd()<.5?S.rival.name:"An outside candidate";S.log.unshift({d:S.day,t:`${who} got the ${tl} job. The board went another way.`});
+  pushDyn({id:"cal_topno_"+S.day,from:"The chair",t:"The top job went to someone else",b:`The ${tl} job came up and ${who==="An outside candidate"?"the board went for an outside candidate":who+" got it"}. You've done everything asked of you. A job like this only comes up once in a long while.`,c:[
+   {t:"Congratulate them and keep going",fx:{stress:4,karma:2},o:"Gracious in public. A long walk at lunch."},
+   {t:"Ask the chair what you'd need to do next time",fx:{rep:1,stress:2},o:"\"Keep doing what you're doing. Your time will come.\""}]})}}
+/* Headhunters offering the top job somewhere smaller: the same rare vacancy, not most offers once you're nearly there */
+{const _go=genOffer;genOffer=function(){if(S&&S.rank===3&&rnd()>=TUNE.topOffer){const m=monthsToPromotion;monthsToPromotion=()=>999;try{return _go.apply(this,arguments)}finally{monthsToPromotion=m}}return _go.apply(this,arguments)}}
+{const _pr=promote;promote=function(){const r=_pr.apply(this,arguments);try{delete S.flags.topjob}catch(e){}return r}}
+{const _sw=switchCareer;switchCareer=function(){const r=_sw.apply(this,arguments);try{delete S.flags.topjob}catch(e){}return r}}
+/* 2. Proposals and weddings don't get lost among everything else once they're due (starting a family is left to its own pace) */
+{const _de=drawEvent;drawEvent=function(){try{if(!S.prison&&!S.front&&!S.sel&&rnd()<TUNE.milestone){const L=EV.filter(e=>["propose","wedding"].includes(e.id)&&eligible(e));if(L.length)return pick(L)}}catch(e){}return _de.apply(this,arguments)}}
+/* 3. Marriages can drift apart, not only end in affairs. Time together and a happy home make it much rarer. */
+function calDriftMonth(){if(S.over||S.prison||S.front||S.sel||S.rel.st!=="married"||S.day-(S.rel.since||0)<24||S.day-(S.dpAt??-99)<36)return;
+ if(S.inbox.some(m=>!m.done&&(/^cal_dp_/.test(m.id)||m.id==="divorce")))return;
+ const E=S.en||{},lv=E.tm&&E.tm.p!=null?E.tm.p:1;
+ const p=TUNE.drift*[2.5,1,.4][lv]*(1+Math.max(0,70-S.homeLife)/25)*(S.stress>60?1.5:1)*(S.rel.trait==="romantic"?1.2:1);
+ if(rnd()>=p)return;S.dpAt=S.day;const P=S.rel.name.split(" ")[0];
+ pushDyn({id:"cal_dp_"+S.day,life:1,from:P,t:"We need to talk",b:`${P} says you've been living like flatmates for a while now. "I don't know if we want the same things any more."`,c:[
+  {t:"Couples counselling (£3k)",p:.6,win:{fx:{gbp:-3000,home:12,stress:4},o:"Hard conversations, every Tuesday. Slowly, you find each other again."},lose:{fx:{gbp:-3000,act:"divorce",stress:12},o:"The counsellor helps you both see it's over. The settlement follows."}},
+  {t:"Promise to make more time",p:.45,win:{fx:{home:8,stress:2},o:"Date nights, phones away. It helps."},lose:{fx:{act:"divorce",stress:14},o:"Too little, too late. The divorce papers arrive in the spring."}},
+  {t:"Agree to separate",fx:{act:"divorce",stress:8},o:"Sad, civil and final. Half of everything goes."}]})}
+/* 4. A bad reputation can be put right: fixing it eases the warning level, and it cools off with time */
+{const _ka=kaAct;kaAct=function(modes){let k0=null;try{k0=kaS().esc}catch(e){}const r=_ka.apply(this,arguments);try{const m=[].concat(modes||[]),k=kaS();if(m.includes("fix")&&!m.includes("survive")&&k0!=null)k.esc=Math.max(0,Math.min(k.esc,k0-1))}catch(e){}return r}}
+{const _km=kaMorning;kaMorning=function(){try{if(S&&!S.placeholder&&!S.over){const k=kaS();if(kaNeg(k.lab)&&k.esc>0&&S.day-(k.escAt??-99)>=TUNE.kaCalm){k.esc--;k.escAt=S.day;S.log.unshift({d:S.day,t:"Things have calmed down a little at work."})}}}catch(e){}return _km.apply(this,arguments)}}
+/* Hooked into the end of each month */
+{const _cdC=closeDay;closeDay=function(){try{if(S&&!S.placeholder){calTopMonth();calDriftMonth()}}catch(e){}return _cdC.apply(this,arguments)}}
 
 function start(data){
  S=(data&&data.S)||load();
