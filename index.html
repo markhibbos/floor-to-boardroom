@@ -16534,6 +16534,69 @@ const PRISON_PASS=["You read fourteen books. Three of them twice.","You learn to
 try{for(const[id,a]of[["pr_course",12],["pr_kitchen",14],["pr_fight",12],["pr_visit",8],["pr_appeal",18]]){const e=EV.find(q=>q.id===id);if(e)e.again=a}}catch(e){}
 
 
+/* In prison, career offers stop: no transfer bids, call-ups, TV shows or job offers. Family, health and prison stories still arrive. */
+const PRISON_BLOCK=/^(sh_|nem|jp_|tourney|case|app_|wp_|unicareer|sfinvite|sa_|quiz|post|pmq|offer|novel|ltrack|lead_|listed|hob|frmove|fork|elec|econ_|dspec|cb|ccb_|callup|burnwarn|boots|bid|arc|crs_|crsinv_|sel_|tv_|vote_|val_|resol_|sh_nudge)/;
+{const _pd=pushDyn;pushDyn=function(ev){if(S&&S.prison&&ev&&PRISON_BLOCK.test(String(ev.id||"")))return;return _pd.apply(this,arguments)}}
+/* No matches or transfer windows from a cell */
+{const _fm=fbMorning;fbMorning=function(){if(S&&S.prison){S.news=[];if(S.fb){S.fb.opp=null;S.fb.scout=false}return}return _fm.apply(this,arguments)}}
+/* Going to prison costs you your job */
+{const _pr=ACTS.prison;ACTS.prison=function(fx,m){const emp=S.bank,self=typeof selfPaid==="function"&&selfPaid();const r=_pr.apply(this,arguments);
+ try{if(S.prison&&!S.prison.sacked){S.prison.sacked=1;const foot=S.path==="foot";
+  S.log.unshift({d:S.day,t:self?"Your clients have all gone elsewhere.":`${emp} ${foot?"terminated your contract":"sacked you"}.`});
+  pushDyn({id:"pr_sacked_"+S.day,life:1,from:self?"Your customers":emp||"Your employer",t:self?"Nobody's calling":foot?"Contract terminated":"You've been sacked",b:self?"Word gets round fast. Your customers have found someone else, and your phone has gone very quiet.":foot?`${emp} has terminated your contract with immediate effect. "The club cannot be associated with criminal behaviour." Your shirt number has already been given away.`:`${emp} has written to you. Following your conviction, your employment ends with immediate effect. Your desk has been cleared into a cardboard box.`,c:[{t:"…",fx:{stress:4},o:"When you get out, you'll be starting again from scratch."}]})}}catch(e){}return r}}
+/* Skills fade inside: a little less sharp every month */
+{const _hd2=healthDay;healthDay=function(notes){const r=_hd2.apply(this,arguments);try{if(S.prison&&!S.over){S.skill=clamp(S.skill-.5,10,100);S.rep=clamp(S.rep-.4,15,100);if(S.fb){S.fb.fit=clamp(S.fb.fit-2,30,100);S.fb.form=clamp(S.fb.form-1.5,20,100)}}}catch(e){}return r}}
+/* When you come out: go back to your old line of work, a few rungs lower, if you can */
+function comebackWhy(){if(S.over!=="released")return"x";const id=S.path,a=age();
+ if(S.record&&REGULATED.includes(id))return`With a conviction, you can't go back to being ${(/^[aeiou]/i.test(CAREERS[id].n)?"an ":"a ")+CAREERS[id].n.toLowerCase()}.`;
+ if(id==="foot"&&a>=34)return"At your age, no club will take a chance on you now.";
+ if(a>=60)return"";return""}
+function comebackOk(){return S&&S.over==="released"&&!comebackWhy()&&age()<60}
+function comebackGo(){if(!comebackOk())return;const id=S.path,C=CAREERS[id],r=S.rank,sk=S.skill,old=S.bank,div=S.lg?S.lg.div:0,foot=id==="foot";
+ switchCareer(id);S.wealth+=RETRAIN[id]||0;
+ S.rank=Math.max(0,r-2);S.rankSince=S.day;S.skill=clamp(sk,10,100);S.rep=35;S.salMult=.85;
+ const others=(foot&&typeof OPPS!=="undefined"?OPPS:C.employers).filter(e=>e!==old);if(others.length)S.bank=pick(others);
+ if(foot){try{S.lg=newLeague(Math.max(0,div-1),S.bank,roundsSoFar(S.day))}catch(e){}S.fb.fit=60;S.fb.form=40}
+ S.log.unshift({d:S.day,t:`A second chance: ${R().t.toLowerCase()} at ${S.bank}.`});
+ pushDyn({id:"pr_comeback_"+S.day,life:1,from:S.bank,t:"A second chance",b:foot?`${S.bank} are willing to take a chance on you. "Everyone deserves a second chance. Just don't make us regret it." The pay is a lot less than you used to get.`:`${S.bank} will give you a job as ${R().t.toLowerCase()}. "We know about your record. Keep your head down and work hard." The pay is lower than before.`,c:[{t:"Grab it with both hands",fx:{stress:-4,home:3},o:"Day one. Everyone's polite. Some of them are very polite."}]});
+ save();render()}
+XCLICK.comeback=()=>comebackGo();
+{const _em=endModal;endModal=function(){const r=_em.apply(this,arguments);try{if(S&&S.over==="released"){const sh=document.getElementById("sheet"),nc=sh&&sh.querySelector('[data-act="newchapter"]');if(nc){const why=comebackWhy(),foot=S.path==="foot";
+ const html=comebackOk()?`<button class="btn primary big" data-act="comeback">${foot?"Find a new club":"Find a new job as "+(/^[aeiou]/i.test(CAREERS[S.path].n)?"an ":"a ")+esc(CAREERS[S.path].n.toLowerCase())}</button>`:"";
+ nc.closest(".btn-row").insertAdjacentHTML("beforebegin",(html?`<div class="btn-row" style="margin:6px 0 8px">${html}</div><p class="hint" style="margin:0 0 6px">${foot?"A lower-league club, on lower pay.":"A couple of rungs lower than before, on lower pay."} Your skills have slipped inside.</p>`:"")+(why?`<p class="hint" style="margin:0 0 6px">${esc(why)}</p>`:""));if(html)nc.classList.remove("primary")}}}catch(e){}return r}}
+
+
+/* Your old club's season isn't yours to celebrate from a cell */
+{const _mo=moment;moment=function(o){if(S&&S.prison&&o&&/^Season /.test(String(o.kicker||"")))return;return _mo.apply(this,arguments)}}
+{const _nm=nextModal;nextModal=function(){if(S&&S.prison&&Array.isArray(modalQueue))for(let i=modalQueue.length-1;i>=0;i--)if(modalQueue[i]&&modalQueue[i][0]==="season")modalQueue.splice(i,1);return _nm.apply(this,arguments)}}
+
+/* ============ Prison: the right goodbye for every career, and who will take you back ============ */
+const careerWord=id=>{const n=CAREERS[id]?CAREERS[id].n:"";return n.split(" ").map(w=>/^[A-Z]{2,}$/.test(w)?w:w.toLowerCase()).join(" ")};
+const aOrAn=w=>(/^[aeiou]/i.test(w)&&!/^(eu|uni)/i.test(w)?"an ":"a ")+w;
+const PRISON_BARRED={astronaut:"You'll never get security clearance for space flight again.",spy:"The Service doesn't take back officers with a conviction.",clubowner:"The league's owners' test bars anyone with a recent conviction from owning a club."};
+{const _cw=comebackWhy;comebackWhy=function(){if(S&&S.over==="released"&&PRISON_BARRED[S.path])return PRISON_BARRED[S.path];return _cw.apply(this,arguments)}}
+const COMEBACK_LABEL={foot:"Find a new club",manager:"Find a new club to coach",music:"Start gigging again",dj:"Get back behind the decks",influencer:"Start posting again",actor:"Get a new agent and audition",tvchef:"Pitch a new cookery show"};
+/* Who gives you the bad news, and how */
+function sackNote(){const id=S.path,t=R().t,emp=S.bank,owner=/owner|founder|partner/i.test(t)||selfPaid()||/independent/i.test(emp);
+ const M={
+  foot:null,
+  manager:[emp,"Sacked",`${emp} has sacked you with immediate effect. The players were told before you were.`],
+  pol:["The party","You've lost your seat",`The party has withdrawn the whip and you've been forced out at a by-election. Your face is on every front page.`],
+  music:["Your manager","Dropped",`Your label has dropped you, the tour is cancelled and your manager has stopped returning calls.`],
+  dj:["Your agent","Dropped",`Every booking is cancelled. Your agent has deleted you from their website.`],
+  influencer:["Your inbox","The brands have gone",`Every sponsor has pulled out, and your follower count is falling like a stone.`],
+  actor:["Your agent","Dropped",`Your agent has dropped you and your scenes are being reshot with someone else.`],
+  tvchef:["The channel","Show cancelled",`The channel has cancelled your show and pulled your sauces from the supermarket shelves.`],
+  clubowner:["The league","Forced to sell",`The league says you're no longer fit to own a club. You're forced to sell ${emp} at a knock-down price.`]};
+ if(M[id]!==undefined)return M[id];
+ if(/partner/i.test(t)&&!selfPaid())return[emp,"Voted out",`The other partners have voted you out of ${emp} and taken your name off the door.`];
+ if(owner)return["Your accountant","The business has gone",`Without you, ${emp} couldn't carry on. The customers drifted away, the staff found new jobs and the doors are shut.`];
+ return null}
+{const _pr2=ACTS.prison;ACTS.prison=function(fx,m){const note=(()=>{try{return sackNote()}catch(e){return null}})();const r=_pr2.apply(this,arguments);
+ try{const msg=S.inbox.find(x=>/^pr_sacked_/.test(x.id)&&!x.done);if(msg&&note){msg.dyn.from=note[0];msg.dyn.t=note[1];msg.dyn.b=note[2];if(S.log[0]&&/sacked you|terminated|clients have/i.test(S.log[0].t))S.log[0].t=note[1]+"."}}catch(e){}return r}}
+/* Button wording that fits the career */
+{const _em2=endModal;endModal=function(){const r=_em2.apply(this,arguments);try{const b=document.querySelector('#sheet [data-act="comeback"]');if(b&&S)b.textContent=COMEBACK_LABEL[S.path]||`Find a new job as ${aOrAn(careerWord(S.path))}`}catch(e){}return r}}
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
