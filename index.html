@@ -4907,11 +4907,11 @@ Object.assign(ACTS,{
 const SF_UNIT="22 Special Air Squadron-ish";
 const SEL_STAGES=[
  {n:"Hills phase",t:"The Fan Dance-ish",b:"24km over the highest peak in the Brecon Beacons with a 25kg pack, against the clock, in sideways rain.",fast:"Push the pace",safe:"Steady and smart",
-  win:"You're in the top ten at the trig point. The directing staff say nothing, which is good.",lose:["Your knee goes on the descent. You're medically withdrawn.","You miss the cut-off by four minutes."]},
+  win:"You're in the top ten at the trig point. The directing staff say nothing, which is good.",lose:["Your knee goes on the descent. You're medically withdrawn.","You miss the cut-off by four minutes."],med:[0]},
  {n:"Endurance",t:"The Long Drag-ish",b:"64km across the mountains, alone, in under 20 hours. Half the course has already gone home.",fast:"Run the downhills",safe:"Eat, drink, keep moving",
   win:"You finish with the dawn behind you and blisters you'll keep for a month.",lose:["You get lost in the fog and miss two checkpoints.","Your body simply stops at hour 17."]},
  {n:"Jungle phase",t:"Four weeks in the jungle",b:"Patrol skills, navigation and living under a sheet of plastic in the rain, somewhere very hot and very far away.",fast:"Lead your patrol",safe:"Keep your kit and your head in order",
-  win:"Your patrol finds the enemy camp. The instructors start using your name.",lose:["A fever lays you out for a week and you're dropped.","Your patrol gets lost, and you get the blame."]},
+  win:"Your patrol finds the enemy camp. The instructors start using your name.",lose:["A fever lays you out for a week and you're medically withdrawn.","Your patrol gets lost, and you get the blame."],med:[0]},
  {n:"Escape and interrogation",t:"On the run, then caught",b:"Five days evading a hunter force across the moors. Then you're caught and questioned for a day and a half.",fast:"Crack a joke at the interrogators",safe:"Name, rank, number. Nothing else.",
   win:"You give them nothing. A hood comes off, someone hands you a cup of tea and says: \"Well done.\"",lose:["You answer a question you shouldn't have. It's over.","You're caught in the first hour by the hunter force."]}
 ];
@@ -4923,8 +4923,8 @@ function sfMorning(){
   if(S.inbox.some(m=>!m.done&&/^sel_/.test(m.id)))return;
   const st=SEL_STAGES[S.sel.stage],p=selOdds();
   pushDyn({id:`sel_${S.sel.stage}_${S.day}`,from:"The directing staff",t:`Selection ${S.sel.stage+1} of 4: ${st.t}`,b:st.b,c:[
-   {t:st.safe,p:Math.min(.92,p+.08),win:{fx:{act:"selnext",stress:6,health:-3},o:st.win},lose:{fx:{act:"selfail"},o:st.lose[0]}},
-   {t:st.fast,p:Math.max(.15,p-.08),win:{fx:{act:"selnext",skill:3,stress:4,health:-4},o:st.win+" You've caught their eye."},lose:{fx:{act:"selfail"},o:st.lose[1]}},
+   {t:st.safe,p:Math.min(.92,p+.08),win:{fx:{act:"selnext",stress:6,health:-3},o:st.win},lose:{fx:{act:"selfail",med:(st.med||[]).includes(0)?1:0},o:st.lose[0]}},
+   {t:st.fast,p:Math.max(.15,p-.08),win:{fx:{act:"selnext",skill:3,stress:4,health:-4},o:st.win+" You've caught their eye."},lose:{fx:{act:"selfail",med:(st.med||[]).includes(1)?1:0},o:st.lose[1]}},
    {t:"Withdraw voluntarily",fx:{act:"selfail",stress:-5},o:"You hand in your number. Nobody thinks less of you for trying."}]});
   return;
  }
@@ -4948,7 +4948,7 @@ function selPart(){
  return{news:`<li><span class="dot"></span><span class="t">Selection is under way. Most of the course won't make it.</span></li>`,
   body:`<div class="sec-head"><h2>Special forces selection</h2><span class="label">${st} of 4 passed</span></div>
    <ol class="sel-steps">${SEL_STAGES.map((x,i)=>`<li class="${i<st?"done":i===st?"now":""}"><b>${esc(x.n)}</b><span>${i<st?"Passed":i===st?"This month":"To come"}</span></li>`).join("")}</ol>
-   <div class="note">You're away from your unit for selection, so there's no normal work. Each month brings one test in your inbox. Your chances depend on your health, skill and stress: right now about <b>${Math.round(selOdds()*100)}%</b> for the steady option. Fail a test and you're returned to your unit, and can try again after a year.</div>`};
+   <div class="note">You're away from your unit for selection, so there's no normal work. Each month brings one test in your inbox. Your chances depend on your health, skill and stress: right now about <b>${Math.round(selOdds()*100)}%</b> for the steady option. Fail a test and you're returned to your unit, and can try again after a year. Being injured out doesn't count as one of your two attempts.</div>`};
 }
 EV.push(
  {id:"sf_siege",career:"soldier",again:14,cond:s=>!!s.sf,from:"The duty officer",t:"Embassy siege",b:"Gunmen are holding hostages in an embassy in London. After six days, the order comes: go.",c:[
@@ -16596,6 +16596,12 @@ function sackNote(){const id=S.path,t=R().t,emp=S.bank,owner=/owner|founder|part
  try{const msg=S.inbox.find(x=>/^pr_sacked_/.test(x.id)&&!x.done);if(msg&&note){msg.dyn.from=note[0];msg.dyn.t=note[1];msg.dyn.b=note[2];if(S.log[0]&&/sacked you|terminated|clients have/i.test(S.log[0].t))S.log[0].t=note[1]+"."}}catch(e){}return r}}
 /* Button wording that fits the career */
 {const _em2=endModal;endModal=function(){const r=_em2.apply(this,arguments);try{const b=document.querySelector('#sheet [data-act="comeback"]');if(b&&S)b.textContent=COMEBACK_LABEL[S.path]||`Find a new job as ${aOrAn(careerWord(S.path))}`}catch(e){}return r}}
+
+/* Special forces selection: being injured out doesn't count as one of your two attempts */
+{const _sf=ACTS.selfail;ACTS.selfail=function(fx,m){if(!fx||!fx.med||!S.sel)return _sf.apply(this,arguments);
+ S.sel=null;S.selTries=Math.max(0,(S.selTries||1)-1);S.selFail=S.day-6;S.reviewStart=S.day+1;S.reviewPnl=0;S.health=clamp(S.health-6,0,100);S.stress=clamp(S.stress+4,0,100);
+ S.log.unshift({d:S.day,t:"Medically withdrawn from selection. It doesn't count as an attempt."});
+ moment({tone:"solemn",icon:"shield",kicker:"Medically withdrawn",title:"Injured out",sub:"Injuries don't count against your two attempts. Get fit, and you can go again in six months.",big:false})}}
 
 function start(data){
  S=(data&&data.S)||load();
