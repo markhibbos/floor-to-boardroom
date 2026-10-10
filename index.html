@@ -499,6 +499,11 @@ html,body{overflow-x:clip}
 .fc-list{list-style:none;padding:0;margin:4px 0 0}.fc-list li{padding:8px 0;border-bottom:1px solid var(--line)}.fc-list .hint{display:block;margin:0}
 .l5-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}.l5-list li{display:flex;align-items:center;justify-content:space-between;gap:10px}.l5-list li>span{display:flex;flex-direction:column;min-width:0}.l5-list small{color:var(--muted);font-size:12.5px}
 .l5-btns{display:flex;gap:6px;flex-shrink:0}.l5-list i{font-style:normal;color:var(--down)}
+.dg-scene{margin:6px 0 10px}.dg-scene svg{display:block;width:100%;height:auto;aspect-ratio:320/200;border-radius:14px}
+.dg-meter{display:flex;justify-content:space-between;align-items:center;margin:2px 0 8px;font-size:13px;color:var(--muted)}.dg-meter b{font-size:16px;letter-spacing:1px}
+.dg-q p{margin:4px 0 10px;font-size:16px;line-height:1.4}.dg-ans{display:grid;gap:8px}.dg-ans .btn{text-align:left;white-space:normal;height:auto;min-height:44px;padding:11px 14px;justify-content:flex-start;line-height:1.35}
+.dg-react{border-radius:12px;padding:12px 14px;margin:8px 0 10px;background:var(--surface2)}.dg-react p{margin:0 0 6px}.dg-react p:last-child{margin:0}
+.dg-love{background:rgba(222,64,120,.13)}.dg-ok{background:rgba(52,150,96,.12)}.dg-hate,.dg-cringe{background:rgba(205,72,48,.13)}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -15756,6 +15761,777 @@ function settingsModal(){inSettings=true;
 {const _hm=hideModal;hideModal=function(){inSettings=false;return _hm.apply(this,arguments)}}
 XCLICK.settings=()=>settingsModal();
 XCLICK.settingsback=()=>{inSettings=false;menuModal()};
+
+
+// First date mini-game data: questions, situations, date personalities, reactions and endings.
+const DATE_Q=[
+ {id:"q1",q:"So, what's your idea of a perfect Sunday?",a:[
+   {t:"Hiking up a hill I can't pronounce, then a pub",k:"adv",r:"{n} tries to pronounce it. A small sneeze comes out."},
+   {t:"Duvet, roast dinner, three films back to back",k:"home"},
+   {t:"Farmers' market, then cooking whatever I panic-bought",k:"food",r:"{n} asks what you'd do with a single giant celeriac."},
+   {t:"Explaining crypto to the people at the next table",k:"cringe",r:"{n} slowly sips their drink for a very long time."}]},
+ {id:"q2",q:"What do you do for fun?",a:[
+   {t:"Pub quiz on Tuesdays. Our team name is a pun. Always.",k:"geek"},
+   {t:"I walk dogs at the shelter. Even the bitey one.",k:"kind",r:"{n} puts a hand on their heart."},
+   {t:"Read business books in the bath",k:"ambit"},
+   {t:"Raves. Daytime raves, evening raves, raves at weddings.",k:"party",r:"{n} asks whose wedding. You don't fully remember."}]},
+ {id:"q3",q:"Where's the best place you've ever been on holiday?",a:[
+   {t:"Iceland. I swam in a lake between two continents.",k:"adv",r:"{n} leans in so far their sleeve dips in the sauce."},
+   {t:"Venice. We got lost every night on purpose.",k:"rom"},
+   {t:"Naples. I ate four pizzas in one day for research.",k:"food"},
+   {t:"Magaluf. I came home with a tattoo and no shoes.",k:"party",r:"{n} checks under the table for your shoes."}]},
+ {id:"q4",q:"Cats or dogs?",a:[
+   {t:"Dogs. I say hello to every single one I pass.",k:"kind"},
+   {t:"Cats. We respect each other's need for a nap.",k:"home",r:"{n} does a slow cat blink at you."},
+   {t:"Whichever one's in the Pokemon I'm currently playing",k:"geek"},
+   {t:"My ex got the cat. I still check her Instagram.",k:"cringe",r:"{n} suddenly finds the menu fascinating again."}]},
+ {id:"q5",q:"What's the worst job you've ever had?",a:[
+   {t:"Dressed as a giant sausage outside a butcher's. In August.",k:"funny",r:"{n} snorts, then tries to pretend it was a cough."},
+   {t:"Junior intern. I made coffee and a five-year plan.",k:"ambit",r:"{n} asks if the coffee was part of the plan."},
+   {t:"Summer camp leader. Rained for six weeks. Loved it.",k:"adv"}]},
+ {id:"q6",q:"Got any hidden talents?",a:[
+   {t:"I can name every Doctor Who actor in order",k:"geek",r:"{n} challenges you. You get them all. Applause from table six."},
+   {t:"I can fold a napkin into a swan. Watch.",k:"rom",r:"{n} holds the napkin swan like it's a baby bird."},
+   {t:"I can do the worm. Anywhere. Don't test me.",k:"party"},
+   {t:"I can make a decent risotto out of nearly nothing",k:"food"}]},
+ {id:"q7",q:"What's your go-to karaoke song?",a:[
+   {t:"Bohemian Rhapsody. All the parts. All the voices.",k:"party"},
+   {t:"Something soppy by Adele, eyes closed, hand on heart",k:"rom"},
+   {t:"I don't sing, I just hold the tambourine with pride",k:"funny",r:"{n} mimes a tiny tambourine in solidarity."},
+   {t:"I once did My Way at my nan's funeral. Standing ovation.",k:"cringe",r:"{n} opens their mouth, closes it, and nods very slowly."}]},
+ {id:"q8",q:"Describe your dream house.",a:[
+   {t:"A cottage with a fireplace and a cat on every chair",k:"home"},
+   {t:"A glass penthouse with a view of all my rivals",k:"ambit"},
+   {t:"A camper van. The dream house moves.",k:"adv",r:"{n} asks if the camper van has a kettle. It does."},
+   {t:"Anywhere with a big kitchen island and a pizza oven",k:"food"}]},
+ {id:"q9",q:"If you could have one superpower, what would it be?",a:[
+   {t:"Teleporting. Breakfast in Tokyo, lunch in Lima.",k:"adv"},
+   {t:"Healing people. Obviously. Is that too cheesy?",k:"kind"},
+   {t:"Time travel, mainly to fix one specific plot hole",k:"geek",r:"{n} asks which plot hole. You are there for twenty minutes."},
+   {t:"Never needing the loo during a film",k:"funny",r:"{n} nods gravely. They have missed many endings."}]},
+ {id:"q10",q:"What would you do if you won the lottery?",a:[
+   {t:"Invest it, build an empire, buy a small island",k:"ambit"},
+   {t:"Pay off my mum's mortgage, then cry a lot",k:"kind",r:"{n}'s eyes go a bit shiny."},
+   {t:"Hire a private chef called something like Marco",k:"food",r:"{n} says, \"Grazie, Marco,\" to an imaginary chef."},
+   {t:"Tell absolutely no one. Except everyone. On the same night.",k:"party"}]},
+ {id:"q11",q:"What's your star sign?",a:[
+   {t:"Scorpio. Which explains a lot, apparently.",k:"rom"},
+   {t:"I'm a Gemini, but in the sense of the NASA programme",k:"geek",r:"{n} snorts into their lemonade."},
+   {t:"No idea. My birthday is just a cake reminder.",k:"food"},
+   {t:"My astrologer says I can't date anyone born in March. When's yours?",k:"cringe",r:"{n} quietly slides their passport back into their bag."}]},
+ {id:"q12",q:"Pineapple on pizza. Yes or no?",a:[
+   {t:"Yes, and I'll fight anyone in this restaurant about it",k:"funny"},
+   {t:"No. Pizza is sacred. I've been to Naples.",k:"food",r:"{n} crosses themselves with a breadstick."},
+   {t:"I'll try anything once. I've had cricket pizza.",k:"adv"}]},
+ {id:"q13",q:"Tea or coffee?",a:[
+   {t:"Tea. Milk in second. I'm not an animal.",k:"home"},
+   {t:"Triple espresso before my 6am gym session",k:"ambit",r:"{n} feels tired just hearing it."},
+   {t:"Whatever's in the flask on the mountain",k:"adv"},
+   {t:"A cup of tea, made by someone I love. Or you.",k:"rom",r:"{n} goes slightly pink."}]},
+ {id:"q14",q:"What's your zombie apocalypse plan?",a:[
+   {t:"I have a spreadsheet. Colour coded. Tab three is weapons.",k:"geek",r:"{n} asks to see tab three. You email it right there."},
+   {t:"Barricade myself in Greggs and live like a king",k:"funny",r:"{n} laughs and asks if there's room in the Greggs."},
+   {t:"Rescue the neighbour's tortoise first. Then think.",k:"kind"},
+   {t:"Throw a last party. If we go, we go dancing.",k:"party"}]},
+ {id:"q15",q:"What's the last thing you googled?",a:[
+   {t:"How long can you leave sourdough starter alone",k:"food"},
+   {t:"Cheapest flights to anywhere with mountains",k:"adv"},
+   {t:"Is it normal for a pigeon to follow you home",k:"funny",r:"{n} looks over your shoulder for the pigeon."},
+   {t:"How to tell if your date is lying about their height",k:"cringe",r:"{n} sits up noticeably straighter."}]},
+ {id:"q16",q:"Who's your celebrity crush?",a:[
+   {t:"Mary Berry. It's about the confidence.",k:"food",r:"{n} raises a glass. \"To Mary.\""},
+   {t:"Whoever played the lead in that rom-com I've watched forty times",k:"rom"},
+   {t:"Brian Cox. Not the actor. The physics one.",k:"geek",r:"{n} says \"the physics one\" back to you, delighted."},
+   {t:"David Attenborough, but in a respectful, grandad way",k:"kind"}]},
+ {id:"q17",q:"How would your friends describe you?",a:[
+   {t:"The one who always organises the group holiday",k:"adv"},
+   {t:"The one who remembers everyone's birthday",k:"kind"},
+   {t:"The one who's always last to leave the dance floor",k:"party",r:"{n} does finger guns at you."},
+   {t:"Driven. Also tired. Mainly driven.",k:"ambit"}]},
+ {id:"q18",q:"Where do you see yourself in five years?",a:[
+   {t:"Running my own company. Possibly two.",k:"ambit",r:"{n} asks if you're hiring, only half joking."},
+   {t:"Same sofa, bigger telly, two more cats",k:"home",r:"{n} asks if the cats have names yet. They do."},
+   {t:"Somewhere sunny with someone nice. Who knows?",k:"rom"},
+   {t:"Still trying to finish this one jigsaw",k:"funny"}]},
+ {id:"q19",q:"What's your most embarrassing moment?",a:[
+   {t:"Waved back at someone who was waving at the person behind me",k:"funny"},
+   {t:"Fell asleep at a festival and woke up on the wrong stage",k:"party"},
+   {t:"Got stuck on a climbing wall for forty minutes. Kids watched.",k:"adv",r:"{n} laughs so much they have to hold the table."},
+   {t:"Probably this date, if I'm honest. No offence.",k:"cringe",r:"{n} blinks twice and takes a long gulp of water."}]},
+ {id:"q20",q:"What's your guilty pleasure?",a:[
+   {t:"Reality TV. I have a ranking system for islanders.",k:"home"},
+   {t:"Fan fiction. I've written some. It got 400 likes.",k:"geek",r:"{n} demands the link. Immediately."},
+   {t:"Eating cheese straight from the fridge at 2am",k:"food",r:"{n} whispers, \"Same,\" like it's a secret."},
+   {t:"Crying at adverts. Especially the Christmas ones.",k:"rom"}]},
+ {id:"q21",q:"What's your favourite film?",a:[
+   {t:"The Notebook. I'm not ashamed. I'm a bit ashamed.",k:"rom"},
+   {t:"Star Wars. The original. Don't make me explain why.",k:"geek",r:"{n} does a wheezy Darth Vader breath."},
+   {t:"Paddington 2. It's a perfect film about kindness.",k:"kind",r:"{n} says Paddington 2 is the correct answer."}]},
+ {id:"q22",q:"What did you have for breakfast?",a:[
+   {t:"Smashed avocado with chilli flakes and a poached egg",k:"food"},
+   {t:"A protein shake in the car on a conference call",k:"ambit"},
+   {t:"Cold pizza from last night's party",k:"party"},
+   {t:"Breakfast? It's a construct.",k:"funny",r:"{n} slides the bread basket towards you, worried."}]},
+ {id:"q23",q:"What's on your bucket list?",a:[
+   {t:"See the Northern Lights from a hot tub",k:"rom"},
+   {t:"Climb Kilimanjaro. Then a nap.",k:"adv",r:"{n} says the nap is the real summit."},
+   {t:"Retire at forty on a yacht",k:"ambit"},
+   {t:"Get my name on the high score of a pub arcade",k:"geek"}]},
+ {id:"q24",q:"Do you have any pets?",a:[
+   {t:"A three-legged rescue dog called Tripod. He's perfect.",k:"kind",r:"{n} demands photos. Lots of photos."},
+   {t:"A sourdough starter called Doughvid Bowie",k:"food",r:"{n} chokes on a crouton laughing."},
+   {t:"A goldfish named after a Lord of the Rings character",k:"geek"},
+   {t:"Twelve snakes. They live under my bed. Want to meet them?",k:"cringe",r:"{n} lifts both feet off the floor."}]},
+ {id:"q25",q:"What's your love language?",a:[
+   {t:"Cooking someone a massive dinner they didn't ask for",k:"food"},
+   {t:"Little notes in coat pockets",k:"rom",r:"{n} checks their own coat pocket, just in case."},
+   {t:"Sending memes at 3am. That's love.",k:"funny"}]},
+ {id:"q26",q:"What's your typical Friday night?",a:[
+   {t:"Dressed up, out by nine, home by sunrise",k:"party"},
+   {t:"Pyjamas by seven and a takeaway I've earned",k:"home"},
+   {t:"Board games with friends. It gets competitive.",k:"geek",r:"{n} admits they once flipped a Monopoly board."},
+   {t:"Catching up on emails so Monday fears me",k:"ambit"}]},
+ {id:"q27",q:"What's the best gift you've ever been given?",a:[
+   {t:"A star named after me. Probably not real. Still cried.",k:"rom"},
+   {t:"A voucher for a skydive. Best and worst day ever.",k:"adv",r:"{n} grips the table just imagining it."},
+   {t:"My grandad's old watch. It doesn't work. I wear it daily.",k:"kind"},
+   {t:"A gift card from my ex. I used it on this outfit.",k:"cringe",r:"{n} looks at your shirt like it might bite."}]},
+ {id:"q28",q:"Tell me about your family.",a:[
+   {t:"Big and loud. Sunday lunch is basically a riot.",k:"food",r:"{n} asks if there's room for one more at lunch."},
+   {t:"I'm close to my sister. She volunteers at the hospice too.",k:"kind"},
+   {t:"My parents still hold hands at the shops",k:"rom",r:"{n} says that's the sweetest thing they've heard all year."},
+   {t:"Mum says hi. She's in the car outside. Wave.",k:"cringe",r:"{n} turns slowly. A woman in the car park waves back."}]},
+ {id:"q29",q:"What are you reading at the moment?",a:[
+   {t:"A fantasy series. Book nine of twelve. No spoilers.",k:"geek"},
+   {t:"Something about habits of millionaires",k:"ambit"},
+   {t:"A travel guide to Patagonia, for reasons",k:"adv"},
+   {t:"The back of a cereal box. Very gripping.",k:"funny",r:"{n} asks for spoilers. You reveal the free toy."}]},
+ {id:"q30",q:"What's your favourite season?",a:[
+   {t:"Autumn. Crunchy leaves, big jumpers, soup.",k:"home",r:"{n} sighs dreamily at the word soup."},
+   {t:"Summer. Festivals. Need I say more?",k:"party"},
+   {t:"Christmas. Is that a season? It is to me.",k:"rom"},
+   {t:"Asparagus season. Six glorious weeks.",k:"food",r:"{n} laughs, then realises you're serious."}]},
+ {id:"q31",q:"Who pays tonight, do you think?",a:[
+   {t:"Let me get it. Next one's yours, if there is one.",k:"rom",r:"{n} smiles. \"There might be.\""},
+   {t:"I'll put it on expenses. Networking, technically.",k:"ambit"},
+   {t:"Split it. Equal partners. Like a sensible duo.",k:"kind",r:"{n} shakes your hand on it. Very businesslike."},
+   {t:"I'll pay for mine. Yours had the lobster, so.",k:"cringe",r:"{n} looks down at their lobster like it betrayed them."}]},
+ {id:"q32",q:"What's your favourite food?",a:[
+   {t:"A really good ramen. Broth simmered for two days.",k:"food"},
+   {t:"Beans on toast. Nothing beats it.",k:"home"},
+   {t:"Whatever the street vendor recommends wherever I am",k:"adv"},
+   {t:"Chips at 3am on the way home from a club",k:"party",r:"{n} says the 3am chips are the best chips."}]},
+ {id:"q33",q:"What were you like at school?",a:[
+   {t:"Chess club captain. We were undefeated, sort of.",k:"geek"},
+   {t:"Class clown. Spent more time outside the room than in it.",k:"funny",r:"{n} says they were exactly the same."},
+   {t:"Running a tuck shop out of my locker",k:"ambit",r:"{n} asks what your profit margin was on Wham bars."},
+   {t:"I peaked at school. Ask me about the 2009 sports day.",k:"cringe",r:"{n} doesn't ask. You tell them anyway."}]},
+ {id:"q34",q:"Are you a morning person?",a:[
+   {t:"5am run, cold shower, inbox zero by seven",k:"ambit"},
+   {t:"I'm up early to watch the sunrise from the hill",k:"adv"},
+   {t:"Morning is the time I spend going back to sleep",k:"home",r:"{n} yawns in agreement."}]},
+ {id:"q35",q:"What's your dream job?",a:[
+   {t:"CEO. Of anything. I'm flexible.",k:"ambit"},
+   {t:"Puppy cuddler at a guide dog charity",k:"kind",r:"{n} says they'd quit their job for that."},
+   {t:"Professional festival reviewer",k:"party",r:"{n} asks if that's a real job. You both hope so."},
+   {t:"Video game tester. I'd be unstoppable.",k:"geek"}]},
+ {id:"q36",q:"What's the most spontaneous thing you've ever done?",a:[
+   {t:"Booked a flight to Morocco at the airport. Best week ever.",k:"adv",r:"{n} looks at you like you're Indiana Jones."},
+   {t:"Said yes to a stranger's wedding afterparty",k:"party"},
+   {t:"Drove six hours to surprise someone on their birthday",k:"rom"},
+   {t:"Got a tattoo of my ex's name. Then their dog's name over it.",k:"cringe",r:"{n} asks to see it. Then wishes they hadn't."}]},
+ {id:"q37",q:"How do you take your eggs?",a:[
+   {t:"Soft boiled, with soldiers, like a civilised person",k:"home",r:"{n} salutes the imaginary soldiers."},
+   {t:"Shakshuka, lots of cumin, crusty bread",k:"food"},
+   {t:"Raw, in a glass, like Rocky. I'm training.",k:"ambit",r:"{n} visibly gags."},
+   {t:"Whatever's least effort. I'm not a hero.",k:"funny"}]},
+ {id:"q38",q:"What's your favourite board game?",a:[
+   {t:"Settlers of Catan. I will trade you sheep.",k:"geek"},
+   {t:"Monopoly. I always win. Always.",k:"ambit",r:"{n} narrows their eyes. A challenge has been set."},
+   {t:"Twister, after a few drinks",k:"party"},
+   {t:"Scrabble with my gran. She cheats, I let her.",k:"kind",r:"{n} grins. \"Your gran sounds brilliant.\""}]},
+ {id:"q39",q:"Have you ever been in love?",a:[
+   {t:"Once. It felt like being in a song.",k:"rom"},
+   {t:"With a lasagne in Bologna, yes",k:"food",r:"{n} says they understand. Lasagne is very lovable."},
+   {t:"I'm in love with my ex right now, actually. Long story.",k:"cringe",r:"{n} starts calculating the distance to the exit."}]},
+ {id:"q40",q:"What's the bravest thing you've ever done?",a:[
+   {t:"Bungee jump off a bridge in New Zealand",k:"adv",r:"{n} goes pale just hearing the word bridge."},
+   {t:"Quit my job to start my own business",k:"ambit"},
+   {t:"Told a waiter my food was cold. I shook for an hour.",k:"funny",r:"{n} laughs so hard a bit of wine comes out of their nose."},
+   {t:"Ran into a river to save a duckling. It didn't need saving.",k:"kind"}]},
+ {id:"q41",q:"What's your favourite way to relax?",a:[
+   {t:"A bath with a candle and a podcast about murder",k:"home"},
+   {t:"Wild swimming in a freezing lake",k:"adv",r:"{n} shivers dramatically in sympathy."},
+   {t:"Baking bread. Kneading is cheaper than therapy.",k:"food"},
+   {t:"Painting tiny model goblins",k:"geek",r:"{n} asks if the goblins have names. They do. All of them."}]},
+ {id:"q42",q:"If you could have dinner with anyone, who would it be?",a:[
+   {t:"My late nan, to get her trifle recipe",k:"kind",r:"{n} reaches over and squeezes your hand."},
+   {t:"Elon Musk. I've got questions. And a pitch deck.",k:"ambit"},
+   {t:"Gordon Ramsay, so he could finally be nice to me",k:"food"},
+   {t:"You. Oh wait. Doing that. Nailed it.",k:"rom",r:"{n} rolls their eyes, but their cheeks go pink."}]},
+ {id:"q43",q:"What's your hidden phobia?",a:[
+   {t:"Moths. They're just evil butterflies.",k:"funny",r:"{n} says you're absolutely right about moths."},
+   {t:"Staying in one place too long",k:"adv"},
+   {t:"Being bored at a party",k:"party"},
+   {t:"Feet. Yours are fine. I checked earlier.",k:"cringe",r:"{n} tucks their feet right under the chair."}]},
+ {id:"q44",q:"What's your favourite smell?",a:[
+   {t:"Fresh bread at a bakery at 6am",k:"food"},
+   {t:"Rain on a hot pavement",k:"rom",r:"{n} says, \"Petrichor,\" softly, and smiles."},
+   {t:"A new laptop out of the box",k:"geek"}]},
+ {id:"q45",q:"Do you like dancing?",a:[
+   {t:"Love it. I'm terrible. That's the point.",k:"funny"},
+   {t:"I go to salsa every Wednesday",k:"party",r:"{n} does a little shimmy in their seat."},
+   {t:"Slow dancing in the kitchen counts, right?",k:"rom"},
+   {t:"Only if it's on a dance mat in an arcade",k:"geek"}]},
+ {id:"q46",q:"What's in your fridge right now?",a:[
+   {t:"Six types of cheese and a bit of hope",k:"food",r:"{n} asks which six. You list them. It takes a while."},
+   {t:"Leftovers I've labelled with dates. And my name.",k:"home"},
+   {t:"Energy drinks and ambition",k:"ambit"},
+   {t:"A jar of my own toenails. For science.",k:"cringe",r:"{n} puts down their fork and doesn't pick it up again."}]},
+ {id:"q47",q:"What's your favourite thing about your hometown?",a:[
+   {t:"The chippy. Ten out of ten. Fight me.",k:"food",r:"{n} defends their own chippy. Passionately."},
+   {t:"The hills just outside it. Brilliant walks.",k:"adv"},
+   {t:"Everyone knows everyone. It's lovely. And nosy.",k:"kind"},
+   {t:"The one nightclub. Sticky floor. Legendary.",k:"party"}]},
+ {id:"q48",q:"What's the best concert you've been to?",a:[
+   {t:"Glastonbury. Mud up to my knees. Pure joy.",k:"party",r:"{n} shows you a photo of their own muddy wellies."},
+   {t:"An orchestra playing video game music",k:"geek",r:"{n} says they cried at that exact concert."},
+   {t:"A tiny gig in a pub where I met my best mate",k:"kind"}]},
+ {id:"q49",q:"How do you handle stress?",a:[
+   {t:"I make a list. Then a list of lists.",k:"ambit",r:"{n} wonders if they're on a list now."},
+   {t:"Long walks with no phone signal",k:"adv"},
+   {t:"I bake. A lot. My neighbours are concerned.",k:"food"},
+   {t:"I ring my mum. Every hour. She's on speed dial one.",k:"cringe",r:"{n}'s smile becomes very, very fixed."}]},
+ {id:"q50",q:"What's your favourite takeaway?",a:[
+   {t:"A Friday curry on the sofa. It's tradition.",k:"home"},
+   {t:"I don't do takeaway. I make my own naan.",k:"food",r:"{n} looks genuinely impressed."},
+   {t:"Kebab at 2am, on the night bus, no regrets",k:"party"},
+   {t:"Whatever my flatmate orders and I steal from",k:"funny"}]},
+ {id:"q51",q:"What's the nicest thing a stranger has done for you?",a:[
+   {t:"Paid for my coffee. I paid it forward for a week.",k:"kind"},
+   {t:"Gave me a lift up a mountain in Chile",k:"adv",r:"{n} says that's either lovely or a film plot."},
+   {t:"Left a rose on my bike. I still don't know who.",k:"rom"}]},
+ {id:"q52",q:"Do you play any video games?",a:[
+   {t:"I have 3,000 hours in one farming game",k:"geek",r:"{n} asks what crops you grow. It gets heated."},
+   {t:"Only FIFA, with the lads, with shouting",k:"party"},
+   {t:"Snake on my old Nokia. Still undefeated.",k:"funny",r:"{n} asks for your high score. It's 4,812."},
+   {t:"No. I'd rather be building something real.",k:"ambit"}]},
+ {id:"q53",q:"What's your favourite word?",a:[
+   {t:"Serendipity. Like tonight, maybe.",k:"rom",r:"{n} groans, but they're smiling."},
+   {t:"Gubbins. It's just fun to say.",k:"funny",r:"{n} says gubbins five times and giggles."},
+   {t:"Profit",k:"ambit"},
+   {t:"Moist. I say it to make people uncomfortable. Moist.",k:"cringe",r:"{n} physically recoils into the curtain."}]},
+ {id:"q54",q:"If you were a biscuit, what would you be?",a:[
+   {t:"A custard cream. Classic. Reliable. Good with tea.",k:"home"},
+   {t:"A homemade shortbread. Buttery. Made with love.",k:"food"},
+   {t:"A Jammie Dodger. Sweet with a heart in the middle.",k:"rom"},
+   {t:"A Party Ring, obviously",k:"party",r:"{n} says they'd be a Jaffa Cake. You argue about it."}]},
+ {id:"q55",q:"What did you want to be when you were little?",a:[
+   {t:"An astronaut. Still a bit hopeful.",k:"geek"},
+   {t:"A vet. I still bandage every hedgehog I find.",k:"kind",r:"{n} goes a bit misty about the hedgehogs."},
+   {t:"Prime Minister. Still not ruled it out.",k:"ambit",r:"{n} asks if they'll get a cabinet job."},
+   {t:"A dinosaur. Genuinely. Not a palaeontologist. A dinosaur.",k:"funny"}]},
+ {id:"q56",q:"What's your idea of a romantic evening?",a:[
+   {t:"Candles, a home-cooked meal, music in the background",k:"rom",r:"{n} slowly rests their chin on their hand."},
+   {t:"Watching the sunset from the top of a hill",k:"adv"},
+   {t:"A blanket, a film, and someone to steal crisps from",k:"home"},
+   {t:"Me, you, and my mum's photo albums of me as a baby",k:"cringe",r:"{n} quietly checks how long the last train is."}]},
+ {id:"q57",q:"What's the strangest thing you've ever eaten?",a:[
+   {t:"Fried grasshoppers in Mexico. Crunchy. Fine.",k:"adv"},
+   {t:"Hákarl. Fermented shark. Tasted like a swimming pool.",k:"food",r:"{n} pulls a face like they've licked a battery."},
+   {t:"A crayon, aged six. Blue. Bit waxy.",k:"funny",r:"{n} asks which colour tastes best. You debate it."}]},
+ {id:"q58",q:"How do you feel about camping?",a:[
+   {t:"Love it. Give me a tent and a stream.",k:"adv"},
+   {t:"I'll camp if there's a hotel nearby",k:"home"},
+   {t:"Festival camping only. Glitter required.",k:"party"},
+   {t:"I'm the one who brings a camping stove and does a full roast",k:"food",r:"{n} says they'd go camping for a roast."}]},
+ {id:"q59",q:"What's your biggest pet peeve?",a:[
+   {t:"People who don't thank the bus driver",k:"kind"},
+   {t:"Slow walkers. I've got places to be.",k:"ambit"},
+   {t:"Spoilers. I will end you. Politely.",k:"geek",r:"{n} zips their lips with a very serious face."},
+   {t:"Waiters. Ugh. Oi, mate, where's my water?",k:"cringe",r:"{n} mouths \"sorry\" to the waiter behind your back."}]},
+ {id:"q60",q:"What's your favourite TV show?",a:[
+   {t:"Bake Off. I shout at the telly about soggy bottoms.",k:"food"},
+   {t:"Dragon's Den. I take notes.",k:"ambit"},
+   {t:"Anything with spaceships and a moody captain",k:"geek"},
+   {t:"Old episodes of Blind Date. For research.",k:"rom",r:"{n} does a terrible Cilla impression."}]},
+ {id:"q61",q:"What's something you're really proud of?",a:[
+   {t:"I ran a marathon dressed as a teapot",k:"funny",r:"{n} asks if you were short and stout. You were."},
+   {t:"I raised two grand for the local food bank",k:"kind",r:"{n} looks at you like you're quite a catch."},
+   {t:"Got promoted three times in two years",k:"ambit"},
+   {t:"Cycled from Land's End to John o' Groats",k:"adv"}]},
+ {id:"q62",q:"Do you cook?",a:[
+   {t:"Every night. I've named my wok.",k:"food"},
+   {t:"I make a mean cheese toastie. That's it.",k:"home"},
+   {t:"I cook for my elderly neighbour every Thursday",k:"kind"},
+   {t:"Once set fire to a salad. Not sure how.",k:"funny",r:"{n} asks how. You still don't know."}]},
+ {id:"q63",q:"What's your favourite thing to do on a rainy day?",a:[
+   {t:"Blanket fort and a jigsaw puzzle",k:"home"},
+   {t:"Puddle jumping. Proper wellies. No shame.",k:"funny",r:"{n} says they still own frog wellies."},
+   {t:"Marathon of a fantasy series, with snacks",k:"geek"},
+   {t:"Put on my boots and go anyway. Rain is just weather.",k:"adv"}]},
+ {id:"q64",q:"How many times have you been on a date this month?",a:[
+   {t:"This is my first. I'm a bit nervous, honestly.",k:"rom",r:"{n} relaxes. \"Me too, actually.\""},
+   {t:"I've been too busy launching a side hustle",k:"ambit",r:"{n} wonders if they're the side hustle."},
+   {t:"Twelve. Wait. Thirteen. You're thirteen. Lucky!",k:"cringe",r:"{n} doesn't feel very lucky."}]},
+ {id:"q65",q:"What's the best advice you've ever had?",a:[
+   {t:"My gran said always be kind. She also said always carry tissues.",k:"kind"},
+   {t:"Say yes to more things. So I did. I'm a diver now.",k:"adv"},
+   {t:"Never eat a supermarket sushi on a train",k:"food"},
+   {t:"Fake it till you make it. I'm still faking.",k:"funny"}]},
+ {id:"q66",q:"What's your favourite place in the world?",a:[
+   {t:"My grandparents' kitchen. Smells like jam.",k:"home"},
+   {t:"The Scottish Highlands. In a storm, ideally.",k:"adv"},
+   {t:"Ibiza at 4am",k:"party",r:"{n} raises their glass. \"Ibiza at 4am.\""},
+   {t:"Any market in Italy",k:"food"}]},
+ {id:"q67",q:"What would your autobiography be called?",a:[
+   {t:"Grinding: My Journey to the Top Floor",k:"ambit"},
+   {t:"Oops: A Life in Small Disasters",k:"funny",r:"{n} says they'd buy it."},
+   {t:"Level Up: A Gamer's Story",k:"geek"},
+   {t:"Me, Me, Me. Volume One of Six.",k:"cringe",r:"{n}'s eyebrows climb up to their hairline."}]},
+ {id:"q68",q:"Do you believe in love at first sight?",a:[
+   {t:"Absolutely. Or at least, at first coffee.",k:"rom"},
+   {t:"I believe in love at first slice",k:"food"},
+   {t:"I believe in a solid due diligence process",k:"ambit",r:"{n} isn't sure if you're joking. Neither are you."}]},
+ {id:"q69",q:"What's your favourite sport?",a:[
+   {t:"Rock climbing. Indoors in winter, outdoors in summer.",k:"adv"},
+   {t:"Darts. In the pub. With chips.",k:"party",r:"{n} mimes a perfect bullseye throw."},
+   {t:"Chess is a sport. I will not be taking questions.",k:"geek"},
+   {t:"Watching the snooker with my grandad",k:"kind"}]},
+ {id:"q70",q:"What's your phone wallpaper?",a:[
+   {t:"My dog in a tiny raincoat",k:"kind",r:"{n} makes a noise like a kettle."},
+   {t:"A vision board of everything I'm going to own",k:"ambit"},
+   {t:"A beach I'm going to one day",k:"rom"},
+   {t:"A photo of my ex. I keep meaning to change it.",k:"cringe",r:"{n} asks for the bill. Out loud. To no one."}]},
+ {id:"q71",q:"What's your favourite way to travel?",a:[
+   {t:"Backpack and a train pass. No plan.",k:"adv"},
+   {t:"First class. Business lounge. Free nuts.",k:"ambit"},
+   {t:"I don't. My sofa is a holiday.",k:"home"},
+   {t:"A road trip with snacks and a terrible playlist",k:"funny"}]},
+ {id:"q72",q:"What's the best meal you've ever had?",a:[
+   {t:"Fresh crab on a Cornish harbour wall",k:"food"},
+   {t:"Noodles at a stall in Bangkok at midnight",k:"adv"},
+   {t:"My mum's Sunday roast. Nothing comes close.",k:"home",r:"{n} says their mum's is better. Rivalry begins."},
+   {t:"Breakfast at a festival after no sleep. Tasted like heaven.",k:"party"}]},
+ {id:"q73",q:"Are you any good at DIY?",a:[
+   {t:"I built a gaming PC from scratch",k:"geek",r:"{n} asks how many fans it has. You say eight."},
+   {t:"I put up a shelf. It held for nearly an hour.",k:"funny"},
+   {t:"I renovated my nan's garden for her birthday",k:"kind"}]},
+ {id:"q74",q:"What's your signature dance move?",a:[
+   {t:"The sprinkler. Classic for a reason.",k:"party",r:"{n} does the sprinkler back. A waiter ducks."},
+   {t:"A slow sway with someone special",k:"rom"},
+   {t:"The robot, done slightly wrong on purpose",k:"funny",r:"{n} does the robot back at you. Badly."},
+   {t:"Did the splits at a wedding. Trousers ripped. Vicar saw everything.",k:"cringe",r:"{n} covers their face with a napkin."}]},
+ {id:"q75",q:"What's the best thing about your job?",a:[
+   {t:"The bonuses. And my name on the door.",k:"ambit"},
+   {t:"Helping people. Even on the rubbish days.",k:"kind"},
+   {t:"The Christmas party. Legendary.",k:"party"},
+   {t:"The office biscuit tin. I am its guardian.",k:"food"}]},
+ {id:"q76",q:"What's your favourite memory?",a:[
+   {t:"Watching shooting stars on a beach with old friends",k:"rom"},
+   {t:"Reaching the top of Ben Nevis in a cloud",k:"adv"},
+   {t:"Christmas morning, aged nine, getting a Game Boy",k:"geek",r:"{n} says they had the exact same one."},
+   {t:"My first ever pay cheque. I framed the payslip.",k:"ambit"}]},
+ {id:"q77",q:"What's your cooking speciality?",a:[
+   {t:"A Thai green curry with paste I make myself",k:"food"},
+   {t:"Toast. Perfectly golden. Every time.",k:"funny"},
+   {t:"Pancakes shaped like hearts",k:"rom"},
+   {t:"Microwave meals, plated nicely. Presentation matters.",k:"home"}]},
+ {id:"q78",q:"How do you feel about my outfit?",a:[
+   {t:"Honestly? You look lovely.",k:"rom",r:"{n} tries very hard not to grin."},
+   {t:"Very practical. Good pockets. Hike-ready.",k:"adv"},
+   {t:"You look like a strong buy",k:"ambit"},
+   {t:"My mum's got that exact jumper",k:"cringe",r:"{n} looks down at the jumper with deep sadness."}]},
+ {id:"q79",q:"What's your favourite quiz round?",a:[
+   {t:"Science and nature. I'm unbeatable.",k:"geek"},
+   {t:"Music. I know every one-hit wonder.",k:"party"},
+   {t:"Food and drink. Ask me anything about cheese.",k:"food"}]},
+ {id:"q80",q:"What's something you can't live without?",a:[
+   {t:"My hiking boots. They've seen five continents.",k:"adv"},
+   {t:"A good laugh every day. Even at myself.",k:"funny"},
+   {t:"My weighted blanket and a hot water bottle",k:"home"},
+   {t:"My phone. I've checked it six times since we sat down.",k:"cringe",r:"{n} watches you check it for a seventh time."}]},
+ {id:"q81",q:"Do you volunteer at all?",a:[
+   {t:"Every weekend at the animal shelter",k:"kind",r:"{n} says that's the most attractive thing you've said."},
+   {t:"I mentor young entrepreneurs. Building the next generation.",k:"ambit"},
+   {t:"I run the quiz at the care home. They're ruthless.",k:"geek"},
+   {t:"I volunteer to finish everyone's chips",k:"funny"}]},
+ {id:"q82",q:"What's your idea of a perfect holiday?",a:[
+   {t:"A cabin, a log fire, no wifi",k:"home"},
+   {t:"A food tour of Japan. Ramen for breakfast.",k:"food"},
+   {t:"Ten countries in ten days",k:"adv",r:"{n} gets tired just counting them."},
+   {t:"A beach club with a DJ and a pool float shaped like a flamingo",k:"party"}]},
+ {id:"q83",q:"What's your guilty TV binge?",a:[
+   {t:"Every series of Grand Designs. I judge their budgets.",k:"ambit"},
+   {t:"Wedding dress shows. I cry at every single one.",k:"rom"},
+   {t:"Animal rescue programmes. Tissues ready.",k:"kind",r:"{n} says they also have a box of tissues for those."},
+   {t:"Cartoons for kids. I'm thirty-four.",k:"funny",r:"{n} names their favourite cartoon. It's the same one."}]},
+ {id:"q84",q:"What do you think of our restaurant?",a:[
+   {t:"The menu is brilliant. I want to try everything.",k:"food"},
+   {t:"Cosy. Feels like a living room with chips.",k:"home"},
+   {t:"I'd change the business model, honestly",k:"ambit"},
+   {t:"I've been here before. With my ex. Same table, actually.",k:"cringe",r:"{n} looks at the table like it's haunted."}]},
+ {id:"q85",q:"What's your favourite sandwich?",a:[
+   {t:"Proper chip butty with lashings of butter",k:"home"},
+   {t:"A Reuben from a deli in New York",k:"adv"},
+   {t:"The one I eat at my desk while winning at work",k:"ambit",r:"{n} looks slightly worried for you."}]},
+ {id:"q86",q:"Do you get on with your exes?",a:[
+   {t:"Yes, we're all still friends. It's very grown up.",k:"kind"},
+   {t:"I've moved on. I'm here, aren't I?",k:"rom"},
+   {t:"Let me show you my spreadsheet on why each one failed",k:"cringe",r:"{n} watches you open a laptop at the dinner table."}]},
+ {id:"q87",q:"How competitive are you?",a:[
+   {t:"Very. I once won a staring contest against a cat.",k:"funny"},
+   {t:"I play to win. In business and in life.",k:"ambit"},
+   {t:"Only at quizzes. Then I'm a monster.",k:"geek"},
+   {t:"I let my little cousins win at everything",k:"kind"}]},
+ {id:"q88",q:"What's your favourite festival?",a:[
+   {t:"Glastonbury. I've been eleven times.",k:"party",r:"{n} asks if you've ever seen the Pyramid Stage sober."},
+   {t:"A food festival. Free samples are my cardio.",k:"food",r:"{n} says they have a free sample strategy too."},
+   {t:"Comic Con. I go in full costume.",k:"geek"},
+   {t:"Bonfire night. Sparklers and hot chocolate.",k:"rom"}]},
+ {id:"q89",q:"What's the first thing you notice about someone?",a:[
+   {t:"Their smile. Yours is nice, by the way.",k:"rom",r:"{n} smiles so wide they nearly lose a crouton."},
+   {t:"How they treat the waiter",k:"kind",r:"{n} sits up and thanks the waiter, very loudly."},
+   {t:"Their shoes. Can they keep up on a hike?",k:"adv"},
+   {t:"Their teeth. I've been staring at yours. You've got a gap.",k:"cringe",r:"{n} closes their mouth and keeps it closed."}]},
+ {id:"q90",q:"What did you order, and why?",a:[
+   {t:"The tasting menu. When in Rome, eat everything.",k:"food"},
+   {t:"The same as you. I panicked.",k:"funny"},
+   {t:"The cheapest thing. I'm saving for a house deposit.",k:"ambit"},
+   {t:"Something I can't pronounce, to be brave",k:"adv"}]},
+
+ {id:"s1",sit:1,q:"The waiter spills red wine all over your date.",a:[
+   {t:"Hand them your napkin and help dab it off",k:"kind",r:"{n} smiles at you through a face of Merlot."},
+   {t:"Pour your wine on yourself so they don't feel alone",k:"funny",r:"{n} laughs so loud the whole restaurant turns round."},
+   {t:"Demand to see the manager, and their manager",k:"ambit"},
+   {t:"Take a photo for your Instagram story",k:"cringe",r:"{n} stares at you, dripping, for a long silent moment."}]},
+ {id:"s2",sit:1,q:"Your ex walks in with someone new.",a:[
+   {t:"Give a friendly wave and focus back on your date",k:"kind"},
+   {t:"Lean in and tell your date a terrible joke",k:"funny"},
+   {t:"Hold your date's hand. Just to be clear.",k:"rom"},
+   {t:"Go over and ask why they never returned your hoodie",k:"cringe",r:"{n} eats a whole bread roll alone while you argue."}]},
+ {id:"s3",sit:1,q:"Your card is declined.",a:[
+   {t:"Laugh it off and offer to wash up",k:"funny",r:"{n} pays, giggling. \"You owe me a pudding.\""},
+   {t:"Calmly try your business card. It's platinum.",k:"ambit"},
+   {t:"Try it again. And again. And again. Very loudly.",k:"cringe",r:"{n} slowly hands over their own card, eyes shut."}]},
+ {id:"s4",sit:1,q:"A busker starts serenading your table.",a:[
+   {t:"Get up and dance with your date",k:"party"},
+   {t:"Request a love song and look into their eyes",k:"rom",r:"{n} melts like a choc ice in July."},
+   {t:"Tip the busker generously",k:"kind"},
+   {t:"Grab the guitar and play the Tetris theme",k:"geek"}]},
+ {id:"s5",sit:1,q:"Your date's phone keeps buzzing.",a:[
+   {t:"Say, \"Go on, take it, I'll mind your chips\"",k:"kind"},
+   {t:"Take out your own phone and check your stocks",k:"ambit"},
+   {t:"Pretend to answer a banana",k:"funny",r:"{n} puts their phone away and picks up a breadstick."},
+   {t:"Grab it and read the messages out loud",k:"cringe",r:"{n} snatches it back. It was their nan."}]},
+ {id:"s6",sit:1,q:"You get spinach stuck in your teeth.",a:[
+   {t:"Smile wide and say, \"Popeye, at your service\"",k:"funny"},
+   {t:"Excuse yourself and sort it out discreetly",k:"home"},
+   {t:"Explain the iron content of spinach in detail",k:"geek"},
+   {t:"Pick it out with a fork and flick it on the floor",k:"cringe",r:"{n} watches the spinach land near their shoe."}]},
+ {id:"s7",sit:1,q:"The restaurant is on fire. A small one.",a:[
+   {t:"Grab the extinguisher and save the day",k:"adv",r:"{n} looks at you like a film hero."},
+   {t:"Make sure the older couple gets out first",k:"kind"},
+   {t:"Grab your date's hand and run out laughing",k:"rom"},
+   {t:"Finish your chips. You paid for them.",k:"food"}]},
+ {id:"s8",sit:1,q:"Your date orders the spiciest dish on the menu and goes bright red.",a:[
+   {t:"Pass them your milk without a word",k:"kind"},
+   {t:"Order the same and race them",k:"adv"},
+   {t:"Explain it's capsaicin, and milk binds to it",k:"geek",r:"{n} nods while weeping and steaming slightly."},
+   {t:"Recommend the chef add some yoghurt to balance it",k:"food"}]},
+ {id:"s9",sit:1,q:"A child at the next table keeps staring at you.",a:[
+   {t:"Pull a funny face until they giggle",k:"funny"},
+   {t:"Wave and give them a breadstick",k:"kind"},
+   {t:"Stare back. You won't lose this one.",k:"cringe",r:"{n} watches you lose a staring contest to a four-year-old."}]},
+ {id:"s10",sit:1,q:"The band starts playing your date's favourite song.",a:[
+   {t:"Pull them up for a dance",k:"party",r:"{n} dances like nobody's watching. Everyone is."},
+   {t:"Sing along, softly, to them",k:"rom"},
+   {t:"Use it as a chance to pitch your new app",k:"ambit"}]},
+ {id:"s11",sit:1,q:"You knock a glass of water into your date's lap.",a:[
+   {t:"Apologise and offer your jacket",k:"kind"},
+   {t:"Say, \"Well, that's the ice broken\"",k:"funny",r:"{n} groans, then laughs despite themselves."},
+   {t:"Knock your own water over. Solidarity.",k:"adv"},
+   {t:"Blame the table. Loudly. Kick it for good measure.",k:"cringe",r:"{n} drips quietly while you fight furniture."}]},
+ {id:"s12",sit:1,q:"Your date says they love a band you secretly hate.",a:[
+   {t:"Say you'll give them another go, for them",k:"rom"},
+   {t:"Suggest you go to a gig together to find out",k:"party"},
+   {t:"Tell them the band's chord progressions are lazy",k:"geek",r:"{n} explains, slowly, that they don't care."}]},
+ {id:"s13",sit:1,q:"The waiter brings the wrong order.",a:[
+   {t:"Eat it anyway. It looks delicious.",k:"food"},
+   {t:"Politely let them know and thank them",k:"kind"},
+   {t:"Snap your fingers and shout, \"Garçon!\"",k:"cringe",r:"{n} slides down in their chair until only their eyes show."}]},
+ {id:"s14",sit:1,q:"It starts pouring with rain on the walk home.",a:[
+   {t:"Give your date your coat",k:"rom",r:"{n} snuggles into your coat and grins."},
+   {t:"Start splashing in puddles",k:"funny"},
+   {t:"Run for the nearest bus shelter",k:"home"},
+   {t:"Suggest a detour to a cosy pub for chips",k:"food"}]},
+ {id:"s15",sit:1,q:"Your date shows you photos of their holiday. There are three hundred.",a:[
+   {t:"Ask about every single mountain",k:"adv"},
+   {t:"Make funny captions for each one",k:"funny"},
+   {t:"Check emails under the table",k:"ambit",r:"{n} notices you checking your emails. It's not great."}]},
+ {id:"s16",sit:1,q:"A pigeon flies into the restaurant.",a:[
+   {t:"Gently guide it back outside with a menu",k:"kind",r:"{n} applauds as the pigeon leaves."},
+   {t:"Name it Gary and toast its arrival",k:"funny"},
+   {t:"Hide under the table until it leaves",k:"home"},
+   {t:"Declare it the best restaurant you've ever been to",k:"adv"}]},
+ {id:"s17",sit:1,q:"Your date mentions they're a vegetarian. You've ordered a whole roast chicken.",a:[
+   {t:"Offer to share your veg and order more",k:"kind"},
+   {t:"Ask for their favourite veggie recipes",k:"food"},
+   {t:"Eat the chicken loudly while maintaining eye contact",k:"cringe",r:"{n} watches you strip a drumstick in total horror."}]},
+ {id:"s18",sit:1,q:"Your date's ex texts them during dinner.",a:[
+   {t:"Tell them it's fine and to reply if they need",k:"kind"},
+   {t:"Joke that you'll fight their ex at chess",k:"geek"},
+   {t:"Ask your date if they want to go somewhere fun instead",k:"party"},
+   {t:"Grab the phone and text back, \"New phone, who dis?\"",k:"funny",r:"{n} laughs, then nervously takes the phone back."}]},
+ {id:"s19",sit:1,q:"You realise you've got your top on inside out.",a:[
+   {t:"Announce it's a new fashion trend",k:"funny"},
+   {t:"Quietly fix it in the toilet",k:"home"},
+   {t:"Leave it. Confidence is everything.",k:"ambit"},
+   {t:"Take it off and turn it round at the table",k:"cringe",r:"{n} stares hard at the ceiling until you're done."}]},
+ {id:"s20",sit:1,q:"There's a pub quiz starting in the bar next door.",a:[
+   {t:"Drag your date in and enter as a team",k:"geek",r:"{n} high-fives you after nailing the history round."},
+   {t:"Join in, but mainly for the free drinks",k:"party"},
+   {t:"Use it as a networking opportunity",k:"ambit"},
+   {t:"Suggest a romantic walk by the river instead",k:"rom"}]},
+ {id:"s21",sit:1,q:"Your date gets the hiccups.",a:[
+   {t:"Try to cure them with a surprise",k:"funny"},
+   {t:"Get them a glass of water and some sugar",k:"kind"},
+   {t:"Explain the science of the diaphragm",k:"geek"},
+   {t:"Say your nan died from hiccups. True story.",k:"cringe",r:"{n}'s hiccups stop through pure fear."}]},
+ {id:"s22",sit:1,q:"The chef comes out to ask how the food is.",a:[
+   {t:"Gush about the sauce and ask for the recipe",k:"food",r:"{n} watches the chef blush and hug you."},
+   {t:"Say it's lovely, and thank them warmly",k:"kind"},
+   {t:"Pitch them a franchise idea",k:"ambit"}]},
+ {id:"s23",sit:1,q:"A fortune teller offers to read your palms.",a:[
+   {t:"Say yes. Adventure awaits.",k:"adv"},
+   {t:"Hold your date's hand and ask for a joint reading",k:"rom",r:"{n} gets suspiciously excited about the word \"future\"."},
+   {t:"Ask for her predictions on the stock market",k:"ambit"},
+   {t:"Refuse and explain the scientific method",k:"geek"}]},
+ {id:"s24",sit:1,q:"Your date suggests karaoke after dinner.",a:[
+   {t:"Absolutely. Microphone, now.",k:"party",r:"{n} squeals and pulls you out the door."},
+   {t:"Say yes, then do a duet with them",k:"rom"},
+   {t:"Suggest a quieter pub and a nice chat",k:"home"},
+   {t:"Agree, then sing every song on the list. Alone.",k:"cringe",r:"{n} leaves after your fourth Whitney song."}]},
+ {id:"s25",sit:1,q:"You trip and fall walking to the table.",a:[
+   {t:"Get up with a bow and say, \"I'll be here all week\"",k:"funny",r:"{n} gives you a round of applause."},
+   {t:"Brush it off and order a stiff drink",k:"party"},
+   {t:"Pretend it was a parkour move",k:"adv"}]},
+ {id:"s26",sit:1,q:"Your date mentions they're going travelling for a year next month.",a:[
+   {t:"Ask if they want a travel buddy",k:"adv",r:"{n} looks very surprised, then very pleased."},
+   {t:"Say you'll write to them. Proper letters.",k:"rom"},
+   {t:"Ask about their travel budget spreadsheet",k:"ambit"},
+   {t:"Say you'll miss them. You met an hour ago.",k:"cringe",r:"{n} edges their chair back, just an inch."}]},
+ {id:"s27",sit:1,q:"The restaurant puts on a surprise magic show.",a:[
+   {t:"Volunteer to be sawn in half",k:"adv"},
+   {t:"Try to work out the trick in a notebook",k:"geek",r:"{n} helps you work it out. You are both thrilled."},
+   {t:"Cheer louder than anyone in the room",k:"party"},
+   {t:"Make the magician laugh with your own rubbish trick",k:"funny"}]},
+ {id:"s28",sit:1,q:"A dog comes over to your table.",a:[
+   {t:"Get down on the floor and give it a cuddle",k:"kind",r:"{n} gets down on the floor with you."},
+   {t:"Slip it a bit of your sausage",k:"food"},
+   {t:"Ask the owner what breed it is and its life story",k:"home"}]},
+ {id:"s29",sit:1,q:"Your date leaves for the loo. Your mum rings.",a:[
+   {t:"Tell her you're out and you'll call tomorrow",k:"kind"},
+   {t:"Let it ring out. You're living your best life.",k:"party"},
+   {t:"Put her on speaker for your date's return",k:"cringe",r:"{n} comes back to a lecture about your eczema."}]},
+ {id:"s30",sit:1,q:"The bill arrives and it's way more than you thought.",a:[
+   {t:"Pay it with a smile. It was worth it.",k:"rom",r:"{n} looks at you like you just rescued a kitten."},
+   {t:"Check the bill line by line with a calculator",k:"ambit"},
+   {t:"Make a joke about selling a kidney",k:"funny"},
+   {t:"Suggest you both split it. Fair and square.",k:"home"}]}
+];
+
+const DATE_TYPES={
+ adv:{n:"adventurous",hints:["just back from cycling across Peru","will climb anything with a view","passport has run out of pages","happiest in a tent in the rain","looking for a co-pilot for my camper van","once swam with sharks on purpose"],loves:["adv","funny"],hates:["home"]},
+ home:{n:"cosy homebody",hints:["big fan of blankets and early nights","my cat is my best friend","perfect night is tea and a box set","proud owner of forty candles","jigsaws are a valid hobby","slippers on by six, every night"],loves:["home","kind"],hates:["party"]},
+ rom:{n:"romantic",hints:["still believe in love letters","cried at every wedding I've been to","looking for my lobster","sunsets and slow songs, please","hopeless romantic, emphasis on hopeless","will make you a mixtape"],loves:["rom","kind"],hates:["ambit"]},
+ geek:{n:"geeky",hints:["will beat you at the pub quiz","currently levelling up a wizard","ask me about my dice collection","yes, I own a lightsaber","fluent in Elvish, rusty in French","Star Trek or Star Wars, choose wisely"],loves:["geek","funny"],hates:["party"]},
+ party:{n:"party animal",hints:["first on the dance floor, last to leave","glitter is a lifestyle","festival season is my favourite season","looking for a karaoke duet partner","sleep is for Mondays","know every bouncer in town"],loves:["party","funny"],hates:["home"]},
+ ambit:{n:"ambitious",hints:["building an empire, one email at a time","up at 5am, every day","looking for a power couple vibe","three side hustles and counting","my calendar is colour coded","let's discuss your five-year plan"],loves:["ambit","adv"],hates:["home"]},
+ foodie:{n:"foodie",hints:["will judge you by your pasta shape","my sourdough starter has a name","know every street food stall in town","life's too short for bad cheese","looking for someone to share starters with","I plan holidays around restaurants"],loves:["food","rom"],hates:["ambit"]}
+};
+
+const DATE_REACT={
+ love:[
+  "{n}'s eyes light up. \"Me too!\"",
+  "{n} slaps the table with joy.",
+  "{n} leans in, grinning from ear to ear.",
+  "{n} gasps. \"Where have you been all my life?\"",
+  "{n} laughs and touches your arm.",
+  "{n} does a tiny happy dance in their seat.",
+  "{n} looks at you like you're the last chip in the bag.",
+  "{n} clinks their glass against yours.",
+  "{n} says, \"Oh, I like you.\"",
+  "{n} goes pink and plays with their hair.",
+  "{n} nods so hard their earrings rattle.",
+  "{n} forgets all about their food."],
+ ok:[
+  "{n} nods politely.",
+  "{n} smiles and sips their drink.",
+  "{n} says, \"Oh, that's nice.\"",
+  "{n} gives a small, friendly shrug.",
+  "{n} says, \"Fair enough,\" and eats a chip.",
+  "{n} makes a thoughtful little humming noise.",
+  "{n} smiles in a way that could mean anything.",
+  "{n} tilts their head, mildly interested.",
+  "{n} says, \"Cool, cool, cool.\"",
+  "{n} nods and butters a bread roll.",
+  "{n} says, \"Hm. I can see that.\"",
+  "{n} gives you a thumbs up, then looks a bit embarrassed."],
+ hate:[
+  "{n} glances at the door.",
+  "{n}'s smile freezes in place.",
+  "{n} checks their watch. Twice.",
+  "{n} says, \"Oh,\" in a very flat voice.",
+  "{n} pokes their food like it might explode.",
+  "{n} suddenly becomes very interested in the wallpaper.",
+  "{n} takes a long, long sip of wine.",
+  "{n} folds their arms.",
+  "{n}'s eyebrows try to leave their face.",
+  "{n} looks at the waiter for help.",
+  "{n} edges their chair back a little.",
+  "{n} texts someone under the table."],
+ cringe:[
+  "{n} stares at you for a very long time.",
+  "{n} whispers, \"Why would you say that?\"",
+  "{n} quietly asks the waiter for the bill.",
+  "{n} chokes on a breadstick.",
+  "{n} goes a very worrying shade of grey.",
+  "{n} pretends to get a phone call. Their phone isn't on.",
+  "{n} looks around to check if this is a prank show.",
+  "The whole restaurant goes quiet. {n} wants to vanish.",
+  "{n} laughs nervously and grips the table.",
+  "{n} drinks their whole glass in one go."]
+};
+
+const DATE_ENDS={
+ great:[
+  "You talk until the staff start stacking chairs. {n} kisses you at the bus stop.",
+  "{n} asks if you're free tomorrow. And the day after.",
+  "You walk {n} home the long way round. On purpose.",
+  "{n} saves your number as a heart emoji.",
+  "You share a bag of chips by the river. {n} holds your hand.",
+  "{n} texts before you've even got home. \"Same time next week?\"",
+  "You both miss the last train. Neither of you minds.",
+  "{n} says it's the best date they've had in years. You believe them."],
+ meh:[
+  "{n} gives you a friendly hug and says, \"This was fun.\"",
+  "You agree to be mates. {n} says you'd make a great pub quiz teammate.",
+  "{n} shakes your hand. Firmly. Like a job interview.",
+  "You have a nice time, but there's no spark. Lovely chat, though.",
+  "{n} says, \"Let's keep in touch,\" and you both know you won't.",
+  "{n} says you remind them of their cousin. In a nice way.",
+  "You split the bill and an awkward high five.",
+  "{n} adds you on social media. As a friend. Just a friend."],
+ bad:[
+  "{n} takes a 'very urgent call from their nan' and climbs out of the toilet window.",
+  "{n} leaves you with the bill. And their starter. And their coat.",
+  "{n} says they've just remembered they left the oven on. In 2019.",
+  "{n} goes to the loo and never comes back. The waiter brings you a pity pudding.",
+  "{n} gets in a taxi before you've finished saying goodbye.",
+  "{n} pretends to see a long lost friend and runs off to hug a stranger.",
+  "{n} blocks you on every app before the bill arrives.",
+  "{n} asks the waiter to call them a taxi. To another country.",
+  "{n} fakes a sneeze and says they're allergic to you. Specifically.",
+  "{n} leaves a note on the napkin. It says \"No.\"",
+  "{n} says their goldfish is unwell and sprints out.",
+  "{n} takes a selfie with you and captions it \"Lesson learned.\""]
+};
+
+/* ============ First dates: a question game that decides how it goes ============ */
+const DATE_VENUES=[
+ {n:"a little Italian place",w1:"#7A2E26",w2:"#4A1A16",prop:"🍝",lights:"#FFD27A"},
+ {n:"a cocktail bar",w1:"#3B2A5C",w2:"#1E1533",prop:"🍸",lights:"#E59BFF"},
+ {n:"a bowling alley",w1:"#16405F",w2:"#0B2235",prop:"🎳",lights:"#5FE1FF"},
+ {n:"a picnic in the park",w1:"#9FD3F0",w2:"#CFEBDD",prop:"🧺",lights:"",sky:1},
+ {n:"a cosy pub",w1:"#5A3A22",w2:"#2E1D10",prop:"🍺",lights:"#FFC46B"},
+ {n:"a sushi bar",w1:"#1F3B36",w2:"#10221F",prop:"🍣",lights:"#FFE0A3"},
+ {n:"a crazy golf course",w1:"#3D7A3A",w2:"#21451F",prop:"⛳",lights:"#FFF3A0"},
+ {n:"a fancy rooftop restaurant",w1:"#20304F",w2:"#0D1528",prop:"🥂",lights:"#FFFFFF"}];
+let dg=null;
+const dgQ=id=>DATE_Q.find(q=>q.id===id);
+function dgPickQs(){
+ const seen=S.dqSeen=S.dqSeen||[];const fresh=a=>{let L=a.filter(q=>!seen.includes(q.id));if(L.length<6){S.dqSeen=seen.filter(id=>!a.some(q=>q.id===id));L=a.slice()}return L};
+ const qs=fresh(DATE_Q.filter(q=>!q.sit)),ss=fresh(DATE_Q.filter(q=>q.sit)),out=[];
+ while(out.length<4&&qs.length)out.push(qs.splice(Math.floor(rnd()*qs.length),1)[0].id);
+ if(ss.length)out.splice(1+Math.floor(rnd()*3),0,pick(ss).id);
+ S.dqSeen=(S.dqSeen||[]).concat(out).slice(-110);return out}
+function dgSetup(p){const vars=p.vars||{};let full,job;
+ if(p.kind==="pick"){const i=p.fx.i;full=vars["n"+i]||"Sam";job=vars["j"+i]||"something in marketing"}else{full=vars.full||vars.p||"Sam";job=vars.job||""}
+ const n=firstOf(full),tk=pick(Object.keys(DATE_TYPES)),T=DATE_TYPES[tk];
+ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+ dg={p,n,full,job,tk,hint:pick(T.hints),venue:pick(DATE_VENUES),qs:dgPickQs(),i:0,score:50,mood:"",react:"",ord:null,step:"intro",age:clamp(Math.floor(age())+Math.round((rnd()-.5)*8),18,90),sx:genderOf(full)==="f"?"f":"m",shuffle}}
+/* Scoring: what your date loves, can live with, can't stand */
+function dgScore(k){const T=DATE_TYPES[dg.tk];if(k==="cringe")return["cringe",-20];if(T.loves.includes(k))return["love",16];if(T.hates.includes(k))return["hate",-14];if(k==="funny")return["ok",6];return["ok",2]}
+const DG_FACE={love:"😍",ok:"🙂",hate:"😒",cringe:"😬"};
+function dgScene(){const V=dg.venue,me=S.av||avDefault(),them=avDefault(dg.full+"date",dg.sx),happy=dg.score>=50,a=Math.floor(age());
+ const lights=V.lights?Array.from({length:9},(_,i)=>`<circle cx="${20+i*35}" cy="${14+(i%2)*6}" r="3.2" fill="${V.lights}" opacity=".9"><animate attributeName="opacity" values=".9;.4;.9" dur="${1.6+(i%3)*.5}s" repeatCount="indefinite"/></circle>`).join("")+`<path d="M0 12 Q160 34 320 12" stroke="#000" stroke-opacity=".25" fill="none"/>`:"";
+ const sky=V.sky?`<circle cx="270" cy="34" r="16" fill="#FFE27A"/><path d="M0 130 Q80 112 160 128 T320 122 V200 H0Z" fill="#7DBA6A"/>`:`<rect x="120" y="30" width="80" height="54" rx="6" fill="#000" fill-opacity=".25"/><path d="M160 30 V84 M120 57 H200" stroke="#fff" stroke-opacity=".12"/>`;
+ const bubble=dg.mood?`<g transform="translate(236,30)"><rect x="-26" y="-20" width="52" height="38" rx="14" fill="#fff"/><path d="M-6 18 L4 30 L8 18Z" fill="#fff"/><text x="0" y="8" text-anchor="middle" font-size="24">${DG_FACE[dg.mood]}</text></g>`:"";
+ return `<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="You and ${esc(dg.n)} on a date">
+  <defs><linearGradient id="dgbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${V.w1}"/><stop offset="1" stop-color="${V.w2}"/></linearGradient></defs>
+  <rect width="320" height="200" fill="url(#dgbg)"/>${sky}${lights}
+  <svg x="18" y="58" width="104" height="104" viewBox="0 0 100 100">${avatarInner({av:me,ageOver:a,photo:1,outfit:"smart",nw:0,smile:true})}</svg>
+  <g>${dg.mood==="love"?`<animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 0" dur=".6s" repeatCount="3"/>`:""}<svg x="198" y="58" width="104" height="104" viewBox="0 0 100 100">${avatarInner({av:them,ageOver:dg.age,photo:1,outfit:"smart",nw:0,smile:happy})}</svg></g>
+  ${bubble}
+  <rect x="40" y="150" width="240" height="14" rx="4" fill="#F4EDE1"/><rect x="58" y="164" width="10" height="36" fill="#6B4B32"/><rect x="252" y="164" width="10" height="36" fill="#6B4B32"/>
+  <rect x="156" y="128" width="8" height="22" rx="2" fill="#FFF7E6"/><ellipse cx="160" cy="124" rx="4" ry="7" fill="#FFB84D"><animate attributeName="ry" values="7;5.5;7" dur="1.1s" repeatCount="indefinite"/></ellipse>
+  <text x="110" y="148" font-size="18" text-anchor="middle">${V.prop}</text><text x="212" y="148" font-size="16" text-anchor="middle">${dg.i>2?"🍷":"🥤"}</text>
+ </svg>`}
+function dgHearts(){const n=clamp(Math.floor(dg.score/20+.25),0,5);return `<div class="dg-meter" aria-label="How it's going: ${n} out of 5"><span>How it's going</span><b>${"❤️".repeat(n)}${"🤍".repeat(5-n)}</b></div>`}
+function dgShow(){if(!dg)return;const T=DATE_TYPES[dg.tk];let body="";
+ if(dg.step==="intro")body=`<p>You're meeting <b>${esc(dg.n)}</b>${dg.job?`, ${esc(dg.job)},`:""} at ${esc(dg.venue.n)}. Their profile says: <i>"${esc(dg.hint)}"</i>.</p><p class="hint">They'll ask about you. Your answers decide how it goes, so think about what they might like.</p><div class="btn-row"><button class="btn primary" data-act="dggo">Let's go</button><button class="btn" data-act="dgcancel">Cancel the date</button></div>`;
+ else if(dg.step==="q"){const q=dgQ(dg.qs[dg.i]);dg.ord=dg.ord||dg.shuffle(q.a.map((x,i)=>i));
+  body=`<div class="dg-q"><span class="label">${q.sit?"Uh oh":"Question "+(dg.i+1)+" of "+dg.qs.length}</span><p>${q.sit?"":`${esc(dg.n)} asks: `}<b>${esc(q.q)}</b></p></div><div class="dg-ans">${dg.ord.map(i=>`<button class="btn" data-act="dgans" data-i="${i}">${esc(q.a[i].t)}</button>`).join("")}</div>`}
+ else if(dg.step==="react")body=`<div class="dg-react dg-${dg.mood}"><p>${esc(dg.react)}</p></div><div class="btn-row"><button class="btn primary" data-act="dgnext">${dg.i>=dg.qs.length?"See how it ends":"Next"}</button></div>`;
+ else if(dg.step==="end")body=`<div class="dg-react dg-${dg.res==="great"?"love":dg.res==="meh"?"ok":"hate"}"><p><b>${dg.res==="great"?"It's a match!":dg.res==="meh"?"Just friends":"A disaster"}</b></p><p>${esc(dg.endT)}</p><p class="hint">${esc(dg.n)} turned out to be ${esc(T.n)}. ${dg.res==="great"?"You're dating now.":dg.res==="meh"?`${esc(dg.n)} is now in your People list.`:"Better luck next time."}</p></div><div class="btn-row"><button class="btn primary" data-act="dgdone">Done</button></div>`;
+ showModal(`<div class="label">First date · ${esc(dg.venue.n)}</div><h2 style="margin-top:4px">${esc(dg.n)}</h2>${dg.step!=="intro"?dgHearts():""}<div class="dg-scene">${dgScene()}</div>${body}`)}
+function dgAnswer(i){if(!dg||dg.step!=="q")return;const q=dgQ(dg.qs[dg.i]),a=q.a[i];if(!a)return;const[m,d]=dgScore(a.k);dg.score=clamp(dg.score+d,0,100);dg.mood=m;
+ dg.react=fill2(a.r&&(m==="cringe"||m==="love"||rnd()<.7)?a.r:pick(DATE_REACT[m]));dg.i++;dg.ord=null;dg.step="react";try{if(m==="love"||m==="ok")sfx.good();else sfx.bad()}catch(e){}}
+const fill2=t=>String(t||"").replace(/\{n\}/g,dg?dg.n:"They");
+function dgFinish(){const s=dg.score;dg.res=s>=68?"great":s>=42?"meh":"bad";dg.endT=fill2(pick(DATE_ENDS[dg.res]));dg.step="end";dg.mood=dg.res==="great"?"love":dg.res==="meh"?"ok":"hate";dgApply()}
+/* What happens after the date */
+function dgApply(){const p=dg.p;S.pendingDate=null;S.dates=(S.dates||0)+1;
+ if(dg.res==="great"){window.__dgRun=1;try{if(p.kind==="pick")_dgPick(p.fx,{vars:p.vars});else _dgDate(p.fx,{vars:Object.assign({p:dg.n,full:dg.full,job:dg.job},p.vars)})}finally{window.__dgRun=0}S.homeLife=clamp(S.homeLife+4,0,100);S.log.unshift({d:S.day,t:`A brilliant first date with ${dg.full}.`});try{sfx.fanfare()}catch(e){}}
+ else if(dg.res==="meh"){addPerson(dg.full.includes(" ")?dg.full:dg.full+" "+pick(SURNAMES),"friend","A first date that became a friendship",50);S.log.unshift({d:S.day,t:`A nice date with ${dg.n}. No spark, but a new friend.`})}
+ else{S.stress=clamp(S.stress+4,0,100);S.homeLife=clamp(S.homeLife-2,0,100);if(/bill/i.test(dg.endT))S.wealth-=80;S.badDates=(S.badDates||0)+1;S.log.unshift({d:S.day,t:`A disastrous first date with ${dg.n}.`})}
+ save();render()}
+function dgStart(){const p=S.pendingDate;if(!p)return;dgSetup(p);dgShow()}
+/* No one is watching (tests): answer at random */
+function dgAuto(){const p=S.pendingDate;if(!p)return;dgSetup(p);for(const id of dg.qs){const q=dgQ(id);const a=pick(q.a);dg.score=clamp(dg.score+dgScore(a.k)[1],0,100)}dgFinish();dg=null}
+/* Every date now goes through the game */
+const _dgDate=ACTS.date,_dgPick=ACTS.datepick;
+ACTS.date=function(fx,m){if(window.__dgRun||typeof DATE_Q==="undefined")return _dgDate.apply(this,arguments);S.pendingDate={kind:"date",fx:Object.assign({},fx),vars:Object.assign({},m&&m.vars)};dgQueue()};
+ACTS.datepick=function(fx,m){if(inLove())return _dgPick.apply(this,arguments);S.pendingDate={kind:"pick",fx:Object.assign({},fx),vars:Object.assign({},m&&m.vars)};dgQueue()};
+function dgQueue(){if(window.__noMoments){dgAuto();return}setTimeout(()=>{if(S.pendingDate&&document.getElementById("modal").hidden&&!dg)dgStart()},700)}
+{const _sc=sceneCheck;sceneCheck=function(){if(S&&S.pendingDate&&!dg&&!S.over&&document.getElementById("modal").hidden&&!(typeof momentOn!=="undefined"&&momentOn)&&!window.__noMoments){dgStart();return}return _sc.apply(this,arguments)}}
+XCLICK.dggo=()=>{dg.step="q";dgShow()};
+XCLICK.dgans=t=>{dgAnswer(+t.dataset.i);dgShow()};
+XCLICK.dgnext=()=>{if(dg.i>=dg.qs.length)dgFinish();else dg.step="q";dgShow()};
+XCLICK.dgcancel=()=>{S.pendingDate=null;const n=dg.n;dg=null;S.log.unshift({d:S.day,t:`Cancelled a date with ${n}.`});save();render();actResult("Date cancelled",esc(`You send ${n} a text. They reply with a thumbs up and unmatch you.`))};
+XCLICK.dgdone=()=>{dg=null;hideModal()};
+/* The dating app no longer promises a second date before you've been on the first */
+try{const e=EV.find(q=>q.id==="lv_app");if(e)[1,2,3].forEach(i=>{const c=e.c[i-1];if(c)c.o=pick([`You've got a date with {n${i}} on Friday.`,`{n${i}} replies straight away. Drinks on Saturday.`,`A date is booked with {n${i}}. Time to iron a shirt.`])})}catch(e){}
+
+/* Closing the window part-way through ends the date on the score so far */
+{const _hd=hideModal;hideModal=function(){if(dg&&dg.step!=="end"&&!window.__dgClosing){window.__dgClosing=1;try{if(dg.step==="intro"){S.pendingDate=null;dg=null}else{dgFinish();const r=dg.res,n=dg.n;dg=null;setTimeout(()=>toastMsg(r==="great"?`You and ${n} hit it off.`:r==="meh"?`${n} would like to stay friends.`:`That date with ${n} didn't go well.`),200)}}finally{window.__dgClosing=0}}return _hd.apply(this,arguments)}}
+
+/* ============ Prison: quiet months pass quickly ============ */
+/* One tap serves up to six months, stopping as soon as something happens */
+const PRISON_PASS=["You read fourteen books. Three of them twice.","You learn to make a surprisingly good curry with a kettle.","You get very good at chess. Nobody will play you now.","You write a lot of letters. Some of them you even send.","You do 200 press-ups a day. Your cellmate is not impressed.","You learn the life story of everyone on the wing.","You count the bricks in your cell. 1,412. You check. 1,413.","You start a book club. It's mostly arguments about the ending.","You learn three card tricks and a bit of Spanish.","The days blur. Tea, yard, dinner, lights out."];
+{const _cd=closeDay;closeDay=function(off){
+ if(!S||!S.prison||S.over||window.__noMoments||window.__ff)return _cd.apply(this,arguments);
+ window.__ff=1;const w0=S.wealth,h0=S.health;let n=0;
+ try{for(;;){_cd.call(this,off);n++;if(!S.prison||S.over||S.inbox.some(m=>!m.done)||n>=6)break;
+  modalQueue.length=0;try{momentQ.length=0}catch(e){}document.getElementById("modal").hidden=true}}finally{window.__ff=0}
+ if(n>1&&!S.over){modalQueue.length=0;try{momentQ.length=0}catch(e){}const left=S.prison?Math.max(0,S.prison.until-S.day):0,dw=Math.round(S.wealth-w0),dh=Math.round(S.health-h0);
+  showModal(`<div class="label">Prison</div><h2 style="margin-top:4px">${n} months pass</h2><p>${esc(pick(PRISON_PASS))}</p>
+   <div class="kv"><span>Time left</span><span>${S.prison?`${left} month${left===1?"":"s"}`:"You're out"}</span><span>Money</span><span class="${dw<0?"down":""}">${dw<0?"−":"+"}${money(Math.abs(dw))}</span><span>Health</span><span>${dh>=0?"+":"−"}${Math.abs(dh)}</span></div>
+   ${S.inbox.some(m=>!m.done)?`<p class="hint">Something's happened. Check your inbox.</p>`:""}<div class="btn-row"><button class="btn primary" data-act="hide">Carry on</button></div>`)}
+}}
+{const _cl2=closeLabel;closeLabel=function(){const l=_cl2.apply(this,arguments);if(l==="Serve this month"&&S.prison){const left=Math.max(0,S.prison.until-S.day);return left>1?`Serve time · ${left} months left`:"Serve your last month"}return l}}
+/* Prison stories come round less often, so most months are quiet and pass quickly */
+try{for(const[id,a]of[["pr_course",12],["pr_kitchen",14],["pr_fight",12],["pr_visit",8],["pr_appeal",18]]){const e=EV.find(q=>q.id===id);if(e)e.again=a}}catch(e){}
 
 
 function start(data){
