@@ -590,6 +590,17 @@ html,body{overflow-x:clip}
 .ka-row{margin-top:10px;padding:8px 10px;border-radius:10px;background:var(--surface2);border:1px solid var(--line)}
 .ka-row .ka-name{font-weight:600;font-size:15px}
 @media (prefers-reduced-motion:reduce){.fx-badge,.fx-alert{animation:none}.meter.fx-pulse-up .bar,.meter.fx-pulse-down .bar{animation:none}}
+.vitals{border-top:1px solid var(--line);background:var(--surface2);padding:6px 12px 7px}
+.vt-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:5px 14px;max-width:1100px;margin:0 auto}
+.vt{min-width:0}
+.vt-h{display:flex;align-items:baseline;justify-content:space-between;gap:4px}
+.vt-l{font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.vt-n{flex:none;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.vt-b{height:5px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:3px}
+.vt-b i{display:block;height:100%;background:var(--up,#2E8B57);border-radius:3px;transition:width .4s}
+.vt.warm .vt-b i{background:#E9A23B}.vt.hot .vt-b i{background:var(--down,#B3262E)}.vt.hot .vt-n{color:var(--down,#B3262E)}
+.desk-tape{overflow:hidden;white-space:nowrap;border:1px solid var(--line);border-radius:10px;background:var(--surface2);margin:0 0 12px}
+.desk-tape .tape-track{padding:6px 0}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -4347,7 +4358,7 @@ function newLeague(div,club,rounds,keep){
  const old=S.lg||{};
  return{div,season:seasonLabel(S.day),teams,round:rounds||0,cup:old.cup&&rounds?old.cup:{alive:true,round:0},trophies:old.trophies||[],history:old.history||[],last:[],window:old.window||null};
 }
-const lgMe=()=>S.lg.teams.find(t=>t.n===S.bank);
+const lgMe=()=>{let t=S.lg&&S.lg.teams&&S.lg.teams.find(t=>t.n===S.bank);if(!t){ensureLeague();t=S.lg.teams.find(t=>t.n===S.bank)}return t};
 const lgPos=()=>sortTable(S.lg.teams).findIndex(t=>t.n===S.bank)+1;
 const ord=n=>n+(["th","st","nd","rd"][(n%100>10&&n%100<14)||n%10>3?0:n%10]);
 /* Rounds already played this season by a given month (three a month, August to May) */
@@ -45581,6 +45592,30 @@ function kaCareerRow(){if(typeof document==="undefined")return;const p=document.
 {const _coK=choicesOf;choicesOf=function(e){const base=_coK.apply(this,arguments);try{const x=kaExtra(e);if(x)return base.concat([x])}catch(err){}return base}}
 {const _tsK=traitScale;traitScale=function(k,v){v=_tsK.apply(this,arguments);try{const l=S&&S.ka&&S.ka.lab;if(v>0){if(l==="trouble"&&k==="heat")v*=1.15;else if(l==="straight"&&k==="heat")v*=.9;else if(l==="helps"&&(k==="home"||k==="morale"))v*=1.1;else if(l==="ruthless"&&k==="rep")v*=.85}}catch(e){}return v}}
 {const _rcK=renderCareer;renderCareer=function(){const r=_rcK.apply(this,arguments);try{kaCareerRow()}catch(x){}return r}}
+/* VITALS strip */
+/* ============ The top of the screen shows your vital signs; headlines and prices live on the Desk ============ */
+window.vitalsExtra=window.vitalsExtra||[];
+function vitalsList(){
+ if(!S||S.placeholder)return[];const rk=R(),L=[];
+ for(const f of window.vitalsExtra){try{const x=f();if(x)L.push(x)}catch(e){}}
+ L.push({lab:rk.repName,v:S.rep,kind:"good"});
+ L.push({lab:"Stress",v:S.stress,kind:"bad"});
+ L.push({lab:CAR_().heatShort||CAR_().heatName||"Heat",v:S.heat,kind:"bad"});
+ if(typeof isTeam==="function"&&isTeam())L.push({lab:S.path==="foot"?"Dressing room":"Morale",v:S.morale,kind:"good"});
+ return L;
+}
+function vitalsHTML(){
+ return vitalsList().map(x=>{const v=Math.max(0,Math.min(100,Math.round(x.v||0)));const warn=x.kind==="bad"?(v>=70?"hot":v>=45?"warm":""):(v<30?"hot":v<45?"warm":"");
+  return `<div class="vt ${warn}" title="${esc(x.lab)} ${x.txt||v}"><div class="vt-h"><span class="vt-l">${esc(x.lab)}</span><span class="vt-n">${esc(String(x.txt||v))}</span></div><div class="vt-b"><i style="width:${x.w!=null?x.w:v}%"></i></div></div>`}).join("");
+}
+{const _r=render;render=function(){const r=_r.apply(this,arguments);try{
+ const t=document.getElementById("tape");if(!t)return r;const box=t.parentElement;
+ if(!box.classList.contains("vitals")){box.className="vitals";box.removeAttribute("aria-hidden");box.setAttribute("aria-label","Your vital signs");t.hidden=true;box.insertAdjacentHTML("beforeend",'<div class="vt-row" id="vtRow"></div>')}
+ const row=document.getElementById("vtRow");if(row)row.innerHTML=S&&!S.placeholder?vitalsHTML():"";
+ const pd=document.getElementById("pane-desk");
+ if(pd&&S&&!S.placeholder&&CAR_().mech==="markets"&&t.innerHTML){let dt=pd.querySelector(".desk-tape");if(!dt){dt=document.createElement("div");dt.className="desk-tape";dt.setAttribute("aria-hidden","true");pd.prepend(dt)}dt.innerHTML='<div class="tape-track mono">'+t.innerHTML+'</div>'}
+ }catch(e){}return r}}
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
