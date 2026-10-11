@@ -52854,6 +52854,393 @@ XCLICK.dailyshare=async()=>{const text=dailyShareText(),url=/^https?:$/.test(loc
  try{await navigator.clipboard.writeText(text+" "+url);toastMsg("Copied. Paste it to a friend.")}catch(e){toastMsg(text)}};
 {const _st=start;start=function(){const r=_st.apply(this,arguments);try{if(location.hash==="#daily")setTimeout(()=>{try{dailyModal()}catch(e){}},500)}catch(e){}return r}}
 
+/* AV2: more career workplace scenes for the inbox banners (salon, kitchen, vet, trades, space and the thinner career families) */
+/* ---- helpers: people with work hats, animals ---- */
+const W2SK=["#E0B37E","#8D5A3B","#C68E5E","#F1C9A5","#6B4330"];
+const w2Hat=(k,c)=>k==="chef"?rc(-6,-44,12,8,"#fff")+iaCirc(-4,-44,4.5,"#fff")+iaCirc(4,-44,4.5,"#fff")+iaCirc(0,-47,5,"#fff")
+ :k==="hard"?pa("M-8 -32 A8 8 0 0 1 8 -32 L11 -32 L11 -30 L-11 -30Z",c||"#E8B73A")
+ :k==="cap"?rc(-8,-40,16,6,c||"#1C2A44")+rc(-9,-35,18,2.4,"#111")+rc(-8,-37,16,1.5,"#E9E2C8")
+ :k==="fire"?pa("M-9 -31 A9 9 0 0 1 9 -31 L13 -29 L13 -27 H-13 V-29Z",c||"#F2D24A")+rc(-1,-41,2,8,"#C9A82A")
+ :k==="space"?iaCirc(0,-30,10.5,"#F2F4F5",'stroke="#C9CDD1" stroke-width="1"')+iaCirc(1,-30,7,c||"#33507A")+pa("M-3 -34 q3 -3 6 -1","none",'stroke="#BFD6EE" stroke-width="1.4"')
+ :k==="beret"?pa("M-9 -33 Q-6 -41 6 -40 Q11 -38 9 -33Z",c||"#7A1F2A")
+ :k==="hair"?pa("M-7 -31 Q-8 -39 0 -39 Q8 -39 7 -31 Q4 -35 -7 -31Z",c||"#3A2A22")
+ :k==="bun"?pa("M-7 -31 Q-8 -39 0 -39 Q8 -39 7 -31 Q4 -35 -7 -31Z",c||"#5A3A22")+iaCirc(0,-40,3.6,c||"#5A3A22")
+ :k==="cowl"?pa("M-9 -28 Q-10 -41 0 -41 Q10 -41 9 -28 L6 -28 Q6 -36 0 -36 Q-6 -36 -6 -28Z",c||"#2B2B2B"):"";
+/* a person (iaPerson) with an optional hat and a hi-vis stripe; feet land at y+20*s */
+const w2P=(x,y,body,o={})=>iaPerson(x,y,body,o.skin||"#E0B37E",o.s||1)+(o.hat||o.vis||o.apron?`<g transform="translate(${x} ${y}) scale(${o.s||1})">${o.apron?pa("M-6 -16 H6 L8 6 H-8Z",o.apron):""}${o.vis?rc(-10,-8,20,2.2,"#D7DDE0")+rc(-10,-2,21,2.2,"#D7DDE0"):""}${o.hat?w2Hat(o.hat,o.hc):""}</g>`:"");
+/* a seated person seen side-on facing right (f=-1 faces left); y = seat height */
+const w2Sit=(x,y,body,skin,f=1,s=1)=>`<g transform="translate(${x} ${y}) scale(${f*s} ${s})">${iaCirc(0,-26,6.5,skin||"#E0B37E")}${pa("M-7 -18 Q0 -22 6 -18 L7 0 H-8Z",body)}${rc(-2,-4,16,6,"#2B3A44")}${rc(10,-2,5,18,"#2B3A44")}</g>`;
+const w2Dog=(x,y,c,s=1,f=1)=>`<g transform="translate(${x} ${y}) scale(${f*s} ${s})">${pa("M-14 -6 Q-22 -16 -20 -18","none",`stroke="${c}" stroke-width="3" stroke-linecap="round"`)}<ellipse cx="-4" cy="-8" rx="13" ry="6.5" fill="${c}"/>${rc(-14,-4,3.5,10,c)}${rc(-7,-4,3.5,10,c)}${rc(0,-4,3.5,10,c)}${rc(6,-4,3.5,10,c)}${iaCirc(10,-16,6,c)}${pa("M13 -17 h7 a2.5 2.5 0 0 1 0 5 h-7Z",c)}${iaCirc(20,-15,1.3,"#222")}${pa("M6 -21 l2 9 l-5 -2Z","#00000033")}${iaCirc(11,-18,1,"#222")}</g>`;
+const w2Cat=(x,y,c,s=1,f=1)=>`<g transform="translate(${x} ${y}) scale(${f*s} ${s})">${pa("M-10 -4 Q-20 -6 -18 -18","none",`stroke="${c}" stroke-width="2.6" stroke-linecap="round"`)}<ellipse cx="-2" cy="-6" rx="10" ry="5.5" fill="${c}"/>${rc(-10,-3,3,7,c)}${rc(4,-3,3,7,c)}${iaCirc(8,-13,5.5,c)}${pa("M4 -16 l1 -6 l4 4Z M9 -18 l3 -5 l2 6Z",c)}${iaCirc(10,-14,.9,"#E9C46A")}</g>`;
+const w2Cow=(x,y,s=1,f=1)=>`<g transform="translate(${x} ${y}) scale(${f*s} ${s})"><ellipse cx="0" cy="-18" rx="22" ry="11" fill="#F4F2EE"/>${pa("M-14 -26 q8 -4 10 4 q-2 6 -10 4Z M4 -24 q8 -4 12 2 q-4 8 -12 4Z M-6 -14 q6 -2 8 4 h-10Z","#2B2B2B")}${rc(-18,-10,5,14,"#F4F2EE")}${rc(-10,-10,5,14,"#F4F2EE")}${rc(8,-10,5,14,"#F4F2EE")}${rc(15,-10,5,14,"#F4F2EE")}${[-18,-10,8,15].map(v=>rc(v,2,5,3,"#3A3A3A")).join("")}${pa("M20 -26 L32 -22 Q36 -14 32 -10 L24 -12Z","#2B2B2B")}<ellipse cx="33" cy="-11" rx="4" ry="3" fill="#E8B8C2"/>${pa("M22 -26 l-3 -5 M26 -25 l2 -5","none",'stroke="#D9CBB0" stroke-width="2"')}${pa("M-22 -20 q-6 6 -4 14","none",'stroke="#2B2B2B" stroke-width="1.6"')}</g>`;
+const w2Horse=(x,y,c,s=1,f=1)=>`<g transform="translate(${x} ${y}) scale(${f*s} ${s})"><ellipse cx="0" cy="-20" rx="20" ry="9" fill="${c}"/>${pa("M12 -24 L22 -44 L30 -42 L22 -20Z",c)}${pa("M20 -46 L34 -38 L32 -33 L18 -38Z",c)}${pa("M14 -26 L20 -44 L17 -46 L11 -30Z","#3A2418")}${rc(-17,-14,4,18,c)}${rc(-10,-14,4,18,c)}${rc(8,-14,4,18,c)}${rc(14,-14,4,18,c)}${pa("M-20 -22 Q-28 -16 -26 -4 L-22 -6 Q-24 -14 -18 -20Z","#3A2418")}${iaCirc(25,-41,1,"#111")}</g>`;
+const w2Plant=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})">${pa("M-6 0 L-5 10 H5 L6 0Z","#B5653A")}${iaCirc(-4,-4,5,"#4E8A4A")}${iaCirc(4,-5,5,"#5E9E58")}${iaCirc(0,-9,5,"#4E8A4A")}</g>`;
+const w2Clock=(x,y,r=6)=>iaCirc(x,y,r,"#F7F4EC",'stroke="#3A3A3A" stroke-width="1.4"')+pa(`M${x} ${y} V${y-r+2} M${x} ${y} H${x+r-2.5}`,"none",'stroke="#3A3A3A" stroke-width="1.2"');
+
+/* ---- Salon (hairdresser) ---- */
+const W2DYE=["#5A2E1E","#8A4A2A","#C0453A","#E9C46A","#2B1E1A","#B07A4A","#7A2A5A","#D9822B","#3A2A22","#E8D2A0","#9A3A6A","#4A6AA8"];
+Object.assign(IA,{
+ /* colour bar: tubes on shelves, mixing bowls, a client in foils */
+ salon_a1:()=>rc(0,0,IA_W,IA_H,"#EFE3D8")+rc(0,66,IA_W,18,"#CDBFAF")
+  +AVq(3,r=>rc(16,20+r*13,156,3,"#B79A7A")+AVq(14,i=>rc(20+i*11,12+r*13,7,8,W2DYE[(i+r*5)%12],'rx="1"')+rc(21+i*11,10+r*13,5,2.4,"#F2EEE6")))
+  +w2P(110,52,"#2B2B2B",{skin:W2SK[1],hat:"bun",hc:"#2B1E1A"})+rc(10,52,176,5,"#F7F4EC")+rc(14,57,168,27,"#D9CEC0")
+  +[40,62,150].map((x,i)=>`<ellipse cx="${x}" cy="50" rx="8" ry="3.4" fill="${["#2B2B2B","#C0453A","#2B2B2B"][i]}"/>`+rc(x+3,40,1.6,10,"#555",`transform="rotate(25 ${x+3} 50)"`)).join("")+`<ellipse cx="104" cy="40" rx="7" ry="3" fill="#2B2B2B"/>`
+  +w2Plant(196,56,.9)
+  +rc(288,10,26,40,"#C9DCE3",'stroke="#B8862B" stroke-width="2" rx="4"')
+  +`<g>${pa("M228 78 Q232 44 252 42 Q272 44 276 78Z","#1A1C1E")}${rc(246,70,12,14,"#555")}${iaCirc(252,34,8,W2SK[3])}${pa("M244 32 Q252 22 260 32 Q252 28 244 32Z","#7A4A2A")}${[-85,-60,-35,-10,15,40,65,88].map(a=>`<rect x="250.5" y="18" width="3.4" height="9" fill="#DDE2E6" stroke="#9AA2A8" stroke-width=".5" transform="rotate(${a} 252 34)"/>`).join("")}</g>`
+  +rc(200,52,22,4,"#B8C2C8")+rc(209,56,4,24,"#8A9298")+`<ellipse cx="211" cy="50" rx="7" ry="2.6" fill="#7A2A5A"/>`,
+ /* nails and brows: a manicure table under a lamp, a wall of polish */
+ salon_a2:()=>rc(0,0,IA_W,IA_H,"#F3DCE2")+rc(0,68,IA_W,16,"#D9B8C0")
+  +rc(16,8,96,52,"#FBEFF2",'rx="4"')+AVq(4,r=>rc(20,18+r*12,88,2.4,"#E3C4CC")+AVq(11,i=>rc(23+i*8,10+r*12,5,8,["#C0453A","#E86A7A","#7A2A5A","#F2B8C6","#2B2B2B","#D9822B","#4A6AA8","#9A3A6A","#E9C46A","#F7F4EC","#3A8A6A"][(i*3+r)%11],'rx="1.5"')+rc(24+i*8,8+r*12,3,2.5,"#2B2B2B")))
+  +w2Sit(138,62,"#4A6AA8",W2SK[3],1,1)+w2Sit(214,62,"#2B2B2B",W2SK[1],-1,1)+pa("M206 34 q2 -12 -6 -8","none",'stroke="#2B1E1A" stroke-width="0"')
+  +rc(150,46,52,5,"#F7F4EC")+rc(170,51,12,33,"#E3C4CC")+rc(154,44,18,2,"#E9DCE0")
+  +pa("M186 46 L192 22 L206 18","none",'stroke="#555" stroke-width="2" fill="none"')+pa("M200 14 L214 18 L208 26Z","#555")+pa("M203 24 L214 20 L232 46 L184 46Z","#FFF6D8",'opacity=".45"')
+  +AVq(4,i=>rc(158+i*6,40,4,6,["#C0453A","#E86A7A","#7A2A5A","#F2B8C6"][i],'rx="1"'))
+  +rc(244,24,58,38,"#FBEFF2",'rx="4"')+iaCirc(273,40,11,"#F7F4EC",'stroke="#C9A0AA" stroke-width="2"')+pa("M266 38 q3 -3 6 0 M275 38 q3 -3 6 0","none",'stroke="#5A3A22" stroke-width="1.6"')
+  +pa("M244 70 Q260 58 276 62 L280 70Z","#E8B8C2")+w2Plant(300,58,.8),
+ /* reception: the booking screen, product shelves and a waiting sofa */
+ salon_a3:()=>rc(0,0,IA_W,IA_H,"#E6E1D6")+rc(0,66,IA_W,18,"#B9AE9E")
+  +AVq(3,r=>rc(14,14+r*16,84,3,"#FFFFFF")+AVq(7,i=>rc(18+i*11,4+r*16,7,10,["#2B2B2B","#C9A27A","#F2F4F5","#4E8A4A","#7A2A5A"][(i+r)%5],'rx="2"')))
+  +w2P(160,48,"#B3262E",{skin:W2SK[2],hat:"hair",hc:"#2B1E1A"})+rc(120,46,90,7,"#F7F4EC")+rc(124,53,82,31,"#2B3A44")+rc(136,62,58,3,"#B8862B")
+  +`<g transform="translate(176 26)">${rc(0,0,30,20,"#1C2329",'rx="2"')}${rc(2,2,26,16,"#DDE8F2")}${AVq(5,c=>AVq(4,r=>rc(3+c*5.2,3+r*3.8,4.2,3,(c*3+r)%4===0?"#E86A7A":(c+r)%3===0?"#7FB2E5":"#F7FAFC")))}${rc(13,20,4,6,"#1C2329")}</g>`
+  +rc(130,42,10,4,"#1C2329",'rx="2"')+iaCirc(142,40,3,"#E86A7A")
+  +pa("M230 66 V48 Q230 44 236 44 H300 Q306 44 306 48 V66Z","#7A9A8A")+rc(226,54,84,12,"#8AAA9A",'rx="4"')+w2Sit(258,58,"#E9C46A",W2SK[4],-1,.9)+w2Plant(304,32,.9)+rc(250,10,40,28,"#C9DCE3",'stroke="#B8862B" stroke-width="2" rx="14"'),
+ /* closing time: the backwash basins, dusk in the window, someone sweeping up */
+ salon_a4:()=>rc(0,0,IA_W,IA_H,"#3A3446")+rc(20,8,110,40,"#E9A07A")+rc(20,30,110,18,"#7A5A8A")+rc(20,8,110,40,"none",'stroke="#2A2434" stroke-width="3"')+rc(74,8,3,40,"#2A2434")+iaCirc(52,28,6,"#F6D98A")
+  +rc(0,66,IA_W,18,"#5A4E5E")+rc(140,0,180,66,"#4A4256")
+  +AVq(3,i=>`<g transform="translate(${158+i*52} 0)">${pa("M4 44 Q16 54 30 44 Z","#1A1C1E")}${rc(14,48,4,16,"#1A1C1E")}${pa("M-2 58 L30 50 L36 56 L4 64Z","#2B2B2B")}${rc(4,62,4,14,"#1A1C1E")}${rc(26,58,4,18,"#1A1C1E")}${rc(18,34,2,10,"#C9CDD1")}${rc(18,34,7,2,"#C9CDD1")}</g>`)
+  +AVq(3,i=>pa(`M${190+i*52} 4 h4 l6 12 h-16Z`,"#F6D98A")+pa(`M${184+i*52} 16 h16 l10 30 h-36Z`,"#F6D98A",'opacity=".12"'))
+  +w2P(76,58,"#2B2B2B",{skin:W2SK[0],hat:"hair",hc:"#C9A060",apron:"#7A2A5A"})+pa("M86 44 L104 76","none",'stroke="#B8862B" stroke-width="2.4"')+pa("M98 74 L112 74 L108 80 L96 80Z","#C0453A")
+  +AVq(7,i=>pa(`M${112+i*5} ${76+(i%2)} q3 -3 6 0`,"none",`stroke="${["#5A3A22","#E9C46A","#2B1E1A"][i%3]}" stroke-width="1.3"`))+AVq(4,i=>rc(10,58+i*5,30,4,["#F2F4F5","#E8B8C2"][i%2],'rx="2"')),
+ /* busy Saturday: every chair taken, people waiting, dryers going */
+ salon_a5:()=>rc(0,0,IA_W,IA_H,"#F2E6DA")+rc(0,68,IA_W,16,"#C9B9A8")
+  +AVq(4,i=>{const x=40+i*66;return rc(x-17,6,34,26,"#C9DCE3",'stroke="#B8862B" stroke-width="2.4" rx="13"')+pa(`M${x-12} 70 Q${x-12} 40 ${x} 40 Q${x+12} 40 ${x+12} 70Z`,"#1A1C1E")+iaCirc(x,34,7,W2SK[(i+3)%5])+pa(`M${x-7} 32 Q${x} 22 ${x+7} 32 Q${x} 28 ${x-7} 32Z`,["#7A4A2A","#2B1E1A","#E9C46A","#C0453A"][i])+rc(x-4,70,8,10,"#555")
+   +w2P(x+24,52,["#2B2B2B","#7A2A5A","#2B2B2B","#3A6A8A"][i],{skin:W2SK[(i*2)%5],s:.9,hat:i%2?"bun":"hair",hc:["#2B1E1A","#C9A060"][i%2]})})
+  +pa("M71 50 l6 -4 M71 50 l6 4","none",'stroke="#555" stroke-width="1.6"')+`<g transform="translate(193 40)">${rc(0,0,14,8,"#2B2B2B",'rx="3"')}${rc(10,6,3,8,"#2B2B2B")}${pa("M-2 1 l-6 -2 M-2 4 h-7 M-2 7 l-6 2","none",'stroke="#BFD6EE" stroke-width="1"')}</g>`
+  +AVq(9,i=>iaCirc(12+i*36,80,1.2,"#B8A898")),
+ /* staff room: kettle on, mugs, coats on hooks, feet up for ten minutes */
+ salon_a6:()=>rc(0,0,IA_W,IA_H,"#DDE3D6")+rc(0,66,IA_W,18,"#A8B49E")
+  +rc(20,30,70,4,"#F7F4EC")+rc(22,34,66,32,"#C9B9A0")+rc(54,34,1.4,32,"#A89878")+rc(30,20,10,10,"#3A3A3A",'rx="2"')+pa("M40 22 h4 v4 h-4","none",'stroke="#3A3A3A" stroke-width="1.6"')+pa("M33 18 q2 -6 0 -10 M37 18 q2 -6 0 -10","none",'stroke="#fff" stroke-width="1.2" opacity=".8"')
+  +rc(100,8,30,58,"#F2F4F5",'stroke="#C9CDD1"')+rc(100,30,30,1.4,"#C9CDD1")+rc(124,14,2,10,"#9AA2A8")+rc(124,36,2,14,"#9AA2A8")+AVq(3,i=>rc(104+i*8,12,6,6,["#E86A7A","#E9C46A","#7FB2E5"][i],'rx="1"'))
+  +w2Clock(160,16,7)+AVq(3,i=>rc(198+i*28,10,4,4,"#6A6A6A")+pa(`M${192+i*28} 14 h16 l2 30 h-20Z`,["#7A2A5A","#2B2B2B","#C0453A"][i]))
+  +rc(150,50,70,4,"#8A6A44")+rc(160,54,4,30,"#6A4E30")+rc(206,54,4,30,"#6A4E30")+AVq(3,i=>rc(166+i*14,43,7,7,["#F2F4F5","#E9C46A","#4A6AA8"][i],'rx="1"'))
+  +w2Sit(146,62,"#2B2B2B",W2SK[2],1,1)+w2Sit(232,62,"#7A2A5A",W2SK[0],-1,1)+rc(276,56,40,12,"#8AAA9A",'rx="4"')+w2Plant(296,46,.9)
+});
+
+/* ---- Restaurant kitchen (chef) ---- */
+const w2Steel=(x,y,w)=>rc(x,y,w,5,"#C9CED2")+rc(x+2,y+5,w-4,84-y,"#AEB4B9")+rc(x+2,y+18,w-4,1.4,"#9AA0A6");
+const w2Plate=(x,y,r)=>`<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.38}" fill="#F7F7F4" stroke="#D5D8DA"/>`;
+Object.assign(IA,{
+ /* prep at dawn: the sky just going pink, crates of veg, a board of carrots */
+ kitchen_a1:()=>rc(0,0,IA_W,IA_H,"#D9DCDE")+rc(30,8,120,38,"#F2B08A")+rc(30,8,120,14,"#B7A6C9")+rc(30,30,120,16,"#F6D3A0")+iaCirc(110,40,8,"#F6E2A8")+pa("M30 46 L60 34 L84 40 L120 30 L150 38 V46Z","#6A6478")+rc(30,8,120,38,"none",'stroke="#8A9096" stroke-width="3"')+rc(89,8,2.4,38,"#8A9096")
+  +w2P(170,50,"#F7F7F4",{hat:"chef",skin:W2SK[2]})+w2Steel(20,52,260)
+  +rc(120,47,46,5,"#D9A86A",'rx="1"')+AVq(5,i=>pa(`M${126+i*7} 48 l2 -1 l7 2 l-7 2Z`,"#E07A2E"))+rc(150,46,14,1.6,"#C9CDD1")+rc(162,45.5,6,2.6,"#2B2B2B")
+  +[[36,"#C9A060","#E9DCC0"],[66,"#7A9A4A","#5E8A3A"],[228,"#B05A3A","#C0453A"]].map(([x,c,v])=>rc(x,38,26,14,c)+AVq(4,i=>iaCirc(x+4+i*6,37,3.6,v))+rc(x,44,26,1.4,"#00000022")).join("")
+  +AVq(3,i=>iaCirc(196+i*8,49,3.2,"#E9DCC0"))+pa("M262 30 q6 -10 0 -18 M268 30 q6 -10 0 -18","none",'stroke="#fff" stroke-width="1.2" opacity=".7"')+rc(256,30,18,18,"#8A9096",'rx="2"'),
+ /* the walk-in: cold blue light, shelves of crates, a chef in a fleece */
+ kitchen_a2:()=>rc(0,0,IA_W,IA_H,"#BFD6E4")+rc(0,70,IA_W,14,"#9AB4C4")
+  +AVq(3,r=>rc(10,18+r*18,300,3,"#E6EEF2")+AVq(12,i=>{const c=["#C9A060","#7A9A4A","#F2F4F5","#C0453A","#E9DCC0","#4E8A4A"][(i+r*2)%6];return i===5||i===6?"":rc(14+i*25,6+r*18,20,12,c==="#F2F4F5"?"#E6EEF2":"#9AA8B2",'rx="1"')+AVq(3,j=>iaCirc(18+i*25+j*6,7+r*18,3,c))}))
+  +rc(140,0,40,84,"#D9E6EE",'opacity=".7"')+AVq(6,i=>rc(141+i*6.6,0,5,70,"#EAF2F6",'opacity=".75"'))
+  +w2P(160,56,"#3A6A8A",{hat:"chef",skin:W2SK[0]})+pa("M150 22 q-4 -4 -2 -8 M170 22 q4 -4 2 -8","none",'stroke="#fff" stroke-width="1.4" opacity=".9"')+rc(166,34,14,10,"#C9A060")+AVq(5,i=>iaCirc(20+i*70,2,1.4,"#fff",'opacity=".8"')),
+ /* pastry section: marble bench, a mixer, tarts and a tall cake */
+ kitchen_a3:()=>rc(0,0,IA_W,IA_H,"#F3E9E2")+rc(0,0,IA_W,10,"#E6D8CC")+AVq(10,i=>rc(i*32,10,1,46,"#E6D8CC"))
+  +w2P(232,50,"#F7F7F4",{hat:"chef",skin:W2SK[3]})+rc(10,52,300,6,"#ECEAE6")+rc(14,58,292,26,"#D8D2CC")+AVq(4,i=>pa(`M${30+i*60} 54 q14 -3 30 1`,"none",'stroke="#CFCAC4" stroke-width=".8"'))
+  +`<g transform="translate(26 22)">${rc(4,28,30,4,"#C0453A",'rx="2"')}${rc(26,4,8,26,"#C0453A",'rx="3"')}${pa("M2 4 H36 Q38 10 30 12 H4Z","#C0453A")}${pa("M8 14 h18 l-3 14 h-12Z","#C9CDD1")}${rc(15,12,2,10,"#8A9096")}</g>`
+  +AVq(5,i=>w2Plate(84+i*18,50,7)+`<ellipse cx="${84+i*18}" cy="48.6" rx="5" ry="2" fill="#E9B44A"/>`+iaCirc(84+i*18-1,47.8,1.3,["#C0453A","#7A2A5A","#3A3A8A","#C0453A","#4E8A4A"][i]))
+  +`<g transform="translate(186 20)">${rc(-2,28,26,3,"#C9CDD1")}${rc(10,31,2,2,"#C9CDD1")}${rc(0,16,22,12,"#F2B8C6")}${rc(3,6,16,10,"#F7F4EC")}${rc(0,16,22,2,"#fff")}${AVq(4,i=>iaCirc(5+i*4,6,1.8,"#C0453A"))}</g>`
+  +pa("M254 38 L268 30 L272 34 L258 42Z","#F7F4EC")+pa("M254 38 l-4 2 l2 2Z","#7A4A2A")+AVq(5,i=>iaCirc(280+i*6,49,2.4,"#7A4A2A"))+pa("M140 52 q8 -6 18 0Z","#F7F4EC"),
+ /* the back door: a van, a stack of crates and a delivery being signed for */
+ kitchen_a4:()=>iaSky("#C9D6DE")+rc(0,0,IA_W,64,"#B07A5A")+AVq(11,r=>rc(0,r*6,IA_W,.8,"#9C6A4C"))
+  +rc(20,14,70,52,"#3A3A3A")+rc(20,14,70,14,"#8A9096")+AVq(5,i=>rc(20,15+i*2.6,70,1,"#6A7076"))+rc(30,32,50,34,"#D9DCDE")+AVq(3,i=>rc(36+i*15,40,10,20,"#C9CED2"))
+  +rc(0,64,IA_W,20,"#6A7076")+w2P(108,46,"#F7F7F4",{hat:"chef",skin:W2SK[1]})+w2P(144,46,"#3A6A8A",{skin:W2SK[0]})+rc(118,34,18,10,"#7A9A4A")+AVq(3,i=>iaCirc(122+i*5,34,2.8,"#C0453A"))
+  +[[160,0],[160,1],[176,0]].map(([x,r])=>rc(x+ (r?8:0),62-r*10,16,10,"#C9A060",'stroke="#9C7A40"')).join("")
+  +`<g transform="translate(206 26)">${rc(0,0,80,36,"#F2F4F5",'rx="3"')}${pa("M80 10 H96 L108 22 V36 H80Z","#F2F4F5")}${pa("M84 13 H95 L104 22 H84Z","#9DC3D9")}${rc(0,18,108,3,"#4E8A4A")}${iaCirc(20,38,7,"#1B1B1B")}${iaCirc(90,38,7,"#1B1B1B")}${iaCirc(20,38,3,"#8A9096")}${iaCirc(90,38,3,"#8A9096")}</g>`
+  +rc(298,40,16,24,"#2F5D3A",'rx="2"')+rc(296,38,20,4,"#264A30"),
+ /* plating: a row of plates on the pass, tickets on the rail, tweezers out */
+ kitchen_a5:()=>rc(0,0,IA_W,IA_H,"#2E3236")+rc(0,6,IA_W,4,"#8A9096")+AVq(9,i=>rc(18+i*34,10,14,18,"#F7F4EC")+rc(20+i*34,14,10,1,"#9A9A9A")+rc(20+i*34,18,8,1,"#9A9A9A")+rc(20+i*34,22,9,1,"#9A9A9A"))
+  +AVq(4,i=>pa(`M${50+i*76} 30 h14 l-2 6 h-10Z`,"#C9CDD1")+pa(`M${46+i*76} 36 h22 l14 24 h-50Z`,"#F6C27A",'opacity=".14"'))
+  +w2P(70,74,"#F7F7F4",{hat:"chef",skin:W2SK[4]})+w2P(250,74,"#F7F7F4",{hat:"chef",skin:W2SK[3]})+rc(0,56,IA_W,6,"#C9CED2")+rc(0,62,IA_W,22,"#9AA0A6")
+  +[[60,"#4E8A4A","#C0453A"],[118,"#E07A2E","#F7F4EC"],[176,"#7A2A5A","#E9C46A"],[234,"#4E8A4A","#E9B44A"]].map(([x,a,b])=>`<ellipse cx="${x+14}" cy="56" rx="22" ry="5" fill="#FFFFFF" stroke="#D5D8DA"/>`+`<ellipse cx="${x+14}" cy="55" rx="8" ry="2.6" fill="${a}"/>`+iaCirc(x+8,54,1.8,b)+iaCirc(x+20,54,1.6,b)+pa(`M${x+4} 57 q10 3 22 -1`,"none",`stroke="${b}" stroke-width="1.2"`)).join("")
+  +pa("M262 46 L246 54 M264 47 L247 55","none",'stroke="#C9CDD1" stroke-width="1.2"'),
+ /* staff meal: one long table before service, a big pot in the middle */
+ kitchen_a6:()=>rc(0,0,IA_W,IA_H,"#E9E4DA")+rc(0,0,IA_W,8,"#C9C2B2")+AVq(5,i=>pa(`M${30+i*64} 8 v6 l-6 6 h12 l-6 -6`,"#3A3A3A")+iaCirc(30+i*64,21,2.4,"#F6E2A8"))
+  +[44,96,148,200,252].map((x,i)=>w2P(x,52,i%2?"#F7F7F4":"#2B2B2B",{skin:W2SK[(i*2+1)%5],s:.95,hat:i===2?"chef":i===4?"bun":"hair",hc:i===4?"#C9A060":"#2B1E1A",apron:i%2?"":"#5A6A7A"})).join("")
+  +rc(10,52,300,5,"#8A6A44")+rc(14,57,292,27,"#7A5A3A",'opacity=".35"')+rc(20,57,4,27,"#6A4E30")+rc(296,57,4,27,"#6A4E30")
+  +pa("M140 38 h32 v12 q0 4 -4 4 h-24 q-4 0 -4 -4Z","#8A9096")+rc(136,38,40,3,"#6A7076")+pa("M148 34 q2 -6 0 -10 M158 34 q2 -6 0 -10 M166 34 q2 -6 0 -10","none",'stroke="#fff" stroke-width="1.3" opacity=".8"')
+  +[30,70,110,200,240,282].map(x=>w2Plate(x,52,9)+`<ellipse cx="${x}" cy="51" rx="5" ry="1.8" fill="#C9883A"/>`).join("")+`<ellipse cx="214" cy="50" rx="11" ry="4" fill="#D9A86A"/>`+rc(92,46,6,6,"#E6EEF2",'rx="1"')+rc(256,46,6,6,"#E6EEF2",'rx="1"')
+});
+
+/* ---- Space (astronaut) ---- */
+const w2Suit=(x,y,r,s=1,vis)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})">${w2P(0,0,"#F2F4F5",{hat:"space",hc:vis,skin:"#E0B37E"})}${rc(-6,-16,12,8,"#C9CDD1",'rx="1.5"')}${rc(-3,-14,2,2,"#C0453A")}${rc(1,-14,2,2,"#1D5FA8")}</g>`;
+Object.assign(IA,{
+ /* the training pool: a mock-up of the station underwater, divers and bubbles */
+ space_a1:()=>rc(0,0,IA_W,IA_H,"#2F7FB0")+rc(0,0,IA_W,10,"#C9CED2")+rc(0,10,IA_W,3,"#8FC7E6")+AVq(5,i=>pa(`M${i*70} 22 q35 -6 70 0`,"none",'stroke="#5AA6D6" stroke-width="2" opacity=".6"'))+rc(0,72,IA_W,12,"#1F6A98")+AVq(16,i=>rc(i*20,72,1,12,"#2A78A8"))
+  +rc(60,4,2,10,"#8A9096")+rc(60,4,40,2,"#8A9096")+rc(98,4,1.2,14,"#555")
+  +`<g transform="translate(150 34)">${rc(0,0,110,30,"#B8C0C6",'rx="6"')}${AVq(6,i=>rc(8+i*17,2,1.4,26,"#9AA2A8"))}${iaCirc(30,15,5,"#4A6A8A")}${iaCirc(70,15,5,"#4A6A8A")}${rc(-20,8,20,14,"#9AA2A8")}${rc(110,10,30,10,"#9AA2A8")}</g>`
+  +w2Suit(120,46,-20,.95)+`<g transform="translate(70 52) rotate(70) scale(.8)">${w2P(0,0,"#1C2329",{skin:"#1C2329"})}${rc(-12,-22,6,18,"#E9C46A",'rx="2"')}</g>`+`<g transform="translate(290 40) rotate(-80) scale(.8)">${w2P(0,0,"#1C2329",{skin:"#1C2329"})}${rc(8,-22,6,18,"#E9C46A",'rx="2"')}</g>`
+  +AVq(12,i=>iaCirc(110+(i%3)*5+i*.6,30-i*1.6,1+(i%3)*.5,"none",'stroke="#CDE8F6" stroke-width=".8"'))+AVq(6,i=>iaCirc(56+i*2,34-i*3,1.2,"none",'stroke="#CDE8F6" stroke-width=".8"')),
+ /* mission control: the big wall map with the orbit track, rows of consoles */
+ space_a2:()=>rc(0,0,IA_W,IA_H,"#18222E")+rc(20,4,280,36,"#0E1A2A",'stroke="#3A4A5E" stroke-width="2"')
+  +pa("M40 14 q10 -4 20 2 q4 8 -6 12 q-10 0 -14 -14Z M80 12 q14 -2 22 4 q-2 10 -12 10 q-6 8 -4 12 q-8 -4 -6 -26Z M140 10 q30 -4 50 4 q4 8 -10 8 q-6 10 -16 6 q-20 -6 -24 -18Z M210 24 q10 -2 14 6 q-4 6 -12 2Z M250 12 q14 0 20 6 q-8 4 -20 -6Z","#2F6A4A")
+  +pa("M20 26 Q60 8 100 22 T180 22 T260 22 T300 16","none",'stroke="#E9C46A" stroke-width="1.6"')+iaCirc(182,22,3,"#fff")+iaCirc(182,22,6,"none",'stroke="#E9C46A" stroke-width="1"')
+  +rc(0,44,IA_W,40,"#222E3C")+[[52,"#1C2632"],[66,"#18202A"]].map(([y,c])=>rc(0,y+8,IA_W,40,c)+AVq(8,i=>rc(12+i*39,y,22,10,"#0E1A2A",'stroke="#5A6A7E"')+rc(14+i*39,y+2,18,6,["#2F6A8A","#4E8A4A","#7A5A2A"][(i+y)%3]))).join("")
+  +AVq(7,i=>iaCirc(30+i*42,64,5.5,["#2B1E1A","#5A3A22","#C9A060","#2B2B2B"][i%4])+pa(`M${23+i*42} 76 q7 -8 14 0Z`,["#3A6A8A","#E9E2C8","#5A6A7A"][i%3]))+AVq(7,i=>rc(26+i*42,58,9,2,"#111")),
+ /* launch pad at dawn: the rocket on the pad, the tower, steam rolling off */
+ space_a3:()=>rc(0,0,IA_W,IA_H,"#3A3F6A")+rc(0,22,IA_W,16,"#7A5A86")+rc(0,38,IA_W,14,"#D98A7A")+rc(0,52,IA_W,12,"#F2C48A")+iaCirc(250,60,10,"#F6E2A8")+rc(0,62,IA_W,22,"#2A2E3A")+rc(0,62,IA_W,2,"#4A4E5A")
+  +AVq(10,i=>iaCirc((i*37+11)%320,(i*7)%20+2,.8,"#fff",'opacity=".8"'))
+  +`<g transform="translate(150 0)">${rc(2,14,16,48,"#F2F4F5")}${pa("M2 14 Q10 -2 18 14Z","#F2F4F5")}${rc(2,26,16,3,"#2B2B2B")}${rc(2,44,16,3,"#2B2B2B")}${rc(-6,30,8,32,"#E9E2C8")}${pa("M-6 30 L-2 22 L2 30Z","#E9E2C8")}${rc(18,30,8,32,"#E9E2C8")}${pa("M18 30 L22 22 L26 30Z","#E9E2C8")}</g>`
+  +`<g transform="translate(184 8)">${rc(0,0,12,56,"none",'stroke="#C0453A" stroke-width="2"')}${AVq(7,i=>pa(`M0 ${i*8} L12 ${i*8+8} M12 ${i*8} L0 ${i*8+8}`,"none",'stroke="#C0453A" stroke-width="1"'))}${rc(-8,12,8,3,"#C0453A")}${rc(-8,32,8,3,"#C0453A")}${rc(-2,-4,16,4,"#8A9096")}${iaCirc(6,-6,1.6,"#E86A7A")}</g>`
+  +rc(110,60,100,4,"#5A5E6A")+iaCloud(122,70,.75,"#F2F4F5",".95")+iaCloud(160,72,.7,"#E6E8EA",".9")+iaCloud(96,74,.6,"#D9DCDE",".85")+iaCloud(186,74,.6,"#F2F4F5",".85")
+  +pa("M14 64 L28 52 L58 48 L84 64Z","#3A3E4C")+rc(40,38,3,26,"#1A1C24")+rc(35,36,13,4,"#1A1C24")+iaCirc(38,35,1.4,"#F6E2A8")+iaCirc(45,35,1.4,"#F6E2A8")+rc(290,40,3,24,"#1A1C24")+iaCirc(291.5,40,2.6,"#F6E2A8"),
+ /* the cupola: windows full of Earth, a camera with a long lens */
+ space_a4:()=>rc(0,0,IA_W,IA_H,"#2E343C")+AVq(9,i=>rc(i*36,0,1.4,84,"#3A4048"))
+  +iaCirc(160,42,40,"#4A5058")+iaCirc(160,42,34,"#05070C")+pa("M126.95 50 Q160 28 193.05 50 A34 34 0 0 1 126.95 50Z","#2F6FB0")+pa("M140 48 q10 -8 22 -4 q6 6 -4 10 q-10 8 -18 -6Z M172 58 q10 -6 14 2 q-6 8 -14 -2Z","#4E9A5A")+iaCloud(150,62,.5,"#fff",".75")+iaCloud(176,46,.4,"#fff",".7")+pa("M126.95 50 Q160 28 193.05 50","none",'stroke="#8FC7E6" stroke-width="2" opacity=".7"')+iaCirc(160,42,34,"none",'stroke="#4A5058" stroke-width="4"')+AVq(6,i=>`<rect x="157" y="4" width="6" height="12" fill="#4A5058" transform="rotate(${i*60} 160 42)"/>`)
+  +AVq(8,i=>iaCirc(132+(i*13)%56,16+(i*7)%14,.8,"#fff"))
+  +`<g transform="translate(84 48) rotate(-28)">${w2P(0,0,"#2F5A8A",{skin:W2SK[2],hat:"hair",hc:"#2B1E1A"})}</g>`+rc(98,26,16,10,"#1C1C1C",'rx="2"')+rc(112,28,14,6,"#2B2B2B")+iaCirc(126,31,3.4,"#3A4A60")
+  +rc(10,10,40,30,"#3A4048",'stroke="#5A6068"')+AVq(4,i=>rc(14,14+i*6,8,3,["#E9C46A","#4BBA85","#4BBA85","#EA6B5D"][i])+rc(26,14+i*6,20,3,"#4A5058"))+rc(268,46,40,8,"#C9CDD1",'rx="2"')+rc(272,30,14,16,"#E6E8EA",'rx="2"')+rc(290,34,14,12,"#B3262E",'rx="2"'),
+ /* inside the capsule: two crew strapped in, screens lit, a porthole of stars */
+ space_a5:()=>rc(0,0,IA_W,IA_H,"#C9CDD1")+pa("M0 0 H320 V12 Q160 30 0 12Z","#B4B9BE")+rc(0,70,IA_W,14,"#8A9096")
+  +AVq(3,i=>`<g transform="translate(${70+i*66} 10)">${rc(0,0,50,30,"#1C2329",'rx="3"')}${rc(3,3,44,24,"#0E1A2A")}${i===1?pa("M6 22 Q16 6 26 14 T44 8","none",'stroke="#4BBA85" stroke-width="1.4"'):AVq(4,j=>rc(6,6+j*5,8+((j*13+i*7)%30),3,["#7FB2E5","#E9C46A","#4BBA85","#7FB2E5"][j]))}</g>`)
+  +iaCirc(32,30,16,"#8A9096")+iaCirc(32,30,12,"#05070C")+AVq(6,i=>iaCirc(24+(i*7)%16,22+(i*5)%16,.7,"#fff"))+iaCirc(288,30,16,"#8A9096")+iaCirc(288,30,12,"#1D3A6A")+pa("M276 36 Q288 26 300 34 V42 H276Z","#2F6FB0")
+  +[118,202].map(x=>pa(`M${x-30} 78 L${x-26} 50 L${x+6} 46 L${x+10} 56 L${x-14} 60 L${x-14} 78Z`,"#2B3A44")+`<g transform="translate(${x-16} 74) rotate(-12)">${w2P(0,0,"#F2F4F5",{hat:"space",skin:"#E0B37E"})}${rc(-10,-12,20,1.6,"#6A7076")}</g>`).join("")
+  +AVq(10,i=>rc(150+(i%5)*4,62+Math.floor(i/5)*4,2.4,2.4,["#EA6B5D","#E9C46A","#4BBA85"][i%3])),
+ /* splashdown: three striped parachutes over the sea, the boat on its way */
+ space_a6:()=>iaSky("#9CCBE8")+iaCloud(30,20,.9)+iaCloud(250,14,1.1)+rc(0,66,IA_W,18,"#2F6FA0")+AVq(8,i=>pa(`M${i*42} 72 q10 -3 20 0`,"none",'stroke="#8FC7E6" stroke-width="1.2"'))
+  +[[118,16,-14],[160,10,0],[202,16,14]].map(([x,y,r])=>`<g transform="rotate(${r} 160 58)">${pa(`M${x-20} ${y+8} Q${x} ${y-14} ${x+20} ${y+8}Z`,"#F2F4F5")}${pa(`M${x-12} ${y+8} Q${x-12} ${y-6} ${x-4} ${y-5} L${x-4} ${y+8}Z M${x+4} ${y-5} Q${x+12} ${y-6} ${x+12} ${y+8} L${x+4} ${y+8}Z`,"#E07A2E")}${pa(`M${x-20} ${y+8} L160 50 M${x} ${y+8} L160 50 M${x+20} ${y+8} L160 50`,"none",'stroke="#5A6068" stroke-width=".6"')}</g>`).join("")
+  +pa("M150 50 h20 l6 14 h-32Z","#3A3F46")+rc(150,50,20,2,"#8A9096")+iaCirc(160,57,2.4,"#E9C46A")
+  +`<g transform="translate(250 60)">${pa("M0 8 H44 L38 16 H6Z","#F2F4F5")}${rc(12,0,16,8,"#E6E8EA")}${rc(16,2,8,4,"#7FB2E5")}${rc(19,-10,1.6,10,"#555")}</g>`+pa("M248 74 q-10 -2 -20 0","none",'stroke="#fff" stroke-width="1.4"')
+});
+
+/* ---- Vet: two more practice scenes (pet family) and a vet-only family out on calls ---- */
+Object.assign(IA,{
+ /* x-ray room: a dog's skeleton on the light box, the vet in a lead apron */
+ pet_a1:()=>rc(0,0,IA_W,IA_H,"#2E3A44")+rc(0,66,IA_W,18,"#3E4A54")
+  +rc(40,8,120,50,"#DDE8F2",'rx="2"')+rc(44,12,112,42,"#1C2A38")
+  +`<g stroke="#E6EEF4" stroke-width="2" fill="none" stroke-linecap="round"><path d="M64 30 Q100 22 132 28"/>${AVq(7,i=>`<path d="M${74+i*8} ${27-i*.4} q2 8 0 12"/>`)}<path d="M70 32 L66 48 M80 32 L82 48 M120 30 L118 48 M128 30 L132 48"/><path d="M132 28 L142 22"/></g>`+iaCirc(146,22,6,"none",'stroke="#E6EEF4" stroke-width="2"')+pa("M56 28 q-6 -4 -8 -10","none",'stroke="#E6EEF4" stroke-width="1.6"')
+  +w2P(196,52,"#3A6A5A",{skin:W2SK[1],hat:"hair",hc:"#2B1E1A",apron:"#5A6A7A"})+rc(178,20,3,22,"#8A9096")+pa("M168 16 h24 l-4 8 h-16Z","#C9CDD1")
+  +rc(220,48,90,5,"#C9CED2")+rc(226,53,4,31,"#8A9096")+rc(300,53,4,31,"#8A9096")+w2Dog(262,48,"#C9883A",.95)+rc(244,40,40,3,"#7FB2E5",'opacity=".6"')
+  +iaCirc(20,16,6,"#E9C46A")+iaCirc(20,16,2,"#2B2B2B"),
+ /* the waiting room: a cat in a box, a dog hiding under a chair, a parrot */
+ pet_a2:()=>rc(0,0,IA_W,IA_H,"#E4EEE8")+rc(0,66,IA_W,18,"#B9CBBF")+rc(0,44,IA_W,22,"#CFE0D6")
+  +AVq(5,i=>rc(20+i*32,48,26,4,"#3A8A7A",'rx="2"')+rc(20+i*32,38,26,10,"#4E9A8A",'rx="2"')+rc(24+i*32,52,2.4,14,"#555")+rc(42+i*32,52,2.4,14,"#555"))
+  +w2Sit(38,50,"#B3262E",W2SK[0],1,.95)+rc(48,40,22,14,"#7A9AB0",'rx="2"')+AVq(4,i=>rc(51+i*5,42,1.6,10,"#2B3A44"))+iaCirc(58,48,3,"#8A8A8A")+iaCirc(56,47,.7,"#E9C46A")+iaCirc(60,47,.7,"#E9C46A")
+  +w2Sit(104,50,"#E9C46A",W2SK[2],1,.95)+w2Dog(108,74,"#2B2B2B",.6,-1)+pa("M106 66 q-4 -4 -6 0","none",'stroke="#fff" stroke-width=".8"')
+  +w2Sit(168,50,"#3A6A8A",W2SK[4],1,.95)+`<g transform="translate(186 22)">${pa("M0 22 V6 Q12 -6 24 6 V22Z","none",'stroke="#B8862B" stroke-width="1.6"')}${AVq(4,i=>rc(4+i*5,4,1,18,"#B8862B"))}${rc(-2,22,28,3,"#B8862B")}${pa("M10 18 q-2 -10 4 -10 q4 2 2 10Z","#4BBA85")}${pa("M14 9 l4 1 l-3 2Z","#E9C46A")}${rc(12,18,1,3,"#555")}</g>`
+  +rc(230,40,80,8,"#F7F4EC")+rc(234,48,72,36,"#3A8A7A")+w2P(268,40,"#3A6A5A",{skin:W2SK[3],s:.9,hat:"bun",hc:"#C9A060"})+rc(236,40,72,6,"#F7F4EC")+rc(290,28,14,12,"#1C2329",'rx="1.5"')+rc(291,29,12,9,"#9DC3D9")
+  +iaHeart(250,14,1,"#E86A7A")+pa("M200 12 h12 v12 h-12Z M203 18 h6 M206 15 v6","none",'stroke="#3A8A7A" stroke-width="1.6"'),
+ /* farm call: a cow by the gate, the 4x4 in the lane, wellies on */
+ vetwork:()=>iaSky("#BFDDEE")+iaCloud(40,16,.9)+iaCloud(230,10,.8)+`<path d="M0 48 Q80 36 160 46 T320 40 V84 H0Z" fill="#8DB86A"/>`+`<path d="M0 56 Q120 50 200 58 T320 54 V84 H0Z" fill="#7AA85A"/>`
+  +AVq(3,i=>iaCirc(40+i*90,44-i*2,7,"#4E7A3A")+rc(39+i*90,44-i*2,2,8,"#5A3A22"))
+  +AVq(6,i=>rc(10+i*18,52,3,22,"#8A6A44"))+rc(10,56,96,3,"#9A7A54")+rc(10,64,96,3,"#9A7A54")+pa("M20 66 L44 56 M44 66 L68 56","none",'stroke="#9A7A54" stroke-width="2"')
+  +w2Cow(160,76,1)+w2P(214,58,"#2F5A3A",{skin:W2SK[0],hat:"hair",hc:"#7A4A2A"})+rc(207,72,6,6,"#2B3A20")+rc(215,72,6,6,"#2B3A20")+rc(222,52,12,8,"#5A3A22",'rx="1.5"')+pa("M200 40 q-12 0 -18 4","none",'stroke="#555" stroke-width="1.2"')
+  +`<g transform="translate(244 42)">${rc(0,8,64,20,"#3A5A4A",'rx="3"')}${pa("M8 8 L14 -4 H40 L44 8Z","#3A5A4A")}${pa("M17 -1 H38 L40 7 H15Z","#9DC3D9")}${iaCirc(14,28,7,"#1B1B1B")}${iaCirc(50,28,7,"#1B1B1B")}${iaCirc(14,28,3,"#8A9096")}${iaCirc(50,28,3,"#8A9096")}${rc(60,12,6,6,"#F6E2A8")}</g>`,
+ /* kennels: a row of pens, a dog in each, someone doing the bowls */
+ vetwork_2:()=>rc(0,0,IA_W,IA_H,"#D9DED8")+rc(0,66,IA_W,18,"#A9B0AA")+AVq(5,i=>{const x=8+i*62;return rc(x,10,56,56,"#EEF0EC")+w2Dog(x+28,64,["#C9883A","#2B2B2B","#F2EEE6","#8A5A3A","#B8B0A0"][i],.8,i%2?-1:1)+`<ellipse cx="${x+44}" cy="64" rx="5" ry="2" fill="${["#C0453A","#1D5FA8","#4E8A4A"][i%3]}"/>`+AVq(8,j=>rc(x+2+j*7,10,1.6,56,"#8A9096"))+rc(x,10,56,2.4,"#8A9096")+rc(x,64,56,2,"#8A9096")})
+  +w2P(170,60,"#3A6A5A",{skin:W2SK[2],hat:"hair",hc:"#2B1E1A",s:.9})+`<ellipse cx="183" cy="60" rx="6" ry="2.2" fill="#C0453A"/>`,
+ /* horse yard: stable doors, a head looking out, one being checked over */
+ vetwork_3:()=>iaSky("#CFE2EC")+iaCloud(250,14,.8)+rc(0,64,IA_W,20,"#C9B48A")+AVq(14,i=>iaCirc(i*24+6,70+(i%3)*4,1,"#A8935E"))
+  +rc(10,18,180,46,"#8A5A3A")+pa("M4 20 L100 6 L196 20Z","#5A4A40")+AVq(3,i=>rc(24+i*56,30,36,34,"#6A4230")+rc(24+i*56,44,36,3,"#4A2E20")+rc(24+i*56,30,36,14,"#2A1A14"))
+  +[[30,"#3A2418",1],[136,"#E6E2DA",-1]].map(([x,c,f])=>`<g transform="translate(${x+18} 30) scale(${f} 1)">${pa("M-10 16 L-8 -2 Q-6 -8 0 -8 L12 4 Q14 8 10 10 L4 8 L0 16Z",c)}${pa("M-6 -6 l0 -6 l4 5Z",c)}${iaCirc(0,-3,1,"#111")}</g>`).join("")
+  +w2Horse(236,74,"#9A5A30",1)+w2P(284,56,"#2F5A3A",{skin:W2SK[3],hat:"hair",hc:"#C9A060"})+pa("M272 40 L262 44","none",'stroke="#555" stroke-width="1.6"')
+  +[[200,"#E9C46A"],[110,"#E9C46A"]].map(([x,c])=>rc(x,64,22,12,c)+rc(x,68,22,1.4,"#C9A040")).join(""),
+ /* lambing at night: a barn lit by one lamp, a ewe and a new lamb in the straw */
+ vetwork_4:()=>rc(0,0,IA_W,IA_H,"#1E1A26")+pa("M0 26 L160 4 L320 26 V84 H0Z","#3A2E2A")+AVq(8,i=>rc(i*40+18,14,3,70,"#2A2220"))+rc(0,62,IA_W,22,"#C9A85A")+AVq(30,i=>pa(`M${(i*11)%320} ${66+(i*7)%16} l6 -3`,"none",'stroke="#E6C878" stroke-width="1"'))
+  +pa("M120 10 h10 l-5 6Z","#E9C46A")+iaCirc(125,18,3,"#F6E2A8")+pa("M100 20 L150 20 L190 80 L60 80Z","#F6E2A8",'opacity=".12"')
+  +`<g transform="translate(130 70)"><ellipse cx="0" cy="-8" rx="18" ry="10" fill="#F2EEE6"/>${AVq(6,i=>iaCirc(-12+i*5,-14+(i%2)*2,4,"#F7F4EC"))}${pa("M14 -14 l12 -2 q4 4 0 8 l-10 2Z","#2B2B2B")}${rc(-12,-2,3,6,"#2B2B2B")}${rc(8,-2,3,6,"#2B2B2B")}</g>`
+  +`<g transform="translate(176 72) scale(.55)"><ellipse cx="0" cy="-8" rx="16" ry="9" fill="#F7F4EC"/>${pa("M12 -14 l10 -2 q3 4 0 7 l-9 2Z","#3A3A3A")}${rc(-10,-2,3,10,"#3A3A3A")}${rc(-2,-2,3,10,"#3A3A3A")}${rc(4,-2,3,10,"#3A3A3A")}${rc(9,-2,3,10,"#3A3A3A")}</g>`
+  +w2P(220,52,"#3A5A4A",{skin:W2SK[0],hat:"hair",hc:"#5A3A22"})+rc(208,32,10,14,"#3A4A5A",'rx="1"')+rc(30,48,30,16,"#8A6A44")+rc(30,54,30,1.4,"#6A4E30")+rc(270,40,40,24,"#6A4E30")+AVq(4,i=>rc(270,44+i*5,40,1.4,"#5A3E20"))
+});
+
+/* ---- Trades: a plumbing family (plumber) and an electrics family (electrician) ---- */
+const w2Cu="#C8783E";
+const w2Pipe=(d,w=3,c=w2Cu)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linejoin="round"/>`;
+Object.assign(IA,{
+ /* the boiler cupboard: copper pipes, a pressure gauge, a torch */
+ plumbing:()=>rc(0,0,IA_W,IA_H,"#E8E0D0")+rc(0,68,IA_W,16,"#B8A888")+rc(90,4,120,64,"#5A4E44")+rc(94,8,112,60,"#3A342E")+rc(208,6,30,62,"#F2EEE6",'transform="skewY(4)"')
+  +rc(118,12,50,40,"#F2F4F5",'rx="3"')+rc(124,18,38,8,"#2B3A44")+rc(128,20,6,4,"#4BBA85")+iaCirc(152,40,5,"#F7F4EC",'stroke="#555" stroke-width="1.2"')+pa("M152 40 l3 -3","none",'stroke="#C0453A" stroke-width="1"')
+  +w2Pipe("M126 52 V68 M136 52 V60 H104 V68 M146 52 V64 M156 52 V58 H196 V68",3)+AVq(4,i=>rc(122+i*10,58,8,3,"#C9CDD1"))+rc(178,24,22,40,"#C0453A",'rx="3"')+rc(186,20,6,4,"#8A9096")
+  +w2P(256,48,"#1D3A6A",{skin:W2SK[1],hat:"hair",hc:"#2B1E1A"})+pa("M246 34 L222 30 L222 36Z","#F6E7A8",'opacity=".7"')+rc(244,32,8,4,"#2B2B2B")
+  +rc(36,58,30,12,"#C0453A",'rx="1"')+rc(44,54,14,4,"none",'stroke="#8A2A20" stroke-width="2"')+pa("M60 66 l18 -6","none",'stroke="#8A9096" stroke-width="3"')+iaCirc(80,59,3,"none",'stroke="#8A9096" stroke-width="2"'),
+ /* a bathroom refit: half-tiled walls, the bath in, the boxes still to open */
+ plumbing_2:()=>rc(0,0,IA_W,IA_H,"#E6E2DA")+AVq(14,i=>AVq(5,r=>rc(i*14+(r%2)*7-7,40+r*8,13,7,"#CFE2E6")))+rc(170,0,1,84,"#C9C2B2")+rc(0,70,IA_W,14,"#B9AE9E")
+  +rc(20,46,100,22,"#F7F7F4",'rx="3"')+rc(20,46,100,3,"#E6E6E2")+rc(104,30,3,16,"#C9CDD1")+rc(98,30,10,3,"#C9CDD1")
+  +`<g transform="translate(200 40)">${rc(0,0,22,14,"#F7F7F4",'rx="2"')}${pa("M-2 14 h28 q0 10 -10 14 h-8 q-10 -4 -10 -14Z","#F7F7F4")}</g>`+rc(250,24,26,16,"#C9DCE3",'stroke="#C9CDD1" stroke-width="2"')+rc(256,40,16,12,"#F7F7F4",'rx="2"')+rc(262,52,4,18,"#E6E6E2")
+  +w2P(150,52,"#1D3A6A",{skin:W2SK[3],hat:"hair",hc:"#C9A060"})+rc(284,56,26,14,"#C9A060",'stroke="#9C7A40"')+rc(288,46,20,10,"#B88A4A",'stroke="#9C7A40"')+AVq(4,i=>rc(10+i*3,74-i*2.5,20,2.2,"#CFE2E6"))+w2Pipe("M232 70 V58 H240",2.4),
+ /* a burst pipe: water spraying under the sink, the kitchen floor awash */
+ plumbing_3:()=>rc(0,0,IA_W,IA_H,"#E6DCC8")+rc(20,10,70,22,"#C9B48A")+rc(54,10,1.4,22,"#A89470")+rc(230,10,70,22,"#C9B48A")+rc(264,10,1.4,22,"#A89470")
+  +rc(10,40,300,4,"#4A4A4A")+rc(12,44,296,28,"#C9B48A")+AVq(6,i=>rc(16+i*49,48,44,22,"#D9C49A")+rc(34+i*49,50,8,1.6,"#8A7A5A"))+rc(116,44,58,28,"#3A342E")+w2Pipe("M130 44 V56 Q130 62 140 62 H160",3,"#C9CDD1")
+  +AVq(9,i=>pa(`M150 62 Q${140+i*6} ${46-(i%3)*4} ${120+i*12} ${60+(i%2)*4}`,"none",'stroke="#7FC0E6" stroke-width="1.4" opacity=".85"'))+AVq(8,i=>iaCirc(124+i*10,48+(i*7)%14,1.4,"#9AD0F0"))
+  +rc(0,70,IA_W,14,"#9AB0B8")+pa("M0 72 Q60 68 120 72 T240 71 T320 72 V84 H0Z","#7FB6D2",'opacity=".9"')+AVq(6,i=>`<ellipse cx="${30+i*52}" cy="${77+(i%2)*3}" rx="10" ry="1.6" fill="none" stroke="#CDE8F6" stroke-width=".8"/>`)
+  +w2P(232,50,"#1D3A6A",{skin:W2SK[2],hat:"hair",hc:"#2B1E1A"})+rc(224,64,6,8,"#2B3A20")+rc(234,64,6,8,"#2B3A20")+rc(70,62,14,12,"#C0453A")+pa("M70 62 q7 -6 14 0","none",'stroke="#8A2A20" stroke-width="1.2"'),
+ /* van stock: back doors open, shelves of fittings, lengths of pipe on the roof */
+ plumbing_4:()=>iaSky("#D6E4EA")+rc(0,66,IA_W,18,"#8A9096")+rc(0,74,IA_W,1.4,"#E9C46A")
+  +`<g transform="translate(70 8)">${rc(0,8,150,58,"#F2F4F5",'rx="4"')}${rc(10,4,130,4,"#8A9096")}${AVq(5,i=>rc(12,-2+i*1.2,126,1,"#C8783E"))}${rc(12,14,126,48,"#3A3E44")}${AVq(3,r=>rc(16,26+r*12,118,2.4,"#8A9096")+AVq(9,i=>(i+r)%4===3?rc(18+i*13,16+r*12,10,10,"#C0453A",'rx="1"'):rc(18+i*13,18+r*12,10,8,["#E9C46A","#7FB2E5","#C9CDD1"][(i+r)%3],'rx="1"')+iaCirc(23+i*13,22+r*12,2,w2Cu)))}${rc(-30,10,30,52,"#E6E8EA",'rx="2"')}${rc(150,10,30,52,"#E6E8EA",'rx="2"')}${rc(-26,14,22,14,"#9DC3D9")}${rc(154,14,22,14,"#9DC3D9")}${iaCirc(10,66,7,"#1B1B1B")}${iaCirc(130,66,7,"#1B1B1B")}</g>`
+  +w2P(278,50,"#1D3A6A",{skin:W2SK[4],hat:"hair",hc:"#2B1E1A"})+rc(266,38,18,10,"#C9A060",'stroke="#9C7A40"')+w2Plant(20,58,1),
+ /* gutters: up a ladder on a wet morning, clearing leaves off the roof edge */
+ plumbing_5:()=>iaSky("#B9C9D4")+iaCloud(220,10,1,"#E6EEF2")+rc(0,0,IA_W,84,"#5A6A7A",'opacity=".08"')
+  +pa("M30 30 L160 6 L300 30Z","#7A4A3A")+AVq(3,r=>pa(`M${57+r*27} ${25-r*5} L${271-r*29} ${25-r*5}`,"none",'stroke="#6A3E30" stroke-width="1"'))+rc(36,30,262,54,"#D9C9AA")+rc(30,28,276,5,"#E6E8EA")+rc(298,33,5,51,"#E6E8EA")
+  +AVq(7,i=>pa(`M${70+i*28} 28 q4 -4 8 0 q-4 3 -8 0Z`,["#B5452B","#D9822B","#8A6A3A"][i%3]))+[60,140,220].map(x=>rc(x,44,30,26,"#9DC3D9",'stroke="#F2EEE6" stroke-width="2"')).join("")
+  +`<g transform="rotate(-12 200 84)">${rc(186,26,3,60,"#C9CDD1")}${rc(204,26,3,60,"#C9CDD1")}${AVq(8,i=>rc(186,32+i*7,21,2,"#C9CDD1"))}</g>`+w2P(202,42,"#1D3A6A",{skin:W2SK[0],hat:"hair",hc:"#7A4A2A"})+rc(212,22,14,8,"#2B2B2B",'rx="1"')+AVq(14,i=>pa(`M${(i*37+3)%320} ${(i*23+2)%60} l-3 7`,"none",'stroke="#E6EEF2" stroke-width=".8" opacity=".7"')),
+ /* the consumer unit: a row of breakers, one tripped, a tester in hand */
+ electrics:()=>rc(0,0,IA_W,IA_H,"#E4E0D8")+rc(0,70,IA_W,14,"#B8AE9E")+rc(80,12,130,40,"#F7F7F4",'rx="3" stroke="#C9CDD1"')+rc(86,18,118,28,"#E6E6E2")
+  +AVq(12,i=>rc(90+i*9.4,22,7,20,"#FFFFFF",'stroke="#B8BCC0" stroke-width=".6"')+rc(91.5+i*9.4,i===7?34:26,4,6,i===0?"#C0453A":i===7?"#E07A2E":"#3A3A3A"))+rc(86,18,10,28,"#C9CDD1")
+  +AVq(6,i=>pa(`M${98+i*18} 52 Q${100+i*18} 62 ${92+i*18} 72`,"none",`stroke="${["#8A5A2A","#3A6AB0","#7A8A3A","#8A5A2A","#3A6AB0","#555"][i]}" stroke-width="2"`))
+  +w2P(248,50,"#E8B73A",{skin:W2SK[2],hat:"hair",hc:"#2B1E1A"})+rc(226,30,12,7,"#E9C46A",'rx="1"')+rc(228,31,6,3,"#4BBA85")+pa("M226 34 L210 32","none",'stroke="#C0453A" stroke-width="1"')
+  +pa("M40 30 l6 -12 h4 l-4 8 h6 l-10 14 l3 -10Z","#E9C46A")+rc(20,54,40,16,"#3A6AB0",'rx="2"')+rc(24,58,32,8,"#2B4A80"),
+ /* rewiring: floorboards up, joists showing, a drum of cable unrolling */
+ electrics_2:()=>rc(0,0,IA_W,IA_H,"#E8E2D4")+rc(0,0,IA_W,8,"#D9D1C0")+rc(240,10,40,34,"#C9DCE3",'stroke="#F2EEE6" stroke-width="3"')+rc(0,52,IA_W,32,"#C9A06A")+AVq(16,i=>rc(i*20,52,1,32,"#A8804A"))
+  +rc(80,58,140,26,"#3A2E24")+AVq(7,i=>rc(84+i*20,58,6,26,"#B08050"))+pa("M80 70 Q150 64 220 74","none",'stroke="#F2EEE6" stroke-width="2"')+pa("M80 76 Q160 72 220 80","none",'stroke="#C0453A" stroke-width="2"')
+  +AVq(3,i=>`<g transform="translate(${106+i*40} 46) rotate(${-8+i*6})">${rc(0,0,30,6,"#C9A06A")}${rc(0,6,30,1.2,"#A8804A")}</g>`)+rc(60,30,10,10,"#F7F7F4",'stroke="#C9CDD1"')+rc(30,30,10,10,"#F7F7F4",'stroke="#C9CDD1"')+pa("M35 40 V52 M65 40 V52","none",'stroke="#8A5A2A" stroke-width="1.6"')
+  +`<g transform="translate(250 66)">${iaCirc(0,0,14,"#8A6A44")}${iaCirc(0,0,11,"#F2EEE6")}${iaCirc(0,0,4,"#8A6A44")}</g>`+pa("M236 70 Q210 72 200 70","none",'stroke="#F2EEE6" stroke-width="2"')
+  +w2P(160,38,"#E8B73A",{skin:W2SK[4],hat:"hair",hc:"#2B1E1A",s:.95}),
+ /* solar panels: up on the roof in the sun, panels going on row by row */
+ electrics_3:()=>iaSky("#A9D4EE")+iaCirc(40,18,10,"#F6E2A8")+iaCloud(250,10,.8)+rc(0,70,IA_W,14,"#8DB86A")
+  +pa("M50 72 L110 24 H270 L300 72Z","#8A4A3A")+rc(54,70,248,14,"#D9C9AA")
+  +AVq(2,r=>AVq(5,i=>{const y=34+r*18,x=124+i*30-r*14;return pa(`M${x} ${y} h26 l-6 16 h-26Z`,"#1D3A6A")+pa(`M${x+13} ${y} l-6 16 M${x+3} ${y+8} h26`,"none",'stroke="#7FB2E5" stroke-width=".7"')}))
+  +pa("M110 24 L50 72","none",'stroke="#E6E8EA" stroke-width="3"')+AVq(4,i=>rc(24+i*16,30,2,54,"#C9CDD1"))+AVq(3,i=>rc(22,34+i*16,52,2,"#C9CDD1"))
+  +w2P(272,48,"#E8B73A",{skin:W2SK[1],hat:"hard",hc:"#F2F4F5",s:.85})+pa("M252 40 h20 l-4 10 h-20Z","#1D3A6A"),
+ /* garden lighting: festoon lights over a patio at dusk, a ladder against the wall */
+ electrics_4:()=>rc(0,0,IA_W,IA_H,"#3A3A5E")+rc(0,22,IA_W,30,"#6A4A6E",'opacity=".6"')+iaCirc(270,16,6,"#F6E7A8")+rc(0,58,IA_W,26,"#3A5A3A")+rc(90,60,140,24,"#8A8A86")+AVq(6,i=>rc(90+i*24,60,1,24,"#6A6A66"))
+  +rc(0,14,60,46,"#C9A07A")+rc(14,24,20,20,"#F6D98A")+rc(40,30,14,30,"#5A3A2A")
+  +pa("M60 22 Q150 46 240 18","none",'stroke="#2B2B2B" stroke-width=".8"')+AVq(9,i=>{const t=(i+.5)/9,u=1-t,x=u*u*60+2*t*u*150+t*t*240,y=u*u*22+2*t*u*46+t*t*18;return rc(x-.5,y,1,3,"#2B2B2B")+iaCirc(x,y+5,2.6,"#F6D98A")+iaCirc(x,y+5,6,"#F6D98A",'opacity=".2"')})
+  +rc(240,14,4,60,"#5A4A3A")+AVq(5,i=>rc(110+i*30,64,3,8,"#2B2B2B")+iaCirc(111.5+i*30,63,2.4,"#F6D98A")+iaCirc(111.5+i*30,64,7,"#F6D98A",'opacity=".18"'))
+  +`<g transform="rotate(10 280 84)">${rc(268,18,3,66,"#C9CDD1")}${rc(284,18,3,66,"#C9CDD1")}${AVq(8,i=>rc(268,24+i*7,19,2,"#C9CDD1"))}</g>`+w2P(300,58,"#E8B73A",{skin:W2SK[3],hat:"hair",hc:"#C9A060",s:.9})+w2Plant(70,56,.9)+w2Plant(80,58,.7),
+ /* an EV charger on the house wall, the car plugged in on the drive */
+ electrics_5:()=>iaSky("#CFE2EC")+iaCloud(60,10,.7)+rc(0,64,IA_W,20,"#9A9A96")+AVq(10,i=>rc(i*32,64,1,20,"#8A8A86"))
+  +rc(150,4,170,60,"#B8664A")+AVq(10,r=>rc(150,8+r*6,170,.8,"#9C5038"))+rc(250,14,40,30,"#C9DCE3",'stroke="#F2EEE6" stroke-width="3"')+rc(170,24,40,40,"#2B3A44")
+  +rc(220,26,18,26,"#F2F4F5",'rx="3"')+rc(224,30,10,6,"#1C2329")+iaCirc(229,42,2.4,"#4BBA85")+pa("M229 52 Q230 70 196 64 Q170 60 150 54","none",'stroke="#1C2329" stroke-width="2.4"')
+  +`<g transform="translate(40 34)">${pa("M0 30 V20 Q0 14 10 14 L28 2 H72 L90 14 Q108 14 108 20 V30Z","#3A8A9A")}${pa("M32 6 H52 V14 H24Z M56 6 H70 L82 14 H56Z","#9DC3D9")}${iaCirc(24,30,9,"#1B1B1B")}${iaCirc(86,30,9,"#1B1B1B")}${iaCirc(24,30,4,"#C9CDD1")}${iaCirc(86,30,4,"#C9CDD1")}${rc(104,18,4,4,"#F6E2A8")}</g>`
+  +w2P(298,60,"#E8B73A",{skin:W2SK[0],hat:"hair",hc:"#2B1E1A",s:.9})+rc(286,40,8,10,"#E9C46A",'rx="1"')
+});
+
+/* ---- Topping up the thinner career families ---- */
+const w2Shop=(x,w,c,lit)=>rc(x,20,w,46,c)+rc(x+4,34,w-8,26,lit?"#F6D98A":"#9DC3D9")+rc(x,26,w,6,"#2B2B2B",'opacity=".5"')+pa(`M${x} 32 h${w} l-4 6 h-${w-8}Z`,["#C0453A","#2F7A3E","#1D5FA8","#7A2A5A"][Math.round(x)%4]);
+Object.assign(IA,{
+ /* police: the incident room, photos and string on the board */
+ police_a1:()=>rc(0,0,IA_W,IA_H,"#D6D9DC")+rc(0,68,IA_W,16,"#8A9096")+rc(60,8,170,48,"#C9A880",'stroke="#8A6A44" stroke-width="3"')
+  +[[72,14],[104,30],[140,12],[176,34],[200,14],[88,40],[150,38]].map(([x,y],i)=>rc(x,y,18,14,i%3?"#F7F4EC":"#E6EEF4")+rc(x+5,y+3,8,7,["#8A8A8A","#C9A880","#7A9AB0"][i%3])+iaCirc(x+9,y+1,1.6,"#C0453A")).join("")
+  +pa("M81 15 L113 31 L149 13 L185 35 L209 15 M113 31 L97 41 L159 39 L185 35","none",'stroke="#C0453A" stroke-width="1"')
+  +w2P(40,54,"#F2F4F5",{skin:W2SK[1],hat:"hair",hc:"#2B1E1A"})+w2P(262,54,"#1C2A44",{skin:W2SK[3],hat:"cap"})+w2P(296,54,"#5A6A7A",{skin:W2SK[0],hat:"bun",hc:"#7A4A2A"})+rc(250,34,12,9,"#F7F4EC"),
+ /* police: on foot down the high street at night, hi-vis on */
+ police_a2:()=>rc(0,0,IA_W,IA_H,"#1E2638")+AVq(10,i=>iaCirc((i*67+9)%320,(i*11)%16+3,.9,"#fff",'opacity=".7"'))+w2Shop(0,70,"#5A4A5A",1)+w2Shop(74,60,"#4A5466",0)+w2Shop(226,94,"#5A4A44",1)+rc(138,16,84,50,"#3A3E52")+rc(146,24,20,16,"#F6D98A")+rc(184,24,20,16,"#3A4458")
+  +rc(0,66,IA_W,18,"#3A3E48")+rc(0,66,IA_W,3,"#6A6E78")+rc(214,14,3,52,"#2B2B2B")+rc(206,12,14,4,"#2B2B2B")+pa("M204 16 h18 l10 50 h-38Z","#F6D98A",'opacity=".14"')
+  +w2P(152,58,"#D9E63A",{skin:W2SK[0],hat:"cap",vis:1,s:.9})+w2P(178,58,"#D9E63A",{skin:W2SK[1],hat:"cap",vis:1,s:.9})+rc(164,38,3,5,"#2B2B2B"),
+ /* police: the dog unit, a German shepherd jumping down from the van */
+ police_a3:()=>iaSky("#CFE0EA")+iaCloud(240,12,.8)+rc(0,62,IA_W,22,"#8DB86A")+rc(0,58,IA_W,6,"#9A9A96")
+  +`<g transform="translate(30 20)">${rc(0,0,110,40,"#F2F4F5",'rx="3"')}${rc(0,18,110,6,"#1D5FA8")}${AVq(11,i=>rc(i*10,18,5,6,"#E9C46A"))}${rc(40,-4,30,4,"#1D5FA8")}${rc(70,4,36,14,"#3A3E44")}${AVq(5,i=>rc(72+i*7,4,1.4,14,"#8A9096"))}${iaCirc(20,42,7,"#1B1B1B")}${iaCirc(90,42,7,"#1B1B1B")}</g>`
+  +w2Dog(176,64,"#8A5A2A",1.1)+pa("M168 52 q4 -3 10 -1","none",'stroke="#2B2B2B" stroke-width="6" stroke-linecap="round"')+w2P(220,48,"#1C2A44",{skin:W2SK[2],hat:"cap"})+pa("M210 36 Q196 44 190 50","none",'stroke="#3A3A3A" stroke-width="1.4"')
+  +AVq(5,i=>rc(250+i*14,46,3,16,"#C9CDD1")+rc(248,50,70,2,"#C9CDD1")),
+ /* police: mounted officers by the park railings */
+ police_a4:()=>iaSky("#D6E4EA")+iaCloud(40,10,.9)+rc(0,40,IA_W,26,"#7AA85A")+AVq(6,i=>iaCirc(20+i*58,36,12,"#4E7A3A")+rc(18+i*58,40,4,14,"#5A3A22"))+AVq(40,i=>rc(i*8,46,1.6,18,"#2B2B2B"))+rc(0,48,IA_W,2,"#2B2B2B")+rc(0,64,IA_W,20,"#9A9A96")
+  +[[130,"#3A2418"],[210,"#8A6A4A"]].map(([x,c])=>w2Horse(x,80,c,1.1)+w2P(x-2,48,"#D9E63A",{skin:W2SK[(x/10)%5],hat:"cap",vis:1,s:.85})+pa(`M${x-14} 60 q8 6 22 0 v4 q-12 4 -22 0Z`,"#1C2A44")).join(""),
+ /* fire: training-tower drills, hoses running across the yard */
+ fire_a1:()=>iaSky("#D6E4EA")+rc(0,64,IA_W,20,"#9A9A96")+rc(40,4,60,60,"#B5653A")+AVq(4,r=>AVq(2,i=>rc(50+i*28,10+r*14,14,10,"#3A3A3A")))
+  +`<g transform="rotate(14 120 64)">${rc(96,8,3,58,"#C9CDD1")}${rc(110,8,3,58,"#C9CDD1")}${AVq(9,i=>rc(96,12+i*6.4,17,1.8,"#C9CDD1"))}</g>`+w2P(112,40,"#2B2B2B",{hat:"fire",s:.8,skin:W2SK[1]})
+  +pa("M200 54 Q150 4 92 18","none",'stroke="#BFE0F2" stroke-width="3" opacity=".9"')+AVq(6,i=>iaCirc(92+i*3,18+(i%2)*4,1.6,"#BFE0F2"))+w2P(212,52,"#2B2B2B",{hat:"fire",skin:W2SK[0],vis:1})+w2P(240,52,"#2B2B2B",{hat:"fire",skin:W2SK[3],vis:1})+pa("M206 46 L198 54","none",'stroke="#8A9096" stroke-width="3"')
+  +pa("M196 56 Q240 80 320 74","none",'stroke="#C0453A" stroke-width="3"')+pa("M0 76 Q100 70 150 78 T260 80","none",'stroke="#E9C46A" stroke-width="2"'),
+ /* fire: a cat up a tree and a ladder going up to it */
+ fire_a2:()=>iaSky("#BFDDEE")+iaCloud(260,12,.9)+rc(0,64,IA_W,20,"#8DB86A")+rc(0,70,IA_W,14,"#9A9A96")
+  +rc(120,20,12,50,"#6A4A30")+pa("M126 30 L170 16 L172 20 L130 36Z","#6A4A30")+iaCirc(110,16,22,"#4E8A4A")+iaCirc(150,10,20,"#5E9E58")+iaCirc(180,20,16,"#4E8A4A")+iaCirc(96,30,14,"#5E9E58")+w2Cat(166,16,"#E07A2E",.8)
+  +`<g transform="rotate(28 230 80)">${rc(222,6,3,76,"#C9CDD1")}${rc(236,6,3,76,"#C9CDD1")}${AVq(11,i=>rc(222,10+i*7,17,1.8,"#C9CDD1"))}</g>`+w2P(206,46,"#2B2B2B",{hat:"fire",skin:W2SK[2],vis:1,s:.85})
+  +`<g transform="translate(240 56)">${rc(0,0,80,22,"#C0453A",'rx="2"')}${rc(4,4,20,8,"#9DC3D9")}${rc(0,14,80,2,"#F2F4F5")}${iaCirc(14,24,6,"#1B1B1B")}${iaCirc(64,24,6,"#1B1B1B")}${rc(30,-4,8,4,"#1D5FA8")}</g>`+w2P(40,50,"#7A2A5A",{skin:W2SK[3],hat:"hair",hc:"#C9A060",s:.9})+w2P(64,52,"#E9C46A",{skin:W2SK[4],s:.7}),
+ /* fire: a crash on the road, cutting gear out, blue lights going */
+ fire_a3:()=>rc(0,0,IA_W,IA_H,"#2A3040")+iaCirc(40,14,30,"#1D5FA8",'opacity=".25"')+iaCirc(280,18,26,"#1D5FA8",'opacity=".25"')+rc(0,50,IA_W,34,"#4A4E58")+AVq(6,i=>rc(10+i*56,66,30,3,"#F2EEE6"))
+  +`<g transform="translate(100 34) rotate(-4)">${pa("M0 22 V14 Q0 8 8 8 L22 0 H52 L64 8 Q76 8 76 14 V22Z","#3A6AB0")}${pa("M24 3 H38 V9 H18Z","#9DC3D9")}${rc(40,3,10,6,"#2A3040")}${iaCirc(16,22,6,"#1B1B1B")}${iaCirc(62,22,6,"#1B1B1B")}${pa("M70 8 L80 4 L78 16Z","#8A9096")}</g>`
+  +rc(184,14,4,40,"#8A9096",'transform="rotate(12 186 54)"')+w2P(150,50,"#2B2B2B",{hat:"fire",skin:W2SK[0],vis:1})+rc(160,34,14,6,"#E07A2E")+w2P(80,50,"#2B2B2B",{hat:"fire",skin:W2SK[4],vis:1})
+  +AVq(4,i=>pa(`M${220+i*20} 66 l4 -12 l4 12Z`,"#E07A2E")+rc(221+i*20,60,6,2,"#F2F4F5"))
+  +`<g transform="translate(10 30)">${rc(0,0,50,26,"#C0453A",'rx="2"')}${rc(8,-4,14,4,"#1D5FA8")}${iaCirc(14,26,5,"#1B1B1B")}${iaCirc(40,26,5,"#1B1B1B")}</g>`,
+ /* fire: the kit room, helmets and tunics on pegs, boots ready */
+ fire_a4:()=>rc(0,0,IA_W,IA_H,"#D9D4CC")+rc(0,68,IA_W,16,"#9A3A30")+rc(0,8,IA_W,3,"#8A9096")
+  +AVq(6,i=>{const x=20+i*46;return rc(x,10,40,58,"#C9C2B2")+rc(x+19,12,2,4,"#555")+pa(`M${x+6} 18 h28 l3 34 h-34Z`,"#2B2B2B")+rc(x+6,40,28,2.4,"#E9E63A")+rc(x+6,46,28,2.4,"#D7DDE0")+pa(`M${x+8} 14 A12 10 0 0 1 ${x+32} 14 L${x+36} 17 H${x+4}Z`,i%3===2?"#F2F4F5":"#F2D24A")+rc(x+8,58,10,10,"#1B1B1B")+rc(x+22,58,10,10,"#1B1B1B")})
+  +rc(300,0,4,84,"#C9CDD1"),
+ /* stage: the DJ booth, decks and a wall of light over the crowd */
+ stage_a1:()=>rc(0,0,IA_W,IA_H,"#140E24")+AVq(12,i=>AVq(4,r=>rc(40+i*20,4+r*9,18,7,["#7A2A9A","#2A6AC0","#C02A7A","#2AA0A0"][(i+r)%4],'opacity=".85"')))
+  +pa("M60 4 L20 84 H60Z M260 4 L300 84 H260Z","#E9C46A",'opacity=".08"')+w2P(160,48,"#2B2B2B",{skin:W2SK[1],hat:"hair",hc:"#2B1E1A"})+pa("M152 20 q8 -8 16 0","none",'stroke="#555" stroke-width="2"')
+  +rc(100,44,120,22,"#2B2B2B")+rc(104,40,112,5,"#3A3A3A")+iaCirc(122,42,8,"#1B1B1B",'stroke="#555"')+iaCirc(198,42,8,"#1B1B1B",'stroke="#555"')+rc(150,38,20,6,"#4A4A4A")+AVq(6,i=>rc(152+i*3,39,1.6,3,["#4BBA85","#E9C46A","#EA6B5D"][i%3]))
+  +AVq(14,i=>iaCirc(10+i*23,80,8,"#0A0712"))+AVq(5,i=>rc(30+i*62,58,4,16,"#0A0712")+iaCirc(32+i*62,57,3,"#0A0712")),
+ /* stage: the recording studio, desk in front and the singer behind the glass */
+ stage_a2:()=>rc(0,0,IA_W,IA_H,"#3A3036")+rc(0,0,IA_W,8,"#2A2226")+rc(60,8,200,36,"#5A6A7A",'stroke="#2A2226" stroke-width="4"')+rc(64,12,192,28,"#7A8A9A",'opacity=".7"')
+  +w2P(170,46,"#C0453A",{skin:W2SK[4],hat:"hair",hc:"#2B1E1A",s:.8})+rc(178,14,2,22,"#555")+iaCirc(179,14,3.4,"#2B2B2B")+pa("M160 18 a10 10 0 0 1 20 0","none",'stroke="#2B2B2B" stroke-width="2"')+iaCirc(120,26,6,"#9AA8B2")
+  +rc(10,20,30,40,"#1B1B1B")+iaCirc(25,32,6,"#3A3A3A")+iaCirc(25,48,9,"#3A3A3A")+rc(280,20,30,40,"#1B1B1B")+iaCirc(295,32,6,"#3A3A3A")+iaCirc(295,48,9,"#3A3A3A")
+  +pa("M30 84 L50 54 H270 L290 84Z","#2B2B2B")+AVq(30,i=>rc(58+i*7,58,2,14,"#555")+rc(57+i*7,60+(i*7)%10,4,2.4,["#F2F4F5","#EA6B5D","#E9C46A"][i%3]))+w2Sit(150,70,"#3A6A8A",W2SK[0],1,1),
+ /* stage: the rehearsal room, foam on the walls, drums, amps and a sofa */
+ stage_a3:()=>rc(0,0,IA_W,IA_H,"#4A3A44")+AVq(20,i=>AVq(6,r=>rc(i*16+(r%2)*8,r*12,7,5,"#5A4A54")))+rc(0,64,IA_W,20,"#6A4A3A")+rc(40,58,240,10,"#8A3A3A",'opacity=".4"')
+  +`<g transform="translate(140 40)">${`<ellipse cx="20" cy="18" rx="16" ry="14" fill="#C0453A"/>`}${`<ellipse cx="20" cy="18" rx="11" ry="10" fill="#F2EEE6"/>`}${rc(-14,6,14,10,"#C0453A")}${rc(42,6,14,10,"#C0453A")}${`<ellipse cx="-6" cy="-6" rx="10" ry="2" fill="#E9C46A"/>`}${rc(-7,-6,2,26,"#8A9096")}${`<ellipse cx="50" cy="-10" rx="12" ry="2" fill="#E9C46A"/>`}${rc(49,-10,2,30,"#8A9096")}</g>`
+  +rc(40,36,40,30,"#1B1B1B")+rc(44,40,32,18,"#3A3A3A")+rc(44,38,32,2,"#C9A060")+rc(250,30,30,36,"#1B1B1B")+rc(254,34,22,26,"#3A3A3A")
+  +`<g transform="translate(100 30) rotate(-20)">${pa("M0 0 q10 -6 14 4 q6 -2 6 6 q-2 10 -12 8 q-10 4 -12 -6Z","#E07A2E")}${rc(14,0,30,3,"#6A4A30")}${rc(42,-2,6,7,"#3A3A3A")}</g>`+w2P(210,50,"#2F5A8A",{skin:W2SK[3],hat:"hair",hc:"#7A4A2A"})+rc(200,30,2,40,"#8A9096")+iaCirc(201,30,3,"#2B2B2B"),
+ /* stage: the tour bus on the motorway at night, bunk lights on */
+ stage_a4:()=>rc(0,0,IA_W,IA_H,"#141C30")+AVq(16,i=>iaCirc((i*53+11)%320,(i*13)%34+2,.9,"#fff",'opacity=".8"'))+iaCirc(270,16,8,"#F6E7A8")+pa("M0 50 Q60 40 120 48 T240 44 T320 46 V60 H0Z","#1E2A3E")
+  +rc(0,58,IA_W,26,"#2A2E36")+AVq(8,i=>rc(i*44,70,22,2,"#E9E2C8"))+AVq(10,i=>rc(i*36,58,2,6,"#8A9096"))
+  +`<g transform="translate(70 28)">${rc(0,0,170,36,"#2B2B3A",'rx="4"')}${pa("M170 4 Q182 6 182 18 V36 H170Z","#2B2B3A")}${pa("M172 8 Q180 10 180 18 H172Z","#5A7A9A")}${AVq(8,i=>rc(8+i*20,8,14,8,i%3===1?"#3A3A4A":"#F6D98A"))}${rc(0,22,182,3,"#7A2A9A")}${iaCirc(30,36,7,"#111")}${iaCirc(150,36,7,"#111")}${rc(180,26,4,4,"#F6E2A8")}</g>`
+  +pa("M254 56 L320 46 V66Z","#F6E2A8",'opacity=".15"'),
+ /* football: training ground, cones, mannequins and a coach's whistle */
+ stadium_a1:()=>iaSky("#CFE2EC")+iaCloud(60,10,.8)+rc(0,34,IA_W,50,"#5E9E4A")+AVq(8,i=>rc(i*40,34,20,50,"#68A854"))+rc(0,30,IA_W,4,"#3A6A3A")
+  +AVq(7,i=>pa(`M${30+i*30} 62 l4 -8 l4 8Z`,"#E07A2E"))+AVq(4,i=>w2P(220+i*14,40,"#3A3A3A",{skin:"#2B2B2B",s:.7}))
+  +w2P(70,46,"#C0453A",{skin:W2SK[1],s:.85})+iaCirc(84,62,3,"#F2F4F5")+w2P(150,48,"#C0453A",{skin:W2SK[3],s:.85})+iaCirc(166,64,3,"#F2F4F5")+w2P(290,50,"#1C2A44",{skin:W2SK[0],hat:"hair",hc:"#8A8A8A"}),
+ /* football: the dressing room, shirts on the pegs, boots under the bench */
+ stadium_a2:()=>rc(0,0,IA_W,IA_H,"#DDE2E6")+rc(0,0,IA_W,10,"#1D5FA8")+rc(0,68,IA_W,16,"#8A9096")
+  +AVq(7,i=>{const x=16+i*44;return rc(x+16,14,2,4,"#555")+pa(`M${x+4} 18 h26 l6 8 l-5 4 l-3 -3 v20 h-22 v-20 l-3 3 l-5 -4Z`,"#C0453A")+rc(x+10,26,14,2,"#F2F4F5")+rc(x+6,62,8,5,"#1B1B1B")+rc(x+18,62,8,5,"#1B1B1B")})
+  +rc(0,52,IA_W,6,"#B88A5A")+rc(10,58,4,10,"#8A6A44")+rc(306,58,4,10,"#8A6A44")+iaCirc(160,74,5,"#F2F4F5")+pa("M156 72 l4 2 l4 -2","none",'stroke="#2B2B2B" stroke-width=".8"'),
+ /* football: a penalty from behind the net, keeper diving */
+ stadium_a3:()=>rc(0,0,IA_W,IA_H,"#2A3A4A")+AVq(24,i=>AVq(3,r=>iaCirc(8+i*13.5,6+r*8,3.4,["#C0453A","#F2F4F5","#1D5FA8","#E9C46A"][(i+r)%4])))+rc(0,28,IA_W,56,"#5E9E4A")+AVq(5,i=>rc(i*70,28,35,56,"#68A854"))
+  +rc(40,20,240,4,"#F2F4F5")+rc(40,20,4,64,"#F2F4F5")+rc(276,20,4,64,"#F2F4F5")+AVq(24,i=>rc(44+i*10,24,.8,60,"#F2F4F5",'opacity=".5"'))+AVq(6,i=>rc(44,30+i*10,232,.8,"#F2F4F5",'opacity=".5"'))
+  +`<g transform="translate(200 50) rotate(-60)">${w2P(0,0,"#E9C46A",{skin:W2SK[2]})}</g>`+iaCirc(236,36,4.4,"#F2F4F5")+w2P(110,60,"#1D5FA8",{skin:W2SK[4],s:.6}),
+ /* architect: site visit, a steel frame going up and the plans out */
+ building_a1:()=>iaSky("#D6E4EA")+iaCloud(260,12,.8)+rc(0,70,IA_W,14,"#B8A888")
+  +AVq(5,i=>rc(100+i*36,14,4,56,"#5A6A7A"))+AVq(4,r=>rc(100,14+r*16,148,3,"#5A6A7A"))+AVq(4,i=>pa(`M${104+i*36} 30 L${136+i*36} 46`,"none",'stroke="#5A6A7A" stroke-width="1.6"'))+rc(100,62,148,8,"#9A9A96")
+  +w2P(46,50,"#2F5A8A",{skin:W2SK[1],hat:"hard",hc:"#F2F4F5"})+w2P(76,50,"#E8B73A",{skin:W2SK[3],hat:"hard"})+rc(48,32,30,14,"#9DC3E6")+AVq(4,i=>rc(52+i*6,36,4,6,"none",'stroke="#F2F4F5" stroke-width=".6"'))
+  +rc(270,40,40,30,"#C9CED1")+rc(276,46,12,8,"#9DC3D9"),
+ /* architect: a footbridge over the river, the design built */
+ building_a2:()=>iaSky("#E8D9C0")+iaCirc(250,24,12,"#F6E2A8")+pa("M0 40 L30 34 L60 40 V60 H0Z M260 38 L290 30 L320 36 V60 H260Z","#B8A898")+rc(0,56,IA_W,28,"#5A8AA8")+AVq(6,i=>pa(`M${i*56+10} 70 q10 -3 20 0`,"none",'stroke="#9DC3D9" stroke-width="1.2"'))
+  +pa("M30 52 Q160 30 290 52","none",'stroke="#F2F4F5" stroke-width="4"')+pa("M60 50 Q160 -6 260 50","none",'stroke="#C9CDD1" stroke-width="3"')+AVq(11,i=>{const x=80+i*16,t=(x-60)/200,s=(x-30)/260,y=(1-t)*(1-t)*50-12*t*(1-t)+t*t*50,d=(1-s)*(1-s)*52+60*s*(1-s)+s*s*52;return rc(x-.5,y,1,Math.max(0,d-y),"#C9CDD1")})
+  +w2P(40,40,"#7A2A5A",{skin:W2SK[2],s:.6})+w2P(276,38,"#1D5FA8",{skin:W2SK[0],s:.6}),
+ /* architect: the drawing board late at night, lamp on, city outside */
+ building_a3:()=>rc(0,0,IA_W,IA_H,"#2A2E3E")+rc(200,6,110,52,"#141A2A")+AVq(6,i=>rc(206+i*17,20+(i%3)*8,12,38-(i%3)*8,"#2A3448")+AVq(3,j=>rc(209+i*17,26+(i%3)*8+j*8,3,3,"#F6D98A")))+rc(200,6,110,52,"none",'stroke="#4A4E5E" stroke-width="3"')+rc(0,66,IA_W,18,"#3A3E4E")
+  +`<g transform="translate(60 26) rotate(-12)">${rc(0,0,110,40,"#E6EEF4")}${rc(6,6,98,28,"#2F5A8A")}${pa("M14 28 V16 L30 10 L46 16 V28 M54 28 V12 H90 V28 M14 28 H96","none",'stroke="#E6EEF4" stroke-width="1"')}</g>`+rc(80,62,4,22,"#5A5E6A")+rc(150,58,4,26,"#5A5E6A")
+  +pa("M176 14 L190 4 L194 8 L182 20","none",'stroke="#8A9096" stroke-width="2"')+pa("M170 12 h14 l-3 8 h-8Z","#8A9096")+pa("M168 20 h18 l20 40 h-58Z","#F6D98A",'opacity=".15"')+rc(20,52,30,4,"#6A4E30")+rc(24,56,3,28,"#4A3A2A")+rc(43,56,3,28,"#4A3A2A")+rc(26,44,8,8,"#F2F4F5",'rx="1"')+rc(36,47,10,5,"#C9A060"),
+ /* soldier: the parade ground, a row standing to attention */
+ war_a1:()=>iaSky("#D6E4EA")+iaCloud(40,10,.8)+rc(0,10,IA_W,40,"#B8A888")+AVq(10,i=>rc(10+i*31,18,16,14,"#5A6A7A"))+rc(0,8,IA_W,4,"#8A7A5E")+rc(0,50,IA_W,34,"#9A9A96")
+  +rc(290,2,2,48,"#555")+rc(292,4,22,12,"#7A1F2A")+rc(292,8,22,4,"#1C2A44")+iaCirc(303,10,2.4,"#E9C46A")
+  +AVq(9,i=>w2P(30+i*28,56,"#3A4A2A",{skin:W2SK[i%5],hat:"beret",s:.85})),
+ /* soldier: the barrack room, bunks made and boots lined up */
+ war_a2:()=>rc(0,0,IA_W,IA_H,"#DCD8C8")+rc(0,66,IA_W,18,"#8A8470")+AVq(4,i=>{const x=16+i*78;return rc(x,26,60,4,"#5A6A4A")+rc(x,24,60,3,"#E6E2D4")+rc(x,52,60,4,"#5A6A4A")+rc(x,50,60,3,"#E6E2D4")+rc(x,18,2,50,"#4A4A4A")+rc(x+58,18,2,50,"#4A4A4A")+rc(x+4,20,14,5,"#F2F4F5",'rx="2"')+rc(x+4,46,14,5,"#F2F4F5",'rx="2"')+rc(x+20,58,8,8,"#1B1B1B")+rc(x+32,58,8,8,"#1B1B1B")})
+  +rc(0,6,IA_W,2,"#8A8470"),
+ /* soldier: the assault course, over the wall and under the net */
+ war_a3:()=>iaSky("#C9D6D0")+rc(0,56,IA_W,28,"#7A6A4A")+AVq(10,i=>`<ellipse cx="${i*34+10}" cy="${66+(i%2)*6}" rx="12" ry="3" fill="#5A4A30"/>`)
+  +rc(60,24,50,36,"#8A6A44")+AVq(5,i=>rc(60,24+i*7,50,1,"#6A4E30"))+w2P(84,30,"#5A6A3A",{skin:W2SK[1],s:.8})
+  +pa("M150 60 L180 46 L280 46 L300 60","none",'stroke="#4A4A3A" stroke-width="1.2"')+AVq(12,i=>pa(`M${180+i*9} 46 L${176+i*9} 60`,"none",'stroke="#4A4A3A" stroke-width=".8"'))+`<g transform="translate(230 70) rotate(-90) scale(.8)">${w2P(0,0,"#5A6A3A",{skin:W2SK[3]})}</g>`
+  +w2P(30,54,"#5A6A3A",{skin:W2SK[4],s:.85})+w2P(300,54,"#3A4A2A",{skin:W2SK[0],hat:"beret",s:.85}),
+ /* spy: the park bench swap, a newspaper left behind */
+ spy_a1:()=>iaSky("#D9DEE2")+iaCloud(240,12,.8,"#fff",".7")+rc(0,52,IA_W,32,"#8DA87A")+rc(0,62,IA_W,10,"#C9B48A")+AVq(5,i=>iaCirc(30+i*70,40,14,"#5E7A50")+rc(28+i*70,44,4,10,"#5A3A22"))
+  +rc(110,50,100,4,"#6A4A30")+rc(110,42,100,3,"#6A4A30")+rc(116,54,4,10,"#2B2B2B")+rc(200,54,4,10,"#2B2B2B")
+  +w2Sit(128,52,"#4A4A44",W2SK[0],1,1)+w2Sit(196,52,"#2B2B2B",W2SK[3],-1,1)+rc(156,46,16,3,"#F2EEE6")+rc(156,43,16,3,"#E6E2D4")+rc(118,22,16,4,"#2B2B2B")+rc(121,18,10,5,"#2B2B2B")
+  +AVq(4,i=>`<g transform="translate(${60+i*16+(i>1?140:0)} 70)"><ellipse cx="0" cy="0" rx="4" ry="3" fill="#8A8A96"/>${iaCirc(3,-3,2,"#6A6A76")}</g>`),
+ /* spy: inside the surveillance van, screens and headphones */
+ spy_a2:()=>rc(0,0,IA_W,IA_H,"#1C2028")+rc(40,10,220,40,"#2A2E38")+AVq(4,i=>rc(48+i*52,14,46,30,"#0E1218",'stroke="#4A4E58"')+rc(52+i*52,18,38,22,["#2F4A3A","#3A3A4A","#2F3A4A","#4A3A2F"][i])+w2P(70+i*52,40,"#0E1218",{s:.4,skin:"#0E1218"}))
+  +rc(0,58,IA_W,26,"#2A2E38")+rc(30,54,240,5,"#4A4E58")+AVq(10,i=>rc(40+i*20,55,10,2,["#4BBA85","#E9C46A","#EA6B5D"][i%3]))
+  +w2Sit(140,70,"#3A3A44",W2SK[2],1,1)+pa("M133 44 a7 7 0 0 1 14 0","none",'stroke="#111" stroke-width="2.4"')+rc(131,42,4,6,"#111")+rc(145,42,4,6,"#111")+rc(280,10,30,60,"#2A2E38",'stroke="#3A3E48"')+rc(286,20,8,8,"#C0453A",'opacity=".7"'),
+ /* spy: a casino gala, chandelier, the roulette table and a dinner jacket */
+ spy_a3:()=>rc(0,0,IA_W,IA_H,"#3A1E24")+AVq(8,i=>rc(i*40+18,0,4,84,"#4A2A30"))+pa("M140 2 h40 l-6 12 h-28Z","#E9C46A")+AVq(7,i=>iaCirc(142+i*6,16+(i%2)*3,2,"#F6E7A8"))+rc(159,0,2,4,"#E9C46A")
+  +`<ellipse cx="160" cy="62" rx="110" ry="16" fill="#1F6A3A"/>`+`<ellipse cx="160" cy="62" rx="110" ry="16" fill="none" stroke="#6A3A20" stroke-width="4"/>`+`<ellipse cx="200" cy="60" rx="18" ry="6" fill="#6A3A20"/>`+`<ellipse cx="200" cy="59" rx="12" ry="4" fill="#B3262E"/>`+`<ellipse cx="200" cy="59" rx="6" ry="2" fill="#1B1B1B"/>`
+  +AVq(4,i=>AVq(3,j=>`<ellipse cx="${90+i*16}" cy="${60-j*2}" rx="5" ry="1.6" fill="${["#C0453A","#1D5FA8","#F2F4F5","#E9C46A"][i]}"/>`))
+  +w2P(70,46,"#141414",{skin:W2SK[0],hat:"hair",hc:"#2B1E1A"})+pa("M67 26 l3 3 l3 -3Z","#F2F4F5")+pa("M68 26 h4 l-2 2Z","#141414")+w2P(250,46,"#B3262E",{skin:W2SK[1],hat:"bun",hc:"#2B1E1A"})+w2P(156,40,"#141414",{skin:W2SK[3],s:.8}),
+ /* camera: the ring-light bedroom studio */
+ tv_a1:()=>rc(0,0,IA_W,IA_H,"#E8DCEC")+rc(0,64,IA_W,20,"#C9B8C8")+AVq(12,i=>iaCirc(20+i*24,12+Math.abs(Math.sin(i))*6,2.2,["#F6D98A","#F2B8C6"][i%2]))+pa("M8 12 Q160 26 312 12","none",'stroke="#8A7A8A" stroke-width=".8"')
+  +rc(10,46,90,18,"#F2F4F5",'rx="3"')+rc(10,40,30,10,"#F2B8C6",'rx="4"')+rc(14,52,86,12,"#B8A0D0")+rc(240,20,60,3,"#F2F4F5")+AVq(4,i=>rc(244+i*14,12,10,8,["#E9C46A","#7FB2E5","#4BBA85","#E86A7A"][i]))+w2Plant(290,56,.9)
+  +w2P(176,46,"#E86A7A",{skin:W2SK[2],hat:"hair",hc:"#2B1E1A"})+iaCirc(118,30,16,"none",'stroke="#F7F4EC" stroke-width="5"')+iaCirc(118,30,16,"none",'stroke="#FFFBE8" stroke-width="2"')+rc(116,46,3,38,"#555")+rc(113,24,9,14,"#1C2329",'rx="1.5"')+iaCirc(117.5,27,1.2,"#3A4A60"),
+ /* camera: the red carpet, photographers' flashes going off */
+ tv_a2:()=>rc(0,0,IA_W,IA_H,"#1E1E2A")+rc(80,0,160,60,"#2A2A3A")+AVq(5,i=>AVq(4,r=>iaStar(96+i*32,10+r*14,.5,"#4A4A5E")))+pa("M110 84 L140 52 H180 L210 84Z","#B3262E")
+  +rc(70,50,4,34,"#C9A060")+rc(246,50,4,34,"#C9A060")+pa("M74 56 Q160 66 246 56","none",'stroke="#7A1F2A" stroke-width="3"')
+  +w2P(148,44,"#141414",{skin:W2SK[1],hat:"hair",hc:"#2B1E1A",s:.9})+`<g transform="translate(172 44) scale(.9)">${iaCirc(0,-30,7,W2SK[3])}${pa("M-7 -31 Q-8 -40 0 -40 Q8 -40 7 -31 L9 -22 Q4 -30 -7 -31Z","#C9A060")}${pa("M-8 -21 L8 -21 L14 20 H-14Z","#E9C46A")}</g>`
+  +AVq(4,i=>{const x=i<2?14+i*30:252+(i-2)*30;return w2P(x+10,62,"#2B2B2B",{skin:W2SK[i],s:.85})+rc(x+2,30,12,8,"#1B1B1B")+rc(x+5,26,6,4,"#1B1B1B")+(i%2?iaCirc(x+8,26,7,"#FFFFFF",'opacity=".85"')+iaStar(x+8,26,.9,"#FFFFFF"):"")})
+});
+
+/* ---- Registering: outdoor scenes take the weather and time-of-day layers; trade and vet families join that career's pool ---- */
+for(const k of ["space_a6","vetwork","vetwork_3","electrics_3","electrics_5","police_a3","police_a4","fire_a1","fire_a2","stadium_a1","building_a1","building_a2","war_a1","war_a3","spy_a1","kitchen_a4"])if(IA[k])AV_OUT.add(k);
+const AV2_POOLS={vet:["vetwork"],plumb:["plumbing"],elec:["electrics"]};
+{const _cp=avCareerPool;avCareerPool=function(){const p=_cp.apply(this,arguments);try{for(const f of AV2_POOLS[S&&S.path]||[])for(const x of avFam(f))if(!p.includes(x))p.push(x)}catch(e){}return p}}
+
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
