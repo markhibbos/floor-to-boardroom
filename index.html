@@ -47678,6 +47678,19 @@ const EN_BONUS_CAP=12;
 /* ILLNESS energy */
 {const _ea=enAllowance;enAllowance=function(E,o){const r=_ea.apply(this,arguments);try{const cs=(S.conds||[]);if(cs.length){const v=-cs.reduce((t,c)=>t+(c.ctl?1:3),0);r.parts.push(["Long-term conditions",v]);r.v+=v}}catch(e){}return r}}
 
+/* YOUNG anti-ageing */
+/* ============ Anti-ageing when you're young: it does nothing, and the game says so ============ */
+{const base={botox:LIFE_EN.botox,bio:LIFE_EN.bio,longevity:LIFE_EN.longevity};
+ const young={botox:["Your face hasn't had the memo yet.","There's nothing to smooth. Yet.","You look exactly as tired as a person your age should."],
+  bio:["The cold plunges are real. The benefit isn't, yet.","You're optimising a body that was already fine.","Your sleep score is great. It was great before, too."],
+  longevity:["The doctor checks you over twice and finds nothing to fix.","You're paying a lot to hear 'you're fine'.","The scans confirm it: you're young."]};
+ for(const k of Object.keys(base))Object.defineProperty(LIFE_EN,k,{configurable:true,enumerable:true,get(){try{const a=Math.floor(age());if(a<30){const lines=young[k];return "At "+a+": nothing to give back yet. "+lines[a%lines.length]}if(a<33)return "Barely anything yet: the energy you lose with age only really starts in your 30s"}catch(e){}return base[k]}})}
+const YOUNG_WARN={botox:["Botox at {a}? The science says 'mate, no'. Your bank manager agrees.","Anti-wrinkle injections at {a}. Bold. Pointless, but bold.","Your skin at {a} is the thing they're trying to get back to."],
+ bio:["Biohacking at {a}: you are now 2% more optimised and 100% more annoying at parties.","Cold plunges at {a}. Your body didn't ask for this.","Supplements at {a}. Expensive wee, mostly."],
+ longevity:["A longevity clinic at {a}? They're delighted to take your money.","You're {a}. Longevity is, for now, happening by itself.","The clinic sends a fruit basket. It's the most useful thing you'll get from them for a decade."]};
+document.addEventListener("click",e=>{try{const b=e.target&&e.target.closest&&e.target.closest('[data-act="life"]');if(!b)return;const id=b.dataset.id;if(!YOUNG_WARN[id])return;
+ setTimeout(()=>{try{const a=Math.floor(age());if(S&&S.life&&S.life[id]&&a<30&&typeof toastMsg==="function")toastMsg(pick(YOUNG_WARN[id]).replace(/\{a\}/g,a))}catch(x){}},50)}catch(x){}},true);
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
