@@ -772,6 +772,17 @@ html,body{overflow-x:clip}
 .cr-stats .label{display:block;font-size:10.5px}.cr-stats b{font-size:15px}
 .cr-ladder{margin:4px 0 0;padding-left:20px;font-size:13.5px;line-height:1.5;color:var(--muted)}.cr-ladder li.got{color:inherit;font-weight:600}.cr-ladder .cr-tick{color:#2E8B57;margin-right:5px}.cr-ladder .cr-tag{display:inline-block;margin-left:8px;padding:0 7px;border-radius:9px;font-size:11px;font-weight:600;background:color-mix(in srgb,#2E8B57 18%,transparent);color:#1F6B42}.cr-ladder .cr-tag.now{background:color-mix(in srgb,#B8862B 22%,transparent);color:#8A5E14}
 .wk-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px;display:flex;align-items:center;gap:8px}.wk-head::after{content:"";flex:1;height:1px;background:var(--line)}
+.move.mv-blocked{opacity:.62}.move.mv-blocked .mv-n{color:var(--muted)}.mv-why{display:block;margin-top:6px;font-size:12.5px;font-weight:600;color:var(--down,#B03A2E)}.mv-none{margin:0 0 10px;padding:8px 10px;border-radius:10px;font-size:13px;background:color-mix(in srgb,var(--down,#B03A2E) 10%,transparent);color:var(--down,#B03A2E)}
+/* BIZNAME: name your business */
+.bn-tap{cursor:pointer}
+#bankName.bn-tap{text-decoration:underline dotted;text-underline-offset:3px}
+.bn-ren{background:none;border:0;padding:0 0 0 4px;margin:0;font:600 11px/1 system-ui,sans-serif;letter-spacing:.02em;text-transform:none;color:var(--accent);text-decoration:underline;cursor:pointer;vertical-align:middle}
+.bn-err{margin-top:6px;padding:8px 10px;border-radius:8px;font-size:13.5px;background:rgba(200,60,50,.12);color:var(--warn,#B3262E)}
+.bn-rules{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.35}
+.bn-now{font-size:13.5px}
+#bnIn{flex:1;min-width:0}
+#bnIn[aria-invalid="true"]{border-color:var(--warn,#B3262E)}
+.move{position:relative}.move .mv-n{padding-right:34px}.mv-pic{position:absolute;top:8px;right:8px;width:28px;height:28px;padding:3px;border-radius:8px;background:color-mix(in srgb,var(--line) 45%,transparent);pointer-events:none}.pill.mv-new{background:color-mix(in srgb,var(--up,#2E8A5E) 16%,transparent);color:var(--up,#2E8A5E);font-size:10.5px;padding:1px 6px;vertical-align:1px}.pill.mv-one{background:color-mix(in srgb,#D7A744 22%,transparent);color:#9A6B12;font-size:10.5px;padding:1px 6px;vertical-align:1px}.mv-less{display:block;margin-top:4px;font-size:12px;color:#9A6B12}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.mv-one,:root:not([data-theme="light"]) .mv-less{color:#E9C46A}}:root[data-theme="dark"] .pill.mv-one,:root[data-theme="dark"] .mv-less{color:#E9C46A}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -1513,7 +1524,7 @@ function houseArt(art,v=0,cls="art",o){
 /* Each employer gets its own backdrop, colours and sign; seniority adds stars, a flag and a gold sign */
 const empHash=n=>{let h=7;for(const c of String(n||""))h=(h*31+c.charCodeAt(0))>>>0;return h};
 const EMP_COLS=["#1D5FA8","#B3262E","#2F7A3E","#7A1F2B","#B8862B","#5B3E8E","#1F7A7A","#C8582A","#2B3A44","#8E3E6E"];
-const empInitials=n=>String(n||"").split(/[^A-Za-z&]+/).filter(w=>w&&!/^(the|of|and|&|ltd|llp|plc)$/i.test(w)).map(w=>w[0].toUpperCase()).join("").slice(0,3)||"HQ";
+const empInitials=n=>String(n||"").replace(/['’]/g,"").split(/[^A-Za-z&]+/).filter(w=>w&&!/^(the|of|and|&|ltd|llp|plc)$/i.test(w)).map(w=>w[0].toUpperCase()).join("").slice(0,3)||"HQ";
 function empBack(){
  const h=empHash(S.bank),style=h%4,tint=EMP_COLS[(h>>>3)%EMP_COLS.length];let b="";
  if(style===0)for(let i=0;i<8;i++){const ht=18+((h>>>(i%8))+i*29)%46;b+=rc(i*42+(h%17),96-ht,30,ht,"#9AA8B3",'opacity=".35"')}
@@ -5461,7 +5472,7 @@ ACTS.cap=()=>{S.caps=(S.caps||0)+2};
 
 /* ============ People, possessions and free time: side stories that weave through a life ============ */
 const SURNAMES=["Okafor","Hughes","Patel","Reid","Kowalski","Byrne","Shah","Morgan","Lindqvist","Adeyemi","Fraser","Costa","Doyle","Nakamura","Price","Quinn"];
-const fullName=()=>`${pick([...NAMES,...FRIEND_NAMES])} ${pick(SURNAMES)}`;
+const fullName=()=>{let n;for(let i=0;i<15;i++){n=`${pick([...NAMES,...FRIEND_NAMES])} ${pick(SURNAMES)}`;if(!rgNameTaken(n))break}return n};
 const ROLE_N={client:"From work",openlover:"Open relationship",friend:"Friend",acq:"Acquaintance",contact:"Work contact",exboss:"Former boss",exrival:"Old rival",lover:"Secret affair",exlover:"Former affair",mentor:"Mentor",neighbour:"Neighbour"};
 function addPerson(n,role,how,bond){S.people=S.people||[];let p=S.people.find(x=>x.n===n&&x.alive);
  if(p){p.bond=clamp(p.bond+8,0,100);return p}
@@ -6221,7 +6232,7 @@ function inboxMorning(){
  const k=S.day===1?1:(rnd()<.2?0:(rnd()<.8?1:2));
  for(let i=0;i<k;i++){const e=drawEvent();if(e)S.inbox.push({id:e.id,done:false,vars:varsFor(e)})}
  if(!S.prison&&!S.front&&!S.sel&&!S.sabb&&S.path!=="foot"&&(S.rank<4||netWorth()>=8e6)){
-  if(S.day-S.lastOffer>=20&&S.rep>=58&&rnd()<.1&&!selfPaid()){const o=genOffer();S.lastOffer=S.day;S.inbox.push({id:o.id,dyn:o,done:false,vars:{}})}
+  if(S.day-S.lastOffer>=20&&S.rep>=58&&rnd()<.1&&!selfPaid()){const o=genOffer();S.lastOffer=S.day;/* OFFER gap */S.offT=S.offT||{};const t0=S.offT[o.t];if(!(t0!=null&&S.day-t0<24)&&!S.inbox.some(m=>!m.done&&m.dyn&&m.dyn.t===o.t)){S.offT[o.t]=S.day;S.inbox.push({id:o.id,dyn:o,done:false,vars:{}})}}
  }
 }
 function varsFor(e){
@@ -13974,7 +13985,7 @@ const running=()=>S.mvRun=S.mvRun||{};
 /* The moves board shows durations, progress and finished courses */
 {const _ms=movesSec;movesSec=function(){let h=_ms.apply(this,arguments);if(!h)return h;const R0=running(),c=cx(),list=careerMoves();
  for(const mv of list){const d=moveDur(mv),r=R0[mv.id],done=mv.id!=="study"&&c.coursesDone&&c.coursesDone[mv.id];if(d<=1&&!done)continue;
-  const add=r?`<span class="mv-run"><span>Month ${r.total-r.left+1} of ${r.total} · tap to stop</span><span class="mv-bar"><i style="width:${Math.round((r.total-r.left)/r.total*100)}%"></i></span></span>`:`<span class="mv-dur">${d>1?`Takes ${d} months${mvCost(mv)?`, ${money(mvCost(mv))} a month`:""}`:""}${done?` <b class="mv-done">✓ Done${done>1?` ×${done}`:""}</b>`:""}</span>`;
+  const add=r?`<span class="mv-run"><span>Month ${r.total-r.left+1} of ${r.total} · tap to stop</span><span class="mv-bar"><i style="width:${Math.round((r.total-r.left)/r.total*100)}%"></i></span></span>`:`<span class="mv-dur">${d>1?`Takes ${d} months${mvCost(mv)?`, ${money(mvCost(mv))} a month`:""}`:""}${done?` <b class="mv-done">✓ Done${done>1?` ${done} times`:""}</b>`:""}</span>`;
   h=h.replace(new RegExp(`(<button class="move[^"]*" data-act="move" data-id="${mv.id}"[^>]*>)`),`$1${add}`)}
  if(!mvPicked().length&&S.mvRest!==S.day&&list.some(m=>!moveAvail(m)))h=h.replace(/(<\/h2><span class="label">[^<]*<\/span><\/div>)/,`$1<div class="btn-row" style="margin:0 0 8px"><button class="btn sm" data-act="mvrest">Rest this month: no development</button></div>`);
  if(S.mvRest===S.day)h=h.replace(/(<\/h2><span class="label">[^<]*<\/span><\/div>)/,`$1<p class="hint" style="margin:0 0 8px">You're resting this month. Pick a move any time if you change your mind.</p>`);
@@ -22727,11 +22738,11 @@ OP_SCEN.tech=[
   lose:["The fix breaks logins for {Australia|Japan|Fiji} instead. Support learns your name.","Friday comes and goes. The ticket now has three people on it, none of them you."]},
 
  {id:"tech_0b",tiers:[0],kind:"The ticket",name:"the broken button on Safari",
-  intro:"The 'Pay now' button does nothing on Safari. Only on iPhones, and only sometimes.",
+  intro:"The 'Pay now' button does nothing in one browser. Only on one make of phone, and only sometimes.",
   start:"a",
   stages:{
    a:{q:"Nobody on the team can make it happen on their laptops. What now?",o:[
-     {t:"Borrow a colleague's iPhone and try it",d:.1,next:"b"},
+     {t:"Borrow a colleague's phone and try it",d:.1,next:"b"},
      {t:"Ask in team chat if anyone's changed anything",d:.06,next:"c",note:"A designer admits she tweaked the button styles {last week|on Monday|before her holiday}."},
      {t:"Mark it 'cannot reproduce'",d:-.14,next:"b",note:"Support reopens it within the hour, in capitals."}]},
    b:{q:["On the borrowed phone, the button only works after you rotate the screen.","On the borrowed phone, the button only springs to life once you turn it sideways."],o:[
@@ -22748,7 +22759,7 @@ OP_SCEN.tech=[
      {t:"Add a separate rule for Android",d:.08},
      {t:"Ship it anyway, Android is a minority",d:-.1}]}
   },
-  win:["Payments on iPhone jump overnight. The finance team sends a thumbs-up emoji, which is rare.","The button works everywhere. You keep the borrowed iPhone a bit longer than strictly needed."],
+  win:["Payments on that phone jump overnight. The finance team sends a thumbs-up emoji, which is rare.","The button works everywhere. You keep the borrowed phone a bit longer than strictly needed."],
   lose:["The button now works on Safari and nowhere else. A brief, special moment.","The release goes out without your fix and the ticket rolls into next sprint, gathering comments."]},
 
  {id:"tech_0c",tiers:[0],kind:"The ticket",name:"the slow search page",
@@ -22956,7 +22967,7 @@ OP_SCEN.tech=[
      {t:"Appeal the decision",d:-.08}]}
   },
   win:["The relaunch climbs to 4.4 stars. Someone prints the graph and sticks it {on the fridge|on the kitchen wall|by the coffee machine}.","Crash rates drop by nine tenths. The support team finally get a quiet Monday."],
-  lose:["The appeal takes three weeks. Android users love it; iPhone users never see it.","The new app crashes in brand new and exciting ways. Reviews hold firm at 2.1."]},
+  lose:["The appeal takes three weeks. Half your users love it; the other half never see it.","The new app crashes in brand new and exciting ways. Reviews hold firm at 2.1."]},
 
  {id:"tech_2d",tiers:[2],kind:"The big launch",name:"the Black Friday rush",
   intro:"Black Friday is three weeks away. Last year the site fell over for {two|three} hours. This year it's your problem.",
@@ -45260,7 +45271,7 @@ function csqIsBig(m,e){const th=csqBigTh(m,e);return th>0&&csqHash("bd:"+csqBase
 /* Chance (0 = never) that a story is a Big decision. Fixed per story, so the hash makes it stable */
 function csqBigTh(m,e){
  try{if(!m||!e||!S)return 0;
-  if(CSQ_X.test(String(m.id))||e.ill||e.front||e.prison||e.chat||e.noBig)return 0;
+  if(CSQ_X.test(String(m.id))||/^(hang_|abs_|mm_|wb_|lf_)/.test(String(m.id))||e.ill||e.front||e.prison||e.chat||e.noBig)return 0;
   const ch=choicesOf(e);if(!ch||ch.length<2||ch.filter(csqStatty).length<1)return 0;
   if(ch.some(c=>csqFxs(c).some(fx=>fx.act&&/^(die|retirewin|redundancy|switchprompt|goalprompt)$/.test(fx.act))))return 0;
   const hasP=ch.some(c=>c.p!=null),car=!!(e.career||(!e.life&&!m.dyn));
@@ -47339,7 +47350,7 @@ function mmStory(){if(!wbOk0()||S.prison||S.front||S.sel||S.wscene)return;
  const list=a=>a.length>1?a.slice(0,-1).join(", ")+" and "+a[a.length-1]:a[0]||"";
  /* A teenager who has been keeping count */
  const teens=wbKids(13,18).map(k=>[k,mmN(x=>x.who===k.n)]).filter(x=>x[1]>=3).sort((a,b)=>b[1]-a[1]);
- if(teens.length&&cool("never_"+teens[0][0].n,60)){const[k,n]=teens[0],N=k.n,e=ex(x=>x.who===N,2);push("never_"+N,{from:N,t:"You were never there",b:`${N} slams a door, then opens it again to finish the sentence. "You missed ${list(e)}. You've missed ${n} things this year alone. You're never there." It isn't strictly true. It isn't far off.`,c:[
+ if(teens.length&&cool("never_"+teens[0][0].n,60)){const[k,n]=teens[0],N=k.n,e=(ex(x=>x.who===N&&S.day-x.d<=12,2).length?ex(x=>x.who===N&&S.day-x.d<=12,2):["the things that mattered to them"]);push("never_"+N,{from:N,t:"You were never there",b:`${N} slams a door, then opens it again to finish the sentence. "You missed ${list(e)}. You've missed ${n} things this year alone. You're never there." It isn't strictly true. It isn't far off.`,c:[
   {t:"Clear time for them: more of you for the next four months",fx:{act:"mm_kid",n:N,kb:8,tt:12,plenty:4,home:2},o:`Pizza on Fridays, lifts everywhere and no phone at dinner. ${N} pretends not to notice. They notice.`},
   {t:"Explain that it's all for them",p:.35,win:{fx:{act:"mm_kid",n:N,kb:2,stress:2},o:"A long pause, then a shrug. \"I suppose.\""},lose:{fx:{act:"mm_kid",n:N,kb:-8,home:-3},o:`"I never asked you to." ${N} doesn't speak to you for a week.`}},
   {t:"Let it blow over",fx:{act:"mm_kid",n:N,kb:-5,stress:2},o:"It blows over. It also gets filed away."}]})}
@@ -54258,6 +54269,669 @@ const RG_SH_T=[n=>n+": 3 months on",n=>n+": still worth it?",n=>n+": time for a 
    if(rec&&typeof ev.t==="string"){const t=ev.t,lc=t.charAt(0).toLowerCase()+t.slice(1);ev=Object.assign({},ev,{t:rec.n===1?"Asked again: "+lc:"One more time: "+lc})}}}}catch(e){}return _pd3.call(this,ev)}}
 /* "Not now" to a training invitation: the next one waits 12, then 24, then 36 months */
 {const _chI=choose;choose=function(i,ci){try{const m=S.inbox[i];if(m&&!m.done&&/^crsinv_/.test(m.id||"")){const e=getEv(m),c=choicesOf(e)[ci];if(c&&/^Not now/i.test(String(c.t||""))){const id=m.id.replace(/^crsinv_/,"").replace(/_\d+$/,"");S.rgInv=S.rgInv||{};const r=S.rgInv[id]=S.rgInv[id]||{n:0,d:S.day};r.n++;r.d=S.day}}}catch(e){}return _chI.apply(this,arguments)}}
+
+/* MOVES clear */
+/* ============ Development cards say plainly why you can't pick them ============ */
+function mvBlock(mv){try{if(!mv)return"";if(mvPicked().includes(mv.id))return"";const why=moveAvail(mv);
+ if(why){const k=mvCost(mv);if(k&&k>Math.max(0,S.wealth))return"Can't afford: "+money(k)+(moveDur(mv)>1?" a month":"")+" · you have "+money(Math.max(0,S.wealth));return why}
+ if(typeof enHas==="function"&&enHas()){const e=enMoveE(mv);if(e>0&&e>enRoom())return"Not enough energy: needs ⚡ "+e+", you have ⚡ "+Math.max(0,enRoom())}
+ if(mvPicked().length>=mvMax())return"All "+mvMax()+" slots in use";return""}catch(e){return""}}
+{const _ms=movesSec;movesSec=function(){let h=_ms.apply(this,arguments);try{if(!h)return h;const L=careerMoves();let open=0,shown=0;
+ h=h.replace(/<button class="move([^"]*)" data-act="move" data-id="([^"]+)"([^>]*)>([\s\S]*?)<\/button>/g,(m,cls,id,attr,inner)=>{const mv=L.find(x=>x.id===id);if(!mv)return m;shown++;const b=mvBlock(mv);if(!b){open++;return m}
+  inner=inner.replace(/<i>(?!Chosen)[^<]*<\/i>/,"");inner+='<span class="mv-why">'+esc(b)+'</span>';
+  return '<button class="move'+cls+' mv-blocked" data-act="move" data-id="'+id+'"'+(attr.includes("aria-disabled")?attr:attr+' aria-disabled="true"')+'>'+inner+'</button>'});
+ if(shown&&!open&&!mvPicked().length)h=h.replace(/(<\/h2><span class="label">[^<]*<\/span><\/div>)/,'$1<p class="mv-none">Nothing you can take on this month: money or energy is too tight. Rest this month, or come back when you have more.</p>')}catch(e){}return h}}
+{const _tm=toggleMove;toggleMove=function(id){try{const mv=careerMoves().find(m=>m.id===id),b=mvBlock(mv);if(b&&!/slots in use/.test(b)){toastLimit(b);return}}catch(e){}return _tm.apply(this,arguments)}}
+
+
+/* REGFIX3: regression-suite fixes, round 3 */
+function rgNameTaken(n){try{return !!(S&&S.people&&S.people.some(p=>p.n===n))}catch(e){return false}}
+/* ---- (g) tooltips and screen-reader labels speak the country's language too ---- */
+const RG_ATTRS=["title","aria-label","placeholder","alt"];
+function rgLocAttrs(root){try{if(!LOC||!root||root.nodeType!==1)return;const els=[root,...root.querySelectorAll("[title],[aria-label],[placeholder],[alt]")];
+ for(const el of els){if(el.closest&&el.closest("[data-noloc],.country-pick"))continue;for(const a of RG_ATTRS){const v=el.getAttribute(a);if(v&&v.length>1){const w=locText(v);if(w!==v)el.setAttribute(a,w)}}}}catch(e){}}
+{const _ln=localizeNode;localizeNode=function(root){const r=_ln.apply(this,arguments);try{if(root&&root.nodeType===1)rgLocAttrs(root)}catch(e){}return r}}
+/* ---- (b) repeat cards in new words; same choices, same effects ---- */
+const RG_TV=[
+ [/^The big day$/,["The big day","Wedding day","Here we go again","Something old, something new"]],
+ [/^Your toughest call this month$/,["Your toughest call this month","A call you won't forget","The one that stays with you","A hard shout"]],
+ [/^The (.+) comes back to haunt you$/,["The $1 comes back to haunt you","Remember the $1?","The $1: it's not over","That $1 again"]],
+ [/^(.+) is on the move$/,["$1 is on the move","$1: a big move","Eyes on $1","$1 is moving fast","$1: the desk wants a view"]],
+ [/^A safety inquiry: (.+)$/,["A safety inquiry: $1","An incident review: $1","Health and safety want a word: $1"]],
+ [/^Questions about the (.+)$/,["Questions about the $1","A complaint about the $1","The $1: what went wrong?"]]];
+{const _pd4=pushDyn;pushDyn=function(ev){try{if(ev&&typeof ev.t==="string"){
+  /* "Go for selection?": "not now" makes the next one wait */
+  if(/^sfinvite/.test(String(ev.id||""))){const r=S.rgSf;if(r&&S.day-r.d<12*r.n)return;if(r)ev=Object.assign({},ev,{t:r.n===1?"Asked again: go for selection?":"One more time: go for selection?"})}
+  for(const[re,vs]of RG_TV){const m=re.exec(ev.t);if(!m)continue;S.rgTv=S.rgTv||{};const k=ev.t,n=S.rgTv[k]=(S.rgTv[k]||0)+1;ev=Object.assign({},ev,{t:ev.t.replace(re,vs[(n-1)%vs.length])});break}}}catch(e){}return _pd4.call(this,ev)}}
+{const _chS=choose;choose=function(i,ci){try{const m=S.inbox[i];if(m&&!m.done&&/^sfinvite/.test(m.id||"")&&ci>0){const r=S.rgSf=S.rgSf||{n:0,d:S.day};r.n++;r.d=S.day}}catch(e){}return _chS.apply(this,arguments)}}
+/* ---- (d) honest timings for events the game sends on purpose, and holding back the cosmetic ones ---- */
+try{for(const[id,g]of[["holiday",11],["lv_app",6],["w_sick",24],["ls_screening",12]]){const e=EV.find(x=>x.id===id);if(e)e.again=g}}catch(e){}
+const RG_HOLD=[[/^Black Friday$/],[/^Paparazzi$/],[/^Award nomination$/],[/^Upgrade your kit$/],[/^A skills course$/],[/^A one-star review$/],[/ is getting married$/],[/^Quiz show contestant$/],
+ [/ needs a loan$/],[/^Play my 30th for free\?$/],[/^Leaving drinks$/],[/^A long-lost relative$/],[/^Forgotten coins$/],[/^A wallet full of cash$/],[/^A match$/],[/^Trouble conceiving$/,12]];
+const RG_DEATHWORDS=/\b(funeral|died|dies|death|dead|grave|memorial|the late|passed away|inherit|ashes|tribute|condolence|in memory|bereave|grief|mourn)\b/i;
+const rgEvOf=m=>{try{return getEv(m)}catch(e){return null}};
+const rgTitle=m=>{const e=rgEvOf(m);let t="";try{t=fill((e&&e.t)||m.t||"",m)}catch(x){t=String((e&&e.t)||"")}return String(t)};
+function rgPrune3(before){let changed=false;const drop=m=>{const i=S.inbox.indexOf(m);if(i>=0){S.inbox.splice(i,1);changed=true}};
+ S.rgTD=S.rgTD||{};S.rgAg=S.rgAg||{};
+ for(const m of S.inbox.filter(m=>!m.done&&!before.has(m))){
+  const e=rgEvOf(m),t=rgTitle(m),keep=/^(offer|fund|trial|callup|st_|cal_|en_col|abs_|hang_|crsinv|sfinvite)/.test(m.id||"")||m.bd||m.csqBig;
+  /* (a) a story about someone who has died */
+  const pid=(m.vars&&m.vars.pid)||(m.dyn&&m.dyn.vars&&m.dyn.vars.pid);if(pid){const p=(S.people||[]).find(q=>q.id===pid);if(p&&p.alive===false){const txt=t+" "+String((e&&e.b)||"");if(!RG_DEATHWORDS.test(txt)){drop(m);continue}}}
+  /* career events delivered after a promotion moved you past their rank */
+  if(e&&!m.dyn&&e.r&&(S.rank<e.r[0]||S.rank>e.r[1])&&!keep){drop(m);continue}
+  /* (d) cosmetic events that came back before their own gap */
+  const h=RG_HOLD.find(([re])=>re.test(t));if(h&&e&&!keep){const gap=h[1]||Math.min(e.again||24,120),k="ag:"+(e.id||t),last=S.rgAg[k];if(last!=null&&S.day-last<gap){drop(m);continue}S.rgAg[k]=S.day}
+  /* (c) the same title twice within a month */
+  /*     (friends' invitations and side-hustle check-ins are left alone: they carry stress relief and choices that keep balance in band) */
+  if(!keep&&t&&!/^(ktin_|sh_end_)/.test(m.id||"")){const last=S.rgTD[t];if(last!=null&&S.day-last<=1){drop(m);continue}S.rgTD[t]=S.day}}
+ return changed}
+{const _cd3=closeDay;closeDay=function(off){const before=S&&S.inbox?new Set(S.inbox):null,d0=S&&S.day;const r=_cd3.apply(this,arguments);try{if(S&&before&&S.day!==d0&&!S.over&&rgPrune3(before))render()}catch(e){}return r}}
+{const _ch3=choose;choose=function(i,ci){const before=S&&S.inbox?new Set(S.inbox):null;const r=_ch3.apply(this,arguments);try{if(S&&before&&!S.over&&rgPrune3(before))render()}catch(e){}return r}}
+
+/* BIZNAME: name your business */
+/* When you run your own business (a sole trader, an owner or founder rank, a solo act, a club you own, or a side business)
+   you choose its name. Career businesses use S.bank (the name in the header, the logo badge, the paper and the inbox);
+   side businesses use S.biz.name. S.bizNm = {path, from (the name before you took over), name, day, custom}.
+   S.bnAsk = queue of prompts still to show ("job" / "side"). Names you choose are protected from the localiser. */
+const BN_SOLO={music:1,dj:1,actor:1,influencer:1};
+const BN_R13=s=>s.replace(/[a-z]/g,c=>String.fromCharCode((c.charCodeAt(0)-97+13)%26+97));
+/* Rude words, ROT13 so the source stays clean. _E match anywhere inside a word, _W only as a whole word (or plural). */
+const BN_BAD_E="shpx,phag,fuvg,avttre,avttn,ovgpu,ovngpu,juber,fyhg,qvyqb,wvmm,jnaxre,obyybpx,oryyraq,nefrubyr,nffubyr,cbea,gjng,cnrqb,qvpxurnq,oybjwbo,unaqwbo,evzwbo,betnfz,onfgneq,zbyrfg,vaprfg,tbyyvjbt".split(",").map(BN_R13);
+const BN_BAD_W="shx,spx,shd,xhag,pbpx,qvpx,cevpx,chffl,nefr,nff,gvgf,gvggvrf,obbo,cvff,cvffrq,jnax,jnaxvat,gbffre,xabournq,zvatr,snaal,fynt,fxnax,phz,fchax,frk,frkl,ahqr,ubeal,nany,nahf,cravf,intvan,pyvg,obare,rerpgvba,betl,zvys,oqfz,funt,abapr,crqb,encr,encvfg,anmv,uvgyre,xxx,snt,snttbg,cnxv,fcvp,puvax,xvxr,pbba,jbt,tbbx,jrgonpx,enturnq,gbjryurnq,tlcb,tlccb,cvxrl,ergneq,genaal,furznyr,qlxr,cbbs,cbbsgre".split(",").map(BN_R13);
+/* Innocent words that happen to contain a rude one */
+const BN_SAFE=["scunthorpe","shiitake","shitake","penistone","cockburn"];
+const bnRx=(w,whole)=>new RegExp((whole?"^":"")+w.split("").map(c=>"(?:"+c+"|\\*)+").join("")+(whole?"(?:e?s)?$":""));
+const BN_RE_E=BN_BAD_E.map(w=>bnRx(w,false)),BN_RE_W=BN_BAD_W.map(w=>bnRx(w,true));
+/* Real brands the game never names (the same list the regression test checks) */
+const BN_BRANDS=["Tesla","Ferrari","Lamborghini","Porsche","Maserati","Bugatti","McLaren","Aston Martin","Rolls-Royce","Bentley","BMW","Mercedes","Mercedes-Benz","Audi","Volkswagen","Range Rover","Land Rover","Harley-Davidson","Harley","Ducati","Kawasaki","Yamaha","Suzuki","Honda","Toyota","Rolex","Gucci","Prada","Louis Vuitton","Chanel","Hermès","Cartier","Versace","Armani",
+ "Instagram","WhatsApp","Facebook","TikTok","YouTube","Twitter","Snapchat","LinkedIn","Netflix","Spotify","Amazon","Uber","Deliveroo","Airbnb","eBay","iPhone","iPad","MacBook","PlayStation","Xbox","Nintendo","Tinder","Bumble","Grindr",
+ "Starbucks","McDonald's","KFC","Burger King","Coca-Cola","Pepsi","Red Bull","Disney","Pixar","Marvel","Google","Microsoft","Nike","Adidas","Lego","IKEA","Ryanair","easyJet","British Airways","Monzo","Revolut","PayPal","Mastercard","Fortnite","Minecraft","Peloton","Fitbit","Dyson","GitHub"];
+const bnFold=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"");
+const bnBrandKey=s=>bnFold(s).toLowerCase().replace(/'/g,"").replace(/[^a-z0-9]+/g," ").trim();
+const BN_BRAND_K=BN_BRANDS.map(b=>[b,bnBrandKey(b),bnBrandKey(b).replace(/ /g,"")]);
+const BN_LEET={"0":"o","3":"e","4":"a","5":"s","7":"t","8":"b","9":"g","@":"a","$":"s","!":"i","|":"i","+":"t","€":"e"};
+/* Every way of reading the name: camelCase split or not, 1 as i or l, ph as f */
+function bnReads(v){const out=new Set();
+ for(const camel of[false,true])for(const one of["i","l"]){let x=bnFold(v);if(camel)x=x.replace(/([a-z])([A-Z])/g,"$1 $2");x=x.toLowerCase().replace(/1/g,one).replace(/[03-9@$!|+€]/g,c=>BN_LEET[c]||c);out.add(x);out.add(x.replace(/ph/g,"f"))}
+ return[...out]}
+/* Words, plus runs of very short pieces glued together ("f u c k", "fu ck", "s.h.i.t") */
+function bnToks(x){const t=x.split(/[^a-z*]+/).filter(Boolean),runs=[];let cur=[];
+ for(const w of t){if(w.length<=3)cur.push(w);else{if(cur.length>1)runs.push(cur.join(""));cur=[]}}if(cur.length>1)runs.push(cur.join(""));
+ return t.concat(runs)}
+function bnRude(v){
+ for(const x of bnReads(v))for(const tk of bnToks(x)){
+  if(BN_RE_W.some(r=>r.test(tk)))return true;
+  let e=tk;BN_SAFE.forEach(s=>{e=e.split(s).join(" ")});
+  if(BN_RE_E.some(r=>r.test(e)))return true}
+ return false}
+function bnBrand(v){const k=" "+bnBrandKey(v)+" ",sq=k.replace(/ /g,"");
+ for(const[b,bk,bs]of BN_BRAND_K){if(k.includes(" "+bk+" "))return b;if(bs.length>=5&&sq===bs)return b}return""}
+const bnClean=raw=>String(raw==null?"":raw).replace(/[‘’ʼ`´]/g,"'").replace(/\s+/g," ").trim();
+/* The rules: 2 to 28 characters; letters, numbers, spaces and & ' - . ! only; nothing rude; no real brands */
+function bnValidate(raw){const v=bnClean(raw);
+ if(v.length<2)return{ok:false,v,err:"That's a bit short. Use at least 2 characters."};
+ if(v.length>28)return{ok:false,v,err:"That's too long. Keep it to 28 characters or fewer."};
+ if(bnRude(v))return{ok:false,v,err:"Let's keep it friendly. Try a name without rude words in it."};
+ if(!/^[A-Za-z0-9À-ÖØ-öø-ÿ &'.!-]+$/.test(v))return{ok:false,v,err:"Use letters, numbers, spaces and & ' - . ! only."};
+ if((v.match(/[A-Za-zÀ-ÖØ-öø-ÿ]/g)||[]).length<2)return{ok:false,v,err:"Include at least a couple of letters."};
+ const b=bnBrand(v);if(b)return{ok:false,v,err:`${b} is a real brand. Make up a name of your own.`};
+ return{ok:true,v,err:""}}
+
+/* ---- Name ideas (Math.random, so the daily challenge's seeded dice are never touched) ---- */
+const bnPick=a=>a[Math.floor(Math.random()*a.length)];
+const BN_TRADE={elec:["Electrical","Electrics","Power & Light","Electrical Services"],plumb:["Plumbing","Plumbing & Heating","Heating","Pipeworks"],
+ hair:["Hair","Hair Studio","Salon","Hair & Beauty"],chef:["Kitchen","Dining Rooms","Eatery","Bistro"],tech:["Labs","Software","Digital","Systems"],
+ vet:["Vets","Veterinary Practice","Animal Clinic","Pet Care"],arch:["Architects","Design Studio","Architecture","Studio"],tvchef:["Foods","Kitchen","Food Co.","Eats"],
+ cardealer:["Motors","Cars","Motor Group","Autos"],clubowner:["FC","United","Athletic","Rovers"],music:["Music","Records","Sound"],dj:["Sound","Beats","Audio"],
+ actor:["Productions","Pictures","Films"],influencer:["Media","Creative","Studios"]};
+const BN_SIDE={bank:"Advisory",elec:"Solar",plumb:"Bathrooms",hair:"Haircare",chef:"Street Food",tech:"Software",foot:"Football Academy",law:"Legal Tech",doc:"Clinic",teach:"Tutors",
+ police:"Security",pol:"Podcast",pilot:"Flight School",nurse:"Home Care",fire:"Fire Safety",vet:"Pet Care",arch:"Design & Build",music:"Studios",influencer:"Merch",soldier:"Security",
+ astronaut:"Space",spy:"Intelligence",tvchef:"Kitchens",manager:"Football Academy",clubowner:"Sports Bar",actor:"Pictures",dj:"Sound",cardealer:"Motors"};
+const BN_ADJ=["Golden","Bright","Blue Door","Silver","Red Kite","Oak Tree","Copper","Little","Wild","Evergreen","Corner","Kingfisher","Lantern","Willow","Summit","True North","Ivy","Northstar","Hummingbird","Juniper","Bluebell","Foxglove","Lighthouse","Second Street","Honeybee","Paper Moon"];
+const BN_TOWN=["Ashvale","Brookmere","Kestrelton","Larkford","Fernwick","Oakhollow","Millhaven","Elmbury","Redwater","Highmoor"];
+function bnSur(){const p=bnClean(S&&S.name).split(" ").filter(Boolean);const s=p.length>1?p[p.length-1]:(typeof SURNAMES!=="undefined"&&SURNAMES.length?bnPick(SURNAMES):"Morgan");return s}
+function bnFirst(){const p=bnClean(S&&S.name).split(" ").filter(Boolean);return p[0]||"Alex"}
+function bnIdea(kind,kk){
+ if(kind==="side"){const w=BN_SIDE[kk]||"Ventures";return bnPick([`${bnSur()} ${w}`,`${bnPick(BN_ADJ)} ${w}`,`${bnFirst()}'s ${w}`])}
+ const T=BN_TRADE[kk]||["& Co.","Group","Ventures","Enterprises"],t=bnPick(T);
+ if(kk==="clubowner")return `${bnPick(BN_TOWN)} ${t}`;
+ const sur2=typeof SURNAMES!=="undefined"&&SURNAMES.length?bnPick(SURNAMES):"Webb";
+ const opts=[`${bnSur()} ${t}`,`${bnPick(BN_ADJ)} ${t}`,`${bnSur()} & ${sur2}`];
+ if(kk==="hair")opts.push(`Salon ${bnPick(["Bleu","Noir","Verde","Soleil","Belle","Lumière"])}`,`${bnFirst()}'s ${t}`);
+ if(kk==="chef"||kk==="tvchef")opts.push(`The ${bnPick(BN_ADJ)} ${bnPick(["Table","Kitchen","Larder","Spoon","Fork"])}`,`${bnFirst()}'s ${t}`);
+ if(kk==="tech")opts.push(`${bnPick(["Loop","Bright","Quanta","Nimbus","Spark","Pixel","Orbit","Tidal"])}${bnPick(["ly","wise","stack","works","hub","forge"])}`);
+ return bnPick(opts)}
+function bnGen(kind,avoid){const kk=kind==="side"?(S.biz&&S.biz.kind)||S.path:S.path;
+ for(let i=0;i<30;i++){const n=bnClean(bnIdea(kind,kk));if(n!==avoid&&bnValidate(n).ok)return n}
+ return kind==="side"?"My Business":"My Company"}
+
+/* ---- Who counts as running their own business ---- */
+function bnOwner(){try{
+ if(!S||S.placeholder||S.over||S.prison||S.front||S.sel||S.sabb||!S.bank)return false;const C=CAREERS[S.path];if(!C)return false;
+ if(BN_SOLO[S.path]){const B=S.bizNm;return /^Independent/.test(S.bank)||(C.__brand&&S.bank===C.employers[0])||(B&&B.path===S.path&&B.name===S.bank)||(typeof soloBrand==="function"&&S.bank===soloBrand())}
+ if(S.path==="clubowner")return true;
+ const r=R()||{};return !!(r.self||C.selfPaid||/\b(owner|founder|patron|sole trader|self-employed)\b/i.test(r.t||""))}catch(e){return false}}
+/* Starting out on your own: the old employer's name no longer fits, so suggest one */
+const bnFresh=()=>{try{return !!(R().self||S.path==="tvchef"||/^Independent/.test(S.bank))}catch(e){return false}};
+/* Rename the career business everywhere its name is used as a key */
+function bnSetBank(nw){const old=S.bank;if(!nw||nw===old)return;S.bank=nw;
+ try{if(S.lg&&S.lg.teams)S.lg.teams.forEach(t=>{if(t.n===old)t.n=nw})}catch(e){}
+ try{if(S.cl&&S.cl.teams)S.cl.teams.forEach(t=>{if(t.n===old)t.n=nw})}catch(e){}
+ try{const C=CAREERS[S.path];if(BN_SOLO[S.path]&&C&&C.employers&&(C.employers[0]===old||/^Independent/.test(C.employers[0]))){C.employers[0]=nw;C.__brand=1}}catch(e){}}
+function bnQueue(k){S.bnAsk=Array.isArray(S.bnAsk)?S.bnAsk:[];if(!S.bnAsk.includes(k))S.bnAsk.push(k)}
+/* Called after anything that can make you an owner: a new stint gets a name and a prompt */
+function bnCheck(){try{
+ if(!S||S.placeholder||S.over||!bnOwner())return;const B=S.bizNm;
+ if(B&&B.path===S.path&&(B.name===S.bank||B.from===S.bank))return;
+ const from=S.bank;if(bnFresh())bnSetBank(bnGen("job"));
+ S.bizNm={path:S.path,from,name:S.bank,day:S.day,custom:false};bnQueue("job")}catch(e){}}
+
+/* ---- The modal ---- */
+let bnTimer=0;
+function bnBusy(){try{if(typeof tourBusy==="function"&&tourBusy())return true;if(typeof tourI!=="undefined"&&tourI>=0)return true;
+ const tl=document.getElementById("tourLayer");if(tl&&!tl.hidden)return true;if(document.querySelector(".moment:not([hidden]),.home:not([hidden])"))return true}catch(e){return true}return false}
+function bnTick(){bnTimer=0;try{if(!S||S.placeholder||S.over||window.__noMoments||!Array.isArray(S.bnAsk)||!S.bnAsk.length)return;
+ if(bnBusy()){bnTimer=setTimeout(bnTick,1500);return}
+ const k=S.bnAsk.shift();if(!S.bnAsk.length)delete S.bnAsk;save();
+ if(k==="side"?!!S.biz:bnOwner())bnModal(k,true)}catch(e){}}
+function bnSoon(){if(!bnTimer&&S&&Array.isArray(S.bnAsk)&&S.bnAsk.length&&!window.__noMoments)bnTimer=setTimeout(bnTick,900)}
+function bnModal(kind,first,err,val){
+ const side=kind==="side",cur=side?(S.biz&&S.biz.name)||"":S.bank,C=CAREERS[S.path]||{};
+ const custom=side?!!(S.biz&&S.biz.custom):!!(S.bizNm&&S.bizNm.custom&&S.bizNm.name===S.bank);
+ const pre=val!=null?val:side&&!custom?bnGen("side"):cur;
+ const what=side?`Your new ${(BIZ[S.biz&&S.biz.kind]||{n:"business"}).n.toLowerCase()} needs a name.`:S.path==="clubowner"?"It's your club now. Keep the name the fans know, or give it a fresh start.":
+  BN_SOLO[S.path]?"Working for yourself means your own brand on everything you do.":`You're now ${(R().t||"the owner").toLowerCase()}. Your business, your name over the door.`;
+ showModal(`<div class="label">${first?"Your own business":"Rename your business"}</div><h2 style="margin-top:4px">Name your business</h2>
+  <p>${esc(what)} It shows on your letterhead, in the paper and on the sign outside.</p>
+  <div class="note bn-now">Currently: <b data-noloc="1">${esc(cur)}</b></div>
+  <div class="field"><label class="label" for="bnIn">Business name</label><div class="code-row"><input id="bnIn" maxlength="28" value="${esc(pre)}" autocomplete="off" autocapitalize="words" spellcheck="false" data-k="${side?"side":"job"}"><button class="btn sm" data-act="bnrand" data-k="${side?"side":"job"}">Random name</button></div>
+  <div class="bn-err" id="bnErr" role="alert"${err?"":" hidden"}>${err?esc(err):""}</div>
+  <div class="bn-rules">2 to 28 characters: letters, numbers, spaces and &amp; ' - . ! Keep it clean, and make it your own (no real brands).</div></div>
+  <div class="btn-row"><button class="btn" data-act="bnkeep" data-k="${side?"side":"job"}">Keep current name</button><button class="btn primary" data-act="bnsave" data-k="${side?"side":"job"}">Save</button></div>`);
+ try{const i=document.getElementById("bnIn");if(i){i.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();bnSave(i.dataset.k)}});i.addEventListener("input",()=>{const el=document.getElementById("bnErr");if(el&&!el.hidden){el.hidden=true;el.textContent=""}})}}catch(e){}}
+function bnErr(msg){const el=document.getElementById("bnErr");if(el){el.textContent=msg;el.hidden=false}const i=document.getElementById("bnIn");if(i){i.setAttribute("aria-invalid","true");try{i.focus()}catch(e){}}}
+/* Apply a name. Returns "" on success or the error message. */
+function bnRename(kind,raw){const r=bnValidate(raw);if(!r.ok)return r.err;const nw=r.v;
+ if(kind==="side"){if(!S.biz)return"You don't have a side business any more.";const old=S.biz.name;S.biz.name=nw;S.biz.custom=true;if(old!==nw)S.log.unshift({d:S.day,t:`Named your business ${nw}.`});return""}
+ if(!bnOwner())return"You can only name a business you own.";
+ const old=S.bank;const B=S.bizNm&&S.bizNm.path===S.path?S.bizNm:(S.bizNm={path:S.path,from:old,name:old,day:S.day,custom:false});
+ bnSetBank(nw);B.name=nw;B.custom=true;if(old!==nw)S.log.unshift({d:S.day,t:`Renamed ${old} to ${nw}.`});return""}
+function bnSave(kind){const i=document.getElementById("bnIn");if(!i)return;const e=bnRename(kind,i.value);if(e){bnErr(e);return}
+ const nm=kind==="side"?S.biz.name:S.bank;save();hideModal();render();try{toastMsg(`Your business is now called ${nm}.`)}catch(e){}}
+XCLICK.bnren=()=>{if(bnOwner())bnModal("job",false)};
+XCLICK.bnrenbiz=()=>{if(S&&S.biz)bnModal("side",false)};
+XCLICK.bnrand=t=>{const i=document.getElementById("bnIn");if(!i)return;i.value=bnGen(t.dataset.k||"job",bnClean(i.value));const el=document.getElementById("bnErr");if(el){el.hidden=true;el.textContent=""}i.removeAttribute("aria-invalid")};
+XCLICK.bnkeep=()=>{hideModal()};
+XCLICK.bnsave=t=>bnSave(t.dataset.k||"job");
+
+/* ---- Hooks: anything that can make you an owner ---- */
+{const _f=promote;promote=function(){const r=_f.apply(this,arguments);bnCheck();return r}}
+{const _f=switchCareer;switchCareer=function(){const r=_f.apply(this,arguments);bnCheck();return r}}
+{const _f=newGame;newGame=function(){const r=_f.apply(this,arguments);bnCheck();return r}}
+/* A solo act keeps its own brand when the game re-brands on load */
+{const _f=soloRename;soloRename=function(){let keep=null;try{const B=S&&S.bizNm;if(B&&B.custom&&B.path===S.path&&BN_SOLO[S.path]&&S.bank===B.name)keep=B.name}catch(e){}
+ const r=_f.apply(this,arguments);try{if(keep){S.bank=keep;const C=CAREERS[S.path];C.employers[0]=keep;C.__brand=1}}catch(e){}return r}}
+/* Side businesses */
+{const _f=startBiz;startBiz=function(){const had=!!(S&&S.biz);const r=_f.apply(this,arguments);try{if(!had&&S.biz){S.biz.custom=false;bnQueue("side");save();bnSoon()}}catch(e){}return r}}
+if(typeof ACTS!=="undefined"&&ACTS.appLaunch){const _f=ACTS.appLaunch;ACTS.appLaunch=function(){const had=!!(S&&S.biz);const r=_f.apply(this,arguments);try{if(!had&&S.biz){S.biz.custom=false;bnQueue("side")}}catch(e){}return r}}
+/* A takeover renames the business for you: that is not a new business to name */
+if(typeof ACTS!=="undefined"&&ACTS.togo){const _f=ACTS.togo;ACTS.togo=function(){const own=bnOwner();const r=_f.apply(this,arguments);try{if(own&&S.bizNm&&S.bizNm.path===S.path){S.bizNm.name=S.bank;S.bizNm.from=S.bank;S.bizNm.custom=false}}catch(e){}return r}}
+/* Names you chose are never translated by the country localiser */
+function bnNames(){try{const n=[];if(S&&S.bizNm&&S.bizNm.custom&&S.bizNm.name)n.push(S.bizNm.name);if(S&&S.biz&&S.biz.custom&&S.biz.name)n.push(S.biz.name);
+ const out=[];n.forEach(x=>{out.push(x);const u=x.toUpperCase();if(u!==x)out.push(u)});return out.filter(x=>x.length>=2).sort((a,b)=>b.length-a.length)}catch(e){return[]}}
+if(typeof locTextL==="function"){const _f=locTextL;locTextL=function(L,t){if(!L||!t||typeof t!=="string")return _f.apply(this,arguments);const ns=bnNames();let s=t,hit=false;
+ ns.forEach((n,i)=>{if(s.indexOf(n)>=0){hit=true;s=s.split(n).join(""+i+"")}});if(!hit)return _f.apply(this,arguments);
+ return String(_f.call(this,L,s)).replace(/(\d+)/g,(m,i)=>ns[+i])}}
+/* Tap the name to rename it: the header, the desk card and the side-business card */
+function bnDecorate(){try{const own=bnOwner(),custom=!!(S.bizNm&&S.bizNm.custom&&S.bizNm.name===S.bank);
+ const h=document.getElementById("bankName");if(h){if(own){h.dataset.act="bnren";h.title="Rename your business";h.classList.add("bn-tap");h.setAttribute("role","button");h.setAttribute("tabindex","0")}else if(h.dataset.act==="bnren"){delete h.dataset.act;h.removeAttribute("title");h.classList.remove("bn-tap");h.removeAttribute("role");h.removeAttribute("tabindex")}
+  if(custom)h.setAttribute("data-noloc","1");else h.removeAttribute("data-noloc")}
+ const cap=document.querySelector("#pane-desk .work-banner .wb-cap b");
+ if(cap&&own&&!cap.querySelector(".bn-ren")){cap.dataset.act="bnren";cap.classList.add("bn-tap");if(custom)cap.setAttribute("data-noloc","1");cap.insertAdjacentHTML("beforeend",` <button class="bn-ren" data-act="bnren" aria-label="Rename your business">Rename</button>`)}}catch(e){}}
+{const _f=bizSec;bizSec=function(){let h=_f.apply(this,arguments);try{if(S&&S.biz&&typeof h==="string"){const a=`<div class="nm" style="font-weight:600">${esc(S.biz.name)}</div>`;
+ if(h.includes(a))h=h.replace(a,()=>`<div class="nm bn-tap" style="font-weight:600" data-act="bnrenbiz"${S.biz.custom?' data-noloc="1"':""}>${esc(S.biz.name)} <button class="bn-ren" data-act="bnrenbiz" aria-label="Rename your business">Rename</button></div>`)}}catch(e){}return h}}
+{const _f=render;render=function(){try{if(S&&!S.placeholder)bnCheck()}catch(e){}const r=_f.apply(this,arguments);try{if(S&&!S.placeholder){bnDecorate();bnSoon()}}catch(e){}return r}}
+document.addEventListener("keydown",e=>{try{if((e.key==="Enter"||e.key===" ")&&e.target&&e.target.id==="bankName"&&e.target.dataset.act==="bnren"){e.preventDefault();XCLICK.bnren()}}catch(x){}});
+
+/* MVVAR: development variety */
+/* ============ Development variety: bigger pools per career and rung, a monthly rotation, varied wording, less from repeats, rare one-offs ============ */
+const MVV_TIER=[null,[100,250,600,1500,5000],[200,500,1200,4000,15000],[400,1000,2500,8000,30000]];
+const MVV_FANS=[1,5,30,200,1000];
+const MVV_UKC=["London","Manchester","Birmingham","Leeds","Glasgow","Edinburgh","Cardiff","Brighton","Bristol","Belfast"];
+const MVV_ABROAD=["Barcelona","Lisbon","Vienna","Copenhagen","Singapore","Toronto","Milan","Amsterdam","Berlin","Melbourne","Tokyo","New York","Paris","Seoul","Cape Town","Dubai"];
+const MVV_K={Learn:2,People:2,Team:2,Train:2,Mind:1,Promote:2};
+const MVV_ONE="One-off chances";
+try{EN_MV_CAT[MVV_ONE]=6}catch(e){}
+function mvvH(x){let h=2166136261;x=String(x);for(let i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619)}h^=h>>>13;h=Math.imul(h,1274126177);h^=h>>>16;return (h>>>0)/4294967296}
+const mvvSalt=()=>(S.name||"")+"|"+S.path+"|"+(S.rank|0);
+const mvvCap=x=>x?x.charAt(0).toUpperCase()+x.slice(1):x;
+function mvvCities(){try{if(typeof LOC!=="undefined"&&LOC&&LOC.map){const o=MVV_UKC.map(x=>LOC.map.get(x)).filter(Boolean);if(o.length>=4)return o}}catch(e){}return MVV_UKC}
+function mvvAbroad(){let own=new Set();try{if(typeof LOC!=="undefined"&&LOC&&LOC.c){own=new Set([LOC.c.city,LOC.c.capital,...LOC.map.values()])}}catch(e){}const o=MVV_ABROAD.filter(x=>!own.has(x));return o.length?o:MVV_ABROAD}
+const mvvPickH=(L,key)=>L[Math.floor(mvvH(key)*L.length)%L.length];
+
+/* Flavour for each career: who you learn from, what you learn, the shows, awards and press of the trade */
+/* Own moves: [id, category, from rung, to rung, name, flavour, effects, cost tier (0 free to 3), months] */
+const MVV_F={
+ bank:{sr:["the head of the desk","a managing director","the bank's best salesperson"],craft:"financial modelling",topics:["derivatives pricing","credit analysis","reading a balance sheet"],fair:"a markets conference",award:"the Golden Bull awards",mag:"The Trading Floor-ish",peers:"traders from rival banks",jr:"junior traders",star:"Victor Crane, the legendary fund boss",second:"two months on the {abroad} desk",
+  net:["A client dinner in {city}","Drinks with clients in {city}","A box at the rugby with clients","A client lunch in {city}"],
+  own:[["bk_night","Learn",0,1,"Stay late to rebuild the desk's models","Spreadsheets until the cleaners arrive.","sk2 st2",0],
+   ["bk_risk","Learn",1,3,"Sit in on the risk committee","You learn where the bodies are buried.","sk2 rp1",0],
+   ["bk_quant","Learn",2,4,"Coding lessons from the quants","Two months of patient explanations.","sk3",1,2],
+   ["bk_econ","Learn",3,4,"Breakfast with the chief economist","Croissants and a view of the next recession.","sk2 rp1",0],
+   ["bk_golf","People",1,4,"A golf day with clients","Four hours of small talk, one good lead.","rp2 tip.3",2],
+   ["bk_road","People",2,4,"A client roadshow in {abroad}","Six meetings a day for a week.","rp3 tip.4 hm-1",3],
+   ["bk_grads","Team",2,4,"Run the graduate trading game","The juniors love it. So do you, secretly.","mo3 rp1",1]]},
+ elec:{sr:["a master electrician","the site foreman","the old boy who wired half the town"],craft:"fault-finding",topics:["smart home wiring","fire alarm systems","three-phase power"],fair:"an electrical trade show",award:"the Bright Sparks awards",mag:"Live Wire Monthly",peers:"other sparks",jr:"apprentices",star:"Dot Ferris, the TV electrician",second:"two months on a hospital build in {city}",
+  net:["A builders' merchant trade breakfast","An electrical trade show in {city}","A wholesaler's open day in {city}","A trade association dinner in {city}"],
+  own:[["el_rig","Learn",0,2,"Practise testing on a training rig","Every fault in the book, safely.","sk2",1],
+   ["el_ev","Learn",1,3,"Fit EV chargers with a specialist","Driveways, cables and a lot of questions.","sk3",1],
+   ["el_solar","Learn",2,4,"A solar and battery storage course","Roofs, inverters and the future.","sk3 rp1",2,2],
+   ["el_merch","People",0,2,"Make friends at the wholesaler counter","They know who's hiring.","rp1 tip.3",0],
+   ["el_reviews","People",2,4,"Ask happy customers for reviews","Five stars travel fast.","rp2 pr1",0],
+   ["el_tender","People",3,4,"Pitch for a council housing contract","Three hundred flats to rewire.","rp2 pr2",2],
+   ["el_vans","Team",2,4,"Sort out the vans and the stores","Nobody hunting for a fuse at 7am.","mo3 st-1",1]]},
+ plumb:{sr:["a gas engineer with thirty years in","the heating firm's best fitter","an old-school master plumber"],craft:"boiler fault-finding",topics:["heat pumps","underfloor heating","unvented cylinders"],fair:"a heating and plumbing expo",award:"the Golden Spanner awards",mag:"Pipe Dreams Weekly",peers:"other plumbers",jr:"apprentices",star:"Big Ron Bramble, the TV plumber",second:"two months on a district heating scheme in {city}",
+  net:["A trade counter breakfast","A heating and plumbing expo in {city}","A merchant's open day in {city}","A trade association dinner in {city}"],
+  own:[["pl_boil","Learn",0,2,"Strip down an old boiler at the training centre","Every part, every screw, twice.","sk2",1],
+   ["pl_maker","Learn",1,3,"A manufacturer's boiler course","Free lunch, useful tricks.","sk3",1],
+   ["pl_heat","Learn",2,4,"Heat pump design days","Sums, radiators and cold houses fixed.","sk3 rp1",2,2],
+   ["pl_merch","People",0,2,"Bacon rolls at the merchants","The counter staff know everyone.","rp1 tip.3",0],
+   ["pl_emerg","People",1,3,"Go on the emergency call-out list","Burst pipes at 3am, grateful customers.","rp2 st2 tip.3",0],
+   ["pl_agent","People",2,4,"Win over a letting agent","Two hundred rented flats, all with boilers.","rp2 pr2",1],
+   ["pl_stock","Team",3,4,"Restock and upgrade the vans","Fewer trips to the merchants for your team.","mo3 rp1",2]]},
+ hair:{sr:["the salon's colour director","a session stylist","the owner, on a Saturday"],craft:"precision cutting",topics:["balayage","curly hair cutting","bridal styling"],fair:"a hair show",award:"the Golden Scissors awards",mag:"Cut and Colour Weekly",peers:"other stylists",jr:"juniors",star:"Rafael Dumont, the celebrity session stylist",second:"two months with a session team in {abroad}",
+  net:["A hair show in {city}","A salon trade fair in {city}","A colour seminar in {city}","A hairdressing awards night in {city}"],
+  own:[["hr_model","Learn",0,1,"Model night: practise on volunteers","Free haircuts, nervous friends.","sk2",0],
+   ["hr_colour","Learn",1,4,"A colour chemistry course","Why blondes go green, and how to stop it.","sk3",1],
+   ["hr_comp","Learn",1,3,"Enter a hairdressing competition","A mannequin head and a stopwatch.","sk2 rp2",1],
+   ["hr_wed","People",1,3,"Hand out cards at a wedding fair","Brides, mothers and bridesmaids.","rp1 pr1",1],
+   ["hr_shoot","People",2,4,"A photo shoot for your portfolio","Your best work, properly lit.","rp2",2],
+   ["hr_fashion","People",2,4,"Backstage at a fashion week show","Forty models, twenty minutes.","rp3 st2",2],
+   ["hr_academy","Team",3,4,"Start a salon academy for juniors","Training nights, pizza and a proper ladder.","mo4 rp2",2,2]]},
+ chef:{sr:["the head chef","the pastry chef","the sous chef on the fish section"],craft:"knife skills",topics:["fermentation","butchery","plant-based cooking"],fair:"a food festival",award:"the Golden Ladle awards",mag:"Mise en Place Monthly",peers:"other chefs",jr:"commis chefs",star:"Chef Rocco Vale, the three-star legend",second:"two months in a famous kitchen in {abroad}",
+  net:["A chefs' night out","A food festival in {city}","A chefs' supper club in {city}","A restaurant awards night in {city}"],
+  own:[["ch_stage","Learn",0,2,"A stage in a top kitchen","A week's unpaid work in someone else's kitchen.","sk3 st2",0],
+   ["ch_market","Learn",0,2,"Dawn trips to the fish market","Ice, gulls and the best prices.","sk2 st1",0],
+   ["ch_forage","Learn",1,3,"A foraging day with a wild-food expert","Wild garlic, and which mushrooms not to eat.","sk2",1],
+   ["ch_eat","Learn",2,4,"Eat your way round {abroad}","Notebook in one hand, fork in the other.","sk3 rp1",3],
+   ["ch_popup","People",1,3,"Run a pop-up night","Borrowed kitchen, sold-out tables.","rp2 st2 tip.2",1],
+   ["ch_farms","People",3,4,"Visit your farms and suppliers","Muddy boots, better produce.","rp2 sk1",2],
+   ["ch_menu","Team",2,4,"Let the team pitch a dish for the menu","The commis chef's dish is the best one.","mo5 rp1",0]]},
+ tech:{sr:["the principal engineer","the head of infrastructure","the founder, who still codes"],craft:"algorithms",topics:["cloud architecture","machine learning","security"],fair:"a developer conference",award:"the Golden Bracket awards",mag:"The Commit Log",peers:"other developers",jr:"junior developers",star:"Ada Kernel, the open-source legend",second:"two months with the {abroad} team",
+  net:["A tech meetup","A tech meetup in {city}","A developer conference in {city}","Startup drinks in {city}"],
+  own:[["tk_pair","Learn",0,1,"Pair-program with a senior engineer","Humbling, then useful.","sk3",0],
+   ["tk_oss","Learn",0,3,"Contribute to an open-source project","Strangers review your code, kindly.","sk2 rp1",0],
+   ["tk_arch","Learn",2,4,"Lead the architecture review","Boxes, arrows and hard decisions.","sk2 rp1 st1",0],
+   ["tk_hack","People",0,2,"A weekend hackathon","Pizza, no sleep, a working demo.","sk2 rp1 st2",0],
+   ["tk_talk","People",1,3,"A lightning talk at a meetup in {city}","Five minutes, twenty slides.","rp2 st1",0],
+   ["tk_valley","People",3,4,"A founders' trip to {abroad}","Investors, coffee and big ideas.","rp3 tip.4",3],
+   ["tk_lunch","Team",2,4,"Start a weekly tech-talk lunch","The team teach each other.","mo4 rp1",1]]},
+ law:{sr:["a senior partner","a barrister in chambers","the head of litigation"],craft:"contract drafting",topics:["employment law","data protection","mergers"],fair:"a legal conference",award:"the Golden Gavel awards",mag:"The Law Gazette-ish",peers:"lawyers from other firms",jr:"trainees",star:"Sir Rupert Quill KC, the famous advocate",second:"two months inside a client's legal team",
+  net:["A law society dinner","A legal conference in {city}","Drinks at the Inns of Court-ish","A law society dinner in {city}"],
+  own:[["lw_court","Learn",0,1,"Sit behind counsel in court","Take notes, pass notes, learn everything.","sk3",0],
+   ["lw_moot","Learn",0,2,"Enter a mooting competition","A pretend case, a real judge.","sk2 rp1",1],
+   ["lw_cpd","Learn",1,3,"A day of updates on new case law","Everything that changed this year.","sk2",1],
+   ["lw_clinic","People",0,2,"Volunteer at a free advice clinic","People who can't pay, problems that matter.","rp2 hm-1",0],
+   ["lw_sem","People",2,4,"Host a breakfast seminar for clients","Bacon rolls and new regulations.","rp2 tip.3",1],
+   ["lw_intl","People",3,4,"An international bar conference in {abroad}","Lawyers from forty countries.","rp3 tip.3",3],
+   ["lw_intake","Team",3,4,"Run the trainee intake","Choose the next ones, and train them well.","mo4 rp1",0]]},
+ doc:{sr:["a consultant on ward rounds","the registrar on nights","a professor of medicine"],craft:"clinical exams",topics:["ultrasound","sepsis care","advanced life support"],fair:"a medical conference",award:"the Golden Stethoscope awards",mag:"The Medical Weekly-ish",peers:"doctors from other hospitals",jr:"junior doctors",star:"Professor Ines Calder, the famous surgeon",second:"two months at a trauma centre in {abroad}",
+  net:["A medical conference","A medical conference in {city}","A royal college dinner in {city}","Grand rounds at a teaching hospital in {city}"],
+  own:[["dc_sim","Learn",0,2,"A simulation training day","A plastic patient tries to die. You stop it.","sk3",1],
+   ["dc_audit","Learn",0,2,"Run a clinical audit","Spreadsheets that save lives.","sk2 rp1 st1",0],
+   ["dc_trial","Learn",2,4,"Join a research trial","Data, ethics forms and real answers.","sk2 rp2 st1",0,2],
+   ["dc_visit","Learn",3,4,"Visit a famous hospital in {abroad}","How they do it there.","sk3 rp1",3],
+   ["dc_case","People",1,3,"Publish a case report","A rare case, written up well.","rp2 st1",0],
+   ["dc_poster","People",1,3,"Present a poster at a medical conference in {city}","Stand by your poster and smile.","rp2",2],
+   ["dc_students","Team",2,4,"Teach the medical students","Bedside teaching, keen faces.","mo3 rp2",0]]},
+ teach:{sr:["the head of department","a teacher who's been there thirty years","the deputy head"],craft:"behaviour management",topics:["phonics","special needs support","exam marking"],fair:"an education show",award:"the Golden Apple awards",mag:"Staffroom Weekly",peers:"teachers from other schools",jr:"trainee teachers",star:"Sir Ken Bramwell, the famous head",second:"two months at a school in {abroad}",skip:["mvv_g_school"],
+  net:["An education conference","An education show in {city}","A subject teachers' meet-up in {city}","A teaching awards night in {city}"],
+  own:[["tc_obs","Learn",0,2,"Watch a brilliant colleague teach","Steal every trick.","sk2",0],
+   ["tc_mark","Learn",1,3,"Become an exam marker","Two hundred scripts, a lot of insight.","sk2 st2",0],
+   ["tc_inspect","Learn",2,4,"Train as an Ofsted inspector","See other schools from the inside.","sk2 rp1",1,2],
+   ["tc_club","People",0,2,"Run an after-school club","Chess, robots or football.","rp2 hm-1",0],
+   ["tc_trip","People",1,3,"Lead a school trip to {city}","Thirty teenagers, one coach.","rp2 st2",1],
+   ["tc_parents","People",2,4,"A parents' evening charm offensive","Every parent leaves smiling.","rp2 st1",0],
+   ["tc_inset","Team",2,4,"Run a training day for staff","Better teaching, fewer sighs.","mo4 rp1",0]]},
+ police:{sr:["a detective inspector","the custody sergeant","an old-school beat officer"],craft:"interview technique",topics:["digital forensics","firearms awareness","public order"],fair:"a policing conference",award:"the Golden Helmet awards",mag:"Beat Weekly",peers:"officers from other forces",jr:"probationers",star:"Mo Harding, the famous murder detective",second:"two months with a national crime unit",
+  net:["A Police Federation dinner","A policing conference in {city}","A detectives' dinner in {city}","A community awards night in {city}"],
+  own:[["pc_ride","Learn",0,1,"Ride along with traffic officers","Fast cars, sharp eyes.","sk2",0],
+   ["pc_drive","Learn",0,2,"An advanced driving course","Blue lights, wet roads.","sk2",1],
+   ["pc_cold","Learn",1,3,"Review an old cold case","Fresh eyes on dusty boxes.","sk2 rp1 st1",0],
+   ["pc_comm","People",0,2,"Community meetings in your area","Tea, biscuits and complaints.","rp2",0],
+   ["pc_press","People",2,4,"A press appeal on local TV","Calm voice, clear message.","rp2 ht-2",0],
+   ["pc_exch","People",3,4,"A policing exchange with {abroad}","Different laws, same problems.","rp3",3],
+   ["pc_brief","Team",2,4,"Better morning briefings","Everyone knows the plan.","mo4",0]]},
+ pol:{sr:["a veteran MP","the chief whip","a former minister"],craft:"public speaking",topics:["media interviews","reading a budget","drafting speeches"],fair:"a party conference fringe event",award:"the Parliamentarian of the Year awards",mag:"The House-ish magazine",peers:"MPs from other parties",jr:"researchers",star:"Lady Margery Thorne, the legendary former minister",second:"two months on a cross-party trade delegation",
+  net:["Party conference","A fringe event at party conference","A think-tank dinner in {city}","A business breakfast in {city}"],
+  own:[["po_debate","Learn",0,2,"Debate coaching","Answer the question you wish they'd asked.","sk3",1],
+   ["po_cttee","Learn",1,3,"Join a select committee inquiry","Evidence sessions and long reports.","sk2 rp1",0],
+   ["po_doors","People",0,2,"Knock on doors with local activists","Dogs, rain and real opinions.","rp2 hm-1",0],
+   ["po_surg","People",1,3,"Extra advice surgeries","Potholes, benefits and neighbours.","rp2 st1",0],
+   ["po_think","People",2,4,"Write a pamphlet for a think tank","Big ideas in small print.","rp2",0],
+   ["po_trade","People",3,4,"A trade mission to {abroad}","Handshakes and photo calls.","rp3",3],
+   ["po_spads","Team",2,4,"Take your advisers out for dinner","They work harder for a thank-you.","mo4",1]]},
+ pilot:{sr:["a training captain","a senior long-haul captain","the chief pilot"],craft:"instrument flying",topics:["crosswind landings","engine failure drills","mountain airports"],fair:"an aviation expo",award:"the Golden Wings awards",mag:"Flight Deck Monthly",peers:"pilots from other airlines",jr:"cadets",star:"Captain Joan Sterling, the record-breaking pilot",second:"two months flying for a sister airline in {abroad}",
+  net:["An aviation expo","An aviation expo in {city}","A pilots' dinner in {city}","An air show hospitality tent"],
+  own:[["pi_sim","Learn",0,2,"Extra simulator hours","Every failure, none of the danger.","sk3",2],
+   ["pi_glide","Learn",0,2,"Gliding at weekends","Silent flying, pure skill.","sk2 st-1",1],
+   ["pi_jump","Learn",1,3,"Jump-seat on a long-haul flight","Watch the best crews work.","sk2",0],
+   ["pi_type","Learn",2,4,"A type rating on a bigger jet","More seats, more buttons.","sk3 rp1",3,2],
+   ["pi_show","People",1,4,"An air show in {city}","Fast jets and old friends.","rp2 st-1",1],
+   ["pi_safety","People",3,4,"Sit on the safety board","Making flying even safer.","rp2 sk1",0],
+   ["pi_crm","Team",2,4,"Lead a crew resource workshop","Crews who speak up.","mo4 rp1",0]]},
+ nurse:{sr:["the ward sister","a specialist nurse","the matron"],craft:"drug calculations",topics:["wound care","cannulation","end-of-life care"],fair:"a nursing conference",award:"the Golden Lamp awards",mag:"The Ward Round",peers:"nurses from other hospitals",jr:"student nurses",star:"Professor Grace Mensah, the famous nurse researcher",second:"two months with a specialist team in {city}",
+  net:["A nursing conference","A nursing conference in {city}","A nurses' awards night in {city}","A royal college study day in {city}"],
+  own:[["nu_skills","Learn",0,1,"A clinical skills day","Cannulas, catheters and confidence.","sk2",1],
+   ["nu_icu","Learn",0,2,"A week on intensive care","Machines, alarms and calm.","sk3 st2",0],
+   ["nu_qi","Learn",2,4,"Lead a quality improvement project","Fix one thing properly.","sk2 rp2 st1",0],
+   ["nu_link","People",1,3,"Become the ward's link nurse","The go-to person for infection control.","rp2",0],
+   ["nu_forum","People",1,3,"Speak up at the staff forum","Say what everyone is thinking.","rp1 st-2",0],
+   ["nu_summit","People",3,4,"A nursing summit in {abroad}","Ideas from around the world.","rp3",3],
+   ["nu_students","Team",2,4,"Mentor student nurses","Patient teaching, grateful students.","mo3 rp1",0]]},
+ fire:{sr:["the watch manager","a fire investigator","the station's longest-serving firefighter"],craft:"breathing apparatus drills",topics:["water rescue","road traffic collisions","rope rescue"],fair:"an emergency services show",award:"the Bravery awards",mag:"Station Call Weekly",peers:"crews from other stations",jr:"trainees",star:"Bryn Talley, the famous rescue expert",second:"two months with the urban search and rescue team",
+  net:["A fire service conference","An emergency services show in {city}","A charity car wash with other crews","A fire service dinner in {city}"],
+  own:[["fi_drill","Learn",0,1,"Extra drill nights","Ladders, hoses, again.","sk2",0],
+   ["fi_fit","Learn",0,2,"Fitness training with the crew","Stair climbs in full kit.","sk1 hp2 st-1",0],
+   ["fi_water","Learn",1,3,"A swift water rescue course","Cold rivers, strong ropes.","sk3",1],
+   ["fi_inv","Learn",2,4,"Shadow a fire investigator","How it started, and who started it.","sk2 rp1",0],
+   ["fi_school","People",0,2,"Fire safety talks in schools","Smoke alarms and shiny engines.","rp2",0],
+   ["fi_open","People",1,3,"Run the station open day","Bouncy castle, hose demos.","rp2 st1",1],
+   ["fi_bbq","Team",2,4,"A watch barbecue","Burgers, families and stories.","mo5",1]]},
+ vet:{sr:["the senior vet","an equine specialist","a surgeon at the referral hospital"],craft:"small animal surgery",topics:["dentistry","exotic pets","ultrasound"],fair:"a vet congress",award:"the Golden Paw awards",mag:"Vet Times-ish",peers:"vets from other practices",jr:"new graduates",star:"Professor Lars Holm, the famous animal surgeon",second:"two months at a wildlife hospital in {abroad}",
+  net:["A vet congress","A vet congress in {city}","A practice owners' dinner in {city}","A farm vets' meeting"],
+  own:[["vt_farm","Learn",0,2,"Ride along on farm calls","Calving at midnight.","sk2 st1",0],
+   ["vt_exotic","Learn",1,3,"An exotics course","Snakes, lizards and very small rabbits.","sk2",1],
+   ["vt_ref","Learn",2,4,"Learn a new operation at a referral hospital","Bring it back to your practice.","sk3",2],
+   ["vt_puppy","People",0,2,"Run puppy parties","Chaos, treats and loyal clients.","rp2",1],
+   ["vt_shelter","People",1,3,"Volunteer at an animal shelter","Good for them, good for you.","rp2 hm-1 st-1",0],
+   ["vt_show","People",2,4,"Vet on duty at a county show","Cattle, sheep and a nervous pony.","rp2",0],
+   ["vt_nurses","Team",2,4,"Training lunches for the nurses","Better care, happier team.","mo4",1]]},
+ arch:{sr:["a partner","the practice's best technical architect","an old architect who knows planning inside out"],craft:"technical drawing",topics:["low-energy design","timber buildings","planning law"],fair:"an architecture festival",award:"the Golden Compass awards",mag:"Building Design-ish",peers:"architects from other practices",jr:"architectural assistants",star:"Hiro Vance, the famous architect",second:"two months at a partner studio in {abroad}",
+  net:["An architecture festival","An architecture festival in {city}","A building awards night in {city}","A walking tour of new buildings in {city}"],
+  own:[["ar_site","Learn",0,2,"Site visits with the job architect","Hard hats and hard lessons.","sk2",0],
+   ["ar_sketch","Learn",0,2,"Sketching tours of {city}","See buildings properly.","sk2 st-1",1],
+   ["ar_model","Learn",1,3,"Learn 3D modelling properly","Two months of tutorials.","sk3",1,2],
+   ["ar_tour","Learn",3,4,"A study tour of buildings in {abroad}","Concrete, glass and inspiration.","sk3 rp1",3],
+   ["ar_comp","People",1,3,"Enter an ideas competition","Late nights, bold ideas.","rp2 st2",1],
+   ["ar_crit","People",1,3,"Guest critic at a university","Students pin up, you comment.","rp2",0],
+   ["ar_review","Team",2,4,"Friday design reviews for the studio","Everyone's work gets better.","mo4 rp1",0]]},
+ influencer:{sr:["a creator with ten million followers","your agent","a former magazine editor"],craft:"video editing",topics:["thumbnails","storytelling on camera","growing an audience"],fair:"a creator convention",award:"the Scrollies awards",mag:"Creator Weekly",peers:"other creators",jr:"editors",star:"Kiki Lux, the mega-creator",second:"two months with a media company in {city}",
+  net:["A creator convention","A creator convention in {city}","A brand launch party in {city}","A creators' brunch in {city}"],
+  own:[["in_light","Learn",0,2,"A lighting and camera class","Look good on any phone.","sk2",1],
+   ["in_book","Learn",3,4,"A media and publishing course","Books, podcasts and TV.","sk2 rp1",2],
+   ["in_trend","People",0,2,"Jump on a trend","Quick, before it's over.","rp1 tip.3",0],
+   ["in_live","People",0,3,"A charity livestream","Twelve hours, good cause.","rp2 st1",0],
+   ["in_collab","People",1,3,"Collab with a creator in {city}","Swap audiences, swap ideas.","rp2 tip.3",1],
+   ["in_brand","People",2,4,"Meet brand managers in {city}","Deals start with coffee.","rp2 tip.4",2],
+   ["in_plan","Team",2,4,"A content planning day with your team","Three months mapped out.","mo4",1]]},
+ soldier:{sr:["the platoon sergeant","a sergeant major","a special forces veteran"],craft:"map reading",topics:["field medicine","signals","leadership in the field"],fair:"a defence expo",award:null,mag:"The Mess Tin magazine",peers:"soldiers from other regiments",jr:"new recruits",star:"Colonel Ironside Harker, the famous commander",second:"two months with an allied unit in {abroad}",skip:["mvv_g_night","mvv_g_write","mvv_o_radio","mvv_o_uni"],
+  net:["A regimental dinner","A mess dinner with another regiment","A defence expo in {city}","A remembrance parade and reception in {city}"],
+  own:[["so_range","Learn",0,2,"Extra time on the range","Tighter groups.","sk2",0],
+   ["so_march","Learn",0,2,"Weekend endurance marches","Heavy pack, long hills.","sk2 hp1 st1",0],
+   ["so_ex","Learn",1,3,"An exercise with allies in {abroad}","Different kit, same mud.","sk3 rp1 hm-2",0],
+   ["so_staff","Learn",3,4,"Staff college reading","Old battles, new lessons.","sk2 rp1",0],
+   ["so_rugby","People",0,2,"Play for the regiment's rugby team","Bruises and friendships.","rp2 st-1",0],
+   ["so_cadets","People",1,4,"Help out at a cadet camp","The next generation.","rp2 hm-1",0],
+   ["so_adv","Team",2,4,"Adventure training for your soldiers","Climbing, kayaking, bonding.","mo5 st-2",1]]},
+ astronaut:{sr:["a veteran astronaut","a flight director","the chief engineer"],craft:"orbital mechanics",topics:["robotics","spacewalk drills","Russian"],fair:"a space conference",award:"the Golden Rocket awards",mag:"Orbit Monthly",peers:"astronauts from other agencies",jr:"candidates",star:"Commander Lena Varga, the record-setting astronaut",second:"two months at a partner agency in {abroad}",skip:["mvv_g_night","mvv_g_cross"],
+  net:["An industry conference","A space conference in {city}","A science festival in {city}","A dinner with mission sponsors"],
+  own:[["as_pool","Learn",0,2,"Extra hours in the training pool","Spacewalks, underwater.","sk3 st1",0],
+   ["as_jet","Learn",0,3,"Jet training flights","Fast, high and loud.","sk2",0],
+   ["as_cave","Learn",1,3,"A cave survival course","Dark, cold and close.","sk3 st2",0],
+   ["as_lab","Learn",1,3,"Help in the science lab","Experiments you'll run in orbit.","sk2 rp1",0],
+   ["as_schools","People",0,3,"A video call with schools","A thousand questions about toilets.","rp2",0],
+   ["as_partner","People",2,4,"A partner agency visit in {abroad}","Hardware, handshakes and dumplings.","rp3",1],
+   ["as_capcom","Team",2,4,"Sit in as capcom for a mission","The voice in the crew's ear.","mo3 rp2",0]]},
+ spy:{sr:["a veteran case officer","the head of the language school","an old Cold War hand"],craft:"tradecraft",topics:["surveillance","code-breaking","interrogation resistance"],fair:"a security conference",award:null,mag:null,peers:"officers from allied services",jr:"new officers",star:"a retired spymaster known only as K",second:"two months at the station in {abroad}",skip:["mvv_g_night","mvv_g_school","mvv_g_talk","mvv_g_keynote","mvv_o_radio","mvv_o_uni","mvv_g_charity"],
+  net:["An industry conference","A security conference in {city}","A quiet lunch with a contact in {city}","A reception at an embassy"],
+  own:[["sp_surv","Learn",0,2,"Surveillance exercises in {city}","Follow, and don't get spotted.","sk3 st1",0],
+   ["sp_lang","Learn",0,3,"Intensive language lessons","Eight hours a day.","sk2",1,2],
+   ["sp_desk","Learn",1,3,"A month on the analysis desk","Reports that matter.","sk2 rp1",0],
+   ["sp_hostile","Learn",2,4,"Hostile environment training","Checkpoints and kidnap drills.","sk3 st2",2],
+   ["sp_cover","People",1,3,"Build up your cover story","Hobbies, friends and a past.","rp2 st1",0],
+   ["sp_liaison","People",2,4,"A liaison visit to an allied service in {abroad}","Trust is traded slowly.","rp3",2],
+   ["sp_debrief","Team",2,4,"Debrief drinks with your team","Some things are never said.","mo4 st-1",1]]},
+ tvchef:{sr:["a veteran TV producer","the show's home economist","a famous restaurant chef"],craft:"talking while cooking",topics:["presenting to camera","food styling","recipe writing"],fair:"a food and drink festival",award:"the Golden Whisk awards",mag:"Telly Food Weekly",peers:"other TV cooks",jr:"researchers",star:"Nonna Bellini, the grande dame of TV cooking",second:"two months filming a series in {abroad}",
+  net:["An industry conference","A food and drink festival in {city}","A TV awards party in {city}","A cookbook launch in {city}"],
+  own:[["tv_auto","Learn",0,2,"Autocue practice","Read, smile, stir.","sk2",0],
+   ["tv_book","Learn",1,3,"Write a cookbook chapter","Test every recipe three times.","sk2 rp1 st1",0],
+   ["tv_travel","Learn",2,4,"A food research trip to {abroad}","Markets, grandmothers and notebooks.","sk3 rp1",3],
+   ["tv_demo","People",0,3,"A cookery demo at a food festival in {city}","Live cooking, real crowd.","rp2",1],
+   ["tv_radio","People",1,4,"A guest spot on a radio food show","Talk about food you can't see.","rp2",0],
+   ["tv_gala","People",2,4,"Cook at a charity gala","Five hundred plates, one good cause.","rp2 hm-1",2],
+   ["tv_crew","Team",2,4,"Thank-you dinner for the crew","They make you look good.","mo5",1]]},
+ clubowner:{sr:["a veteran chairman","the club secretary","a former chairman of a big club"],craft:"football finance",topics:["stadium operations","player trading","sponsorship"],fair:"a football finance summit",award:"the Football Business awards",mag:"The Boardroom Bulletin",peers:"other owners",jr:"club staff",star:"Don Vittorio Russo, the legendary club president",second:"two months shadowing a club president in {abroad}",
+  net:["An industry conference","A football finance summit in {city}","A boardroom lunch at an away game","A league dinner in {city}"],
+  own:[["co_acad","Learn",0,2,"Spend a week with the academy","The future of the club, aged twelve.","sk2",0],
+   ["co_scout","Learn",1,3,"Scouting trips with the recruitment team","Cold stands, hot tea.","sk2 rp1",1],
+   ["co_fans","People",0,4,"A fans' forum","Honest questions, loud ones.","rp2 st2",0],
+   ["co_away","People",0,3,"Travel with the away fans","Coach, pies and songs.","rp2 hm-1",1],
+   ["co_comm","People",1,4,"Fund a community scheme","Kids' football, food banks.","rp3",2],
+   ["co_tour","People",3,4,"A pre-season tour in {abroad}","New fans, new sponsors.","rp3 tip.3",3],
+   ["co_party","Team",1,4,"A staff party at the ground","The tea ladies dance best.","mo5",2]]},
+ manager:{sr:["a veteran manager","the head of the academy","an old coach who's seen everything"],craft:"tactics",topics:["set pieces","pressing","sports science"],fair:"a coaches' conference",award:"the Manager of the Month awards",mag:"The Tactics Board",peers:"other managers",jr:"coaches",star:"Gianni Rossetti, the legendary coach",second:"two months on the coaching staff of a big club in {abroad}",
+  net:["An industry conference","A coaches' conference in {city}","A managers' dinner in {city}","A coaching clinic in {city}"],
+  own:[["mg_watch","Learn",0,2,"Watch games and take notes","Three games a weekend.","sk2",0],
+   ["mg_video","Learn",1,3,"Video sessions with the analyst","Pause, rewind, learn.","sk2",0],
+   ["mg_visit","Learn",1,4,"Visit a famous training ground in {abroad}","How the best do it.","sk3 rp1",3],
+   ["mg_press","People",1,4,"Charm the local press","Tea and quotes.","rp2 ht-2",0],
+   ["mg_pundit","People",2,4,"A guest spot as a TV pundit","Opinions, nicely lit.","rp2 ht-1",0],
+   ["mg_bond","Team",1,4,"A team-bonding trip","Go-karts and a quiz.","mo6 st-1",2],
+   ["mg_youth","Team",2,4,"Give a youth player a chance","The dressing room notices.","mo3 rp2",0]]},
+ actor:{sr:["a veteran stage actor","a casting director","a famous director"],craft:"voice and movement",topics:["accents","stage combat","screen acting"],fair:"a film festival",award:"the Golden Curtain awards",mag:"Curtain Call Weekly",peers:"other actors",jr:"young actors",star:"Dame Cordelia Marsh, the great classical actor",second:"two months on a film set in {abroad}",
+  net:["An industry conference","A film festival in {city}","A theatre first night in {city}","A casting showcase in {city}"],
+  own:[["ac_class","Learn",0,2,"Acting classes","Scenes, notes, again.","sk2",1],
+   ["ac_voice","Learn",0,3,"Voiceover work","Adverts, cartoons and audiobooks.","sk1 rp1",0],
+   ["ac_dialect","Learn",1,3,"A dialect coach","Sound like anyone.","sk3",2],
+   ["ac_season","Learn",2,4,"A season at a classical theatre","Verse, swords and full houses.","sk3 rp1 st1",0,2],
+   ["ac_fringe","People",0,2,"A fringe play in {city}","Forty seats, one good review.","rp2 st2",1],
+   ["ac_cast","People",1,3,"Lunch with a casting director","Be memorable.","rp2 tip.4",1],
+   ["ac_prem","People",2,4,"Walk the red carpet at a premiere","Smile, wave, keep walking.","rp2",2]]},
+ cardealer:{sr:["the sales manager","the best closer in the group","the dealer principal"],craft:"selling",topics:["finance and insurance","used car appraisal","electric cars"],fair:"a motor show",award:"the Golden Keys awards",mag:"Forecourt Weekly",peers:"dealers from other garages",jr:"sales executives",star:"Fast Eddie Bancroft, the TV car dealer",second:"two months at the manufacturer's head office in {abroad}",
+  net:["A motor trade dinner","A motor show in {city}","A car auction in {city}","A dealer awards night in {city}"],
+  own:[["cd_auct","Learn",0,2,"Go to the car auctions","Fast bids, hidden faults.","sk2",0],
+   ["cd_dodgy","Learn",0,1,"Learn to spot a dodgy car","Clocked miles and fresh paint.","sk2",0],
+   ["cd_factory","Learn",3,4,"A factory visit in {abroad}","Robots and a test track.","sk2 rp2",3],
+   ["cd_revs","People",0,3,"Chase reviews from happy buyers","Five stars sell cars.","rp1 tip.2",0],
+   ["cd_test","People",1,3,"Run a test-drive weekend","Balloons and free coffee.","rp2 pr1",1],
+   ["cd_launch","People",2,4,"A new model launch evening","Canapés and finance deals.","rp2 pr2",2],
+   ["cd_comp","Team",2,4,"A sales competition with a prize","A weekend away for the winner.","mo5",1]]},
+ foot:{noGen:1,sr:["the club captain","a veteran centre-back","the club's record goalscorer"],star:"Ruud Vandersloot, the great striker",second:"training with a top club in {abroad}",award:null,skip:["mvv_o_summer","mvv_o_uni","mvv_o_panel","mvv_o_tour","mvv_o_judge"],
+  net:["A charity golf day","A sponsor's dinner in {city}","A kit launch party in {city}","A football awards dinner in {city}"],
+  own:[["fb_set","Train",0,4,"Set-piece sessions after training","Free kicks until dark.","sk2 form1",0],
+   ["fb_weak","Train",0,2,"Weak-foot practice","Left, left, left.","sk3 st1",0],
+   ["fb_video","Train",1,4,"Video analysis with the coaches","Your runs, slowed down.","sk2 form2",0],
+   ["fb_sprint","Train",0,4,"A sprint coach","Faster over ten yards.","fit4 sk1",2],
+   ["fb_alt","Train",2,4,"An altitude camp in {abroad}","Thin air, big lungs.","fit8",3],
+   ["fb_yoga","Mind",0,4,"Yoga for footballers","Hamstrings that bend.","fit2 st-3",1],
+   ["fb_ice","Mind",1,4,"Ice baths and cryotherapy","Cold, then better.","fit3 st-2",2],
+   ["fb_school","People",0,4,"Coach at a local school","Thirty kids, one ball.","rp2 hm-1",0],
+   ["fb_shop","People",1,4,"Sign shirts at the club shop","A queue round the block.","rp1 ht-1",0],
+   ["fb_capt","People",3,4,"A captain's dinner with the squad","Settle the dressing room.","rp2 st-2",2]]},
+ music:{noGen:1,sr:["a session legend"],star:"Velvet Morrow, the rock legend",second:"two months writing in a studio in {abroad}",award:"the Indie Music awards",skip:["mvv_o_panel","mvv_o_tour","mvv_o_judge"],
+  own:[["mu_theory","Learn",0,2,"Music theory evening classes","Chords with names.","sk2",1],
+   ["mu_cowrite","Learn",1,3,"A co-writing session in {city}","Two heads, one chorus.","sk3",1],
+   ["mu_sess","Learn",1,3,"Session work on someone else's record","Play what they need.","sk2 rp1",0],
+   ["mu_retreat","Learn",2,4,"A songwriting retreat in {abroad}","Sun, guitars and no phones.","sk3 pres1",3],
+   ["mu_open","Promote",0,1,"An open mic night in {city}","Five minutes, a real crowd.","pres2 fans30",0],
+   ["mu_busk","Promote",0,1,"Busk in the busiest square in town","Coins and new fans.","fans40 pres1",0],
+   ["mu_pod","Promote",1,3,"Guest on a music podcast","Tell the story behind the songs.","fans60 rp1",0],
+   ["mu_charity","Promote",2,4,"Play a charity gig","Good cause, good press.","fans50 rp2 hm-1",0],
+   ["mu_party","Promote",2,4,"An industry party at a festival","Wristbands and handshakes.","rp2 fans30",2]]},
+ dj:{noGen:1,sr:["a veteran resident DJ"],star:"DJ Solenne, the techno queen",second:"two months producing in a studio in {abroad}",award:"the Dance Music awards",skip:["mvv_o_panel","mvv_o_tour","mvv_o_judge"],
+  own:[["dj_dig","Learn",0,2,"Dig for records in second-hand shops","Dusty crates, rare gems.","sk2",1],
+   ["dj_b2b","Learn",0,3,"Play back-to-back with a friend","Two sets of ears.","sk2 pres1",0],
+   ["dj_vinyl","Learn",1,3,"Learn to mix on vinyl","No sync button.","sk2 pres1",1],
+   ["dj_synth","Learn",1,4,"A synthesis and sound design course","Make sounds nobody's heard.","sk3",2,2],
+   ["dj_stream","Promote",0,2,"Stream a live set","Your bedroom, the world.","fans60",0],
+   ["dj_remix","Promote",1,3,"Enter a remix competition","Somebody else's hit, your way.","rp1 fans40",0],
+   ["dj_boat","Promote",2,4,"A boat party set","Sunset, bass and spray.","pres2 fans40",2],
+   ["dj_conf","Promote",2,4,"A dance music conference in {abroad}","Panels by day, parties by night.","rp2 fans50",3]]}
+};
+
+/* Moves any career can take, worded for that career */
+const MVV_GEN=[
+ ["g_night","Learn",0,1,"Evening classes in {craft}","Two evenings a week at the local college.","sk2",1,2],
+ ["g_online","Learn",0,2,"An online course in {topic}","Videos on the bus, quizzes at lunch.","sk2",0],
+ ["g_check","Learn",0,1,"Ask {sr} to check your work","Painful, but you learn fast.","sk2 st1",0],
+ ["g_shop","Learn",1,3,"A weekend workshop on {topic}","Two days with people who know more than you.","sk3",2],
+ ["g_read","Learn",1,4,"Read everything in {mag}","An hour every evening, highlighter in hand.","sk1 rp1",0],
+ ["g_cross","Learn",1,3,"Swap jobs with a colleague for a month","See how the other half works.","sk2 rp1",0],
+ ["g_study","Learn",2,4,"A study trip to {abroad}","See how they do it there.","sk3 rp1",3],
+ ["g_coach","Learn",3,4,"An executive coach","Fortnightly sessions on how you lead.","sk2 rp1 st-3",3,2],
+ ["g_drinks","People",0,2,"Drinks with {peers}","Gossip, tips and a late night.","rp1 st-2 tip.25",1],
+ ["g_school","People",0,2,"Talk at a school careers day","Thirty teenagers, two good questions.","rp1 hm-1",0],
+ ["g_fair","People",1,3,"{fair} in {city}","Stands, samples and a lot of handshakes.","rp2 tip.35",2],
+ ["g_write","People",1,4,"Write a piece for {mag}","Your name in print.","rp2 st1",0],
+ ["g_awards","People",2,4,"{award} night in {city}","Black tie, rubber chicken, useful gossip.","rp2 tip.2",2],
+ ["g_charity","People",2,4,"A charity dinner with {peers}","A good cause and a good table plan.","rp2 hm-1 tip.2",2],
+ ["g_talk","People",3,4,"Speak at {fair} in {city}","Twenty minutes on stage, an hour at the bar.","rp3 st2",2],
+ ["g_keynote","People",4,4,"A keynote speech in {abroad}","Flown out, jet-lagged back.","rp4 st2 hm-2",3],
+ ["g_social","People",0,2,"Post your best work online","Before and after, nicely lit.","rp1 tip.2",0,0,["hair","chef","elec","plumb","tech","arch","influencer","tvchef","actor","cardealer","vet"]],
+ ["g_tmentor","Team",2,4,"Mentor one of your {jr}","An hour a week of your time.","mo3 rp1 sk1",0],
+ ["g_away","Team",2,4,"A team away day","Paintball, a pub lunch and a flip chart.","mo6 st-2",2],
+ ["g_train","Team",2,4,"Run a training day for your team","Everyone learns one new thing.","mo4 rp1",1],
+ ["g_tawards","Team",3,4,"Team awards and a curry","Silly trophies, real thanks.","mo5 hm-1",1],
+ ["g_deputy","Team",3,4,"Coach your deputy to step up","So you can step back sometimes.","rp2 mo3 st-1",0]
+];
+/* Rare, time-limited chances */
+const MVV_ONES=[
+ ["o_master",0,3,"A masterclass with {star}","Twenty places, and one of them is yours.","sk5 rp1",2],
+ ["o_second",1,3,"Secondment: {second}","Your boss has put your name forward.","sk2 rp2 hm-2",0,2],
+ ["o_award",1,4,"Enter {award}","Fill in the form, cross your fingers.","aw.3",1],
+ ["o_judge",3,4,"Judge {award}","A day of reading entries, a night of handing out trophies.","rp3",0],
+ ["o_panel",3,4,"Sit on a government review of your field","Your name in the report.","rp3 st2",0],
+ ["o_summer",0,2,"A free place at a summer school","A week of lectures, all paid for.","sk4",0],
+ ["o_uni",2,4,"A guest lecture at a university in {city}","Students take notes on what you say.","rp2 sk1",0],
+ ["o_radio",1,4,"An interview on national radio","Ten minutes, live.","rp2 ht-2",0],
+ ["o_tour",2,4,"A study tour of {abroad}, all paid for","A sponsor picks up the bill.","sk3 rp2",0]
+];
+const MVV_REST_LO=["A weekend away","A weekend camping","A weekend at the seaside","A city break","A weekend at a friend's cottage","A lazy weekend with your phone off"];
+const MVV_REST_HI=["A long weekend at a spa hotel","A villa weekend in the sun","A country house weekend","A sailing weekend","A long weekend at a mountain lodge"];
+const MVV_MENTOR=["Shadow {sr}","Learn the ropes from {sr}","Spend your evenings with {sr}","Ask {sr} to teach you"];
+
+function mvvParse(x){const e={};String(x||"").replace(/([a-z]+)(-?\.?\d+(?:\.\d+)?)/g,(m,k,v)=>{e[k]=parseFloat(v);return m});return e}
+const mvvSpec=(a,cat)=>cat?{id:"mvv_"+a[0],cat,r0:a[1],r1:a[2],n:a[3],d:a[4],e:mvvParse(a[5]),tier:a[6]||0,months:a[7]||0,one:1}:{id:"mvv_"+a[0],cat:a[1],r0:a[2],r1:a[3],n:a[4],d:a[5],e:mvvParse(a[6]),tier:a[7]||0,months:a[8]||0,only:a[9]||null};
+const MVV_CACHE={};
+function mvvFl(){return MVV_F[S.path]||{noGen:0,sr:["someone senior"],craft:"the basics",topics:["the latest methods"],fair:"an industry conference",award:"the industry awards",mag:"the trade press",peers:"people in your line of work",jr:"juniors",star:"a famous name in your field",second:"two months at head office",net:[NET[S.path]||"An industry conference"],own:[]}}
+/* Every move this career could ever offer, with the career's words filled in where needed */
+function mvvAll(){const p=S.path;if(MVV_CACHE[p])return MVV_CACHE[p];const F=mvvFl(),sk=new Set(F.skip||[]);
+ const has=t=>!/\{(award|mag|fair|star|second)\}/.test(t)||[...t.matchAll(/\{(award|mag|fair|star|second)\}/g)].every(m=>!!F[m[1]]);
+ const own=(F.own||[]).map(a=>{const sp=mvvSpec(a);sp.id="mvv_"+p+"_"+a[0].replace(/^[a-z]+_/,"");return sp});
+ const gen=F.noGen?[]:MVV_GEN.map(a=>mvvSpec(a)).filter(sp=>!sk.has(sp.id)&&has(sp.n)&&(!sp.only||sp.only.includes(p)));
+ const ones=MVV_ONES.map(a=>mvvSpec(a,MVV_ONE)).filter(sp=>!sk.has(sp.id)&&has(sp.n));
+ for(const sp of own.concat(gen,ones))if(sp.months>1)MOVE_DUR[sp.id]=sp.months;
+ return MVV_CACHE[p]={own,gen,ones,all:own.concat(gen,ones)}}
+/* Team moves need a team (or the rung where you'd have one) */
+function mvvOk(sp){const r=S.rank|0,C=CAR_(),c=cx();if(r<sp.r0||r>sp.r1)return false;
+ if(sp.cat==="Team")return (c.team||0)>0||r>=Math.max(2,(C.teamFrom||2)-1);
+ if(sp.e.pr&&C.mech!=="jobs")return false;return true}
+function mvvPool(){const A=mvvAll();return A.own.concat(A.gen).filter(mvvOk)}
+/* The monthly offer: each category's moves are shuffled once per cycle, and each month shows the next few, so everything comes round before anything repeats */
+function mvvOffer(pool,day){const salt=mvvSalt(),by={},out=new Set();for(const sp of pool)(by[sp.cat]=by[sp.cat]||[]).push(sp);
+ for(const[cat,L]of Object.entries(by)){const k=Math.min(L.length,MVV_K[cat]||2),P=Math.max(1,Math.ceil(L.length/k)),cyc=Math.floor(day/P),pos=((day%P)+P)%P;
+  const ord=L.slice().sort((a,b)=>mvvH(salt+"|"+cat+"|"+cyc+"|"+a.id)-mvvH(salt+"|"+cat+"|"+cyc+"|"+b.id));
+  for(let i=0;i<k;i++)out.add(ord[(pos*k+i)%ord.length].id)}return out}
+function mvvSeen(pool){const d=S.day,from=Math.max(S.rankSince||0,d-12),s=new Set();for(let x=from;x<d;x++)for(const id of mvvOffer(pool,x))s.add(id);return s}
+/* A rare one-off: it turns up for two months, and goes once you've taken it */
+function mvvOneNow(){const c=cx(),d=S.day,A=mvvAll();for(const w of[d,d-1]){if(w<4)continue;if(mvvH(mvvSalt()+"|one|"+w)<.08){const L=A.ones.filter(sp=>mvvOk(sp)&&!(c.mvOne&&c.mvOne[sp.id]));if(!L.length)return null;return{sp:mvvPickH(L,mvvSalt()+"|onepick|"+w),left:w===d?2:1}}}return null}
+/* Repeats: the first time is full value, then two-thirds, then a third. A move recovers a step for every 8 months you leave it alone. */
+function mvvCount(id){const c=cx(),r=c.mvRep&&c.mvRep[id];if(!r)return 0;return Math.max(0,r.n-Math.floor((S.day-r.last)/8))}
+const mvvFac=n=>n<=0?1:n===1?.67:.34;
+function mvvF(id){const m=S.mvMul&&S.mvMul[id];if(m&&(m.d===S.day||running()[id]))return m.f;return mvvFac(mvvCount(id))}
+const mvvSc=(v,f)=>v>0?Math.max(1,Math.round(v*f)):Math.min(-1,Math.round(v*f));
+function mvvTxt(e,f){const C=CAR_(),r=S.rank|0,o=[],sc=v=>mvvSc(v,f);
+ if(e.sk)o.push("Skill +"+sc(e.sk));if(e.rp)o.push(((C.ranks[r]&&C.ranks[r].repName)||"Reputation")+" +"+sc(e.rp));
+ if(e.fit)o.push("Fitness +"+sc(e.fit));if(e.form)o.push("Form +"+sc(e.form));if(e.pres)o.push("Stage presence +"+sc(e.pres));
+ if(e.fans)o.push("about "+fmtNum(Math.round(e.fans*MVV_FANS[r]*f))+" new fans");if(e.mo)o.push("Team morale +"+sc(e.mo));if(e.hp)o.push("Health +"+sc(e.hp));
+ if(e.st)o.push(e.st<0?"Stress −"+(-sc(e.st)):"Stress +"+e.st);if(e.ht)o.push(C.heatShort+" −"+(-sc(e.ht)));
+ if(e.hm)o.push(e.hm<0?"Home life −"+(-e.hm):"Home life +"+sc(e.hm));if(e.pr)o.push("Extra work for "+e.pr+" month"+(e.pr>1?"s":""));
+ let t=o.length?mvvCap(o.join(", "))+".":"";if(e.tip)t+=(t?" ":"")+"You might hear about good work.";if(e.aw)t+=(t?" ":"")+"A win would be a big boost.";return t}
+function mvvApply(e,f,label){const c=cx(),r=S.rank|0,out={},sc=v=>mvvSc(v,f);
+ if(e.sk)S.skill=clamp(S.skill+sc(e.sk),0,100);if(e.rp)S.rep=clamp(S.rep+sc(e.rp),0,100);
+ if(e.st)S.stress=clamp(S.stress+(e.st<0?sc(e.st):e.st),0,100);if(e.hm)S.homeLife=clamp(S.homeLife+(e.hm>0?sc(e.hm):e.hm),0,100);
+ if(e.ht)S.heat=clamp((S.heat||0)+(e.ht<0?sc(e.ht):e.ht),0,100);if(e.mo)S.morale=clamp((S.morale==null?50:S.morale)+sc(e.mo),0,100);
+ if(e.hp&&S.health!=null)S.health=clamp(S.health+sc(e.hp),0,100);
+ if(S.fb&&S.path==="foot"){if(e.fit)S.fb.fit=clamp((S.fb.fit||0)+sc(e.fit),0,100);if(e.form)S.fb.form=clamp((S.fb.form||0)+sc(e.form),0,100)}
+ if(isMusic()){const m=mu();if(e.pres)m.presence=clamp(m.presence+sc(e.pres),0,100);if(e.fans)m.fans+=Math.round(e.fans*MVV_FANS[r]*f)}
+ if(e.pr)c.promoUntil=Math.max(c.promoUntil||0,S.day+e.pr);
+ if(e.tip&&rnd()<e.tip*Math.max(.5,f)){c.tipUntil=S.day+1;out.note="You heard about some well-paid work. It shows up next month."}
+ if(e.aw){const F=mvvFl(),aw=mvvCap(F.award||"the awards");if(rnd()<e.aw+S.rep/400){S.rep=clamp(S.rep+4,0,100);out.note="You won at "+F.award+"!";out.mom={icon:"trophy",kicker:aw,title:"Winner",sub:S.name+" takes the prize. The phone doesn't stop ringing."};try{S.log.unshift({d:S.day,t:"Won at "+F.award+"."})}catch(x){}}
+  else{S.rep=clamp(S.rep+1,0,100);out.note="Shortlisted at "+F.award+", but not this year."}}
+ return out}
+function mvvFill(t,F,id,day){const k=id+"|"+day,C=mvvCities(),A=mvvAbroad();
+ return String(t).replace(/\{second\}/g,F.second||"").replace(/\{star\}/g,F.star||"").replace(/\{award\}/g,F.award||"").replace(/\{mag\}/g,F.mag||"").replace(/\{fair\}/g,F.fair||"")
+  .replace(/\{peers\}/g,F.peers||"").replace(/\{jr\}/g,F.jr||"").replace(/\{craft\}/g,F.craft||"")
+  .replace(/\{topic\}/g,()=>mvvPickH(F.topics||["the latest methods"],k+"t")).replace(/\{sr\}/g,()=>mvvPickH(F.sr||["someone senior"],k+"s"))
+  .replace(/\{city\}/g,()=>mvvPickH(C,k+"c")).replace(/\{abroad\}/g,()=>mvvPickH(A,k+"a"))}
+function mvvMove(sp,day0){const F=mvvFl(),r=S.rank|0,f=mvvF(sp.id),fill=t=>mvvFill(t,F,sp.id,day0);
+ const cost=sp.tier?scaleCost(MVV_TIER[sp.tier][Math.min(4,r)]):0,txt=mvvTxt(sp.e,f),fl=fill(sp.d||"");
+ return{id:sp.id,cat:sp.cat,n:mvvCap(fill(sp.n)),d:(fl?fl+" ":"")+txt,cost,mvv:sp,mvvF:f,run:()=>mvvApply(sp.e,mvvF(sp.id),sp.n)}}
+/* Add the month's offer to the moves list, and vary the wording of the everyday ones */
+function mvvDecorate(L){const F=mvvFl(),d=S.day,R0=running(),ids=mvPicked(),C=CAR_(),r=S.rank|0,c=cx(),have=new Set(L.map(m=>m.id));
+ const d0=id=>R0[id]&&R0[id].start!=null?R0[id].start:d;
+ const net=L.find(m=>m.id==="net");if(net&&F.net&&F.net.length){const f=mvvF("net"),k=d0("net");net.n=mvvCap(mvvFill(mvvPickH(F.net,mvvSalt()+"|net|"+k),F,"net",k));
+  net.d=((C.ranks[r]&&C.ranks[r].repName)||"Reputation")+" +"+mvvSc(2,f)+", and you might hear about good work.";net.mvvF=f;
+  net.run=()=>{const g=mvvF("net");S.rep=clamp(S.rep+mvvSc(2,g),0,100);if(rnd()<.4*Math.max(.5,g)){c.tipUntil=S.day+1;return{note:"You heard about some well-paid work. It shows up next month."}}}}
+ const men=L.find(m=>m.id==="mentor");if(men&&F.sr){const f=mvvF("mentor"),k=d0("mentor");men.n=mvvCap(mvvFill(mvvPickH(MVV_MENTOR,mvvSalt()+"|men|"+k),F,"mentor",k));
+  men.d="Skill +"+mvvSc(3,f)+". It eats into your evenings.";men.mvvF=f;
+  men.run=()=>{const g=mvvF("mentor");S.skill=clamp(S.skill+mvvSc(3,g),0,100);S.stress=clamp(S.stress+2,0,100);S.homeLife=clamp(S.homeLife-1,0,100)}}
+ const rest=L.find(m=>m.id==="rest");if(rest&&!isMusic())rest.n=mvvPickH(r>=3?MVV_REST_HI:MVV_REST_LO,mvvSalt()+"|rest|"+d);
+ const A=mvvAll(),off=mvvOffer(mvvPool(),d),force=new Set(Object.keys(R0).concat(ids));
+ for(const sp of A.own.concat(A.gen)){if(have.has(sp.id))continue;if(off.has(sp.id)||force.has(sp.id)){L.push(mvvMove(sp,d0(sp.id)));have.add(sp.id)}}
+ const o=mvvOneNow();
+ for(const sp of A.ones){if(have.has(sp.id))continue;const now=o&&o.sp.id===sp.id;if(now||force.has(sp.id)){const mv=mvvMove(sp,now?d-(2-o.left):d0(sp.id));if(now)mv.mvvOne=o.left;L.unshift(mv);have.add(sp.id)}}
+ return L}
+{const _f=careerMoves;careerMoves=function(){const L=_f.apply(this,arguments);if(window.__kitWanted)return L;try{mvvDecorate(L)}catch(e){if(!window.__mvvErr){window.__mvvErr=1;try{console.warn("mvv",e)}catch(x){}}}return L}}
+/* At the end of the month: note what was repeated, so next time it counts for less */
+{const _f=runMoves;runMoves=function(W){try{const R0=running(),ids=mvPicked(),c=cx();c.mvRep=c.mvRep||{};S.mvMul=S.mvMul||{};
+ for(const k of Object.keys(S.mvMul))if(!ids.includes(k)&&!R0[k])delete S.mvMul[k];
+ for(const id of ids){if(id==="study"||id==="kit"||id==="hire"||id==="rest"||/^crs_/.test(id))continue;
+  if(R0[id]){if(!S.mvMul[id])S.mvMul[id]={f:mvvFac(mvvCount(id)),d:S.day};continue}
+  S.mvMul[id]={f:mvvFac(mvvCount(id)),d:S.day};const rec=c.mvRep[id]=c.mvRep[id]||{n:0,last:S.day};rec.n=mvvCount(id)+1;rec.last=S.day;rec.tot=(rec.tot||0)+1;
+  if(/^mvv_o_/.test(id)){c.mvOne=c.mvOne||{};c.mvOne[id]=S.day}}}catch(e){}
+ return _f.apply(this,arguments)}}
+/* Little pictures for the cards */
+const MVV_PIC={
+ book:'<path d="M12 22 Q30 14 50 24 V84 Q30 74 12 82Z" fill="#7FB2E5"/><path d="M88 22 Q70 14 50 24 V84 Q70 74 88 82Z" fill="#A9CDF0"/><path d="M50 24 V84" stroke="#3E6FB0" stroke-width="3"/>',
+ cap:'<path d="M50 18 L92 38 L50 58 L8 38Z" fill="#46596A"/><path d="M26 48 V68 Q50 82 74 68 V48 L50 60Z" fill="#6E7F8C"/><path d="M86 41 V66" stroke="#E9C46A" stroke-width="4"/><circle cx="86" cy="68" r="5" fill="#E9C46A"/>',
+ chat:'<path d="M10 20 H62 V54 H30 L18 66 V54 H10Z" fill="#7FB2E5"/><path d="M40 44 H90 V76 H82 V88 L70 76 H40Z" fill="#E9C46A"/>',
+ team:'<circle cx="28" cy="40" r="10" fill="#E9A07A"/><circle cx="72" cy="40" r="10" fill="#C98A64"/><circle cx="50" cy="32" r="12" fill="#F2D3B8"/><path d="M10 80 Q28 54 46 80Z" fill="#7FB2E5"/><path d="M54 80 Q72 54 90 80Z" fill="#4BBA85"/><path d="M28 86 Q50 48 72 86Z" fill="#E9C46A"/>',
+ sun:'<circle cx="50" cy="50" r="18" fill="#F6C344"/><path d="M50 10V22M50 78V90M10 50H22M78 50H90M22 22L30 30M70 70L78 78M78 22L70 30M30 70L22 78" stroke="#F6C344" stroke-width="6" stroke-linecap="round"/>',
+ mic:'<rect x="38" y="10" width="24" height="44" rx="12" fill="#8E969A"/><path d="M28 44 Q28 68 50 68 Q72 68 72 44" fill="none" stroke="#6E7F8C" stroke-width="5"/><path d="M50 68 V84 M36 86 H64" stroke="#6E7F8C" stroke-width="5"/>',
+ plane:'<path d="M50 8 C55 8 56 16 56 24 V40 L90 60 V68 L56 58 V78 L66 86 V92 L50 88 L34 92 V86 L44 78 V58 L10 68 V60 L44 40 V24 C44 16 45 8 50 8Z" fill="#7FB2E5"/>',
+ pen:'<path d="M70 10 L90 30 L38 82 L14 88 L20 64Z" fill="#E9C46A"/><path d="M20 64 L38 82 L14 88Z" fill="#6E7F8C"/><path d="M62 18 L82 38" stroke="#C0453A" stroke-width="6"/>',
+ tool:'<path d="M64 10 A22 22 0 0 0 46 40 L12 74 A8 8 0 0 0 26 88 L60 54 A22 22 0 0 0 90 36 L76 44 L64 36 L60 22 Z" fill="#8E969A"/>',
+ ball:'<circle cx="50" cy="50" r="38" fill="#F2F4F5" stroke="#6E7F8C" stroke-width="3"/><path d="M50 34 L64 44 L59 60 H41 L36 44Z" fill="#46596A"/>',
+ leaf:'<path d="M18 82 C18 40 46 16 86 14 C84 56 60 82 18 82Z" fill="#4BBA85"/><path d="M18 82 L62 38" stroke="#2E8A5E" stroke-width="4"/>',
+ mega:'<path d="M14 40 H30 L74 16 V84 L30 60 H14Z" fill="#EA6B5D"/><path d="M30 60 L38 86 H48 L42 62" fill="#C0453A"/><path d="M82 38 Q90 50 82 62" stroke="#EA6B5D" stroke-width="5" fill="none"/>',
+ note:'<path d="M36 22 L80 12 V66 M36 22 V74" stroke="#8E7FC8" stroke-width="6" fill="none"/><ellipse cx="28" cy="76" rx="12" ry="9" fill="#B57FE5"/><ellipse cx="72" cy="68" rx="12" ry="9" fill="#B57FE5"/>',
+ eye:'<path d="M8 50 Q50 10 92 50 Q50 90 8 50Z" fill="#F2F4F5" stroke="#8E969A" stroke-width="4"/><circle cx="50" cy="50" r="15" fill="#3E6FB0"/><circle cx="50" cy="50" r="6" fill="#1B2630"/>',
+ glass:'<path d="M20 20 H44 L40 52 Q32 58 24 52Z" fill="#E9C46A"/><path d="M56 20 H80 L76 52 Q68 58 60 52Z" fill="#E9C46A"/><path d="M32 56 V82 M22 84 H42 M68 56 V82 M58 84 H78" stroke="#8E969A" stroke-width="4"/>'
+};
+function mvvPic(mv){const id=mv.id,n=(mv.mvv?mv.mvv.n:mv.n)||"",cat=mv.cat;
+ if(mv.mvv&&mv.mvv.one&&/award|Judge/i.test(n))return MOMENT_ICONS.trophy;if(mv.mvv&&mv.mvv.one&&/masterclass/i.test(n))return MOMENT_ICONS.star;
+ if(/\{abroad\}|abroad|\btour\b|trip to/i.test(n)&&cat!=="Tour")return MVV_PIC.plane;if(/award|competition|^Enter /i.test(n))return MOMENT_ICONS.trophy;
+ if(/talk|speak|keynote|radio|podcast|lecture|interview|pundit|press|forum|open mic|appeal/i.test(n))return MVV_PIC.mic;
+ if(/write|pamphlet|publish|piece|report|cookbook|Read /i.test(n))return MVV_PIC.pen;
+ if(id==="study"||/^crs_/.test(id))return MVV_PIC.cap;if(id==="mentor"||/^Shadow|Watch|watch /.test(n))return MVV_PIC.eye;if(id==="net")return MVV_PIC.glass;if(id==="hire")return MOMENT_ICONS.key||MVV_PIC.team;
+ if(id==="promo")return MVV_PIC.mega;if(id==="rest")return MVV_PIC.sun;
+ const byCat={Learn:"book",People:"chat",Team:"team",You:"sun",Courses:"cap",Train:"ball",Mind:"leaf",Promote:"mega",Record:"note",Band:"note",Deal:"pen",Tour:"plane",Gear:"tool",Kit:"tool"};
+ if(cat===MVV_ONE)return MOMENT_ICONS.star;return MVV_PIC[byCat[cat]]||MVV_PIC.book}
+/* The board: pictures, a New pill, one-off pills and a plain note when something is wearing thin */
+{const _f=movesSec;movesSec=function(){let h=_f.apply(this,arguments);try{if(!h)return h;const L=careerMoves(),c=cx(),pool=mvvPool(),seen=mvvSeen(pool);
+ h=h.replace("Kit is on its own tab.","Kit is on its own tab. Fresh options turn up every month, and doing the same thing again pays off less each time.");
+ for(const mv of L){const key='data-id="'+mv.id+'"',i=h.indexOf(key);if(i<0)continue;const end=h.indexOf("</button>",i);if(end<0)continue;
+  let btn=h.slice(i,end);const ni=btn.indexOf('<span class="mv-n">');if(ni<0)continue;
+  const pic='<svg class="mv-pic" viewBox="0 0 100 100" aria-hidden="true">'+mvvPic(mv)+'</svg>';
+  btn=btn.slice(0,ni)+pic+btn.slice(ni);
+  let pills="";if(mv.mvvOne)pills=' <span class="pill mv-one">'+(mv.mvvOne===1?"Last chance this month":"One-off: 2 months only")+'</span>';
+  else if(mv.mvv&&!seen.has(mv.id)&&!mvvCount(mv.id)&&!(c.mvRep&&c.mvRep[mv.id]))pills=' <span class="pill mv-new">New</span>';
+  if(pills){const di=btn.indexOf('<span class="mv-d">');if(di>7&&btn.slice(di-7,di)==="</span>")btn=btn.slice(0,di-7)+pills+btn.slice(di-7)}
+  if(mv.mvvF!=null&&mv.mvvF<1){const rec=c.mvRep&&c.mvRep[mv.id],n=rec?rec.tot||rec.n:0;if(n){btn=btn.replace(/ ?<b class="mv-done">[^<]*<\/b>/,"");const fi=btn.indexOf('<span class="mv-f">');
+   if(fi>=0)btn=btn.slice(0,fi)+'<span class="mv-less">Less useful now: done '+n+' time'+(n>1?"s":"")+'. Try something different.</span>'+btn.slice(fi)}}
+  h=h.slice(0,i)+btn+h.slice(end)}}catch(e){}return h}}
 
 function start(data){
  S=(data&&data.S)||load();
