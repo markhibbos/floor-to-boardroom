@@ -45389,8 +45389,8 @@ const FXV=[
  ["skill",()=>"Skill",1,()=>"Skill"],
  ["form",()=>"Form",1,()=>"Form"],
  ["fit",()=>"Fitness",1,()=>"Fitness"]];
-function fxSnap(){return{path:S.path,homeLife:S.homeLife,rep:S.rep,stress:S.stress,heat:S.heat,morale:isTeam()?S.morale:null,health:S.health,skill:S.skill,form:S.fb?S.fb.form:null,fit:S.fb?S.fb.fit:null,wealth:S.wealth,out:S.evPnl||0}}
-function fxDiff(a,b){const d={};if(!a||!b||a.path!==b.path)return d;for(const k in a){if(k==="path"||a[k]==null||b[k]==null)continue;const v=b[k]-a[k];if(Math.abs(v)>1e-9)d[k]=v}return d}
+function fxSnap(){return{path:S.path,rank:S.rank,bank:S.bank,homeLife:S.homeLife,rep:S.rep,stress:S.stress,heat:S.heat,morale:isTeam()?S.morale:null,health:S.health,skill:S.skill,form:S.fb?S.fb.form:null,fit:S.fb?S.fb.fit:null,wealth:S.wealth,out:S.evPnl||0}}
+function fxDiff(a,b){const d={};if(!a||!b||a.path!==b.path)return d;const moved=a.rank!==b.rank||a.bank!==b.bank;for(const k in a){if(k==="path"||k==="rank"||k==="bank"||a[k]==null||b[k]==null)continue;if(moved&&["rep","heat","morale","out"].includes(k))continue;const v=b[k]-a[k];if(Math.abs(v)>1e-9)d[k]=v}return d}
 /* Turns a set of changes into [text, good?] pairs, biggest first */
 function fxParts(d,lower){const out=[];
  for(const[k,lab,up]of FXV){const v=Math.round(d[k]||0);if(!v)continue;const n=lab();out.push([`${v>0?"+":"−"}${Math.abs(v)} ${lower?n.toLowerCase():n}`,up?v>0:v<0,Math.abs(v)])}
@@ -47652,6 +47652,22 @@ function calDriftMonth(){if(S.over||S.prison||S.front||S.sel||S.rel.st!=="marrie
 {const _km=kaMorning;kaMorning=function(){try{if(S&&!S.placeholder&&!S.over){const k=kaS();if(kaNeg(k.lab)&&k.esc>0&&S.day-(k.escAt??-99)>=TUNE.kaCalm){k.esc--;k.escAt=S.day;S.log.unshift({d:S.day,t:"Things have calmed down a little at work."})}}}catch(e){}return _km.apply(this,arguments)}}
 /* Hooked into the end of each month */
 {const _cdC=closeDay;closeDay=function(){try{if(S&&!S.placeholder){calTopMonth();calDriftMonth()}}catch(e){}return _cdC.apply(this,arguments)}}
+
+/* STALE inbox */
+/* ============ Messages that no longer make sense quietly resolve themselves ============ */
+const STALE_RULES=[
+ {re:/^sit_broke_/,gone:()=>S.wealth>=0,ct:"Delete the text",o:"Your account is back in the black. You delete the text without replying."}
+];
+function staleSweep(){try{if(!S||!S.inbox)return;for(const m of S.inbox){if(m.done)continue;const r=STALE_RULES.find(x=>x.re.test(m.id||""));if(r&&r.gone()){m.done=true;m.ct=r.ct;m.o=r.o;m.fx={};m.now={}}}}catch(e){}}
+{const _ri=renderInbox;renderInbox=function(){staleSweep();return _ri.apply(this,arguments)}}
+{const _cl=closeLabel;closeLabel=function(){staleSweep();return _cl.apply(this,arguments)}}
+
+/* ENERGY bonus cap */
+/* ============ Fitness, hobbies, pets, traits and treatments help, but together they add at most +12 ============ */
+const EN_BONUS_CAP=12;
+{const _ea=enAllowance;enAllowance=function(E,o){const r=_ea.apply(this,arguments);try{
+ const core=/^(Your age|Health|Stress|Energy debt|Well rested|Unwell)/;let extra=0;for(const [n,x] of r.parts)if(!core.test(n)&&x>0)extra+=x;
+ if(extra>EN_BONUS_CAP){const cut=extra-EN_BONUS_CAP;r.parts.push(["Diminishing returns (bonuses cap at +"+EN_BONUS_CAP+")",-cut]);r.v-=cut}}catch(e){}return r}}
 
 function start(data){
  S=(data&&data.S)||load();
