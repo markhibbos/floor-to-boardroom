@@ -771,6 +771,7 @@ html,body{overflow-x:clip}
 .cr-stats>div{background:var(--surface2,rgba(0,0,0,.04));border:1px solid var(--line);border-radius:10px;padding:7px 9px}
 .cr-stats .label{display:block;font-size:10.5px}.cr-stats b{font-size:15px}
 .cr-ladder{margin:4px 0 0;padding-left:20px;font-size:13.5px;line-height:1.5;color:var(--muted)}.cr-ladder li.got{color:inherit;font-weight:600}
+.wk-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px;display:flex;align-items:center;gap:8px}.wk-head::after{content:"";flex:1;height:1px;background:var(--line)}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -53242,6 +53243,70 @@ for(const k of ["space_a6","vetwork","vetwork_3","electrics_3","electrics_5","po
 const AV2_POOLS={vet:["vetwork"],plumb:["plumbing"],elec:["electrics"]};
 {const _cp=avCareerPool;avCareerPool=function(){const p=_cp.apply(this,arguments);try{for(const f of AV2_POOLS[S&&S.path]||[])for(const x of avFam(f))if(!p.includes(x))p.push(x)}catch(e){}return p}}
 
+
+/* HANGOVERS */
+/* ============ Big nights out: hangovers, sick days, and an absence record work notices ============ */
+const HO_BIG=/\b(all night|3am|4am|party|parties|rave|festival|join in|night out|pub crawl|bender|clubbing|nightclub|stag|hen do|lock-in|one more drink|drinks|pint|pints|cocktails?|shots|karaoke|afterparty|after-party|celebrate|i'm in)\b/i;
+function hoChance(w){const a=Math.floor(age());let p=.22+Math.max(0,a-25)*.012;try{if((S.traits||[]).includes("party"))p*=.65;if((S.traits||[]).includes("steady"))p*=.8}catch(e){}return Math.min(.75,p*(w||1))}
+function hoNight(w,what){try{if(!S||S.placeholder||S.over||S.prison||window.__hoSkip)return;if(rnd()>hoChance(w))return;
+ const a=Math.floor(age()),sev=Math.min(3,1+(rnd()<.25+Math.max(0,a-30)*.01?1:0)+(w>1.4&&rnd()<.4?1:0));
+ const H=S.ho=S.ho||{};H.cur={d:S.day,sev,what:what||"a big night"};
+ const sickP=[0,.12,.35,.6][sev]+Math.max(0,a-35)*.006;
+ if(rnd()<sickP&&!(typeof selfPaid==="function"&&selfPaid()&&rnd()<.5)){H.sick=(H.sick||[]).concat(S.day).slice(-30);H.cur.sick=1;
+  S.rep=clamp(S.rep-1,0,100);try{if(S.boss)S.boss.mood=clamp((S.boss.mood||50)-3,0,100)}catch(e){}S.evPnl=(S.evPnl||0)-Math.round(Math.abs(S.evPnl||0)*.03);
+  S.log.unshift({d:S.day,t:"Called in sick after "+(what||"a big night")+"."});try{toastMsg(pick(["You call in sick. Your voice is very convincing. Nobody is convinced.","Sick day. The duvet wins.","You phone in sick and immediately feel guilty. Then you go back to sleep."]))}catch(e){}}
+ else{S.log.unshift({d:S.day,t:["","A rough morning after ","A brutal hangover after ","A two-day hangover after "][sev]+(what||"a big night")+"."});try{toastMsg(pick(["Your head is pounding. Water. Toast. Regret.","You've aged five years overnight.","Never again. (Again.)"]))}catch(e){}}}catch(e){}}
+// Inbox choices (incl. group chats) that are big nights
+{const _ch=choose;choose=function(i,ci){let big=0,label="";try{const m=S.inbox[i],e=getEv(m),c=choicesOf(e)[ci],t=String(c&&c.t||"");const ctx=t+" "+(e&&e.chat?e.chat.map(l=>l[1]).join(" "):"")+" "+String(e&&e.t||"");
+  if(c&&!IE_REST.test(t)&&HO_BIG.test(ctx)&&(HO_BIG.test(t)||(e&&e.chat))){big=/stag|hen do|festival|bender|all night|3am|4am/i.test(ctx)?1.5:1;label=/stag/i.test(ctx)?"the stag do":/hen do/i.test(ctx)?"the hen do":/festival/i.test(ctx)?"the festival":"a big night out"}}catch(x){}
+ const m=S.inbox[i];const r=_ch.apply(this,arguments);try{if(big&&m&&m.done&&m.ci===ci)hoNight(big,label)}catch(x){}return r}}
+// Free-time nights out
+{const _da=doActivity;doActivity=function(k){const a=(typeof ACTIVITIES!=="undefined"?ACTIVITIES:[]).find(x=>(x.id||x.k)===k);const u0=typeof enUsed==="function"?enUsed():0;const r=_da.apply(this,arguments);
+ try{if(a&&typeof enUsed==="function"&&enUsed()>u0){const n=String(a.n||a.t||k);if(/festival|karaoke|pub|club|party|cocktail|bar|quiz|stand-?up|singles|night/i.test(n+" "+k))hoNight(/festival|singles/i.test(n+" "+k)?1.5:1,n.toLowerCase().replace(/^(go to |go |a |an |the )/,"").replace(/^/,"the "))}}catch(e){}return r}}
+// Stag and hen dos
+{const _wf=wsFinish;wsFinish=function(){const w=S.wscene;const r=_wf.apply(this,arguments);try{if(w&&w.kind==="do"&&!w.hoDone){w.hoDone=1;hoNight(1.8,"the stag or hen do")}}catch(e){}return r}}
+// The month: hangovers cost energy; sick days build an absence record
+{const _ep=enPlan;enPlan=function(){const L=_ep.apply(this,arguments);try{const H=S.ho&&S.ho.cur;if(H&&H.d===S.day){const a=Math.floor(age());L.push({cat:"rest",n:H.sick?"Sick day after "+H.what:"Hangover after "+H.what,e:Math.round([0,5,9,14][H.sev]*(1+Math.max(0,a-30)*.015))})}}catch(e){}return L}}
+const hoRecent=()=>((S.ho&&S.ho.sick)||[]).filter(d=>S.day-d<12).length;
+function hoMorning(){try{if(!S||S.placeholder||S.over||S.prison||S.daily)return;const H=S.ho;if(!H)return;const n=hoRecent(),solo=typeof soloJob==="function"&&soloJob(),self=typeof selfPaid==="function"&&selfPaid();
+ H.lvl=H.lvl||0;if(H.lvl>0&&n<=1&&S.day-(H.lvlAt||0)>=12){H.lvl=Math.max(0,H.lvl-1);H.lvlAt=S.day}
+ if(S.inbox.some(m=>!m.done&&/^abs_/.test(m.id)))return;
+ const boss=(S.boss&&S.boss.n)||"Your manager";
+ if(solo||self){if(n>=4&&S.day-(H.soloAt||-99)>=8){H.soloAt=S.day;pushDyn({noBig:1,id:"abs_solo_"+S.day,from:"Your diary",t:"Word is getting round",b:"You've cancelled on people "+n+" times this year after big nights. Clients and bookers talk.",c:[{t:"Knock the nights out on the head for a while",fx:{stress:3,home:-2},o:"Early nights. Your diary fills back up."},{t:"Nobody minds, it's rock and roll",fx:{rep:-6,pnl:-.3},o:"Two clients quietly go elsewhere."}]})}return}
+ const step=(lv,t,b,c)=>{H.lvl=lv;H.lvlAt=S.day;pushDyn({noBig:1,id:"abs_"+lv+"_"+S.day,from:lv===1?boss:"HR",t,b,c})};
+ if(H.lvl===0&&n>=3)step(1,"A quiet word about your sick days",boss+" closes the door. \"That's "+n+" sick days this year, and they always seem to follow a big weekend. I'm not daft.\"",[{t:"Apologise and mean it",fx:{stress:2,rep:1},o:"\"Good. Let's not have this chat again.\""},{t:"Blame a nasty bug that's going round",p:.5,win:{fx:{},o:"They give you the benefit of the doubt. Just."},lose:{fx:{rep:-3,act:"bossmood",d:-6},o:"\"Funny how it only goes round on Mondays.\""}},{t:"Shrug it off",fx:{rep:-2},o:"They write something down. That's never good."}]);
+ else if(H.lvl===1&&n>=5)step(2,"Formal warning: your absence record","A letter from HR: "+n+" days off sick in twelve months. This is a formal warning. Any more and it goes to a final warning.",[{t:"Accept it and cut back on the nights out",fx:{stress:4},o:"It stings. You put the phone on silent on Friday nights."},{t:"Get a doctor's note for the next one",p:.45,win:{fx:{stress:2},o:"The doctor is sympathetic. The warning stands, but it won't get worse for now."},lose:{fx:{stress:5,rep:-2},o:"The doctor asks how much you drink. You round down. A lot."}},{t:"Appeal it",p:.3,win:{fx:{stress:3},o:"The appeal panel softens it to an informal warning."},lose:{fx:{stress:6,rep:-3},o:"The appeal is rejected. And now everyone knows."}}]);
+ else if(H.lvl===2&&n>=7)step(3,"Final written warning","HR again: "+n+" days off this year. This is your final warning. The next sick day after a night out could cost you your job.",[{t:"Promise it won't happen again",fx:{stress:6},o:"You mean it this time. Probably."},{t:"Ask for support: is it more than a few nights out?",fx:{stress:2,karma:2,home:1},o:"They point you to the employee helpline. It helps more than you expected."}]);
+ else if(H.lvl===3&&n>=8){H.lvl=4;pushDyn({noBig:1,id:"abs_4_"+S.day,from:"HR",t:"A meeting about your attendance",b:"A meeting has been booked with HR and "+boss+". You know what this is.",c:[{t:"Go in and face it",fx:{act:"absfire"},o:"You're dismissed for poor attendance. You clear your desk with a pounding head."},{t:"Beg for one last chance",p:.25,win:{fx:{stress:10,rep:-5},o:"They give you one more chance. One."},lose:{fx:{act:"absfire"},o:"It doesn't work. You're let go."}}]})}
+}catch(e){}}
+ACTS.absfire=()=>{S.over=S.rank>=4?"ousted":"fired";S.log.unshift({d:S.day,t:"Dismissed for poor attendance."})};
+ACTS.bossmood=fx=>{try{if(S.boss)S.boss.mood=clamp((S.boss.mood||50)+(fx.d||0),0,100)}catch(e){}};
+{const _wmH=willMorning;willMorning=function(){const r=_wmH.apply(this,arguments);try{hoMorning()}catch(e){}return r}}
+
+/* INBOX weeks */
+/* ============ The month's inbox in weeks; follow-ups land the week after; the morning after is your choice ============ */
+{const _pd=pushDyn;pushDyn=function(ev){const r=_pd.apply(this,arguments);try{const m=S.inbox.find(x=>x.id===ev.id);if(m&&m.wk==null&&window.__wkParent!=null)m.wk=Math.min(4,window.__wkParent+1)}catch(e){}return r}}
+{const _ch=choose;choose=function(i,ci){const was=window.__wkParent;try{const m=S.inbox[i];window.__wkParent=m&&m.wk!=null?m.wk:1}catch(e){}try{return _ch.apply(this,arguments)}finally{window.__wkParent=was}}}
+function wkAssign(){try{const P=S.inbox.filter(m=>!m.done&&m.wk==null);if(!P.length)return;const taken=S.inbox.filter(m=>!m.done&&m.wk!=null).map(m=>m.wk);
+ P.forEach((m,j)=>{let w=1+((h32(String(m.id))+j)%4);if(P.length<=4){const free=[1,2,3,4].filter(x=>!taken.includes(x));if(free.length)w=free[j%free.length]}m.wk=w;taken.push(w)})}catch(e){}}
+function wkLabel(w){try{const d=dateFor(S.day),y=d.getUTCFullYear(),mo=d.getUTCMonth(),last=new Date(Date.UTC(y,mo+1,0)).getUTCDate(),a=(w-1)*7+1,b=w===4?last:w*7;
+ const mn=d.toLocaleDateString("en-GB",{month:"short",timeZone:"UTC"});return "Week "+w+" · "+a+"–"+b+" "+mn}catch(e){return "Week "+w}}
+{const _ri=renderInbox;renderInbox=function(){try{wkAssign()}catch(e){}const r=_ri.apply(this,arguments);try{
+ const pane=document.getElementById("pane-inbox");if(!pane)return r;const cards=[...pane.querySelectorAll("article.mail.pending")];if(cards.length<2)return r;
+ const wkOf=a=>{const b=a.querySelector('[data-act="choose"]');const m=b?S.inbox[+b.dataset.i]:null;return m&&m.wk?m.wk:1};
+ const parent=cards[0].parentElement,anchor=cards[0];const sorted=cards.map((a,ix)=>({a,w:wkOf(a),ix})).sort((x,y)=>x.w-y.w||x.ix-y.ix);
+ let lastW=0;const frag=document.createDocumentFragment();for(const o of sorted){if(o.w!==lastW){const h=document.createElement("div");h.className="wk-head";h.textContent=wkLabel(o.w);frag.appendChild(h);lastW=o.w}frag.appendChild(o.a)}
+ parent.insertBefore(frag,parent.querySelector("article.mail:not(.pending)")||null)}catch(e){}return r}}
+// The morning after: a hangover becomes a choice the following week
+function hoNight(w,what){try{if(!S||S.placeholder||S.over||S.prison||window.__hoSkip)return;if(rnd()>hoChance(w))return;
+ const a=Math.floor(age()),sev=Math.min(3,1+(rnd()<.25+Math.max(0,a-30)*.01?1:0)+(w>1.4&&rnd()<.4?1:0));const H=S.ho=S.ho||{};H.cur={d:S.day,sev,what:what||"a big night"};
+ const self=typeof selfPaid==="function"&&selfPaid();const head=["","Your head is fuzzy.","Your head is pounding and the room won't keep still.","You can't remember getting home. Your phone has 4% battery and 11 messages."][sev];
+ pushDyn({noBig:1,id:"hang_"+S.day+"_"+Math.floor(rnd()*1e6),life:1,from:"The morning after",t:pick(["The morning after","Ouch","Regret, mostly"]),b:head+" It's a working day. "+(sev>=3?"This is a bad one.":""),c:[
+  {t:self?"Get on with the job, slowly":"Drag yourself in",fx:{stress:2+sev,act:"hoin",sev},o:pick(["You survive on coffee and sheer will. Your work is not your best.","You spend the day very quietly. Nobody is fooled.","Three bacon rolls later, you're nearly human."])},
+  {t:self?"Cancel today's jobs":"Call in sick",fx:{act:"hosick",what:what||"a big night"},o:pick(["The duvet wins.","Your 'sick voice' is very convincing. Nobody is convinced.","You feel guilty for about four minutes, then go back to sleep."])}]})}catch(e){}}
+ACTS.hoin=fx=>{try{S.evPnl=(S.evPnl||0)-Math.round(Math.abs(S.evPnl||0)*.02*(fx.sev||1));S.rep=clamp(S.rep-(fx.sev>=3?1:0),0,100)}catch(e){}};
+ACTS.hosick=fx=>{try{const H=S.ho=S.ho||{};H.sick=(H.sick||[]).concat(S.day).slice(-30);if(H.cur)H.cur.sick=1;S.rep=clamp(S.rep-1,0,100);if(S.boss)S.boss.mood=clamp((S.boss.mood||50)-3,0,100);
+ S.evPnl=(S.evPnl||0)-Math.round(Math.abs(S.evPnl||0)*.03);S.stress=clamp(S.stress-2,0,100);S.log.unshift({d:S.day,t:"Called in sick after "+(fx.what||"a big night")+"."})}catch(e){}};
 
 function start(data){
  S=(data&&data.S)||load();
