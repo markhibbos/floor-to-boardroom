@@ -4155,16 +4155,26 @@ function townSec(){
 /* ============ The Daily Grind: a spoof local paper about your month ============ */
 const mpick=x=>x[Math.floor(Math.random()*x.length)];
 const SMALL_ADS=["LOST: one Clam card. Sentimental value. Reward.","FOR SALE: exercise bike, used twice. Slight guilt included.","WANTED: someone to explain crypto to my dad.","Piano lessons. Neighbours not included.","FOUND: a cat that answers to the sound of a tin opener.","Allotment available. Previous owner's marrows still at large.","Man with van. Van with man. Your choice.","Bake sale Saturday. Please stop asking about the soggy bottoms.","Free to good home: 40 years of National Geographic.","Dog walker wanted. Dog is the boss."];
+/* Weather by country, January to December */
+const WEATHER_BY={
+ australia:["Scorcher, total fire ban","Humid, afternoon storms","Warm and sticky","Mild autumn sunshine","Cool and clear","Chilly mornings, sunny days","Coldest week of the year: 12 degrees","Windy and dry","Spring sunshine, magpies swooping","Warm and bright, beaches filling up","Hot northerly winds","Sunburnt Christmas: 35 degrees at the beach"],
+ usa:["Blizzard warning, schools closed","Bitter cold and grey","Slush and sunshine","Spring rain, umbrellas out","Warm and bright","Muggy and hot","Heatwave, cooling centres open","Thunderstorms in the evening","Glorious late summer","Crisp autumn colours","Cold and windy","First snow, lights going up"],
+ france:["Cold and grey, chance of snow","Damp and chilly","Mild with showers","Spring showers, café terraces reopen","Warm and sunny","Hot, everyone heading south","Canicule: heatwave warning","Half the city is on holiday","Golden late summer","Autumn rain","Foggy and cold","Frosty, Christmas markets busy"],
+ japan:["Dry and freezing","Cold, plum blossom early","Cherry blossom forecast: next week","Cherry blossom at its best","Golden Week sunshine","Rainy season begins","Hot and humid","Typhoon warning","Lingering heat, cicadas loud","Mild and clear","Autumn leaves turning","Cold and dry, illuminations up"],
+ india:["Pleasant and dry","Warm and hazy","Hot, mangoes arriving","Very hot and humid","Scorching pre-monsoon heat","Monsoon arrives: heavy rain","Monsoon downpours, trains delayed","Heavy rain warning","Monsoon easing","Humid with showers","Warm and festive","Cool, clear evenings"],
+ nigeria:["Harmattan haze, dusty mornings","Hot and dry","Hot, first storms","Rainy season begins","Heavy afternoon rain","Downpours, flooding on the roads","Wet and grey","Short dry spell","Heavy rain returns","Thunderstorms","Hot and humid","Harmattan arrives, cool mornings"],
+ russia:["Minus 15 and heavy snow","Freezing, frozen rivers","Snow melting into slush","Thaw, mud everywhere","Spring at last, lilacs out","White nights, warm and bright","Summer heat at the dacha","Warm with thunderstorms","First chill, mushroom season","Cold rain, first snow","Snow settling","Deep freeze, New Year trees up"]
+};
 const WEATHER=["Snow showers, gritters on standby","Grey and drizzly","Blustery with sunny spells","April showers, bring a brolly","Warm and bright","Glorious sunshine","Heatwave warning","Thunderstorms later","Mild and misty","Leaves on the line","Fog and frost","Crisp and clear, perfect for Christmas"];
 /* Turn the month's log into a front page. big=true when it's worth showing straight away. */
 function paperFor(day){
- const first=(S.name||"").split(" ")[0]||"Local resident",who=`${S.home.area||"Local"} ${CAREERS[S.path].n.toLowerCase()}`,whoU=who.toUpperCase(),a=ageInt();
+ const first=(S.name||"").split(" ")[0]||"Local resident",pLoc=t=>{try{return typeof locText==="function"?locText(t):t}catch(e){return t}},who=pLoc(`${S.home.area||"Local"} ${CAREERS[S.path].n.toLowerCase()}`),whoU=who.toUpperCase(),a=ageInt();
  const L=S.log.filter(l=>l.d===day).map(l=>l.t);
  const has=re=>L.find(t=>re.test(t));
  const W=S.world&&S.world.id!=="calm"?wld():null;
  const rules=[
   [/^Died\./,t=>[`TRIBUTES PAID TO ${whoU}`,`${S.name} has died, aged ${a}. ${t.replace(/^Died\. /,"")}`]],
-  [/Six numbers/,()=>[`${whoU} SCOOPS £4.2M JACKPOT`,`${first}, ${a}, checked the ticket "about forty times".`]],
+  [/Six numbers/,()=>[`${whoU} SCOOPS ${pLoc("£4.2m").toUpperCase()} JACKPOT`,`${first}, ${a}, checked the ticket "about forty times".`]],
   [/^Review: Promoted/,()=>[`${whoU} PROMOTED`,`${first}, ${a}, has been made ${R().t.toLowerCase()} at ${S.bank}.`]],
   [/Milestone: Married|setting a date|You're married/i,()=>[`WEDDING BELLS FOR ${whoU}`,`${first} has married ${S.rel.name}. Guests described the dancing as "enthusiastic".`]],
   [/The baby has arrived/,()=>[`IT'S A BABY FOR ${whoU}`,`${first} and family welcome ${(S.children[S.children.length-1]||{}).n||"a new arrival"}. Sleep is expected to resume in about 2045.`]],
@@ -4179,14 +4189,14 @@ function paperFor(day){
   [/Started a business|Expanded /,t=>[`LOCAL BUSINESS BOOM`,t]],
   [/^Sold .* for /,t=>[`${whoU} CASHES IN`,t]],
   [/Ambition achieved/,t=>[`${whoU} DOES IT!`,t.replace("Ambition achieved: ",`${first} has achieved a long-held ambition: `)]],
-  [/begins\.$/,t=>[`${t.replace(/ begins\.$/,"").toUpperCase()} HITS`,W?W.d:t]],
+  [/begins\.$/,t=>[`${pLoc(t.replace(/ begins.$/,"")).toUpperCase()} HITS`,W?W.d:t]],
   [/Divorce settlement/,t=>[`${whoU} SPLITS`,t]],
   [/Adopted a /,t=>[`MEET THE NEW ARRIVAL`,t]]
  ];
  let lead=null,big=false;
  for(const[re,fn]of rules){const t=has(re);if(t){lead=fn(t);big=true;break}}
  const news=(S.news||[]).filter(n=>n.t);
- if(!lead){const n=news[0];lead=n?[n.t.toUpperCase(),`Readers in ${S.home.area||"town"} are talking about little else.`]:[`QUIET MONTH IN ${(S.home.area||"TOWN").toUpperCase()}`,`Nothing much happened. Experts say this is fine.`]}
+ if(!lead){const n=news[0];lead=n?[pLoc(n.t).toUpperCase(),`Readers in ${S.home.area||"town"} are talking about little else.`]:[`QUIET MONTH IN ${pLoc(S.home.area||"town").toUpperCase()}`,`Nothing much happened. Experts say this is fine.`]}
  const briefs=[];if(W)briefs.push([W.n,mpick(W.news||[W.d])]);
  for(const n of news.slice(1,3))briefs.push(["In the news",n.t]);
  if(S.rival&&Math.random()<.5)briefs.push(["Business",`${S.rival.name} tipped for big things at ${S.bank}.`]);
@@ -4196,7 +4206,7 @@ function paperFor(day){
  const sport=S.path==="foot"&&S.lg?`${S.bank}: ${ord(lgPos())} in ${DIVS[S.lg.div]}.`:pick(["The pub quiz league goes to a tie-break over the capital of Peru.","Local parkrun record falls to a 64-year-old in a tutu.","Sunday league match abandoned after the ball lands in the river."]);
  const signs=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"],star=signs[(S.age0||22)*7%12];
  const horo=pick(["Someone at work is about to surprise you. Pretend you saw it coming.","Money flows in, then straight back out. Classic.","Avoid big decisions on Tuesdays. And Wednesdays.","An old friend is thinking of you. Probably about the money you owe them.","Love is in the air. So is a cold."]);
- return{big,day,date:fmtDate(day),lead,briefs,weather:WEATHER[m],ad:mpick(SMALL_ADS),ad2:mpick(SMALL_ADS),price:Math.round(90+day/12*4),issue:12000+day,bmd,letter,sport,star,horo};
+ return{big,day,date:fmtDate(day),lead,briefs,weather:((typeof WEATHER_BY!=="undefined"&&WEATHER_BY[S.country])||WEATHER)[m],ad:mpick(SMALL_ADS),ad2:mpick(SMALL_ADS),price:Math.round(90+day/12*4),issue:12000+day,bmd,letter,sport,star,horo};
 }
 function paperHTML(p,btn){
  return `<div class="paper"><div class="paper-mast"><span>Est. 1887 · No. ${p.issue||""}</span><b>The Daily Grind</b><span>${esc(p.date)} · ${p.price}p</span></div>
