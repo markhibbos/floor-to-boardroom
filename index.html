@@ -45802,7 +45802,7 @@ function enWorkE(){
  const E=S.en||{};if(E.bsab&&E.bsab.until>S.day)return 8;
  if(S.lastOff===S.day)return 10;
  const D=EN_DIAL[enDial()];let e;
- if(CAR_().mech==="jobs"&&S.cards){const rk=R(),c0=rk._cap0||rk.cap||1;e=Math.max(6,(jobsUsed()-(enOpOn()?S.op.h:0))/c0*EN_WK*D.int)}else e=D.e;
+ if(CAR_().mech==="jobs"&&S.cards){const rk=R(),c0=rk._cap0||rk.cap||1;e=Math.max(D.e*.5,(jobsUsed()-(enOpOn()?S.op.h:0))/c0*EN_WK*D.int)}else e=D.e;
  if(S.sick>0)e*=.4;
  const lv=E.mo&&E.mo.d===S.day?E.mo:null;if(lv)e*=1-Math.min(1,lv.days/21)*(lv.oncall?.5:1);
  return Math.round(e);
@@ -46064,7 +46064,7 @@ window.vitalsExtra.push(()=>{if(!enHas()||S.over)return null;const E=enS();if(!E
 function enDialHtml(inModal){const E=enS();if(!E)return"";const d=enDial(),locked=E.pt&&E.pt.until>S.day,jobs=CAR_().mech==="jobs";
  return `<div class="${inModal?"":"pane-sec "}en-dial"><div class="sec-head"><h2 style="font-size:18px">Work hours</h2><span class="label">⚡ ${enWorkE()} this month</span></div>
   ${inModal?"":enSumHtml()}<div class="seg en-seg" role="group" aria-label="Work hours">${EN_DIAL.map((x,i)=>`<button data-act="${inModal?"endialm":"endial"}"data-v="${i}" class="${d===i?"on":""}" ${locked&&i>0?"disabled":""}>${esc(x.n)}</button>`).join("")}</div>
-  <p class="hint keep" style="margin:6px 0 0">${esc(EN_DIAL[d].d)} ${jobs?`Your working day: ${R().cap}h.`:`Results ×${EN_DIAL[d].out}.`}${locked?" You're part-time until "+esc(shortDate(E.pt.until))+".":""}${E.bsab&&E.bsab.until>S.day?" You're on a break to recover until "+esc(shortDate(E.bsab.until))+".":""}</p></div>`}
+  <p class="hint keep" style="margin:6px 0 0">${esc(EN_DIAL[d].d)} ${jobs?`Your working day: ${R().cap}h. You’ve booked ${(+jobsUsed()).toFixed(1)}h · ⚡${enWorkE()} now, up to ⚡${EN_DIAL[d].e} if you fill your day.`:`Results ×${EN_DIAL[d].out}.`}${locked?" You're part-time until "+esc(shortDate(E.pt.until))+".":""}${E.bsab&&E.bsab.until>S.day?" You're on a break to recover until "+esc(shortDate(E.bsab.until))+".":""}</p></div>`}
 XCLICK.endial=t=>{const E=enS();if(!E)return;const v=clamp(+t.dataset.v||0,0,3);if(E.pt&&E.pt.until>S.day&&v>0)return;E.dial=v;try{enTrimPicks()}catch(e){}save();render()};
 {const _rd=renderDesk;renderDesk=function(){const r=_rd.apply(this,arguments);try{if(!enHas()||deskTabNow()!=="work"||deskLocked())return r;const p=document.getElementById("pane-desk");const a=p&&(p.querySelector(".subtabs-wrap")||p.querySelector(".work-banner"));if(a&&a.insertAdjacentHTML)a.insertAdjacentHTML("afterend",enDialHtml())}catch(e){}return r}}
 {const _rj=renderJobs;renderJobs=function(){const o=_rj.apply(this,arguments);try{if(!enHas())return o;const ph=enJobHourE();
