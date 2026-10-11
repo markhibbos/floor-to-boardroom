@@ -41535,7 +41535,7 @@ try{const SIM={hollywood:"mansion",cheshire:"mansion",valley:"family",ibiza:"fam
 function careerStartHome(){const s=CAREER_START_HOME[S.path];if(!s||ownsHome()||S.abroad)return;if(!["room","parents"].includes(S.home.t)&&!(HT[S.home.t]&&HT[S.home.t].start))return;
  S.home=Object.assign({},S.home,{t:s.k,n:s.n,value:0,loan:0,up:0,rent:s.rent,tier:0,area:s.area});}
 {const _ng4=newGame;newGame=function(){const r=_ng4.apply(this,arguments);try{careerStartHome()}catch(e){}return r}}
-{const _sc4=switchCareer;switchCareer=function(){const was=S.home&&HT[S.home.t]&&HT[S.home.t].start;const r=_sc4.apply(this,arguments);try{if(was&&!CAREER_START_HOME[S.path]){S.home=Object.assign({},S.home,{t:"room",n:"Room in a Bethnal Green flatshare",rent:1100,area:"Bethnal Green"});S.log.unshift({d:S.day,t:"Moved out of work housing into a flatshare."})}else careerStartHome()}catch(e){}return r}}
+{const _sc4=switchCareer;switchCareer=function(){const was=S.home&&HT[S.home.t]&&HT[S.home.t].start;const r=_sc4.apply(this,arguments);try{if(was&&!CAREER_START_HOME[S.path]){S.home=Object.assign({},S.home,{t:"room",n:"Room in a Bethnal Green flatshare",rent:1100,area:(typeof locArea==="function"&&S.country!=="uk"?locArea("Bethnal Green"):"Bethnal Green")});S.log.unshift({d:S.day,t:"Moved out of work housing into a flatshare."})}else careerStartHome()}catch(e){}return r}}
 
 /* ============ Relocation: your career can take you abroad ============ */
 const CAREER_ABROAD={
@@ -47230,11 +47230,11 @@ function rsVitalsSec(){
   ${en}
   <div class="rs-vs" id="vs-rep"><div class="meters">${meter(esc(rk.repName),S.rep,"good")}</div>
    ${ka?`<div class="rs-ka"><span class="label">Known as</span> <b>${esc(ka)}</b></div>`:""}
-   <p class="hint keep" style="margin:4px 0 0">Good work and the right choices build it, and you need 55 or more to be promoted. At 0 you're fired.</p></div>
+   <p class="hint keep" style="margin:4px 0 0">Good work and the right choices build it, and you need 55 or more to be promoted. Near the top every point is harder to win and a slip costs more, and without steady good work it slides back towards what your role can sustain${typeof t3Base==="function"?" (about "+Math.round(t3Base())+" for you now)":""}. At 0 you're fired.</p></div>
   <div class="rs-vs" id="vs-stress"><div class="meters">${meter("Stress",S.stress,"bad")}</div>
-   <p class="hint keep" style="margin:4px 0 0">What eases it: a good home life (above 65), the gym, rest and holidays, easier work hours, hobbies and pets. At 100 you burn out and this career ends.</p></div>
+   <p class="hint keep" style="margin:4px 0 0">Every month your workload, running over your energy, debt and the people you're neglecting push it up. What eases it: a good home life (above 65), the gym, rest and holidays, easier work hours, hobbies and pets. At 100 you burn out and this career ends.</p></div>
   <div class="rs-vs" id="vs-heat"><div class="meters">${meter(esc(heatN),S.heat,"bad")}</div>
-   <p class="hint keep" style="margin:4px 0 0">Risky choices, cut corners and shady offers push it up. It cools a little each month you keep out of trouble. At 100 this career is over: you're banned${(S.karma||0)<=-25?", and with your record you could be arrested":""}.</p></div>
+   <p class="hint keep" style="margin:4px 0 0">Risky choices, cut corners and shady offers push it up. Being stretched too thin makes for sloppy work that adds to it, and it cools only slowly once you keep out of trouble. At 100 this career is over: you're banned${(S.karma||0)<=-25?", and with your record you could be arrested":""}.</p></div>
   ${typeof isTeam==="function"&&isTeam()?`<div class="rs-vs" id="vs-morale"><div class="meters">${meter(S.path==="foot"?"Dressing room":"Team morale",S.morale,"good")}</div>
    <p class="hint keep" style="margin:4px 0 0">How your team feels about working for you. Good months and looking after people lift it; low morale drags down your results.</p></div>`:""}
  </div>`;
@@ -54034,7 +54034,7 @@ function locInside(L,w,str,at){
  const m=/^(the|The) (.+)$/.exec(w);if(m){const core=m[2];if(!L.ins.has(core)){const vals=[...new Set([...L.map.values()])],re=new RegExp("(^|[^A-Za-z0-9])"+reEsc(core)+"(?=[^A-Za-z0-9]|$)");const c=vals.filter(v=>v!==core&&re.test(v));if(c.length)L.ins.set(core,c)}if(hit(core,at+m[1].length+1))return true}
  return false}
 /* ---- Countries: fill the gaps in each swap table, so no UK area or institution slips through ---- */
-const LOC_FILL={"Clam card":"travel card","Cotswold":"country","Cotswolds":"countryside","the Cotswolds":"the countryside","UK stamp duty":"property taxes","stamp duty":"property tax","Stamp duty":"Property tax",
+const LOC_FILL={"a hung parliament":"a close election","A hung parliament":"A close election","hung parliament":"close election","Hung parliament":"Close election","the King's Head":"the corner bar","The King's Head":"The corner bar","King's Head":"Corner Bar","Isle of Wight":"the coast","the Isle of Wight":"the coast","Clam card":"travel card","Cotswold":"country","Cotswolds":"countryside","the Cotswolds":"the countryside","UK stamp duty":"property taxes","stamp duty":"property tax","Stamp duty":"Property tax",
  "National Insurance":"social security","King's Counsel-ish":"Senior Counsel-ish","King's Counsel":"Senior Counsel","HMP Thameside":"the state prison","Pub quiz":"Quiz night","pub quiz":"quiz night",
  "Pubs":"Bars","pubs":"bars","pub":"bar","The Treasury":"The Finance Ministry","the Treasury":"the finance ministry","a knighthood":"a national honour","constituents":"voters","Boxing Day":"the day after Christmas",
  "Kent Police":"the regional police","Kent Fire and Rescue":"the regional fire service","10 Downing Street":"the leader's residence","Houses of Parliament":"the parliament building","council estate":"housing estate",
@@ -54943,6 +54943,113 @@ function mvvPic(mv){const id=mv.id,n=(mv.mvv?mv.mvv.n:mv.n)||"",cat=mv.cat;
   h=h.slice(0,i)+btn+h.slice(end)}}catch(e){}return h}}
 
 {const _ch=choose;choose=function(i,ci){const m=S.inbox[i];try{if(m&&!m.done)m.dDay=S.day}catch(e){}return _ch.apply(this,arguments)}}
+
+/* TUNE3: rep stress complaints */
+/* ============ Reputation is hard to hold at the top; stress and complaints build faster ============
+   Inbox choices, activities and trips are scaled the moment they happen (and the answered card shows what you really got).
+   Everything else (the month's work, the review, awards, stories that change things directly) is settled once a month on
+   clMonth, which runs just before the month-end report is built so the report shows the result, and reputation once more
+   after the month closes. The monthly pull-back, stress build-up and recovery, and slow-fading complaints happen on clMonth.
+   Every knob lives in TUNE3. State: S.t3 = {k: career key, rk: rank, r: reputation, h: complaints, as last settled};
+   old saves just start it. */
+const TUNE3={
+ repTop:70,        /* reputation gains start to shrink above this */
+ repSpan:30,       /* ...a gain is worth (100 - rep)/repSpan of itself: +3 at 85 is +1.5, at 94 it is +0.6 */
+ repMinGain:.05,   /* never less than this share of a gain */
+ repLoss:.5,       /* slips cost up to this much more, rising from repTop to 100 */
+ repBase:[46,52,58,64,70], /* where reputation settles by rank, before skill */
+ repSkill:.15,     /* each point of skill over 50 raises that baseline by this */
+ repDown:.05,      /* share of the gap above the baseline lost each month */
+ repUp:.015,       /* share of the gap below the baseline won back each month */
+ stUp:.3,          /* stress from choices, activities and trips counts this much extra (tapered like the build-up) */
+ stWork:[.8,1.2,1.6,2,2.4], /* stress a month from the job itself, by rank */
+ stDial:[.4,1,1.6,2.3],     /* ...times this for coasting / normal / pushing / all-in */
+ stOver:14,        /* stress for running over your energy limit, per 100% over */
+ stStreak:.6,      /* extra stress per month in a row over the limit (after the first) */
+ stStrain:.2,      /* stress per point of strain */
+ stDebt:1.2,       /* in the red: this much, plus up to stDebtMax more the deeper it is */
+ stDebtMax:2,
+ stPeople:.7,      /* each person you're neglecting who needs a lot of you */
+ stLittle:.6,      /* little children at home */
+ stFull:35,        /* the extra stress is in full below this... */
+ stTop:75,         /* ...and fades to nothing by this: the game's own events decide the last stretch to burnout */
+ stRest:2,         /* a month well under your energy limit */
+ stTrip:5,         /* a holiday this month */
+ stOff:5,          /* a month off work */
+ stFree:1,         /* each kind of free time you made room for (fun, fitness, friends, family), up to 3 */
+ stEase:.12,       /* above stEaseFrom, this share of the excess eases off each month: you start dropping things */
+ stEaseFrom:70,
+ hUp:.4,           /* new complaints count this much extra (tapered) */
+ hSlow:.4,         /* complaints fade this much slower each month (the game's own fade is 1), below hSlowTo */
+ hSlowTo:60,
+ hOver:.6,         /* complaints from sloppy work when you're more than 10% over your energy limit */
+ hStrain:.05,      /* per point of strain */
+ hFull:35,         /* the extra complaints are in full below this... */
+ hTop:70           /* ...and fade to nothing by this: bans and trials stay down to the game's own events */
+};
+const t3Taper=(v,full,top)=>clamp((top-v)/Math.max(1,top-full),0,1);
+function t3Gain(r,d){let x=r,left=d;while(left>1e-9){const st=Math.min(1,left);left-=st;const f=x<=TUNE3.repTop?1:clamp((100-x)/TUNE3.repSpan,TUNE3.repMinGain,1);x+=st*f}return x}
+/* reputation r0 changed by d: what it should be instead */
+function t3RepD(r0,d){if(d>0)return clamp(t3Gain(r0,d),0,100);if(d<0)return clamp(r0+d*(1+TUNE3.repLoss*Math.max(0,r0-TUNE3.repTop)/(100-TUNE3.repTop)),0,100);return r0}
+function t3Base(){const B=TUNE3.repBase;return clamp(B[clamp(S.rank||0,0,B.length-1)]+((S.skill||50)-50)*TUNE3.repSkill,35,82)}
+const t3Key=()=>S.path+"|"+(S.prison?"p":"");
+const t3Live=T=>T&&T.r!=null&&T.k===t3Key()&&T.rk===S.rank;
+/* Scale what fn() just did to reputation, stress and complaints; returns the real changes */
+let t3Depth=0;
+function t3Now(fn,self,args){if(t3Depth||!S)return{ret:fn.apply(self,args)};const r0=S.rep,s0=S.stress,h0=S.heat,rk0=S.rank,p0=S.path;let ret;t3Depth++;try{ret=fn.apply(self,args)}finally{t3Depth--}
+ try{if(!S||S.placeholder||S.prison||S.over||S.rank!==rk0||S.path!==p0)return{ret};const T=S.t3;
+  if(S.rep!==r0){const live=t3Live(T);S.rep=t3RepD(r0,S.rep-r0);if(live)T.r+=S.rep-r0}
+  if(S.stress>s0)S.stress=clamp(S.stress+(S.stress-s0)*TUNE3.stUp*t3Taper(s0,TUNE3.stFull,TUNE3.stTop),0,100);
+  if(S.heat>h0){S.heat=clamp(S.heat+(S.heat-h0)*TUNE3.hUp*t3Taper(h0,TUNE3.hFull,TUNE3.hTop),0,100);if(T&&T.h!=null)T.h+=S.heat-h0}
+  return{ret,d:{rep:S.rep-r0,stress:S.stress-s0,heat:S.heat-h0}}}catch(e){return{ret}}}
+let t3Last=null;
+{const _afT3=applyFx;applyFx=function(fx){const o=t3Now(_afT3,this,arguments);t3Last=o.d?{fx,d:o.d}:null;return o.ret}}
+/* the answered card shows what you really got */
+{const _chT3=choose;choose=function(i){const m=S&&S.inbox&&S.inbox[i],was=m&&m.done;t3Last=null;const r=_chT3.apply(this,arguments);
+ try{if(m&&!was&&m.done&&t3Last&&m.fx&&m.fx===t3Last.fx){const fx=Object.assign({},m.fx);for(const k of["rep","stress","heat"])if(fx[k]){const v=Math.round(t3Last.d[k]);if(v)fx[k]=v;else delete fx[k]}m.fx=fx}}catch(e){}t3Last=null;return r}}
+{const _daT3=doActivity;doActivity=function(){return t3Now(_daT3,this,arguments).ret}}
+{const _ttT3=takeTrip;takeTrip=function(){return t3Now(_ttT3,this,arguments).ret}}
+function t3Month(){
+ if(!S||S.placeholder||S.over)return;const T=S.t3||(S.t3={}),key=t3Key();
+ const fresh=T.k!==key||T.r==null;
+ const E=S.en||null,h=E&&E.hist&&E.hist.length&&E.hist[E.hist.length-1].d===S.day?E.hist[E.hist.length-1]:null;
+ const busy=!S.prison&&!S.sabb&&!(E&&E.bsab&&E.bsab.until>S.day);
+ /* 1. Reputation: gains shrink near the top, slips cost more, and it drifts back towards what your rank and skill can sustain */
+ if(!S.prison){if(!fresh&&T.rk===S.rank)S.rep=t3RepD(T.r,S.rep-T.r);
+  const B=t3Base();if(S.rep>B)S.rep=clamp(S.rep-(S.rep-B)*TUNE3.repDown,0,100);else S.rep=clamp(S.rep+(B-S.rep)*TUNE3.repUp,0,100)}
+ /* 2. Stress: the job, running over your energy, money worries and the people you're neglecting all pile on; rest and time off take it away */
+ if(busy){let up=TUNE3.stWork[clamp(S.rank||0,0,4)]*TUNE3.stDial[typeof enDial==="function"?enDial():1];
+  if(h&&h.used>h.al)up+=(h.used-h.al)/Math.max(1,h.al)*TUNE3.stOver+TUNE3.stStreak*Math.max(0,(E.streak||1)-1);
+  if(E)up+=(E.strain||0)*TUNE3.stStrain;
+  if(S.wealth<0){let sal=30000;try{sal=Math.max(12000,salary())}catch(e){}up+=TUNE3.stDebt+Math.min(TUNE3.stDebtMax,-S.wealth/sal*TUNE3.stDebtMax)}
+  try{for(const p of enPeople())if(p.lv===0&&p.need>=6)up+=TUNE3.stPeople}catch(e){}
+  try{if((S.children||[]).some(k=>kidAge(k)<5))up+=TUNE3.stLittle}catch(e){}
+  up*=t3Taper(S.stress,TUNE3.stFull,TUNE3.stTop);
+  let dn=0;if(h&&h.used<=h.al*.8)dn+=TUNE3.stRest;if(S.lastTrip===S.day)dn+=TUNE3.stTrip;if(S.lastOff===S.day)dn+=TUNE3.stOff;
+  if(E&&E.sp){let n=0;for(const k of["fun","fitness","friends","family"])if((E.sp[k]||0)>0)n++;dn+=TUNE3.stFree*Math.min(3,n)}
+  dn*=.6+S.stress/100;
+  S.stress=clamp(S.stress+up-dn,0,100);if(S.stress>TUNE3.stEaseFrom)S.stress-=(S.stress-TUNE3.stEaseFrom)*TUNE3.stEase}
+ /* 3. Complaints: they land harder, fade slower, and creep up when you're stretched too thin to do the job properly */
+ if(!S.prison){const tp=t3Taper(S.heat,TUNE3.hFull,TUNE3.hTop);
+  if(!fresh&&T.h!=null&&S.heat>T.h)S.heat=clamp(S.heat+(S.heat-T.h)*TUNE3.hUp*tp,0,100);
+  if(S.heat>=1&&S.heat<TUNE3.hSlowTo)S.heat=clamp(S.heat+TUNE3.hSlow,0,100);
+  if(busy){let x=0;if(h&&h.used>h.al*1.1)x+=TUNE3.hOver;if(E)x+=(E.strain||0)*TUNE3.hStrain;S.heat=clamp(S.heat+x*tp,0,100)}
+ }
+ T.k=key;T.rk=S.rank;T.r=S.rep;T.h=S.heat;
+}
+{const _cmT3=clMonth;clMonth=function(){try{t3Month()}catch(e){try{window.__hbErr&&window.__hbErr(e,"t3Month")}catch(x){}}return _cmT3.apply(this,arguments)}}
+/* After the month closes: reputation won at the review, the awards or a season's end gets the same treatment straight away */
+{const _cdT3=closeDay;closeDay=function(){const d0=S&&S.day;const r=_cdT3.apply(this,arguments);
+ try{if(S&&!S.placeholder&&!S.over&&!S.prison&&S.day!==d0&&S.t3){const T=S.t3;if(T.k===t3Key()){const r0=S.rep;if(T.rk===S.rank&&T.r!=null)S.rep=t3RepD(T.r,S.rep-T.r);T.rk=S.rank;T.r=S.rep;T.h=S.heat;if(Math.abs(S.rep-r0)>=.5){save();render()}}}}catch(e){}return r}}
+
+/* SMALL4 */
+/* Callbacks that quote an old story about someone who has since died don't name them */
+{const _cb=csqBuild;csqBuild=function(T,tr,big){try{const dead=(S.people||[]).filter(p=>p&&p.alive===false&&/ /.test(String(p.n||"")));if(tr&&tr.t&&dead.some(p=>String(tr.t).includes(p.n))){let t=String(tr.t);for(const p of dead)t=t.split(p.n).join("an old friend");tr=Object.assign({},tr,{t})}}catch(e){}return _cb.call(this,T,tr,big)}}
+/* Stories from your mum, dad or parents need a living parent */
+const parentFrom=e=>{try{return /^(Your )?(mum|dad|mother|father|parents)\b/i.test(String(e&&e.from||""))||/^Mum\b|^Dad\b/.test(String(e&&e.from||""))}catch(x){return false}};
+const noParents=()=>{try{return (S.parentsAlive??2)<=0}catch(x){return false}};
+{const _el=eligible;eligible=function(e){if(parentFrom(e)&&noParents())return false;return _el.apply(this,arguments)}}
+{const _pd=pushDyn;pushDyn=function(ev){if(parentFrom(ev)&&noParents())return;return _pd.apply(this,arguments)}}
 
 function start(data){
  S=(data&&data.S)||load();
