@@ -754,6 +754,9 @@ html,body{overflow-x:clip}
 .iv-stakes{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0;background:var(--surface2,var(--surface));min-width:0;overflow-wrap:anywhere}
 .iv-stakes span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
 @media (prefers-reduced-motion:no-preference){.iv-art svg{animation:iaIn .45s ease both}}
+.op-art{border-radius:15px 15px 0 0;margin:-14px -14px 10px;height:64px}
+.world-note .world-art{margin:-10px -12px 8px;height:52px;border-radius:13px 13px 0 0;border-bottom:0}
+.act-pic{display:block;max-width:240px;margin:10px auto 6px;pointer-events:none}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -52436,6 +52439,349 @@ try{for(const t of TRIPS)if(SV_TRIP[t.k]&&!t.__sv){t.__sv=1;t.st=t.st.concat(SV_
  const near=all.filter(x=>x.tiers.includes(r>0?r-1:r+1)&&!seen.includes(x.id));if(near.length&&rnd()<.6)return pick(near);
  let best=null,bi=1e9;for(const x of L){const i=seen.indexOf(x.id);if(i<bi){bi=i;best=x}}return best||_op.apply(this,arguments)}catch(e){return _op.apply(this,arguments)}}}
 svSceneAltInstall();
+
+/* AV: art variety module. More pictures and less repetition: inbox scenes, photo backdrops, newspaper photos, operations, free time, trophies and world events */
+/* ---- New inbox scenes (320x84). Named <family>_a<n> so they join the family's rotation ---- */
+const AVq=(n,f)=>{let o="";for(let i=0;i<n;i++)o+=f(i);return o};
+const avSnow=(n,h)=>AVq(n,i=>iaCirc((i*53+11)%320,(i*29+5)%(h||70),1+(i%3)*.4,"#fff",'opacity=".85"'));
+const avBunting=(y,c)=>AVq(11,i=>pa(`M${i*30} ${y} L${i*30+15} ${y+12} L${i*30+30} ${y}Z`,c[i%c.length]))+`<path d="M0 ${y} H320" stroke="#fff" stroke-width="1" opacity=".6"/>`;
+const avLights=(y,n,w)=>`<path d="M0 ${y} Q${(w||320)/4} ${y+10} ${(w||320)/2} ${y} T${w||320} ${y}" stroke="#4A4A4A" stroke-width=".8" fill="none"/>`+AVq(n,i=>iaCirc(6+i*((w||320)-12)/(n-1),y+Math.abs(Math.sin(i*1.3))*6+1,2.4,["#EA6B5D","#E9C46A","#4BBA85","#7FB2E5"][i%4]));
+const avGift=(x,y,w,h,c,rb)=>rc(x,y,w,h,c)+rc(x+w/2-2,y,4,h,rb||"#E9C46A")+rc(x,y+h/2-2,w,4,rb||"#E9C46A")+pa(`M${x+w/2} ${y} q-6 -8 -9 -2 q3 4 9 2 q6 -8 9 -2 q-3 4 -9 2Z`,rb||"#E9C46A");
+const avHouse=(x,w,h,c,roof,lit)=>rc(x,72-h,w,h,c)+pa(`M${x-3} ${72-h} L${x+w/2} ${72-h-14} L${x+w+3} ${72-h}Z`,roof)+rc(x+w/2-5,60,10,12,"#3A2A22")+rc(x+6,72-h+8,10,9,lit?"#F6D98A":"var(--win)")+rc(x+w-16,72-h+8,10,9,lit?"#F6D98A":"var(--win)");
+const avUmb=(x,y,c)=>pa(`M${x-16} ${y} A16 12 0 0 1 ${x+16} ${y}Z`,c)+rc(x-.8,y,1.6,18,"#3A3A3A");
+const avTable=(x,y,w,c)=>rc(x,y,w,5,c||"#8A6A44")+rc(x+6,y+5,4,84-y,"#6A4E30")+rc(x+w-10,y+5,4,84-y,"#6A4E30");
+const avPint=(x,y)=>rc(x,y,7,11,"#E9B44A",'rx="1"')+rc(x,y,7,3,"#F7F1E0")+`<path d="M${x+7} ${y+3} h2 a2 2 0 0 1 0 6 h-2" stroke="#C9CDD1" stroke-width="1.2" fill="none"/>`;
+const avKid=(x,y,c,h)=>iaPerson(x,y,c,h||"#E0B37E",.62);
+
+Object.assign(IA,{
+ /* Christmas */
+ xmas_a1:()=>iaSky("#2A3150")+avSnow(22,46)+iaCirc(280,16,9,"#F6E7A8")+rc(0,72,IA_W,12,"#EEF2F4")+avHouse(20,54,30,"#A9553E","#5A3A2A",1)+avHouse(90,50,26,"#C9A27A","#4A3A2A",1)+avHouse(196,58,32,"#8C4636","#3E2A22",1)+avLights(38,12,140).replace(/<path[^>]*\/>/,"")
+  +`<g transform="translate(272 54)">${iaCirc(0,12,9,"#F7FAFC")}${iaCirc(0,-2,6.5,"#F7FAFC")}${iaCirc(-2,-3,.9,"#2B2B2B")}${iaCirc(2,-3,.9,"#2B2B2B")}${pa("M0 -1 l5 1.2 l-5 1Z","#E07A2E")}${rc(-6,-10,12,3,"#2B2B2B")}${rc(-4,-16,8,6,"#2B2B2B")}${rc(-7,3,14,2.5,"#C0453A")}</g>`
+  +`<path d="M0 74 Q80 70 160 74 T320 73 V84 H0Z" fill="#F7FAFC"/>`,
+ xmas_a2:()=>iaSky("#4A2E2A")+rc(0,0,IA_W,84,"#5A3A30",'opacity=".5"')+rc(0,70,IA_W,14,"#3A2620")+`<g transform="translate(110 14)">${rc(0,0,100,8,"#E9DCC6")}${rc(6,8,88,50,"#C9BBA2")}${rc(24,22,52,36,"#2B1E1A")}${pa("M30 58 Q36 38 44 50 Q48 30 56 48 Q62 36 70 58Z","#F6A33D")}${pa("M38 58 Q44 46 50 54 Q56 42 62 58Z","#F6D44A")}</g>`
+  +AVq(4,i=>`<g transform="translate(${122+i*22} 22)">${rc(0,0,9,12,["#C0453A","#2F7A3E","#F2F4F5","#1D5FA8"][i])}${pa("M0 12 h9 v4 q0 4 -6 4 h-6 v-4Z",["#C0453A","#2F7A3E","#F2F4F5","#1D5FA8"][i])}${rc(0,0,9,3,"#F2F4F5")}</g>`)
+  +`<path d="M104 14 Q160 30 216 14" stroke="#2F7A3E" stroke-width="5" fill="none"/>`+AVq(6,i=>iaCirc(112+i*19,14+Math.sin(i/5*Math.PI)*12,2.6,["#EA6B5D","#E9C46A"][i%2]))
+  +`<g transform="translate(260 20)">${pa("M10 0 L28 26 H20 L32 44 H-12 L0 26 H-8Z","#2F7A3E")}${rc(6,44,8,8,"#6A4A30")}${iaStar(10,0,.6,"#E9C46A")}${iaCirc(4,30,2.4,"#EA6B5D")}${iaCirc(16,38,2.4,"#E9C46A")}${iaCirc(12,20,2.2,"#7FB2E5")}</g>`
+  +avGift(30,56,20,14,"#B3262E")+avGift(54,60,14,10,"#1D5FA8","#F2F4F5")+rc(0,0,IA_W,84,"#F6A33D",'opacity=".06"'),
+ xmas_a3:()=>iaSky("#3A2A3A")+[60,260].map(x=>rc(x-20,6,40,34,"#1C2A44",'stroke="#E9DCC6" stroke-width="3"')+AVq(5,i=>iaCirc(x-14+i*7,12+(i*7)%24,1.1,"#fff"))).join("")+rc(0,58,IA_W,26,"#5A3A2A")
+  +rc(30,52,260,8,"#F2EEE6")+`<ellipse cx="160" cy="48" rx="28" ry="10" fill="#C98A4A"/><ellipse cx="160" cy="45" rx="20" ry="7" fill="#D9A060"/>${rc(150,30,3,10,"#F2EEE6")}${rc(168,30,3,10,"#F2EEE6")}`
+  +[90,230].map(x=>`<ellipse cx="${x}" cy="50" rx="14" ry="4" fill="#F7F4EC"/>`+iaCirc(x,47,5,"#4E8A4A")+iaCirc(x+4,46,3,"#E07A2E")).join("")
+  +[120,205].map((x,i)=>`<g transform="translate(${x} 46) rotate(${i?14:-10})">${rc(-12,-2,24,5,i?"#C0453A":"#2F7A3E",'rx="2"')}${pa("M-12 -2 l-5 -2 v9 l5 -2Z M12 -2 l5 -2 v9 l-5 -2Z",i?"#C0453A":"#2F7A3E")}</g>`).join("")
+  +[[44,"#C0453A"],[276,"#1D5FA8"]].map(([x,c])=>iaPerson(x,58,c,"#E0B37E",.9)+pa(`M${x-6} 26 l2 -6 l2 4 l2 -5 l2 5 l2 -4 l2 6Z`,"#E9C46A")).join("")
+  +AVq(4,i=>rc(70+i*60,40,3,12,"#F2EEE6")+pa(`M${71.5+i*60} 34 q3 3 0 6 q-3 -3 0 -6Z`,"#F6D44A")),
+ xmas_a4:()=>iaSky("#DDE6EA")+rc(90,6,140,56,"#B7CBD8",'stroke="#F2EEE6" stroke-width="5"')+rc(158,6,4,56,"#F2EEE6")+avSnow(16,56).replace(/cx="(\d+)/g,(m,v)=>`cx="${94+(+v%132)}`)+`<path d="M92 58 Q130 48 160 56 T228 54 V62 H92Z" fill="#F7FAFC"/>`
+  +rc(0,62,IA_W,22,"#B88A5A")+avGift(40,46,26,18,"#C0453A")+avGift(70,52,18,12,"#2F7A3E","#F2F4F5")+avGift(240,44,28,20,"#1D5FA8")+avGift(272,52,16,12,"#E9C46A","#C0453A")+avGift(150,56,22,14,"#7A4A8A")+avGift(196,58,14,10,"#E86A7A","#F2F4F5")
+  +`<g transform="translate(14 8)">${pa("M8 0 L24 24 H16 L28 42 H-12 L0 24 H-8Z","#2F7A3E")}${iaStar(8,0,.55,"#E9C46A")}${rc(4,42,8,10,"#6A4A30")}</g>`+avLights(4,14),
+ /* Holidays */
+ beach_a1:()=>iaSky("#F2B88A")+rc(0,0,IA_W,24,"#E89A7A",'opacity=".5"')+iaCirc(160,46,18,"#F6D44A",'opacity=".9"')+rc(0,46,IA_W,38,"#3E7FA8")+AVq(5,i=>rc(60+i*44,52+(i%2)*6,24,1.5,"#F6D44A",'opacity=".6"'))
+  +`<path d="M0 46 V30 L14 24 L30 30 V46Z M30 46 V22 L46 14 L62 22 V46Z" fill="#E9DCC6"/>`+rc(6,34,6,6,"#3A4650")+rc(40,28,6,6,"#3A4650")+`<path d="M258 46 V26 L272 18 L288 26 V46Z M288 46 V32 L302 26 L320 32 V46Z" fill="#E9C9A6"/>`
+  +[[90,"#C0453A"],[214,"#F2F4F5"]].map(([x,c])=>`<g transform="translate(${x} 62)">${pa("M0 0 H40 L34 10 H6Z",c)}${rc(18,-26,2,26,"#5A4636")}${pa("M20 -26 L36 -4 H20Z","#F2EEE6")}</g>`).join("")+rc(0,74,IA_W,10,"#C9A06A"),
+ beach_a2:()=>iaSky("#BFE3F2")+iaCirc(40,18,10,"#F6D44A")+rc(200,8,110,52,"#F2EEE6")+AVq(4,i=>rc(208+i*26,14,16,10,"#9CC0D2")+rc(208+i*26,32,16,10,"#9CC0D2")+rc(206+i*26,26,20,3,"#E9DCC6"))+rc(0,56,IA_W,28,"#E9DCC6")
+  +`<rect x="60" y="60" width="150" height="18" rx="6" fill="#5BC0DE"/>`+AVq(5,i=>`<path d="M${70+i*28} 66 q5 -3 10 0" stroke="#fff" stroke-width="1.2" fill="none"/>`)+[20,234,270].map((x,i)=>`<g transform="translate(${x} 60)">${rc(0,8,30,4,"#F2F4F5",'transform="rotate(-8)"')}${rc(2,12,2,6,"#9AA0A6")}${rc(26,8,2,6,"#9AA0A6")}</g>`).join("")+avUmb(46,42,"#E86A7A")+avUmb(250,42,"#E9C46A")+pa("M120 60 L124 22 L128 60Z","#7A5B3A")+`<path d="M124 24 C110 18 100 24 96 30 M124 24 C138 16 150 22 154 30 M124 24 C118 12 108 10 102 12" stroke="#3E8E5E" stroke-width="5" fill="none"/>`,
+ beach_a3:()=>iaSky("#CFE6F2")+iaCloud(40,18,.8)+iaCloud(200,14,.6)+rc(0,50,IA_W,34,"#4FA0C8")+AVq(6,i=>`<path d="M${20+i*50} ${60+(i%2)*8} q6 -3 12 0" stroke="#fff" stroke-width="1.2" fill="none"/>`)
+  +`<path d="M190 84 V44 Q210 30 240 36 L270 30 Q300 32 320 42 V84Z" fill="#8FA86A"/><path d="M190 84 V44 Q200 60 196 84Z" fill="#7A9058"/>`+`<g transform="translate(262 4)">${rc(0,8,12,26,"#F2F4F5")}${rc(0,14,12,5,"#C0453A")}${rc(0,24,12,5,"#C0453A")}${rc(-2,4,16,5,"#3A4650")}${pa("M-2 4 L6 -2 L14 4Z","#C0453A")}${pa("M12 6 L40 0 L40 12Z","#F6E7A8",'opacity=".5"')}</g>`
+  +`<g transform="translate(70 52)">${pa("M0 8 H34 L28 16 H6Z","#F2F4F5")}${rc(16,-14,2,22,"#5A4636")}${pa("M18 -14 L32 6 H18Z","#E9C46A")}</g>`,
+ /* Weddings */
+ wedding_a1:()=>iaSky("#F4EDE4")+AVq(9,i=>iaCirc(20+i*36,10+(i%3)*4,2,"#F2B8C6",'opacity=".8"'))+rc(0,70,IA_W,14,"#E2D3C0")+rc(96,62,128,10,"#FFFDF7",'stroke="#E2D3C0"')+pa("M96 72 L90 84 H230 L224 72Z","#FFFDF7")
+  +`<g transform="translate(160 62)">${rc(-34,-14,68,14,"#FFF8EC",'stroke="#D9C9A6" stroke-width="1.2"')}${rc(-25,-28,50,14,"#FFF8EC",'stroke="#D9C9A6" stroke-width="1.2"')}${rc(-16,-42,32,14,"#FFF8EC",'stroke="#D9C9A6" stroke-width="1.2"')}${AVq(7,i=>iaCirc(-30+i*10,-14,2.4,i%2?"#F2B8C6":"#E86A7A"))}${AVq(5,i=>iaCirc(-20+i*10,-28,2.2,i%2?"#E86A7A":"#F2B8C6"))}${AVq(3,i=>iaCirc(-10+i*10,-42,2,"#E86A7A"))}${iaCirc(-4,-48,3.4,"#2B3A44")}${iaCirc(4,-48,3.4,"#F2F4F5",'stroke="#999" stroke-width=".5"')}</g>`
+  +[118,202].map(x=>`<g transform="translate(${x} 62)">${rc(-1,-8,2,8,"#C9CED1")}${pa("M-5 -18 h10 l-3 10 h-4Z","#F6E7A8",'opacity=".9"')}</g>`).join("")+`<g transform="translate(40 40)">${iaCirc(0,0,10,"#E86A7A")}${iaCirc(10,-4,8,"#F2B8C6")}${iaCirc(-8,6,7,"#F7F4EC")}${rc(-1,8,2,30,"#4E8A4A")}</g><g transform="translate(282 40)">${iaCirc(0,0,10,"#F2B8C6")}${iaCirc(-10,-4,8,"#E86A7A")}${iaCirc(8,6,7,"#F7F4EC")}${rc(-1,8,2,30,"#4E8A4A")}</g>`,
+ wedding_a2:()=>iaSky("#D6E8F2")+iaCloud(30,14,.7)+iaGround(72,"#A8C79A")+`<g transform="translate(40 10)">${rc(30,0,22,62,"#D8CFBF")}${pa("M30 0 L41 -14 L52 0Z","#8A8072")}${rc(0,26,90,36,"#E2D9C9")}${pa("M-4 26 L45 8 L94 26Z","#8A8072")}${`<path d="M36 62 V48 A5 5 0 0 1 46 48 V62Z" fill="#5A4636"/>`}${rc(8,34,8,12,"#9CC0D2")}${rc(70,34,8,12,"#9CC0D2")}${rc(38,10,6,8,"#9CC0D2")}</g>`
+  +AVq(26,i=>rc(150+(i*37)%160,10+(i*23)%46,3,3,["#F2B8C6","#fff","#E9C46A","#7FB2E5"][i%4],`transform="rotate(${i*31} ${150+(i*37)%160} ${10+(i*23)%46})"`))
+  +`<g transform="translate(176 50)">${pa("M0 22 V12 Q0 6 8 6 L18 -2 H54 L64 6 Q74 6 74 12 V22Z","#F2EEE6",'stroke="#C9CED1"')}${rc(22,0,14,7,"#3A4650")}${rc(40,0,12,7,"#3A4650")}${iaCirc(14,23,6,"#2B2B2B")}${iaCirc(60,23,6,"#2B2B2B")}<path d="M74 14 L92 6 M74 14 L92 18" stroke="#C9CED1" stroke-width="1"/>${iaCirc(93,6,2,"#F2F4F5")}${iaCirc(93,18,2,"#7FB2E5")}</g>`,
+ wedding_a3:()=>iaSky("#1F2A44")+AVq(14,i=>iaCirc((i*47)%320,(i*13)%20+2,1,"#fff",'opacity=".6"'))+`<path d="M20 30 L160 4 L300 30 V84 H20Z" fill="#F2EEE6" opacity=".95"/><path d="M20 30 L160 4 L300 30" stroke="#D9CBB8" stroke-width="3" fill="none"/>`+rc(20,74,280,10,"#C9B48A")
+  +avLights(20,16).replace(/<path[^>]*\/>/,"")+AVq(4,i=>`<path d="M${20+i*70} 30 Q${55+i*70} 46 ${90+i*70} 30" stroke="#E9C46A" stroke-width="1" fill="none" opacity=".8"/>`)
+  +iaPerson(140,60,"#2B3A44")+`<g transform="translate(168 60)">${iaCirc(0,-30,7,"#C68A5A")}<path d="M-8 -21 L8 -21 L18 20 H-18Z" fill="#fff" stroke="#E2D3C0"/></g>`+iaHeart(154,24,.9,"#E86A7A")
+  +[[60,"#B3262E"],[86,"#4BBA85"],[236,"#1D5FA8"],[262,"#E9C46A"]].map(([x,c])=>iaPerson(x,62,c,"#E0B37E",.75)).join(""),
+ /* Fitness */
+ run_a1:()=>iaSky("#E3E8EC")+rc(0,0,IA_W,10,"#C9CED6")+AVq(5,i=>rc(16+i*64,16,44,26,"#B7CBD8",'stroke="#F2F4F5" stroke-width="2"'))+rc(0,64,IA_W,20,"#5A6670")
+  +`<g transform="translate(40 40)">${pa("M0 26 L60 26 L66 18 L8 18Z","#2B3A44")}${rc(54,-4,4,24,"#3A4650")}${rc(48,-8,14,6,"#3A4650",'rx="2"')}</g>`+iaPerson(78,58,"#E86A7A")
+  +`<g transform="translate(170 54)">${rc(0,0,60,3,"#8E969A")}${rc(-6,-6,6,15,"#2B2B2B",'rx="1"')}${rc(60,-6,6,15,"#2B2B2B",'rx="1"')}${rc(-10,-3,4,9,"#2B2B2B")}${rc(66,-3,4,9,"#2B2B2B")}</g>`
+  +[250,270,290].map((x,i)=>`<g transform="translate(${x} ${60+i})">${iaCirc(0,0,6+i,"#2B3A44")}${pa(`M-4 ${-5-i} Q0 ${-12-i} 4 ${-5-i}`,"none",'stroke="#2B3A44" stroke-width="2.5"')}</g>`).join("")+rc(160,70,80,3,"#3A4650"),
+ run_a2:()=>iaSky("#CFE6F2")+iaCloud(220,14,.8)+iaGround(56,"#8CC46E")+`<path d="M0 84 Q120 58 200 64 T320 60 V70 Q240 70 200 74 T0 84Z" fill="#D9C9A6"/>`+tree(30,30,16)+tree(70,36,12)+tree(290,28,15)+tree(256,38,11)
+  +[[120,"#1D5FA8",1],[160,"#E86A7A",.9],[196,"#4BBA85",.85],[226,"#E9C46A",.8]].map(([x,c,s])=>`<g transform="translate(${x} ${70-x/20}) scale(${s})">${iaCirc(0,-36,6,"#E0B37E")}${pa("M-5 -29 L6 -29 L8 -10 L-4 -10Z",c)}<path d="M-4 -10 L-14 4 M6 -10 L12 4 M-5 -26 L-14 -16 M6 -26 L14 -32" stroke="#2B3A44" stroke-width="3.5" stroke-linecap="round" fill="none"/></g>`).join(""),
+ run_a3:()=>iaSky("#DDEBF0")+rc(0,0,IA_W,14,"#C9D9E2")+rc(0,22,IA_W,62,"#4FB0D8")+AVq(5,i=>`<path d="M0 ${30+i*12} H320" stroke="${i%2?"#F2F4F5":"#C0453A"}" stroke-width="1.5" stroke-dasharray="4 4"/>`)+AVq(8,i=>`<path d="M${(i*43)%300} ${26+(i*11)%50} q6 -3 12 0" stroke="#fff" stroke-width="1" fill="none" opacity=".7"/>`)
+  +`<g transform="translate(150 46)">${iaCirc(0,0,6,"#E86A7A")}${rc(-2,-2,4,2,"#2B3A44")}<path d="M6 2 Q20 -2 34 4 M-4 4 L-16 -6 M8 0 L22 -10" stroke="#E0B37E" stroke-width="4" stroke-linecap="round" fill="none"/></g>`+rc(0,18,IA_W,4,"#E9DCC6")+`<path d="M120 50 q4 -4 8 0 q4 4 8 0" stroke="#fff" stroke-width="1.4" fill="none"/>`,
+ /* Babies */
+ baby_a1:()=>iaSky("#E2EAF6")+rc(0,66,IA_W,18,"#D9C9A6")+rc(220,10,60,42,"#2A3560",'stroke="#F2EEE6" stroke-width="3"')+iaCirc(262,24,7,"#F6E7A8")+iaCirc(265,22,6,"#2A3560")+AVq(5,i=>iaCirc(228+i*11,16+(i%2)*20,.8,"#fff"))
+  +`<g transform="translate(110 30)">${rc(0,0,4,40,"#F2EEE6")}${rc(80,0,4,40,"#F2EEE6")}${rc(0,32,84,6,"#F2EEE6")}${AVq(9,i=>rc(8+i*8,6,2.5,26,"#F2EEE6"))}${rc(0,4,84,3,"#F2EEE6")}${`<ellipse cx="42" cy="30" rx="22" ry="5" fill="#9CC8EE"/>`}</g>`
+  +`<g transform="translate(152 0)">${rc(-.5,0,1,10,"#9AA0A6")}${rc(-24,10,48,1.5,"#9AA0A6")}${iaStar(-22,18,.5,"#E9C46A")}${iaCirc(0,18,4,"#F2B8C6")}${iaStar(22,18,.5,"#7FB2E5")}${[-22,0,22].map(x=>rc(x-.3,11,.6,4,"#9AA0A6")).join("")}</g>`
+  +`<g transform="translate(40 50)">${rc(0,0,24,16,"#C9A27A",'rx="3"')}${iaCirc(12,-4,7,"#C9A27A")}${iaCirc(7,-10,3,"#C9A27A")}${iaCirc(17,-10,3,"#C9A27A")}${iaCirc(10,-5,1,"#2B2B2B")}${iaCirc(14,-5,1,"#2B2B2B")}</g>`,
+ baby_a2:()=>iaSky("#DCEBF5")+iaCirc(40,16,9,"#F6D44A")+iaGround(70,"#9CCB96")+tree(296,32,14)+rc(20,20,2,52,"#7A5B3A")+rc(290-0,20,2,0,"#7A5B3A")+`<path d="M22 22 Q150 34 280 22" stroke="#8A8A8A" stroke-width="1" fill="none"/>`+rc(278,20,2,52,"#7A5B3A")
+  +[[50,"#F2B8C6","vest"],[90,"#9CC8EE","grow"],[132,"#F6E7A8","sock"],[164,"#C9E2C2","vest"],[204,"#F2F4F5","grow"],[248,"#F2B8C6","sock"]].map(([x,c,k])=>{const y=26+Math.sin((x-22)/258*Math.PI)*-1*-6;return `<g transform="translate(${x} ${y})">${rc(-1,-3,2,5,"#C9A27A")}${k==="vest"?pa("M-10 0 h20 l4 6 l-4 2 v12 h-12 v-12 l-4 -2Z",c):k==="grow"?pa("M-10 0 h20 l3 8 l-3 1 v10 l-3 8 h-5 l-2 -8 l-2 8 h-5 l-3 -8 v-10 l-3 -1Z",c):pa("M-3 0 h7 v10 q0 4 -4 4 h-7 q-2 -4 2 -5 h2Z",c)}</g>`}).join("")
+  +`<g transform="translate(150 50)"><path d="M0 0 A20 20 0 0 1 40 0 L40 8 H0Z" fill="#7FB2E5"/>${rc(0,8,40,12,"#9CC8EE",'rx="3"')}${iaCirc(8,24,5,"#2B3A44")}${iaCirc(32,24,5,"#2B3A44")}</g>`,
+ /* Secrets */
+ secret_a1:()=>iaSky("#1A2236")+rc(0,66,IA_W,18,"#2A3040")+rc(232,10,3,56,"#4A5466")+rc(222,8,18,4,"#4A5466")+`<path d="M220 12 L200 66 H270 L246 12Z" fill="#F6E7A8" opacity=".14"/>`+iaCirc(231,13,4,"#F6E7A8")
+  +`<g transform="translate(110 38)">${pa("M0 28 V16 Q0 10 8 10 L22 0 H70 L86 10 Q96 10 96 16 V28Z","#3A4A66")}${rc(26,3,20,9,"#1C2436")}${rc(50,3,20,9,"#1C2436")}${iaCirc(34,9,3.5,"#14181C")}${iaCirc(60,9,3.5,"#14181C")}${iaCirc(18,29,7,"#14181C")}${iaCirc(78,29,7,"#14181C")}</g>`+iaHeart(158,30,.6,"#E86A7A")+AVq(10,i=>iaCirc((i*67)%320,(i*13)%30+2,1,"#fff",'opacity=".5"')),
+ secret_a2:()=>iaSky("#20203A")+rc(0,60,IA_W,24,"#2E2A44")+rc(40,10,70,42,"#2B3A5A",'stroke="#3E3A5A" stroke-width="3"')+iaCirc(90,22,6,"#F6E7A8",'opacity=".8"')
+  +`<g transform="translate(140 40)">${rc(0,8,90,22,"#3E3A5A")}${rc(-6,4,40,10,"#5A5480",'rx="5"')}${rc(4,0,22,10,"#E9DCC6",'rx="5"')}</g>`+`<g transform="translate(250 38)">${rc(0,10,40,22,"#4A3A2A")}${rc(14,-6,4,16,"#8A7A5A")}${pa("M6 -6 h20 l-4 -10 h-12Z","#E9C46A",'opacity=".8"')}${rc(8,4,16,6,"#14181C",'rx="1.5"')}${rc(10,5,12,4,"#7FB2E5")}</g>`+`<path d="M266 40 Q240 20 214 30" stroke="#7FB2E5" stroke-width="1" fill="none" opacity=".4"/>`+iaCirc(272,40,8,"#7FB2E5",'opacity=".18"'),
+ /* Halloween */
+ halloween_a1:()=>iaSky("#2A1F3A")+iaCirc(60,18,11,"#F6E7A8")+rc(0,70,IA_W,14,"#2B2B2B")+`<g transform="translate(200 18)">${rc(0,0,100,52,"#4A3A44")}${rc(40,22,20,30,"#7A4A2A")}${rc(12,10,18,14,"#F6A33D",'opacity=".8"')}${rc(70,10,18,14,"#F6A33D",'opacity=".8"')}${pa("M-6 0 L50 -16 L106 0Z","#3A2A34")}</g>`
+  +[[226,"#E07A2E"],[272,"#E07A2E"]].map(([x,c])=>`<ellipse cx="${x}" cy="66" rx="8" ry="6" fill="${c}"/>`+pa(`M${x-4} 64 l2 -2 l2 2Z M${x+1} 64 l2 -2 l2 2Z`,"#2A1F3A")).join("")
+  +`<g transform="translate(120 70)">${pa("M-12 0 Q-12 -34 0 -34 Q12 -34 12 0 l-4 -4 l-4 4 l-4 -4 l-4 4 l-4 -4Z","#F2F4F5")}${iaCirc(-4,-24,2,"#2A1F3A")}${iaCirc(4,-24,2,"#2A1F3A")}</g>`
+  +`<g transform="translate(156 70)">${pa("M-9 0 L-6 -18 H6 L9 0Z","#4A2A5A")}${iaCirc(0,-22,5,"#C9E2A8")}${pa("M-10 -24 H10 L0 -42Z","#2B2B2B")}${rc(-12,-26,24,3,"#2B2B2B")}</g>`
+  +`<g transform="translate(180 64)">${pa("M-6 4 h12 l-2 -10 h-8Z","#E07A2E")}${rc(-6,-8,12,2,"#2B2B2B")}</g>`+[[90,22],[30,40],[300,10]].map(([x,y])=>`<path d="M${x} ${y} q6 -6 12 0 q6 -6 12 0 q-6 2 -12 6 q-6 -4 -12 -6Z" fill="#14101C"/>`).join(""),
+ /* Social life */
+ party_a1:()=>iaSky("#4A2E22")+rc(0,0,IA_W,24,"#3A2216")+AVq(12,i=>rc(10+i*26,6,8,14,["#4E8A4A","#B8862B","#7A1F2B"][i%3],'rx="2"'))+rc(0,60,IA_W,24,"#5A3A22")
+  +[[40,140],[190,120]].map(([x,w])=>avTable(x,52,w,"#7A4E2E")+rc(x+12,46,22,7,"#F2EEE6",'transform="rotate(-6 '+(x+12)+' 46)"')+rc(x+40,48,26,6,"#F2EEE6")+avPint(x+76,41)+avPint(x+92,42)+`<path d="M${x+22} 47 h12 M${x+44} 50 h14" stroke="#888" stroke-width="1"/>`).join("")
+  +[[30,"#1D5FA8"],[176,"#4BBA85"],[316,"#E86A7A"]].map(([x,c])=>iaPerson(x,58,c,"#E0B37E",.85)).join("")+`<g transform="translate(150 20)">${rc(0,0,22,16,"#2B2B2B",'rx="2"')}${rc(2,2,18,12,"#7FB2E5")}${pa("M8 5 l6 3 l-6 3Z","#F2F4F5")}</g>`,
+ party_a2:()=>iaSky("#2A2440")+avLights(8,16)+rc(0,62,IA_W,22,"#3A3450")+rc(200,20,110,42,"#4A4466")+rc(206,26,40,14,"#3A3450")+rc(256,26,48,14,"#3A3450")+rc(200,54,110,8,"#5A5480")
+  +AVq(9,i=>{const x=20+i*30,c=["#E86A7A","#7FB2E5","#E9C46A","#4BBA85","#B57FE5"][i%5];return `<g transform="translate(${x} ${66+(i%2)*4})">${iaCirc(0,-22,5,["#E0B37E","#C68A5A","#8C5A3C"][i%3])}${pa("M-6 -16 h12 l2 16 h-16Z",c)}${i%3===0?`<path d="M6 -14 L12 -26" stroke="${["#E0B37E","#C68A5A"][i%2]}" stroke-width="2.5" stroke-linecap="round"/>`:""}</g>`})
+  +[[230,"#E9C46A"],[280,"#B3262E"]].map(([x,c])=>rc(x,46,6,8,c)).join("")+`<g transform="translate(286 4)">${iaCirc(0,10,8,"#F2F4F5",'opacity=".8"')}${AVq(6,i=>rc(-8+(i%3)*5,4+Math.floor(i/3)*6,3,3,"#9AA0A6"))}</g>`,
+ party_a3:()=>iaSky("#CFE6F2")+iaCirc(280,16,9,"#F6D44A")+iaGround(66,"#8CC46E")+avBunting(8,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85"])+rc(0,40,IA_W,26,"#C9A27A",'opacity=".0"')
+  +`<g transform="translate(60 44)">${rc(0,0,44,8,"#2B2B2B",'rx="2"')}${rc(4,8,3,22,"#3A3A3A")}${rc(37,8,3,22,"#3A3A3A")}${AVq(4,i=>rc(6+i*9,-3,6,3,"#8C4636",'rx="1"'))}${AVq(3,i=>`<path d="M${10+i*12} -6 q4 -8 0 -16 q-4 -8 0 -14" stroke="#C9CED1" stroke-width="2" fill="none" opacity=".6"/>`)}</g>`
+  +iaPerson(42,66,"#F2F4F5")+rc(36,30,12,4,"#F2F4F5")+avTable(160,56,90,"#F2EEE6").replace(/#6A4E30/g,"#C9CED1")+[176,200,224].map((x,i)=>iaCirc(x,52,5,["#E86A7A","#E9C46A","#4BBA85"][i])).join("")
+  +[[140,"#1D5FA8"],[270,"#E86A7A"],[296,"#4BBA85"]].map(([x,c])=>iaPerson(x,66,c,"#C68A5A",.85)).join(""),
+ /* Money */
+ money_a1:()=>iaSky("#E9E2D4")+rc(0,56,IA_W,28,"#B88A5A")+`<g transform="translate(60 30) rotate(-6)">${rc(0,0,46,58,"#F7F4EC",'stroke="#C9C2B2"')}${AVq(6,i=>rc(6,8+i*7,i%2?26:34,2.5,"#9AA0A6"))}${rc(26,48,14,3,"#C0453A")}</g>`+`<g transform="translate(116 36) rotate(4)">${rc(0,0,40,50,"#F7F4EC",'stroke="#C9C2B2"')}${AVq(5,i=>rc(5,8+i*7,i%2?20:30,2.5,"#9AA0A6"))}${rc(5,42,30,4,"#C0453A")}</g>`
+  +`<g transform="translate(184 32)">${rc(0,0,40,52,"#3A4650",'rx="4"')}${rc(5,5,30,12,"#BFD9C2")}${AVq(12,i=>rc(5+(i%3)*11,22+Math.floor(i/3)*7,8,5,i===11?"#E86A7A":"#8E969A",'rx="1"'))}</g>`
+  +`<g transform="translate(250 30)">${rc(0,8,36,34,"#C9DCE3",'rx="4" opacity=".7"')}${rc(4,0,28,8,"#9AA0A6",'rx="2"')}${AVq(6,i=>`<ellipse cx="${10+(i%3)*8}" cy="${38-Math.floor(i/3)*5}" rx="5" ry="2" fill="#D7A744" stroke="#B8862B" stroke-width=".6"/>`)}</g>`,
+ money_a2:()=>iaSky("#E8E0EC")+rc(0,64,IA_W,20,"#C9C2B2")+[[50,"#E86A7A",44],[96,"#1D5FA8",36],[180,"#E9C46A",48],[230,"#4BBA85",38]].map(([x,c,h])=>`<g transform="translate(${x} ${72-h})">${rc(0,8,34,h-8,c)}${`<path d="M8 8 V2 A9 6 0 0 1 26 2 V8" stroke="#3A3A3A" stroke-width="2" fill="none"/>`}${rc(4,14,26,3,"#fff",'opacity=".5"')}</g>`).join("")
+  +[[140,24],[284,30]].map(([x,y])=>`<g transform="translate(${x} ${y}) rotate(-14)">${pa("M0 0 H22 L30 8 L22 16 H0Z","#E9C46A")}${iaCirc(24,8,2.4,"#E8E0EC")}${rc(4,5,10,2,"#8A6A10")}${rc(4,9,8,2,"#8A6A10")}</g>`).join("")+`<path d="M142 22 Q130 10 150 6" stroke="#8A8A8A" stroke-width="1" fill="none"/>`,
+ /* Love */
+ love_a1:()=>iaSky("#DDEFF6")+iaCirc(40,16,9,"#F6D44A")+iaGround(56,"#9CCB96")+tree(290,28,16)+tree(20,34,12)+`<path d="M100 76 L120 58 H220 L240 76Z" fill="#E86A7A"/>`+AVq(4,i=>`<path d="M${116+i*30} 58 L${106+i*34} 76" stroke="#fff" stroke-width="2" opacity=".6"/>`)
+  +`<g transform="translate(176 54)">${rc(0,0,28,14,"#C9A27A",'rx="2"')}<path d="M4 0 Q14 -12 24 0" stroke="#8A6A44" stroke-width="2.5" fill="none"/></g>`+iaPerson(136,58,"#B3262E","#E0B37E",.8)+iaPerson(224,58,"#1D5FA8","#8C5A3C",.8)+iaHeart(180,20,1.2,"#E86A7A")+rc(150,62,10,8,"#E9C46A",'rx="1"'),
+ love_a2:()=>iaSky("#151D33")+AVq(26,i=>iaCirc((i*53+9)%320,(i*17)%40+2,1,"#fff",'opacity=".7"'))+iaCirc(250,18,10,"#F6E7A8")+rc(0,52,IA_W,32,"#1E3050")+AVq(6,i=>rc(30+i*48,60+(i%2)*8,22,1.2,"#F6E7A8",'opacity=".35"'))
+  +`<path d="M0 52 Q40 30 80 52" stroke="#3A4A66" stroke-width="5" fill="none"/>`+rc(0,44,IA_W,8,"#2A3A55")
+  +`<g transform="translate(160 44)">${rc(-26,-6,52,3,"#5A4636")}${rc(-26,-14,52,3,"#5A4636")}${rc(-24,-3,3,10,"#5A4636")}${rc(21,-3,3,10,"#5A4636")}</g>`+`<g transform="translate(150 38) scale(.7)">${iaCirc(0,-30,7,"#3E4E70")}${pa("M-9 -20 Q0 -25 9 -20 L11 0 H-11Z","#3E4E70")}</g><g transform="translate(168 38) scale(.7)">${iaCirc(0,-30,7,"#3E4E70")}${pa("M-9 -20 Q0 -25 9 -20 L11 0 H-11Z","#3E4E70")}</g>`
+  +`<g transform="translate(196 6)">${iaHeart(0,8,1.1,"#E86A7A")}<path d="M0 14 Q4 24 -2 34" stroke="#9AA0A6" stroke-width=".8" fill="none"/></g>`,
+ /* Calls and messages */
+ phone_a1:()=>iaSky("#F2E9DA")+rc(0,0,IA_W,40,"#E9DCC6")+rc(220,6,70,40,"#BFE0F2",'stroke="#F2EEE6" stroke-width="4"')+iaCirc(270,18,6,"#F6D44A",'opacity=".8"')+rc(0,52,IA_W,32,"#C9A27A")
+  +`<g transform="translate(70 34)">${rc(0,0,70,24,"#3A4650",'rx="2" transform="skewX(-14)"')}${rc(-8,24,86,4,"#2B3A44",'rx="1"')}${rc(4,3,56,16,"#7FB2E5",'transform="skewX(-14)"')}</g>`
+  +`<g transform="translate(170 56)">${rc(0,0,14,26,"#14181C",'rx="3" transform="rotate(-70)"')}</g>`+`<g transform="translate(176 44)">${rc(0,0,8,8,"#E9C46A",'rx="1" opacity=".0"')}</g>`+`<ellipse cx="200" cy="52" rx="10" ry="3" fill="#F2EEE6"/>${rc(194,40,12,12,"#F2EEE6",'rx="2"')}<path d="M206 43 h3 a3 3 0 0 1 0 6 h-3" stroke="#F2EEE6" stroke-width="2" fill="none"/><path d="M198 36 q2 -4 0 -8 M202 36 q2 -4 0 -8" stroke="#9AA0A6" stroke-width="1" fill="none"/>`
+  +`<g transform="translate(36 46)">${rc(0,0,22,14,"#D9A060",'rx="3"')}${rc(2,-2,18,4,"#E9C08A",'rx="2"')}</g>`+iaCirc(160,54,5,"#E86A7A",'opacity=".0"'),
+ phone_a2:()=>iaSky("#DDE3EA")+rc(0,58,IA_W,26,"#B9A27A")+`<g transform="translate(96 8)">${rc(0,0,128,72,"#2B3A44",'rx="6"')}${rc(6,6,116,56,"#C9DCE3")}${rc(6,6,57,27,"#E9DCC6")}${rc(65,6,57,27,"#CFE0C8")}${rc(6,35,57,27,"#E8C9C4")}${rc(65,35,57,27,"#C9D4F2")}
+  ${[[34,24,"#E0B37E","#B3262E"],[93,24,"#8C5A3C","#1D5FA8"],[34,53,"#C68A5A","#4BBA85"],[93,53,"#E0B37E","#E9C46A"]].map(([x,y,h,b])=>iaCirc(x,y-8,5,h)+pa(`M${x-8} ${y+2} Q${x} ${y-6} ${x+8} ${y+2}Z`,b)).join("")}${rc(54,64,20,3,"#4A5866",'rx="1"')}</g>`+rc(80,78,160,4,"#3A4650",'rx="2"')+`<g transform="translate(260 52)">${rc(0,0,16,10,"#F2EEE6",'rx="1"')}<path d="M16 2 h3 a3 3 0 0 1 0 6 h-3" stroke="#F2EEE6" stroke-width="2" fill="none"/></g>`,
+ /* Family */
+ family_a1:()=>iaSky("#F2E6D6")+rc(30,6,60,40,"#CFE6F2",'stroke="#F2EEE6" stroke-width="4"')+rc(230,6,60,40,"#CFE6F2",'stroke="#F2EEE6" stroke-width="4"')+rc(0,66,IA_W,18,"#B88A5A")
+  +[[70,"#1D5FA8","#E0B37E",1],[110,"#B3262E","#C68A5A",1],[150,"#E9C46A","#E0B37E",.6],[214,"#9AA0A6","#E0B37E",.95],[250,"#7A4A8A","#E0B37E",.95],[186,"#4BBA85","#8C5A3C",.62]].map(([x,c,h,s])=>iaPerson(x,62,c,h,s)).join("")
+  +rc(46,52,236,8,"#F2EEE6")+rc(60,60,4,24,"#8A6A44")+rc(264,60,4,24,"#8A6A44")+`<ellipse cx="164" cy="50" rx="18" ry="6" fill="#C98A4A"/>`+[96,132,200,236].map(x=>`<ellipse cx="${x}" cy="52" rx="9" ry="2.5" fill="#F7F4EC" stroke="#C9CED1" stroke-width=".5"/>`).join("")+rc(150,40,3,10,"#F2EEE6"),
+ family_a2:()=>iaSky("#2B2F44")+rc(0,0,IA_W,84,"#3A3550",'opacity=".4"')+rc(110,10,100,54,"#14181C",'rx="3"')+rc(114,14,92,46,"#7FB2E5",'opacity=".85"')+pa("M120 54 L150 30 L170 44 L184 34 L200 54Z","#4BBA85",'opacity=".7"')+`<path d="M110 64 L60 84 H260 L210 64Z" fill="#7FB2E5" opacity=".08"/>`
+  +rc(0,70,IA_W,14,"#2A2438")+`<g transform="translate(70 52)">${rc(0,8,180,24,"#5A4A6A",'rx="8"')}${rc(-8,0,20,30,"#4E3E5E",'rx="6"')}${rc(168,0,20,30,"#4E3E5E",'rx="6"')}</g>`
+  +[[100,8,"#8C5A3C"],[130,7,"#E0B37E"],[160,5,"#2B2B2B"],[186,6,"#C9A27A"],[214,8,"#E0B37E"]].map(([x,r,c],i)=>iaCirc(x,52-r,r,c)+(i===3?"":`<path d="M${x-r} ${52-r} Q${x} ${50-r*2.4} ${x+r} ${52-r}" fill="${c}" opacity=".9"/>`)).join("")+`<g transform="translate(236 64)">${iaCirc(0,-6,6,"#8C5A3C")}${pa("M-4 -10 L-6 -16 L-1 -11Z M4 -10 L6 -16 L1 -11Z","#8C5A3C")}</g>`,
+ /* Bad news */
+ storm_a1:()=>iaSky("#6A747E")+iaCloud(20,14,1.4,"#4A5260",".95")+iaCloud(200,10,1.6,"#4A5260",".95")+avHouse(10,60,32,"#8C6A5A","#4A3A30")+avHouse(240,64,34,"#9A7A6A","#4A3A30")+rc(0,62,IA_W,22,"#5A7A8E",'opacity=".9"')
+  +AVq(10,i=>`<path d="M${10+i*32} ${66+(i%3)*5} q8 -3 16 0" stroke="#C9DCE3" stroke-width="1.2" fill="none"/>`)+AVq(20,i=>`<path d="M${(i*17)%320} ${30+(i*7)%30} l-3 8" stroke="#C9DCE3" stroke-width="1.2"/>`)
+  +`<g transform="translate(150 66)">${iaCirc(0,-26,6,"#E0B37E")}${pa("M-7 -19 h14 l2 14 h-18Z","#E9C46A")}${avUmb(0,-36,"#C0453A")}</g>`+`<g transform="translate(70 70)">${pa("M0 0 h18 l-2 -8 h-14Z","#3A4650")}${rc(5,-14,8,6,"#3A4650")}</g>`,
+ news_a1:()=>iaSky("#1C2A44")+rc(0,0,IA_W,84,"#24365A")+AVq(5,i=>rc(i*70,8,60,36,"#2E4470",'rx="2"'))+rc(0,52,IA_W,32,"#1A2236")+`<path d="M60 84 L80 52 H240 L260 84Z" fill="#3A4E7A"/>`+rc(80,50,160,4,"#7FB2E5")
+  +iaPerson(160,58,"#2B3A44","#C68A5A")+rc(152,34,16,4,"#F2F4F5")+rc(0,70,IA_W,14,"#C0453A")+AVq(6,i=>rc(18+i*52,75,30+(i%2)*10,3,"#F2F4F5",'opacity=".8"'))+`<g transform="translate(270 14)">${iaCirc(10,10,9,"#C0453A")}${iaCirc(10,10,4,"#F2F4F5")}</g>`,
+ award_a1:()=>iaSky("#E6EEF2")+AVq(18,i=>rc((i*37)%320,(i*13)%30+2,4,6,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85"][i%4],`transform="rotate(${i*40} ${(i*37)%320} ${(i*13)%30+2})"`))+rc(0,76,IA_W,8,"#9CCB96")
+  +[[110,58,"#C9CED6","#4BBA85","#E0B37E"],[160,48,"#E9C46A","#B3262E","#C68A5A"],[210,62,"#C98A4A","#1D5FA8","#8C5A3C"]].map(([x,y,m,c,h])=>rc(x-22,y,44,76-y,"#5A6A7A")+iaPerson(x,y-12,c,h,.6)+`<path d="M${x-3} ${y-26} L${x} ${y-20} L${x+3} ${y-26}" stroke="#1D5FA8" stroke-width="1.5" fill="none"/>`+iaCirc(x,y-19,2.6,m)).join(""),
+});
+
+/* ---- World events get a picture of their own ---- */
+Object.assign(IA,{
+ world_ai:()=>iaSky("#1A2433")+AVq(6,i=>`<g transform="translate(${14+i*52} 14)">${rc(0,0,38,58,"#26354A",'rx="2"')}${AVq(6,j=>rc(5,5+j*9,28,4,"#3A4A60")+iaCirc(30,7+j*9,1.4,(i+j)%3?"#4BBA85":"#E9C46A"))}</g>`)+rc(0,72,IA_W,12,"#14181C")
+  +`<g transform="translate(160 40)">${rc(-16,-22,32,26,"#C9D4DE",'rx="6"')}${iaCirc(-7,-10,4,"#7FB2E5")}${iaCirc(7,-10,4,"#7FB2E5")}${rc(-6,-2,12,2.5,"#3A4650")}${rc(-1,-30,2,8,"#C9D4DE")}${iaCirc(0,-31,3,"#EA6B5D")}${rc(-12,6,24,26,"#C9D4DE",'rx="4"')}${rc(-22,8,8,18,"#AFBCC8",'rx="3"')}${rc(14,8,8,18,"#AFBCC8",'rx="3"')}${iaCirc(0,18,4,"#4BBA85")}</g>`,
+ world_energy:()=>iaSky("#CFE6F2")+iaCloud(30,16,.8)+iaGround(64,"#9CCB96")+[[70,1],[150,.8],[230,1.1]].map(([x,s])=>`<g transform="translate(${x} 66) scale(${s})">${pa("M-2 0 L-1 -50 H1 L2 0Z","#F2F4F5")}<g transform="translate(0 -50)">${pa("M0 0 L-3 -26 L0 -28 L2 -2Z","#F2F4F5")}${pa("M0 0 L24 12 L24 15 L1 3Z","#F2F4F5")}${pa("M0 0 L-22 14 L-24 12 L-1 -2Z","#F2F4F5")}${iaCirc(0,0,2.5,"#C9CED1")}</g></g>`).join("")
+  +`<g transform="translate(280 28)">${pa("M-10 46 L0 0 L10 46 M-7 30 H7 M-5 18 H5 M-14 6 H14","none",'stroke="#8E969A" stroke-width="2"')}</g>`+AVq(4,i=>rc(16+i*14,70,12,7,"#1D3557",'stroke="#9CC0D2" stroke-width=".6"')),
+ world_vote:()=>iaSky("#E8E2D4")+rc(0,66,IA_W,18,"#B9A27A")+avBunting(4,["#C0453A","#F2F4F5","#1D5FA8"])+`<g transform="translate(130 28)">${rc(0,8,60,40,"#3A4650",'rx="3"')}${rc(18,6,24,4,"#14181C")}${rc(4,16,52,6,"#F2F4F5",'opacity=".2"')}</g>`
+  +`<g transform="translate(160 20) rotate(-8)">${rc(-10,-10,20,16,"#F7F4EC",'stroke="#9AA0A6" stroke-width=".6"')}<path d="M-6 -2 l3 3 l6 -7" stroke="#C0453A" stroke-width="2" fill="none"/></g>`
+  +[[50,"#1D5FA8"],[86,"#E86A7A"],[240,"#4BBA85"],[274,"#E9C46A"]].map(([x,c])=>iaPerson(x,64,c,"#E0B37E",.85)).join("")+`<g transform="translate(220 30)">${rc(0,0,2,36,"#5A4636")}${rc(2,0,22,14,"#C0453A")}${iaCirc(13,7,4,"#F2F4F5")}</g>`,
+ world_prices:()=>iaSky("#F0E2D4")+rc(0,62,IA_W,22,"#C9C2B2")+AVq(4,i=>rc(20+i*72,10,60,46,"#E9DCC6",'stroke="#C9B48A" stroke-width="2"')+AVq(3,j=>rc(26+i*72+j*18,16+((i+j)%2)*14,14,14,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85"][(i+j)%4],'rx="2"')))
+  +`<g transform="translate(140 46)">${pa("M0 0 H44 L38 26 H6Z","#3E6FB0")}<path d="M8 0 Q22 -18 36 0" stroke="#2B3A44" stroke-width="3" fill="none"/>${iaCirc(14,-2,5,"#E86A7A")}${iaCirc(26,-4,6,"#4BBA85")}${rc(30,-10,6,12,"#E9C46A")}</g>`
+  +[[110,30],[214,26]].map(([x,y])=>`<g transform="translate(${x} ${y}) rotate(-12)">${pa("M0 0 H22 L30 8 L22 16 H0Z","#C0453A")}${iaCirc(24,8,2.2,"#F0E2D4")}<path d="M5 12 L16 3 M6 4 h3 M14 11 h3" stroke="#fff" stroke-width="1.6"/></g>`).join("")+`<path d="M244 20 l14 0 l0 14 M258 20 l-16 16" stroke="#C0453A" stroke-width="4" fill="none" stroke-linecap="round" transform="rotate(-90 251 27)"/>`,
+ world_bank:()=>iaSky("#B9C0C8")+iaCloud(30,14,1.1,"#9AA3AE",".9")+iaCloud(220,10,1.2,"#9AA3AE",".9")+rc(0,70,IA_W,14,"#8A9096")+`<g transform="translate(90 14)">${pa("M-6 16 L70 -4 L146 16Z","#D8CFBF")}${rc(-2,16,144,6,"#C9BFAE")}${AVq(6,i=>rc(6+i*24,24,10,34,"#E6DED0"))}${rc(-6,56,152,4,"#C9BFAE")}${rc(60,34,20,24,"#3A4650")}</g>`
+  +AVq(9,i=>iaPerson(30+i*30-(i>3?0:0)+(i>4?40:0),74,["#1D5FA8","#B3262E","#4BBA85","#E9C46A","#7A4A8A","#9AA0A6"][i%6],["#E0B37E","#C68A5A","#8C5A3C"][i%3],.62)).replace(/translate\((2[0-9]{2}|3[0-9]{2})/g,(m,v)=>`translate(${Math.min(310,+v)}`)
+});
+const WORLD_ART={boom:"money_6",recession:"storm",inflation:"world_prices",crash:"home_6",pandemic:"hospital",ai:"world_ai",election:"world_vote",war:"war",housing:"home",rally:"trading",cheapenergy:"world_energy",tourism:"plane",green:"world_energy",lowrates:"home_5",energy:"world_energy",banking:"world_bank",techbust:"office",rateshock:"world_prices"};
+
+/* ---- More photo backgrounds (200x150). Kept out of PH_BG so the collection doesn't grow locked slots ---- */
+const PH_VAR={
+ xmas:[
+  ()=>pR(0,0,200,150,"#26304E")+[...Array(30)].map((_,i)=>pC((i*41+7)%200,(i*23+3)%96,1+(i%3)*.4,"#fff",'opacity=".9"')).join("")+pR(0,100,200,50,"#EEF2F4")+pR(10,46,44,54,"#8C4636")+pP("M6 46 L32 26 L58 46Z","#3E2A22")+pR(18,58,10,10,"#F6D98A")+pR(36,58,10,10,"#F6D98A")+pR(146,52,48,48,"#A9553E")+pP("M142 52 L170 32 L198 52Z","#3E2A22")+pR(154,64,10,10,"#F6D98A")+pR(176,64,10,10,"#F6D98A")
+   +`<g transform="translate(100 18)">${pP("M0 0 L22 30 H12 L28 54 H14 L34 80 H-34 L-14 54 H-28 L-12 30 H-22Z","#2F7A3E")}${pR(-4,80,8,6,"#5A3A2A")}${[[-8,30],[10,44],[-14,60],[14,66],[0,52],[-20,74],[22,76]].map(([x,y],i)=>pC(x,y,2.6,["#EA6B5D","#E9C46A","#7FB2E5","#F2F4F5"][i%4])).join("")}${pP("M0 -8 L2.5 -2 L9 -2 L4 2 L6 8 L0 4 L-6 8 L-4 2 L-9 -2 L-2.5 -2Z","#E9C46A")}</g>`,
+  ()=>pR(0,0,200,150,"#5A3A30")+pR(0,0,200,96,"#6B4538")+pR(56,24,88,10,"#E9DCC6")+pR(62,34,76,62,"#C9BBA2")+pR(78,52,44,44,"#2B1E1A")+pP("M84 96 Q90 72 98 86 Q102 64 110 84 Q116 72 122 96Z","#F6A33D")+pP("M92 96 Q98 80 104 90 Q110 76 116 96Z","#F6D44A")
+   +[66,90,112,130].map((x,i)=>`<g transform="translate(${x} 34)">${pR(0,0,8,12,["#C0453A","#2F7A3E","#F2F4F5","#1D5FA8"][i])}${pP("M0 12 h8 v4 q0 4 -6 4 h-5 v-4Z",["#C0453A","#2F7A3E","#F2F4F5","#1D5FA8"][i])}${pR(0,0,8,3,"#F2F4F5")}</g>`).join("")+AVL("M52 24 Q100 40 148 24","#2F7A3E",4)+pR(0,96,200,54,"#7A4E3A")+pR(0,96,200,4,"#5A3A2A")+pR(0,0,200,150,"#F6A33D",'opacity=".07"'),
+  ()=>pR(0,0,200,150,"#3A2A3A")+pR(70,10,60,40,"#1C2A44",'stroke="#E9DCC6" stroke-width="3"')+[...Array(7)].map((_,i)=>pC(76+i*8,16+(i*7)%28,1.1,"#fff")).join("")+AVL("M0 8 Q50 18 100 8 T200 8","#2F7A3E",3)+[...Array(10)].map((_,i)=>pC(10+i*20,10+Math.abs(Math.sin(i))*7,2,["#EA6B5D","#E9C46A","#4BBA85"][i%3])).join("")
+   +pR(0,110,200,40,"#5A3A2A")+pR(10,104,180,10,"#F2EEE6")+`<ellipse cx="100" cy="102" rx="22" ry="8" fill="#C98A4A"/><ellipse cx="100" cy="99" rx="15" ry="5" fill="#D9A060"/>`+[30,170].map(x=>`<ellipse cx="${x}" cy="104" rx="12" ry="3" fill="#F7F4EC"/>`+pC(x,101,4,"#4E8A4A")+pC(x+3,100,2.5,"#E07A2E")).join("")+[60,140].map(x=>pR(x,88,3,14,"#F2EEE6")+pP(`M${x+1.5} 82 q3 3 0 6 q-3 -3 0 -6Z`,"#F6D44A")).join("")
+ ],
+ lounge:[
+  ()=>pR(0,0,200,150,"#E6E9E4")+pR(20,10,110,76,"#BFE0F2",'stroke="#F2F4F5" stroke-width="5"')+pR(73,10,4,76,"#F2F4F5")+pP("M24 70 Q60 52 90 66 T128 60 V84 H24Z","#9CCB96")+pR(0,96,200,54,"#C9B49A")+pR(150,40,30,56,"#B8A07A",'rx="2"')+pC(165,34,14,"#4E8A4A")+pC(156,26,9,"#5A9A55")+pC(174,28,9,"#5A9A55")
+   +pR(146,20,40,3,"#8A7A5A")+`<ellipse cx="100" cy="132" rx="70" ry="8" fill="#D9A060" opacity=".5"/>`,
+  ()=>pR(0,0,200,150,"#D9C2A6")+pR(10,14,50,82,"#8A5A3A")+[0,1,2,3].map(r=>pR(14,20+r*19,42,3,"#6A4228")+[...Array(6)].map((_,i)=>pR(16+i*7,8+r*19+4,5,12,["#C0453A","#1D5FA8","#E9C46A","#4BBA85","#7A4A8A","#F2EEE6"][(i+r)%6])).join("")).join("")
+   +pR(130,30,54,8,"#E9DCC6")+pR(136,38,42,58,"#B9A890")+pR(146,58,22,38,"#2B1E1A")+pP("M150 96 Q154 80 158 88 Q162 76 166 96Z","#F6A33D")+pR(0,96,200,54,"#8A6A4A")+`<ellipse cx="96" cy="128" rx="60" ry="9" fill="#B3262E" opacity=".45"/>`+pR(84,34,26,30,"#B8862B")+pR(87,37,20,24,"#E8C9C4")
+ ],
+ stage:[
+  ()=>pR(0,0,200,150,"#2A2236")+[30,100,170].map(x=>pC(x,18,8,"#F6E7A8",'opacity=".9"')+AVL(`M${x} 0 V10`,"#C9B48A",1)+pP(`M${x-14} 24 L${x} 14 L${x+14} 24Z`,"#E9C46A",'opacity=".5"')).join("")+pR(0,0,200,150,"#F6E7A8",'opacity=".05"')
+   +[[24,104],[100,96],[176,104]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="26" ry="8" fill="#F2EEE6"/>`+pR(x-24,y,48,30,"#E9DCC6")+pC(x-10,y-4,2,"#E86A7A")+pR(x+6,y-12,2,10,"#F2EEE6")).join("")+pR(0,130,200,20,"#3A2E44")
+ ],
+ palace:[
+  ()=>pR(0,0,200,150,"#E8DCC8")+[20,60,140,180].map(x=>pR(x-6,0,12,112,"#F2EBDD")+pR(x-9,0,18,6,"#D8C9A3")+pR(x-9,106,18,6,"#D8C9A3")).join("")+pP("M100 4 l-14 18 h28Z","#E9C46A",'opacity=".6"')+[...Array(7)].map((_,i)=>pC(88+i*4,24+(i%2)*3,1.8,"#F6E7A8")).join("")
+   +pR(0,112,200,38,"#C9B48A")+pP("M80 150 L90 112 H110 L120 150Z","#B3262E")+pR(78,40,44,56,"#C9B48A",'stroke="#B8862B" stroke-width="3"')+pR(84,46,32,44,"#8A6A9A",'opacity=".6"')
+ ],
+ pub:[
+  ()=>pR(0,0,200,150,"#BFE0F2")+pCloud(150,20,.8)+pR(0,40,200,70,"#2F4A3A")+pR(0,36,200,8,"#1E3328")+pWins(14,54,4,1,30,28,46,0,"#F6E7A8")+pR(84,64,32,46,"#1E3328")+[24,176].map(x=>pC(x,48,9,"#4E8A4A")+pC(x-4,52,4,"#E86A7A")+pC(x+5,51,3,"#F2F4F5")).join("")
+   +pR(0,110,200,40,"#8CC46E")+[[30,118],[150,120]].map(([x,y])=>pR(x,y,36,4,"#8A6A44")+pR(x+4,y+4,3,12,"#6A4E30")+pR(x+29,y+4,3,12,"#6A4E30")+pP(`M${x+2} ${y-24} L${x+18} ${y-36} L${x+34} ${y-24}Z`,"#E9DCC6")+pR(x+17,y-24,2,24,"#9AA0A6")).join("")
+ ],
+ grad:[
+  ()=>pR(0,0,200,150,"#CFE6F2")+pCloud(20,20,.8)+pR(20,30,160,80,"#D8C9A3")+pP("M14 30 L100 6 L186 30Z","#B8A47A")+[...Array(6)].map((_,i)=>pArch(30+i*25,46,14,30,"#8A93A6")).join("")+pArch(88,74,24,36,"#5A4636")+pR(0,110,200,40,"#8CC46E")+pTree(10,84,1)+pTree(192,86,.9)
+ ],
+ party:[
+  ()=>pR(0,0,200,150,"#241A36")+[...Array(5)].map((_,i)=>pP(`M${20+i*40} 0 L${6+i*40} 110 L${34+i*40} 110Z`,["#E86A7A","#7FB2E5","#E9C46A","#4BBA85","#B57FE5"][i],'opacity=".22"')).join("")+pC(100,18,10,"#D9DEE0")+[...Array(8)].map((_,i)=>pR(94+(i%4)*3,12+Math.floor(i/4)*6,2,2,"#8E969A")).join("")
+   +pR(0,110,200,40,"#3A2E50")+[...Array(16)].map((_,i)=>pR((i%8)*25,110+Math.floor(i/8)*20,25,20,(i+Math.floor(i/8))%2?"#5A3E80":"#7A4EA0",'opacity=".7"')).join("")
+ ],
+ funeral:[
+  ()=>pR(0,0,200,150,"#D9D4CC")+pP("M70 110 V40 A30 30 0 0 1 130 40 V110Z","#B8C9D8",'stroke="#C9B48A" stroke-width="3"')+pR(98,10,4,100,"#C9B48A",'opacity=".6"')+pR(70,58,60,3,"#C9B48A",'opacity=".6"')+pR(0,110,200,40,"#8A7A6A")
+   +[30,170].map(x=>pR(x-2,70,4,40,"#B8B0A4")+pC(x,62,10,"#F2F4F5")+pC(x-7,66,6,"#E8C9C4")+pC(x+7,66,6,"#F2F4F5")).join("")+[56,144].map(x=>pR(x,88,4,22,"#F2EEE6")+pP(`M${x+2} 80 q3 4 0 8 q-3 -4 0 -8Z`,"#F6D44A")).join("")
+ ],
+ night:[
+  ()=>pR(0,0,200,150,"#141C30")+[...Array(16)].map((_,i)=>pC((i*47)%200,(i*13)%40,1,"#fff",'opacity=".8"')).join("")+pC(30,22,9,"#F6E7A8")+pR(0,74,200,76,"#1E3050")+pP("M0 70 Q100 30 200 70 V76 Q100 40 0 76Z","#3A4A66")+[...Array(9)].map((_,i)=>pC(10+i*22,62-Math.sin(i/8*Math.PI)*28,2,"#F6E7A8")).join("")
+   +[...Array(8)].map((_,i)=>pR(8+i*26,88+(i%3)*12,14,1.5,"#F6E7A8",'opacity=".35"')).join("")+pR(0,120,200,30,"#2A3040")
+ ]
+};
+/* scenes for free-time activity photos */
+const PH_ACT={
+ sky:()=>pR(0,0,200,150,"#8FC7F0")+pCloud(20,40,1.2)+pCloud(140,24,1)+pCloud(100,110,1.4)+pP("M0 150 L0 132 Q40 126 70 134 T140 128 T200 134 V150Z","#8CC46E")+pP("M0 150 V140 H40 V150 M60 150 V138 H100 V150","#7AB85E")+`<g transform="translate(150 50)"><path d="M-22 0 A22 14 0 0 1 22 0Z" fill="#E86A7A"/><path d="M-22 0 L0 26 M22 0 L0 26 M-8 -2 L0 26 M8 -2 L0 26" stroke="#555" stroke-width=".6"/></g>`+`<g transform="translate(30 14)">${pR(0,0,40,8,"#F2F4F5",'rx="4"')}${pP("M14 0 L22 -8 H28 L24 0Z","#C9CDD1")}</g>`,
+ foodbank:()=>pR(0,0,200,150,"#E8EEF2")+pR(0,0,200,20,"#C9CED6")+pR(10,24,180,6,"#8A6A44")+pR(10,56,180,6,"#8A6A44")+[...Array(9)].map((_,i)=>pR(14+i*20,8+((i%3)*2),14,16,["#C0453A","#E9C46A","#4BBA85","#7FB2E5"][i%4],'rx="1"')+pR(14+i*20,40,14,16,["#E9C46A","#7FB2E5","#C0453A"][i%3],'rx="1"')).join("")
+   +pR(0,104,200,46,"#C9C2B2")+pR(20,96,160,10,"#7A9BB8")+[30,90,150].map(x=>pR(x,80,26,18,"#C68A5A")+pR(x,80,26,4,"#B07A4A")).join("")
+};
+
+/* ---- A picture for every trophy (100x100, same style as the moment icons) ---- */
+const TRI={
+ bag:`<path d="M38 22 L44 10 H56 L62 22Z" fill="#B8862B"/><path d="M36 22 H64 C82 36 88 58 82 76 Q78 88 50 88 Q22 88 18 76 C12 58 18 36 36 22Z" fill="#D7A744"/><rect x="38" y="20" width="24" height="5" rx="2" fill="#8A6A10"/><path d="M50 40 V72 M58 46 Q50 40 43 45 Q40 54 50 56 Q60 58 57 66 Q50 72 42 66" stroke="#8A6A10" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+ coins:`${[0,1,2,3,4].map(i=>`<ellipse cx="34" cy="${80-i*9}" rx="20" ry="7" fill="#E9C46A" stroke="#B8862B" stroke-width="2"/>`).join("")}${[0,1,2,3,4,5,6].map(i=>`<ellipse cx="66" cy="${84-i*9}" rx="20" ry="7" fill="#D7A744" stroke="#B8862B" stroke-width="2"/>`).join("")}<path d="M60 26 l4 -8 M72 26 l4 -8" stroke="#E9C46A" stroke-width="3" stroke-linecap="round"/>`,
+ crown:`<path d="M14 72 L18 30 L36 50 L50 20 L64 50 L82 30 L86 72Z" fill="#E9C46A" stroke="#B8862B" stroke-width="3" stroke-linejoin="round"/><rect x="14" y="72" width="72" height="10" rx="3" fill="#D7A744"/><circle cx="50" cy="60" r="6" fill="#C0453A"/><circle cx="30" cy="62" r="4" fill="#3E6FB0"/><circle cx="70" cy="62" r="4" fill="#4BBA85"/><circle cx="18" cy="28" r="4" fill="#E9C46A"/><circle cx="50" cy="18" r="4" fill="#E9C46A"/><circle cx="82" cy="28" r="4" fill="#E9C46A"/>`,
+ chartdown:`<rect x="12" y="12" width="76" height="76" rx="8" fill="#F2EEE6"/><path d="M22 78 H80 M22 78 V22" stroke="#8E969A" stroke-width="3"/><path d="M24 30 L40 40 L52 34 L66 60 L78 72" stroke="#C0453A" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M80 76 L66 74 L78 62Z" fill="#C0453A"/>`,
+ summit:`<path d="M6 86 L40 30 L56 52 L66 40 L94 86Z" fill="#8E969A"/><path d="M40 30 L50 46 L44 44 L38 50 L32 44Z" fill="#F2F4F5"/><path d="M66 40 L72 50 L66 48 L62 52Z" fill="#F2F4F5"/><rect x="39" y="8" width="3" height="24" fill="#5A4636"/><path d="M42 8 L62 14 L42 20Z" fill="#E9C46A"/>`,
+ cake:`<rect x="18" y="52" width="64" height="32" rx="4" fill="#F2B8C6"/><rect x="26" y="34" width="48" height="20" rx="4" fill="#F7E7EE"/><path d="M18 60 Q26 66 34 60 Q42 66 50 60 Q58 66 66 60 Q74 66 82 60" stroke="#fff" stroke-width="3" fill="none"/>${[36,50,64].map(x=>`<rect x="${x-2}" y="20" width="4" height="14" fill="#7FB2E5"/><ellipse cx="${x}" cy="15" rx="3" ry="5" fill="#F6D44A"/>`).join("")}<rect x="12" y="84" width="76" height="5" rx="2" fill="#C9CED1"/>`,
+ family:`${[[30,46,14,"#1D5FA8"],[70,46,14,"#B3262E"],[42,64,9,"#4BBA85"],[58,66,8,"#E9C46A"]].map(([x,y,r,c])=>`<circle cx="${x}" cy="${y-r-6}" r="${r*.62}" fill="#E0B37E"/><path d="M${x-r} ${y+r*2.6} V${y+r*.4} Q${x} ${y-r*.6} ${x+r} ${y+r*.4} V${y+r*2.6}Z" fill="${c}"/>`).join("")}<path d="M50 14 L46 10 A3 3 0 0 1 50 6 A3 3 0 0 1 54 10Z" fill="#E86A7A"/>`,
+ tree:`<rect x="46" y="54" width="8" height="34" fill="#7A5B3A"/><path d="M50 60 L30 44 M50 64 L72 46" stroke="#7A5B3A" stroke-width="5"/><circle cx="50" cy="32" r="22" fill="#4E8A4A"/><circle cx="28" cy="44" r="14" fill="#5A9A55"/><circle cx="72" cy="44" r="14" fill="#5A9A55"/>${[[50,24],[36,40],[64,40],[28,48],[72,48]].map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="4" fill="${["#E9C46A","#E86A7A","#7FB2E5","#F2F4F5","#E9C46A"][i]}"/>`).join("")}`,
+ hourglass:`<rect x="22" y="10" width="56" height="8" rx="3" fill="#7A5B3A"/><rect x="22" y="82" width="56" height="8" rx="3" fill="#7A5B3A"/><path d="M28 18 H72 Q72 38 54 50 Q72 62 72 82 H28 Q28 62 46 50 Q28 38 28 18Z" fill="#DDEEF6" stroke="#9AA0A6" stroke-width="2"/><path d="M36 30 H64 Q60 40 50 46 Q40 40 36 30Z M34 80 Q38 66 50 62 Q62 66 66 80Z" fill="#E9C46A"/><path d="M50 46 V62" stroke="#E9C46A" stroke-width="2"/>`,
+ ball:`<circle cx="50" cy="50" r="38" fill="#F2F4F5" stroke="#2B2B2B" stroke-width="3"/><path d="M50 34 L64 44 L59 61 H41 L36 44Z" fill="#2B2B2B"/><path d="M50 34 V14 M64 44 L83 38 M59 61 L70 78 M41 61 L30 78 M36 44 L17 38" stroke="#2B2B2B" stroke-width="3"/>`,
+ chefhat:`<path d="M26 58 C10 56 10 30 30 32 C30 14 52 10 58 24 C70 12 92 24 82 42 C92 50 84 62 74 58Z" fill="#F2F4F5" stroke="#C9CED1" stroke-width="2"/><rect x="28" y="56" width="44" height="22" rx="3" fill="#F2F4F5" stroke="#C9CED1" stroke-width="2"/>${[36,50,64].map(x=>`<path d="M${x} 84 l2.4 5 l5.6 .6 l-4.2 3.8 l1.2 5.6 l-5 -2.8 l-5 2.8 l1.2 -5.6 l-4.2 -3.8 l5.6 -.6Z" fill="#E9C46A"/>`).join("")}`,
+ gavel:`<rect x="20" y="78" width="60" height="10" rx="3" fill="#7A4A2A"/><g transform="rotate(-35 50 46)"><rect x="30" y="26" width="40" height="18" rx="4" fill="#9A6A3A"/><rect x="26" y="24" width="6" height="22" rx="2" fill="#B8862B"/><rect x="68" y="24" width="6" height="22" rx="2" fill="#B8862B"/><rect x="47" y="44" width="6" height="40" fill="#7A4A2A"/></g>`,
+ steth:`<path d="M30 14 V40 Q30 58 46 58 Q62 58 62 40 V14" stroke="#3E6FB0" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M46 58 V70 Q46 84 62 84 Q76 84 76 70 V62" stroke="#3E6FB0" stroke-width="6" fill="none"/><circle cx="76" cy="56" r="10" fill="#C9CED1" stroke="#8E969A" stroke-width="3"/><circle cx="30" cy="12" r="5" fill="#2B2B2B"/><circle cx="62" cy="12" r="5" fill="#2B2B2B"/>`,
+ magnifier:`<circle cx="42" cy="42" r="26" fill="#C9E2F2" stroke="#5A4636" stroke-width="7"/><path d="M28 34 Q34 24 46 24" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="58" y="62" width="12" height="32" rx="4" fill="#5A4636" transform="rotate(-45 64 78)"/>`,
+ globe:`<circle cx="50" cy="48" r="34" fill="#7FB2E5"/><path d="M32 26 Q44 30 40 42 Q30 46 34 58 Q22 52 20 40 Q24 30 32 26Z M58 20 Q72 24 78 38 Q68 40 64 50 Q70 62 62 72 Q54 64 56 52 Q50 44 58 34Z" fill="#4BBA85"/><path d="M16 48 H84 M50 14 Q32 48 50 82 M50 14 Q68 48 50 82" stroke="#fff" stroke-width="1.5" fill="none" opacity=".6"/><rect x="40" y="84" width="20" height="6" rx="2" fill="#B8862B"/>`,
+ plane:`<path d="M10 54 Q14 46 30 46 H74 L88 30 H96 L90 52 Q90 60 78 60 H30 Q14 60 10 54Z" fill="#F2F4F5" stroke="#9AA0A6" stroke-width="2"/><path d="M40 46 L56 22 H66 L58 46Z M44 60 L56 80 H66 L58 60Z" fill="#7FB2E5"/>${[24,32,40,48,56,64].map(x=>`<circle cx="${x}" cy="52" r="2" fill="#3E6FB0"/>`).join("")}`,
+ bars:`<rect x="14" y="12" width="72" height="76" rx="4" fill="#5A6670"/><rect x="20" y="18" width="60" height="64" fill="#2B3A44"/>${[28,40,52,64,76].map(x=>`<rect x="${x-3}" y="12" width="6" height="76" fill="#9AA0A6"/>`).join("")}<rect x="14" y="44" width="72" height="6" fill="#9AA0A6"/>`,
+ halo:`<ellipse cx="50" cy="22" rx="26" ry="8" fill="none" stroke="#E9C46A" stroke-width="6"/><path d="M30 52 C10 40 6 62 24 72 L38 60Z M70 52 C90 40 94 62 76 72 L62 60Z" fill="#F2F4F5" stroke="#C9CED1" stroke-width="2"/><circle cx="50" cy="52" r="14" fill="#E0B37E"/><path d="M34 90 Q36 70 50 68 Q64 70 66 90Z" fill="#F2F4F5" stroke="#C9CED1" stroke-width="2"/>`,
+ broken:`<path d="M48 84 L16 52 A18 18 0 0 1 48 26 L42 42 L52 52 L44 64Z" fill="#E86A7A"/><path d="M54 84 L50 66 L58 54 L48 42 L54 26 A18 18 0 0 1 86 52Z" fill="#E86A7A"/>`,
+ people:`${[[22,"#7FB2E5"],[78,"#4BBA85"],[36,"#E9C46A"],[64,"#E86A7A"],[50,"#1D5FA8"]].map(([x,c],i)=>{const y=i<2?40:i<4?46:52;return `<circle cx="${x}" cy="${y-12}" r="9" fill="#E0B37E"/><path d="M${x-13} ${y+34} V${y+8} Q${x} ${y-4} ${x+13} ${y+8} V${y+34}Z" fill="${c}"/>`}).join("")}`,
+ chest:`<path d="M14 44 Q14 20 50 20 Q86 20 86 44Z" fill="#9A6A3A"/><rect x="14" y="44" width="72" height="40" rx="3" fill="#7A4A2A"/><rect x="14" y="42" width="72" height="6" fill="#D7A744"/><rect x="22" y="20" width="6" height="64" fill="#D7A744"/><rect x="72" y="20" width="6" height="64" fill="#D7A744"/><rect x="44" y="42" width="12" height="16" rx="2" fill="#E9C46A"/><circle cx="50" cy="50" r="2.5" fill="#5A3A1A"/>`,
+ frame:`<rect x="10" y="16" width="80" height="66" fill="#B8862B" stroke="#8A6A10" stroke-width="3"/><rect x="18" y="24" width="64" height="50" fill="#9FD0EE"/><circle cx="66" cy="36" r="6" fill="#F6D44A"/><path d="M18 74 L36 48 L50 62 L60 52 L82 74Z" fill="#4E8A4A"/>`,
+ horseshoe:`<path d="M24 20 V50 A26 26 0 0 0 76 50 V20" stroke="#9AA0A6" stroke-width="14" fill="none"/><path d="M24 20 V50 A26 26 0 0 0 76 50 V20" stroke="#C9CED1" stroke-width="6" fill="none"/>${[[24,30],[24,46],[76,30],[76,46],[34,68],[66,68]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2" fill="#5A6670"/>`).join("")}<path d="M44 10 l6 10 l6 -10" stroke="#C0453A" stroke-width="5" fill="none"/>`,
+ balls:`${[[30,40,"#E86A7A"],[56,30,"#E9C46A"],[78,50,"#7FB2E5"],[40,66,"#4BBA85"],[66,74,"#B57FE5"]].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="15" fill="${c}"/><circle cx="${x}" cy="${y}" r="7" fill="#fff"/>`).join("")}`,
+ cap:`<path d="M6 40 L50 22 L94 40 L50 58Z" fill="#2B3A44"/><path d="M26 48 V70 Q50 82 74 70 V48 L50 58Z" fill="#3A4A58"/><path d="M84 44 V70" stroke="#E9C46A" stroke-width="3"/><circle cx="84" cy="72" r="4" fill="#E9C46A"/>`,
+ palette:`<path d="M50 12 C24 12 8 32 10 54 C12 76 32 90 52 88 C62 87 62 78 56 72 C52 66 56 60 64 62 C78 66 92 58 92 44 C92 26 74 12 50 12Z" fill="#E9C9A0"/>${[[30,36,"#C0453A"],[48,26,"#E9C46A"],[68,30,"#4BBA85"],[78,46,"#3E6FB0"],[28,58,"#7A4A8A"]].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="7" fill="${c}"/>`).join("")}<circle cx="44" cy="70" r="7" fill="#F2EEE6"/>`,
+ paw:`<ellipse cx="50" cy="64" rx="20" ry="17" fill="#8C5A3C"/>${[[24,42,8],[40,26,8],[60,26,8],[76,42,8]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*1.25}" fill="#8C5A3C"/>`).join("")}`,
+ case:`<rect x="12" y="32" width="76" height="52" rx="6" fill="#7A4A2A"/><path d="M36 32 V22 Q36 16 42 16 H58 Q64 16 64 22 V32" stroke="#5A3A1A" stroke-width="5" fill="none"/><rect x="12" y="50" width="76" height="6" fill="#5A3A1A"/><rect x="44" y="46" width="12" height="14" rx="2" fill="#E9C46A"/>`,
+ flag:`<rect x="18" y="8" width="5" height="84" fill="#5A4636"/><path d="M23 12 Q46 4 60 14 T88 14 V50 Q74 58 60 50 T23 50Z" fill="#3E6FB0"/><path d="M23 26 Q46 18 60 28 T88 28 V36 Q74 44 60 36 T23 36Z" fill="#F2F4F5"/><circle cx="20.5" cy="8" r="5" fill="#E9C46A"/>`,
+ pulse:`<path d="M50 86 L16 52 A18 18 0 0 1 50 26 A18 18 0 0 1 84 52Z" fill="#E86A7A"/><path d="M8 56 H30 L38 40 L48 70 L58 34 L66 56 H92" stroke="#fff" stroke-width="5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`,
+ banana:`<path d="M16 30 Q30 82 84 72 Q88 66 82 64 Q42 66 28 26Z" fill="#F6D44A" stroke="#B8862B" stroke-width="2"/><path d="M28 26 L24 18 L18 22 L16 30" fill="#7A5B3A"/><path d="M82 64 L88 68 L84 72" fill="#5A4636"/>`,
+ calendar:`<rect x="14" y="18" width="72" height="70" rx="6" fill="#F2F4F5" stroke="#9AA0A6" stroke-width="2"/><rect x="14" y="18" width="72" height="18" rx="6" fill="#C0453A"/><rect x="28" y="10" width="6" height="16" rx="2" fill="#5A6670"/><rect x="66" y="10" width="6" height="16" rx="2" fill="#5A6670"/>${[0,1,2,3,4,5,6,7,8,9,10,11].map(i=>`<rect x="${22+(i%4)*15}" y="${42+Math.floor(i/4)*14}" width="10" height="9" rx="1.5" fill="${i===6?"#4BBA85":"#D9DEE0"}"/>`).join("")}`
+};
+Object.entries(TRI).forEach(([k,v])=>{MOMENT_ICONS["tr_"+k]=v});
+const TR_ICON={firstmil:"bag",tenmil:"coins",hundredmil:"crown",lostitall:"chartdown",toprank:"summit",legend:"star",married:"rings",married3:"rings",parent:"baby",bigfam:"family",grand:"tree",gen3:"tree",hundred:"hourglass",ninety:"hourglass",medal:"medal",sf:"dagger",veteran:"shield",caps:"ball",caps50:"ball",stars3:"chefhat",kc:"gavel",surgeon:"steth",mi5:"mask",mi6:"globe",detective:"magnifier",award:"trophy",award5:"trophy",silver:"trophy",prison:"bars",saint:"halo",ruthless:"dagger",affair:"broken",friends10:"people",mentor:"people",neighbourfriend:"home",heirloom:"chest",collector:"chest",horse:"horseshoe",painting:"frame",jackpot:"balls",globetrotter:"globe",graduate:"cap",hobbytop:"palette",hobby3:"palette",bestinshow:"paw",pethero:"paw",holidays5:"plane",business:"case",abroad:"flag",survivor:"pulse",fifty:"cake",absurd:"banana",daily:"calendar",fourcareers:"sign"};
+const trIcon=id=>{const k=TR_ICON[id];return k?(MOMENT_ICONS["tr_"+k]?"tr_"+k:MOMENT_ICONS[k]?k:"trophy"):"trophy"};
+
+/* ---- Choosing pictures: a stable pick per item, never the same as the last few, and dressed for the season and time of day ---- */
+const avNoSnow=()=>{try{return ["india","nigeria","australia"].includes(S.country)}catch(e){return false}};
+const avSeason=()=>{let m=((S.day-1)%12+12)%12;try{if(S.country==="australia")m=(m+6)%12}catch(e){}return m===11||m<=1?"winter":m<=4?"spring":m<=7?"summer":"autumn"};
+const AV_SNOWY=new Set(["xmas_a1","xmas_a4","PH:xmas:0"]);
+const AV_OUT=new Set(["beach","beach_a1","beach_a2","beach_a3","car","home","school","court","hospital","police","fire","stadium","war","building","family","love","love_a1","run","run_a2","wedding_a2","party_a3","baby_a2","plane","world_energy"]);
+/* career workplaces from the photo album, cropped to a banner */
+const AV_PHC={pilot:["runway"],soldier:["war"],arch:["site"],elec:["site"],influencer:["studio","city"],spy:["night"],pol:["parliament"],foot:["stadium"],manager:["stadium"],clubowner:["stadium"],tvchef:["studio"],actor:["studio"],tech:["office"]};
+for(const k of new Set([].concat(...Object.values(AV_PHC))))if(PH_BG[k]&&!IA["phc_"+k])IA["phc_"+k]=()=>`<svg x="0" y="0" width="${IA_W}" height="${IA_H}" viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">${PH_BG[k]()}</svg>`;
+function avFam(k){if(!k||!IA[k])return[];const out=Object.keys(IA).filter(x=>x===k||(x.startsWith(k+"_")&&/^_(\d+|a\d+)$/.test(x.slice(k.length))));const ns=avNoSnow();return ns?out.filter(x=>!AV_SNOWY.has(x)):out}
+function avCareerPool(){const p=S&&S.path,base=IA_CAREER[p];let pool=avFam(base);
+ for(const a of(IA_ALT[p]||[]))for(const x of avFam(a))if(!pool.includes(x))pool.push(x);
+ for(const c of(AV_PHC[p]||[]))if(IA["phc_"+c])pool.push("phc_"+c);return pool}
+/* a light layer over the scene: evening, night, snow, autumn leaves, blossom, rain */
+function avOverlay(o){
+ const W=IA_W,H=IA_H,q=(n,f)=>{let s="";for(let i=0;i<n;i++)s+=f(i);return s};
+ if(o==="dusk")return rc(0,0,W,H,"#6B3FA0",'opacity=".2"')+rc(0,0,W,26,"#E86A7A",'opacity=".14"');
+ if(o==="night")return rc(0,0,W,H,"#0B1530",'opacity=".42"')+q(14,i=>iaCirc((i*67+9)%W,(i*11)%22+2,.9,"#fff",'opacity=".8"'));
+ if(o==="snow")return rc(0,0,W,H,"#9AAABB",'opacity=".18"')+`<path d="M0 78 Q80 74 160 78 T320 77 V84 H0Z" fill="#F7FAFC"/>`+q(30,i=>iaCirc((i*41+7)%W,(i*29+3)%74,1+(i%3)*.5,"#fff",'opacity=".9"'));
+ if(o==="rain")return rc(0,0,W,H,"#5A6A7A",'opacity=".22"')+`<g stroke="#DDE8F2" stroke-width=".8" opacity=".7">${q(34,i=>`<path d="M${(i*37+3)%330} ${(i*23+2)%84} l-4 9"/>`)}</g>`;
+ if(o==="autumn")return q(14,i=>{const x=(i*47+13)%W,y=(i*31+9)%78;return pa(`M${x} ${y} q4 -5 8 0 q-4 5 -8 0Z`,["#D9822B","#B5452B","#E9C46A"][i%3],`transform="rotate(${(i*53)%180} ${x+4} ${y})"`)});
+ if(o==="blossom")return q(18,i=>iaCirc((i*43+11)%W,(i*19+5)%76,1.8,i%2?"#F2B8C6":"#F7D4DE",'opacity=".9"'));
+ return "";
+}
+function avMood(k,txt,h){
+ const t=String(txt||""),out=AV_OUT.has(k),s=avSeason();
+ if(/\b(night|tonight|late|midnight|2am|3am|4am|11pm|after dark)\b/i.test(t))return "night";
+ if(/\b(rain|raining|flood|storm|soaked)\b/i.test(t)&&out)return "rain";
+ if(/\b(snow|frost|freezing|blizzard)\b/i.test(t)&&out&&!avNoSnow())return "snow";
+ const r=h%100;if(!out)return r<10?"dusk":"";
+ if(s==="winter"&&r<35&&!avNoSnow())return "snow";if(s==="autumn"&&r<35)return "autumn";if(s==="spring"&&r<30)return "blossom";
+ if(r>=40&&r<54)return "dusk";if(r>=54&&r<62)return "night";if(r>=62&&r<70&&s!=="summer")return "rain";return "";
+}
+/* pick from a pool: rotation by a stable hash, skipping anything shown recently or already on screen */
+function avPick(pool,h,recent,used){if(!pool.length)return null;const rot=pool.map((_,i)=>pool[(h+i)%pool.length]);
+ return rot.find(x=>!recent.includes(x)&&!(used&&used.has(x)))||rot.find(x=>!(used&&used.has(x)))||rot[0]}
+function avRemember(list,k,pool){list.unshift(k);const keep=Math.max(1,Math.min(6,pool.length-1));if(list.length>keep)list.length=keep}
+const avSvg=(k,o,cls,style)=>`<svg ${cls?`class="${cls}" `:""}viewBox="0 0 ${IA_W} ${IA_H}" preserveAspectRatio="xMidYMid slice"${style?` style="${style}"`:""} aria-hidden="true">${IA[k]()}${avOverlay(o)}</svg>`;
+function avIaPick(m,e){
+ if(m&&m.avIa&&IA[m.avIa.k])return m.avIa;
+ const k=iaKey2(m,e);if(!k||!IA[k])return null;
+ let pool=avFam(k);const career=IA_CAREER[S.path];
+ if(k===career||(IA_ALT[S.path]||[]).includes(k))for(const x of avCareerPool())if(!pool.includes(x))pool.push(x);
+ const h=h32(String(m.id||"")+"|"+(e.t||"")+"|"+S.day),R=S.avIaR=Array.isArray(S.avIaR)?S.avIaR:[];
+ const used=typeof iaUsed!=="undefined"?iaUsed:null;const pk=avPick(pool,h,R,used);if(!pk)return null;
+ avRemember(R,pk,pool);let txt="";try{txt=fill(e.t||"",m)+" "+fill(e.b||"",m)}catch(x){txt=e.t||""}
+ const p={k:pk,o:avMood(pk,txt,h>>>8)};if(m)m.avIa=p;return p;
+}
+{const _ia=inboxArt;inboxArt=function(m,e){try{const p=avIaPick(m,e);if(!p)return _ia.apply(this,arguments);
+  if(typeof iaUsed!=="undefined"&&iaUsed)iaUsed.add(p.k);
+  return `<div class="mail-art" aria-hidden="true">${avSvg(p.k,p.o)}</div>`}catch(x){return _ia.apply(this,arguments)}}}
+
+/* ---- Photo album: the same kind of photo gets a different backdrop each year ---- */
+{const _ps=photoSVG;photoSVG=function(ph,av,cls){const h=_ps.apply(this,arguments);try{
+  if(!ph)return h;let alt=null;
+  if(ph.avBg&&PH_ACT[ph.avBg])alt=PH_ACT[ph.avBg];
+  else if(PH_VAR[ph.sc]){const L=PH_VAR[ph.sc].map((f,i)=>[f,i]).filter(([f,i])=>!(avNoSnow()&&AV_SNOWY.has("PH:"+ph.sc+":"+i)));const n=L.length+1;const i=((ph.a|0)+h32(ph.sc+(ph.pr||"")+((ph.c||[]).length)))%n;if(i)alt=L[i-1][0]}
+  if(!alt)return h;const base=(PH_BG[ph.sc]||PH_BG.park)(),at=h.indexOf(base);if(at<0)return h;return h.slice(0,at)+alt()+h.slice(at+base.length)}catch(e){return h}}}
+
+/* ---- The newspaper photo matches the story ---- */
+const AV_PAPER=[[/^TRIBUTES|has died/i,"ph:funeral","Family and friends gathered to say goodbye."],[/JACKPOT/i,"money","The winning ticket, now kept somewhere very safe."],[/WEDDING BELLS/i,"wedding","The big day, as captured by a cousin with a good phone."],
+ [/IT'S A BABY/i,"baby","The newest resident of the area."],[/NEW ARRIVAL/i,"pet","Settling in nicely, by all accounts."],[/HANGS UP/i,"party","Colleagues gave a fond send-off."],[/JETS OFF/i,"plane","Bags packed and ready to go."],
+ [/QUESTIONS FOR/i,"news","Our reporter waited outside for a comment."],[/IN COURT/i,"court","Outside court this week."],[/WALKS FREE/i,"police","Outside the prison gates this month."],[/SNAPS UP NEW HOME/i,"HOUSE","The new home, pictured this week."],
+ [/NEW WHEELS/i,"CAR","Spotted on the high street."],[/ACCIDENT/i,"car","The scene earlier this month."],[/BUSINESS BOOM/i,"office","Business is booming."],[/CASHES IN/i,"money","A good month for the bank balance."],[/DOES IT!/i,"award","A proud moment."],[/SPLITS/i,"storm","A difficult month."],[/PROMOTED/i,"WORK",""]];
+function avPaperPic(p){
+ const t=(p.lead||[]).join(" ");let k=null,cap="";
+ for(const[re,kk,c]of AV_PAPER)if(re.test(t)){k=kk;cap=c;break}
+ if(!k&&/ HITS$/.test((p.lead||[""])[0])&&S.world&&WORLD_ART[S.world.id]){k=WORLD_ART[S.world.id];cap="How the news looks from here this month."}
+ if(!k){for(const[re,kk]of IA_LIFE)if(re.test(t)){k=kk;break}cap="In the news this month."}
+ if(!k)k="news";
+ const st="aspect-ratio:320/110";
+ if(k==="WORK")return null;
+ if(k==="HOUSE")return[homeArtNow("art"),cap];
+ if(k==="CAR"){const c=carOf(S.car.id);return c&&c.id!=="none"?[carArt(c.shape,S.car.color,"art",carOpts()),cap]:null}
+ if(k.startsWith("ph:")){const b=k.slice(3);return[`<svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice" style="${st}" aria-hidden="true">${PH_BG[b]()}</svg>`,cap]}
+ const pool=avFam(k);if(!pool.length)return null;const pk=pool[h32(t+p.day)%pool.length];
+ return[avSvg(pk,"",null,st),cap];
+}
+{const _ph=paperHTML;paperHTML=function(p,btn){const h=_ph.apply(this,arguments);try{const a='<figure class="paper-photo">',b='<div class="paper-av">',i=h.indexOf(a),j=h.indexOf(b,i);if(i<0||j<0)return h;
+  const r=avPaperPic(p);if(!r)return h;let out=h.slice(0,i+a.length)+r[0]+h.slice(j);
+  if(!p.cap&&r[1])out=out.replace(/(<figcaption>)Our photographer outside [^<]*(<\/figcaption>)/,(m0,x,y)=>x+esc(r[1])+y);return out}catch(e){return h}}}
+
+/* ---- Operations get a picture of the workplace ---- */
+{const _os=opsSec;opsSec=function(){const h=_os.apply(this,arguments);try{const o=S.op;if(!h||!o||o.d!==S.day)return h;const i=h.indexOf('<div class="ops');if(i<0)return h;const j=h.indexOf(">",i);
+  if(!o.avIa||!IA[o.avIa.k]){const pool=avCareerPool();if(!pool.length)return h;const R=S.avOpR=Array.isArray(S.avOpR)?S.avOpR:[];const hh=h32(String(o.name||"")+S.day);const pk=avPick(pool,hh,R,null);avRemember(R,pk,pool);o.avIa={k:pk,o:avMood(pk,o.name,hh>>>8)}}
+  return h.slice(0,j+1)+`<div class="mail-art op-art" aria-hidden="true">${avSvg(o.avIa.k,o.avIa.o)}</div>`+h.slice(j+1)}catch(e){return h}}}
+
+/* ---- Free time: a snapshot of what you did ---- */
+const AV_ACT={speed:[["restaurant","pub","night"]],blind:[["restaurant","cafe"]],singles:[["beach","greece","thai"],{o:"hols"}],weekend:[["lake","highlands","restaurant"],{pt:1}],dayout:[["seaside","park","beach"],{pt:1,kids:1}],
+ quiz:[["pub"],{fr:1,pr:"pint"}],karaoke:[["stage","party"],{fr:1,pr:"mic"}],festival:[["festival"],{fr:1}],cook:[["kitchen"],{h:"chef"}],golf:[["park"],{pr:"golf",o:"smart"}],volunteer:[["@foodbank","beach","park"]],standup:[["stage"],{pr:"mic"}],skydive:[["@sky"]],
+ dinner:[["lounge","garden"],{pt:1,fr:1}],bbq:[["garden"],{pt:1,kids:1,fr:1}],xmas:[["xmas"],{pt:1,kids:1,h:"santa"}],sleepover:[["lounge"],{kids:1}],roadtrip:[["road","highlands"],{pt:1,kids:1}],escape:[["city","night"],{fr:1}],parkrun:[["park","forest"],{o:"sport",pr:"medal"}],
+ pottery:[["cafe","lounge"]],bowling:[["party"],{fr:1}],comedy:[["stage","pub"],{pt:1}],museum:[["city","london"],{pt:1}],climb:[["forest","highlands"],{o:"sport"}],swim:[["seaside","beach"]],skate:[["park"],{pt:1}],bonfire:[["night","garden"],{pt:1,kids:1}],
+ xmarket:[["city","xmas"],{pt:1}],bookclub:[["lounge","cafe"],{fr:1}],boardgames:[["lounge"],{pt:1,fr:1}],spa:[["garden","restaurant"],{pt:1}],cinema:[["night","city"],{pt:1}]};
+const AV_GRP={Dating:[["restaurant","pub"]],Together:[["park","restaurant"],{pt:1}],"At home":[["lounge","garden"],{pt:1}],"Out and about":[["city","pub","park"],{fr:1}]};
+function avActPic(a){const d=AV_ACT[a.k]||AV_GRP[a.g];if(!d)return"";const [scs,x]=[d[0],d[1]||{}];const s=scs[h32(a.k+S.day)%scs.length];
+ const bg=s[0]==="@"?s.slice(1):null;const c=castNow({pt:x.pt,kids:x.kids,fr:x.fr});
+ const ph=Object.assign(phBase(),{sc:bg?"park":s,c,pr:x.pr||"",h:x.h||"",o:x.o||"",av:S.av},bg?{avBg:bg}:{});
+ return `<div class="pola act-pic" style="--r:${((h32(a.k+S.day)%5)-2)*.6}deg"><span class="pola-img">${photoSVG(ph,S.av)}</span></div>`}
+{const _ar=actResult;actResult=function(title,text,extra){try{const a=ACTIVITIES.find(x=>x.n===title);if(a){const pic=avActPic(a);if(pic)return _ar.call(this,title,text,pic+(extra||""))}}catch(e){}return _ar.apply(this,arguments)}}
+
+/* ---- Trophies: each has its own picture ---- */
+{const _mo=moment;moment=function(o){try{if(o&&o.kicker==="New trophy"&&o.icon==="trophy"){const t=TROPHIES.find(x=>x[1]===o.title);if(t)o.icon=trIcon(t[0])}}catch(e){}return _mo.apply(this,arguments)}}
+{const _tm=trophyModal;trophyModal=function(){const _sm=showModal;showModal=function(h){try{const ico=MOMENT_ICONS.trophy,parts=String(h).split(ico);if(parts.length-1===TROPHIES.length)h=parts.map((p,i)=>i<TROPHIES.length?p+MOMENT_ICONS[trIcon(TROPHIES[i][0])]:p).join("")}catch(e){}showModal=_sm;return _sm.apply(this,[h].concat([].slice.call(arguments,1)))};try{return _tm.apply(this,arguments)}finally{showModal=_sm}}}
+
+/* ---- World events: a picture at the top of the banner ---- */
+{const _wb=worldBanner;worldBanner=function(){const h=_wb.apply(this,arguments);try{const k=S.world&&WORLD_ART[S.world.id];if(!h||!k||!IA[k])return h;const a='<div class="note world-note">';if(h.indexOf(a)!==0)return h;
+  return a+`<div class="mail-art world-art" aria-hidden="true">${avSvg(k,"")}</div>`+h.slice(a.length)}catch(e){return h}}}
+
 
 function start(data){
  S=(data&&data.S)||load();
