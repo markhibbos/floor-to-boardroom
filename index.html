@@ -783,6 +783,8 @@ html,body{overflow-x:clip}
 #bnIn{flex:1;min-width:0}
 #bnIn[aria-invalid="true"]{border-color:var(--warn,#B3262E)}
 .move{position:relative}.move .mv-n{padding-right:34px}.mv-pic{position:absolute;top:8px;right:8px;width:28px;height:28px;padding:3px;border-radius:8px;background:color-mix(in srgb,var(--line) 45%,transparent);pointer-events:none}.pill.mv-new{background:color-mix(in srgb,var(--up,#2E8A5E) 16%,transparent);color:var(--up,#2E8A5E);font-size:10.5px;padding:1px 6px;vertical-align:1px}.pill.mv-one{background:color-mix(in srgb,#D7A744 22%,transparent);color:#9A6B12;font-size:10.5px;padding:1px 6px;vertical-align:1px}.mv-less{display:block;margin-top:4px;font-size:12px;color:#9A6B12}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.mv-one,:root:not([data-theme="light"]) .mv-less{color:#E9C46A}}:root[data-theme="dark"] .pill.mv-one,:root[data-theme="dark"] .mv-less{color:#E9C46A}
+#pane-inbox,#pane-inbox *{overflow-anchor:none}
+.wk-head.later{opacity:.6}.wk-lock{margin:0 0 14px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;font-size:13.5px;color:var(--muted);text-align:center}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -9082,7 +9084,7 @@ function inboxDedupe(){
   if(seen[th]){S.inbox=S.inbox.filter(x=>x!==m)}else seen[th]=1}
 }
 /* ============ Prompts that point you at the desk: market alerts, rush jobs, intel updates and a nudge when you've left it alone ============ */
-ACTS.godesk=()=>{setTimeout(()=>{try{deskTab="work";setTab("desk");const el=document.querySelector(".ops")||document.getElementById("workBoard");if(el)el.scrollIntoView({block:"start"});else window.scrollTo(0,0)}catch(e){}},350)};
+ACTS.godesk=()=>{setTimeout(()=>{try{deskTab="work";try{localStorage.setItem("ftb-desktab","work")}catch(e){}setTab("desk");render();const el=document.querySelector(".ops")||document.getElementById("workBoard");if(el)el.scrollIntoView({block:"start"});else window.scrollTo(0,0)}catch(e){}},350)};
 ACTS.deskpos=fx=>{const id=fx.id;if(!B[id])return;const cur=S.pos[id]||0,room=R().lim-(used()-Math.abs(cur)),v=fx.dir*Math.max(0,Math.min(2,room));if(!v){S.log.unshift({d:S.day,t:`No room in your risk limit for ${B[id].n}.`});return}S.pos[id]=v;S.log.unshift({d:S.day,t:`Went ${v>0?"long":"short"} ${B[id].n}.`})};
 ACTS.deskauto=()=>{for(const n of S.news){if(!n.id||!B[n.id])continue;ACTS.deskpos({id:n.id,dir:n.dir})}};
 ACTS.deskrush=fx=>{const cd=S.cards&&S.cards.find(c=>c.id===fx.cid);if(!cd)return;const a=CAR_().appr,i=Math.min(1,a.length-1);if(jobsUsed()+cd.h*a[i].h<=R().cap+.01){S.pick[cd.id]=i;S.log.unshift({d:S.day,t:`Took on a rush job: ${cd.n}.`})}else S.log.unshift({d:S.day,t:`No hours left for the rush job: drop something on your desk to fit it in.`})};
@@ -15279,7 +15281,7 @@ document.addEventListener("click",e=>{
  if(a==="momentok"){nextMoment();return}
  if(customClick(a,t))return;
  if(a==="lifetab"){lifeTab=t.dataset.v;S.lifeSeen=S.lifeSeen||{};S.lifeSeen[lifeTab]=S.day;try{localStorage.setItem("ftb-lifetab",lifeTab)}catch(e){}renderLife();return}
- if(a==="pointshelp"){if(CAR_().mech==="jobs"&&!S.prison&&!S.front){deskTab="work";setTab("desk");const el=document.getElementById("pointsHelp");if(el){el.open=true;el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}}else showModal(`<h2>${CAR_().fmt==="pts"?"Points":"Your numbers"} explained</h2><p>${pointsHelpText()}</p><div class="btn-row"><button class="btn primary" data-act="hide">Got it</button></div>`);return}
+ if(a==="pointshelp"){if(CAR_().mech==="jobs"&&!S.prison&&!S.front){deskTab="work";try{localStorage.setItem("ftb-desktab","work")}catch(e){}setTab("desk");render();const el=document.getElementById("pointsHelp");if(el){el.open=true;el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}}else showModal(`<h2>${CAR_().fmt==="pts"?"Points":"Your numbers"} explained</h2><p>${pointsHelpText()}</p><div class="btn-row"><button class="btn primary" data-act="hide">Got it</button></div>`);return}
  if(a==="lovego"){loveGo(t.dataset.k);return}
  if(a==="endrel"){endRelModal();return}
  if(a==="endrelgo"){endRel();return}
@@ -53304,11 +53306,17 @@ function wkAssign(){try{const P=S.inbox.filter(m=>!m.done&&m.wk==null);if(!P.len
 function wkLabel(w){try{const mo=((S.day-1)%12+12)%12,y=START_YEAR+(S.yo||0)+Math.floor((S.day-1)/12),last=new Date(Date.UTC(y,mo+1,0)).getUTCDate(),a=(w-1)*7+1,b=w===4?last:w*7;
  const mn=MONTHS[mo].slice(0,3);return "Week "+w+" · "+a+"–"+b+" "+mn}catch(e){return "Week "+w}}
 {const _ri=renderInbox;renderInbox=function(){try{wkAssign()}catch(e){}const r=_ri.apply(this,arguments);try{
- const pane=document.getElementById("pane-inbox");if(!pane)return r;const cards=[...pane.querySelectorAll("article.mail.pending")];if(cards.length<2)return r;
- const wkOf=a=>{const b=a.querySelector('[data-act="choose"]');const m=b?S.inbox[+b.dataset.i]:null;return m&&m.wk?m.wk:1};
+ /* INBOX stay */const pane=document.getElementById("pane-inbox");if(!pane)return r;const all=[...pane.querySelectorAll("article.mail")],msgs=S.inbox.filter(m=>getEv(m));
+ all.forEach((a,k)=>{const m=msgs[k];if(m)a.dataset.mi=String(S.inbox.indexOf(m))});
+ const cards=all.filter(a=>{const m=S.inbox[+a.dataset.mi];return a.classList.contains("pending")||(m&&m.wk!=null&&m.dDay===S.day)});if(cards.length<2)return r;
+ const wkOf=a=>{const m=S.inbox[+a.dataset.mi];return m&&m.wk?m.wk:1};
  const parent=cards[0].parentElement,anchor=cards[0];const sorted=cards.map((a,ix)=>({a,w:wkOf(a),ix})).sort((x,y)=>x.w-y.w||x.ix-y.ix);
- let lastW=0;const frag=document.createDocumentFragment();for(const o of sorted){if(o.w!==lastW){const h=document.createElement("div");h.className="wk-head";h.textContent=wkLabel(o.w);frag.appendChild(h);lastW=o.w}frag.appendChild(o.a)}
- parent.insertBefore(frag,parent.querySelector("article.mail:not(.pending)")||null)}catch(e){}return r}}
+ /* WEEK lock */const isP=o=>o.a.classList.contains("pending");const pw=sorted.filter(isP).map(o=>o.w);const curW=pw.length?Math.min(...pw):99;
+ const lockN={};for(const o of sorted)if(isP(o)&&o.w>curW)lockN[o.w]=(lockN[o.w]||0)+1;
+ let lastW=0;const frag=document.createDocumentFragment();for(const o of sorted){if(o.w!==lastW){const h=document.createElement("div");h.className="wk-head"+(o.w>curW&&lockN[o.w]?" later":"");h.textContent=wkLabel(o.w);frag.appendChild(h);lastW=o.w;
+  if(o.w>curW&&lockN[o.w]){const n=lockN[o.w],L=document.createElement("div");L.className="wk-lock";L.textContent=(n===1?"1 message":n+" messages")+" coming this week. Deal with week "+curW+" first.";frag.appendChild(L)}}
+  if(isP(o)&&o.w>curW){o.a.remove();continue}frag.appendChild(o.a)}
+ parent.insertBefore(frag,[...parent.querySelectorAll("article.mail")].find(a=>!cards.includes(a))||null)}catch(e){}return r}}
 // The morning after: a hangover becomes a choice the following week
 function hoNight(w,what){try{if(!S||S.placeholder||S.over||S.prison||window.__hoSkip)return;if(rnd()>hoChance(w))return;
  const a=Math.floor(age()),sev=Math.min(3,1+(rnd()<.25+Math.max(0,a-30)*.01?1:0)+(w>1.4&&rnd()<.4?1:0));const H=S.ho=S.ho||{};H.cur={d:S.day,sev,what:what||"a big night"};
@@ -53338,7 +53346,7 @@ const leaveLeft=()=>{try{const E=enS();if(E&&!E.lv)enLeaveRoll(E);return E&&E.lv
 /* ============ Finished inbox cards show the energy they used (or gave back) ============ */
 {const _ri=renderInbox;renderInbox=function(){const r=_ri.apply(this,arguments);try{
  const pane=document.getElementById("pane-inbox");if(!pane)return r;const arts=[...pane.querySelectorAll("article.mail:not(.pending)")];const done=S.inbox.filter(m=>m.done&&getEv(m));
- arts.forEach((a,k)=>{const m=done[k];if(!m||!m.ieE||a.querySelector(".en-chip"))return;let ch=a.querySelector(".chips");if(!ch){const out=a.querySelector(".outcome")||a;ch=document.createElement("div");ch.className="chips";out.appendChild(ch)}
+ arts.forEach((a,k)=>{const m=a.dataset.mi!=null?S.inbox[+a.dataset.mi]:done[k];if(!m||!m.ieE||a.querySelector(".en-chip"))return;let ch=a.querySelector(".chips");if(!ch){const out=a.querySelector(".outcome")||a;ch=document.createElement("div");ch.className="chips";out.appendChild(ch)}
   const sp=document.createElement("span");sp.className="chip en-chip "+(m.ieE>0?"b":"g");sp.textContent=(m.ieE>0?"−":"+")+Math.abs(m.ieE)+" energy";ch.appendChild(sp)})}catch(e){}return r}}
 
 /* CM: composed workplace scenes for the inbox banners. A backdrop for the job, the people in the story (with their own skin and hair) and a few props, chosen per message */
@@ -54051,6 +54059,7 @@ function locHome(){try{if(S&&S.home&&S.home.area&&S.country&&S.country!=="uk")S.
 {const _ng=newGame;newGame=function(){const r=_ng.apply(this,arguments);locHome();return r}}
 {const _csh=careerStartHome;careerStartHome=function(){const r=_csh.apply(this,arguments);locHome();return r}}
 {const _st=start;start=function(){const r=_st.apply(this,arguments);try{locHome();render()}catch(e){}return r}}
+{const _ld=lifeDay;lifeDay=function(){const r=_ld.apply(this,arguments);locHome();return r}}
 /* The newspaper costs money, not pence, abroad */
 function paperPrice(n){try{if(typeof LOC!=="undefined"&&LOC)return locMoney(n/100,"",LOC)}catch(e){}return n+"p"}
 /* ---- Stories that need something you haven't got: children of the right age, a marriage, a cold climate ---- */
@@ -54932,6 +54941,8 @@ function mvvPic(mv){const id=mv.id,n=(mv.mvv?mv.mvv.n:mv.n)||"",cat=mv.cat;
   if(mv.mvvF!=null&&mv.mvvF<1){const rec=c.mvRep&&c.mvRep[mv.id],n=rec?rec.tot||rec.n:0;if(n){btn=btn.replace(/ ?<b class="mv-done">[^<]*<\/b>/,"");const fi=btn.indexOf('<span class="mv-f">');
    if(fi>=0)btn=btn.slice(0,fi)+'<span class="mv-less">Less useful now: done '+n+' time'+(n>1?"s":"")+'. Try something different.</span>'+btn.slice(fi)}}
   h=h.slice(0,i)+btn+h.slice(end)}}catch(e){}return h}}
+
+{const _ch=choose;choose=function(i,ci){const m=S.inbox[i];try{if(m&&!m.done)m.dDay=S.day}catch(e){}return _ch.apply(this,arguments)}}
 
 function start(data){
  S=(data&&data.S)||load();
