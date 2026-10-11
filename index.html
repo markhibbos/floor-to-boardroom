@@ -15990,7 +15990,7 @@ ACTS.shstart=fx=>{if(shCur()||shAvail(fx.k))return;const H=HUSTLES[fx.k];S.wealt
 const wpOn=()=>l5ok()&&!S.sabb&&!soloJob()&&S.path!=="foot"&&S.day>=6;
 function wpMorning(){
  if(!wpOn()||S.day-(S.wpAt??-99)<5||rnd()>.13||l5busy(/^wp_/))return;
- const W=WORK_WORDS[S.path]||WORK_WORDS.tech,boss=S.boss&&S.boss.n?firstOf(S.boss.n):"your boss",col=pick(NAMES_M.concat(NAMES_F).filter(n=>n!==firstOf(S.name))),riv=S.rival&&S.rival.name?firstOf(S.rival.name):col,place=W[0],crowd=W[1];
+ const W=WORK_WORDS[S.path]||WORK_WORDS.tech,boss=S.boss&&S.boss.n?firstOf(S.boss.n):"your boss",col=pick(NAMES_M.concat(NAMES_F).filter(n=>n!==firstOf(S.name)&&!rgDead(n))),riv=S.rival&&S.rival.name?firstOf(S.rival.name):col,place=W[0],crowd=W[1];
  const E=[
   ["Who gets the credit?",`${riv} presented your idea at the big meeting as their own. ${boss} loved it.`,[{t:"Call it out, there and then",p:.5,win:{fx:{rep:4,act:"wpboss",d:6},o:`You have the emails to prove it. ${riv} goes very quiet.`},lose:{fx:{rep:-2,stress:5,act:"wpboss",d:-6},o:"It looks like sour grapes. Everyone shifts in their seats."}},{t:`Have a quiet word with ${boss} later`,fx:{rep:2,act:"wpboss",d:4},o:`${boss} nods slowly. "I did wonder."`},{t:"Let it go",fx:{stress:4},o:"You'll remember this, though."}]],
   ["A reorganisation",`There's a big shake-up at ${place}. Everyone's job is being 'reviewed'.`,[{t:"Volunteer to help plan it",p:.55,win:{fx:{rep:5,stress:4,act:"wpboss",d:8},o:"You end up with a better job and a bigger desk."},lose:{fx:{rep:-2,stress:6},o:"You get the blame for every unpopular change."}},{t:"Keep your head down",fx:{stress:3},o:"You survive. Not everyone does."}]],
@@ -47335,7 +47335,7 @@ function mmMonth(notes){if(!wbOk0()||S.front||S.sel)return;const p=mmTiredP(),wh
 function mmStory(){if(!wbOk0()||S.prison||S.front||S.sel||S.wscene)return;
  if(S.inbox.some(m=>!m.done&&/^(mm_|lf_)/.test(m.id)))return;const M=S.mm=S.mm||{cb:{}};M.cb=M.cb||{};if(S.day-(M.at??-99)<10||rnd()>.09)return;
  const cool=(k,n)=>S.day-(M.cb[k]??-999)>=n,opts=[],push=(k,ev)=>opts.push(()=>{M.at=S.day;M.cb[k]=S.day;pushDyn(Object.assign({id:`mm_${k}_${S.day}`,life:1,noBig:1},ev))});
- const ex=(f,n)=>(S.missed||[]).filter(f).slice(-n).map(x=>x.t.charAt(0).toLowerCase()+x.t.slice(1));
+ const ex=(f,n)=>(S.missed||[]).filter(x=>f(x)&&!rgDead(x.who)).slice(-n).map(x=>x.t.charAt(0).toLowerCase()+x.t.slice(1));
  const list=a=>a.length>1?a.slice(0,-1).join(", ")+" and "+a[a.length-1]:a[0]||"";
  /* A teenager who has been keeping count */
  const teens=wbKids(13,18).map(k=>[k,mmN(x=>x.who===k.n)]).filter(x=>x[1]>=3).sort((a,b)=>b[1]-a[1]);
@@ -54080,7 +54080,7 @@ function rgPrune(before,used0,cap){let changed=false;const drop=m=>{const i=S.in
  for(const m of S.inbox.filter(m=>!m.done&&!before.has(m))){
   const t=m.dyn&&m.dyn.t;const g=typeof t==="string"&&(/^offer/.test(m.id||"")?gapKey(t):rgGapKey(t));if(g){S.storyAt=S.storyAt||{};const at=S.storyAt[g[0]];if(at!=null&&at!==S.day&&S.day-at<g[1]){drop(m);continue}S.storyAt[g[0]]=S.day}
   /* the same story twice at once, or twice in the same month (even if the first was already answered) */
-  if(S.inbox.some(o=>o!==m&&(!o.done||o.rgD===S.day)&&(o.id===m.id||(m.dyn&&o.dyn&&t&&o.dyn.t===t))))drop(m);else m.rgD=S.day}
+  if(S.inbox.some(o=>o!==m&&(!o.done||(o.rgD!=null&&S.day-o.rgD<=1))&&(o.id===m.id||(m.dyn&&o.dyn&&t&&o.dyn.t===t))))drop(m);else m.rgD=S.day}
  if(cap){let pend=S.inbox.filter(m=>!m.done).length;
   if(pend>5)for(const m of S.inbox.filter(m=>!m.done&&!before.has(m)&&!m.dyn&&!rgKeep(m)).reverse()){if(pend<=5)break;const e=EV.find(x=>x.id===m.id);if(!e||e.req||e.ill||e.front||e.prison)continue;drop(m);pend--}}
  return changed}
@@ -54216,6 +54216,48 @@ cmSocial=function(m,e){
  c.o=avMood(CMB[c.s].out?"court":"office",txt,h>>>8);c.cm=1;c.c=S.path;c.k=IA[k0]?k0:"party";m.avIa=c;return c;
 };
 
+
+
+/* REGFIX2: regression-suite fixes, round 2 */
+/* Is this name someone who has died (and nobody alive shares it)? */
+function rgDead(n){try{if(!n||!S)return false;n=String(n);const P=S.people||[],first=x=>String(x||"").split(" ")[0];
+ const dead=P.some(p=>p.alive===false&&(p.n===n||first(p.n)===n||first(n)===p.n));if(!dead)return false;
+ const alive=P.some(p=>p.alive!==false&&(p.n===n||first(p.n)===first(n)))||(S.rel&&S.rel.name&&first(S.rel.name)===first(n))||(S.friend&&first(S.friend.n)===first(n));return !alive}catch(e){return false}}
+/* Your lover can't tell your partner anything once they've died, and nobody can find out from a partner who has */
+{const _lr=loverReveals;loverReveals=function(p){try{if(p&&p.alive===false)return;if(!inLove()||S.rel.st==="widowed"||rgDead(S.rel.name))return}catch(e){}return _lr.apply(this,arguments)}}
+/* Your partner can't find messages from a lover who has died */
+{const _pc2=pushCaught;pushCaught=function(lv){try{if(!lv||lv.alive===false||!inLove())return}catch(e){}return _pc2.apply(this,arguments)}}
+/* ---- Headlines that fit the country: no big freeze in a hot country, no Bonfire Night abroad ---- */
+const RG_HOT_NEWS=[["Big freeze bursts pipes across the city","Heatwave bursts water mains across the city"],["Chimney fires surge in the first cold snap","Grass fires surge in the first hot spell"],
+ ["Ice on the roads causes a run of crashes","Flash flooding causes a run of crashes"],["Fewer drivers stuck as roads gritted early","Fewer drivers stuck as storm drains cleared early"],["Cold snap: boiler breakdowns double","Heatwave: air-con breakdowns double"]];
+const RG_HOT_WORDS=[[/\b[Bb]ig freeze\b/g,m=>m[0]==="B"?"Heatwave":"heatwave"],[/\b([Cc])old snap\b/g,(m,c)=>(c==="C"?"H":"h")+"eatwave"],[/\bsnowstorm\b/gi,"storm"],[/\bsnow\b/g,"rain"],[/\bSnow\b/g,"Rain"],
+ [/\bfreezing\b/g,"sweltering"],[/\bFreezing\b/g,"Sweltering"],[/\bfrost\b/g,"heat"],[/\bicy\b/g,"flooded"],[/\bblizzard\b/gi,"storm"],[/\bgritted\b/g,"cleared"]];
+function rgHot(t){if(typeof t!=="string"||!RG_WARM.includes(S.country))return t;const x=RG_HOT_NEWS.find(p=>p[0]===t);if(x)return x[1];let r=t;for(const[re,w]of RG_HOT_WORDS)r=r.replace(re,w);return r}
+function rgNewsLocal(){try{if(!S||!S.news||!S.country||S.country==="uk")return;for(const n of S.news)if(n&&n.t)n.t=rgHot(n.t)}catch(e){}}
+{const _cd2=closeDay;closeDay=function(){const r=_cd2.apply(this,arguments);rgNewsLocal();return r}}
+{const _ng2=newGame;newGame=function(){const r=_ng2.apply(this,arguments);rgNewsLocal();return r}}
+(function(){try{for(const code of Object.keys(COUNTRIES)){if(code==="uk")continue;const c=COUNTRIES[code];if(!c||!Array.isArray(c.swap))continue;const have=new Set(c.swap.map(p=>p[0]));
+  const night=(c.swap.find(p=>p[0]==="Bonfire Night")||[])[1]||"Fireworks Night";
+  for(const[k,v]of[["Bonfire night",night.charAt(0)+night.slice(1).toLowerCase()],["Bonfire season","Fireworks season"],["bonfire season","fireworks season"],["Bonfire Night",night]])if(!have.has(k)){c.swap.push([k,v]);have.add(k)}}
+ for(const k of Object.keys(LOC_CACHE))delete LOC_CACHE[k];if(typeof S!=="undefined"&&S&&S.country&&S.country!=="uk")LOC=buildLoc(S.country)}catch(e){}})();
+/* ---- Friends getting in touch: more ways to say it, and the least-used one goes first ---- */
+try{KT_IN.push(["Dinner at ours?","{f}: \"We're doing a big pot of chilli on Sunday. Come hungry.\""],["Five-a-side?","{f}'s five-a-side team is a player short. \"Even you would do.\""],
+ ["Help me move?","{f} is moving flat and has promised pizza to anyone who carries a sofa."],["Film night","{f}: \"New film's out. I'll get the tickets if you get the popcorn.\""],
+ ["Brunch?","{f} has found a new brunch place and won't stop talking about the pancakes."],["Big news","{f} messages: \"Can we meet? I've got something to tell you and I'm not doing it by text.\""],
+ ["Remember me?","{f}: \"Is this still your number? It's been far too long.\""],["An early swim?","{f} is going for an early swim on Saturday. \"Cold, but you'll feel amazing.\""],
+ ["Game night","{f} is hosting a board game night. \"Bring snacks. Prepare to lose.\""],["Cake emergency","{f} has baked far too much. \"Come and help me eat this before I eat it all.\""],
+ ["Tickets for the match","{f} has a spare ticket for the match on Saturday. \"Your name was first on the list.\""],["A favour and a pint","{f} needs a hand putting up some shelves. \"I'll buy you a pint after. Two if they're straight.\""])}catch(e){}
+/* ---- Repeat cards, new words: same choices, so nothing about the game changes ---- */
+const RG_SH_T=[n=>n+": 3 months on",n=>n+": still worth it?",n=>n+": time for a check-in",n=>n+": how it's going",n=>n+": another quarter done"];
+{const _pd3=pushDyn;pushDyn=function(ev){try{if(ev&&typeof ev.id==="string"){
+  if(/^ktin_/.test(ev.id)&&ev.vars&&ev.vars.pn){S.rgKt=S.rgKt||{};const use=t=>S.rgKt[t]||0,min=Math.min(...KT_IN.map(T=>use(T[0]))),pool=KT_IN.filter(T=>use(T[0])===min),T=pool[Math.floor(rnd()*pool.length)];
+   S.rgKt[T[0]]=use(T[0])+1;ev=Object.assign({},ev,{t:T[0],b:T[1].replace(/\{f\}/g,String(ev.vars.pn).split(" ")[0])})}
+  else if(/^sh_end_/.test(ev.id)&&typeof ev.t==="string"){const nm=ev.t.replace(/: \d+ months on$/,"");if(nm!==ev.t){S.rgSh=S.rgSh||{};const k=S.rgSh[nm]=(S.rgSh[nm]||0)+1;ev=Object.assign({},ev,{t:RG_SH_T[(k-1)%RG_SH_T.length](nm)})}}
+  else if(/^crsinv_/.test(ev.id)){const id=ev.id.replace(/^crsinv_/,"").replace(/_\d+$/,"");const rec=(S.rgInv||{})[id];
+   if(rec&&S.day-rec.d<12*rec.n)return;
+   if(rec&&typeof ev.t==="string"){const t=ev.t,lc=t.charAt(0).toLowerCase()+t.slice(1);ev=Object.assign({},ev,{t:rec.n===1?"Asked again: "+lc:"One more time: "+lc})}}}}catch(e){}return _pd3.call(this,ev)}}
+/* "Not now" to a training invitation: the next one waits 12, then 24, then 36 months */
+{const _chI=choose;choose=function(i,ci){try{const m=S.inbox[i];if(m&&!m.done&&/^crsinv_/.test(m.id||"")){const e=getEv(m),c=choicesOf(e)[ci];if(c&&/^Not now/i.test(String(c.t||""))){const id=m.id.replace(/^crsinv_/,"").replace(/_\d+$/,"");S.rgInv=S.rgInv||{};const r=S.rgInv[id]=S.rgInv[id]||{n:0,d:S.day};r.n++;r.d=S.day}}}catch(e){}return _chI.apply(this,arguments)}}
 
 function start(data){
  S=(data&&data.S)||load();
