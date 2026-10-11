@@ -757,7 +757,7 @@ html,body{overflow-x:clip}
 .op-art{border-radius:15px 15px 0 0;margin:-14px -14px 10px;height:64px}
 .world-note .world-art{margin:-10px -12px 8px;height:52px;border-radius:13px 13px 0 0;border-bottom:0}
 .act-pic{display:block;max-width:240px;margin:10px auto 6px;pointer-events:none}
-.home-icons .hic{cursor:pointer;transition:transform .15s}
+.home-icons .hic{cursor:pointer;transition:transform .15s,box-shadow .15s}.home-icons .hic:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);transform:translateY(-1px)}
 .home-icons .hic:active{transform:scale(.94)}
 .home-icons .hic.played{background:color-mix(in srgb,#2E8B57 22%,var(--surface,#fff));border-color:#2E8B57}
 .home-icons .hic.played svg{color:#1F6B42}
@@ -52798,11 +52798,13 @@ function avActPic(a){const d=AV_ACT[a.k]||AV_GRP[a.g];if(!d)return"";const [scs,
 
 
 /* Home icons: rows of equal length, centred, whatever the number of careers and the screen width */
-function homeIconsBalance(){try{const el=document.getElementById("homeIcons");if(!el)return;const n=el.children.length;if(!n)return;
+function homeIconsBalance(){try{const el=document.getElementById("homeIcons");if(!el)return;const n=el.children.length;if(!n)return;if(!(el.parentElement&&el.parentElement.clientWidth)){requestAnimationFrame(()=>setTimeout(homeIconsBalance,60));return}
  const first=el.children[0],w=first.getBoundingClientRect().width||34,gap=parseFloat(getComputedStyle(el).columnGap||getComputedStyle(el).gap)||6,avail=el.parentElement.clientWidth||el.clientWidth||320;
  const per=Math.max(1,Math.floor((avail+gap)/(w+gap))),rows=Math.ceil(n/per),cols=Math.ceil(n/rows);
  el.style.display="grid";el.style.gridTemplateColumns="repeat("+cols+","+w+"px)";el.style.justifyContent="center";el.style.gap=gap+"px"}catch(e){}}
 addEventListener("resize",()=>{clearTimeout(homeIconsBalance._t);homeIconsBalance._t=setTimeout(homeIconsBalance,150)});
+addEventListener("load",()=>setTimeout(homeIconsBalance,50));addEventListener("pageshow",()=>setTimeout(homeIconsBalance,50));
+try{const hiEl=document.getElementById("homeIcons");if(hiEl&&window.ResizeObserver){let lastW=0;new ResizeObserver(()=>{const w=hiEl.parentElement?hiEl.parentElement.clientWidth:0;if(w&&Math.abs(w-lastW)>2){lastW=w;homeIconsBalance()}}).observe(hiEl.parentElement||hiEl)}}catch(e){}
 /* CAREER record */
 /* ============ Your record in each career: coloured home icons, and tap one to see how you did ============ */
 const CR_KEY="ol-career-rec";
@@ -52825,7 +52827,7 @@ function crEnd(){try{if(!S||S.placeholder||S.daily)return;crTouch();const R=crAl
 function crState(id){const r=crAll()[id];return !r||!r.lives?"":r.top?"done":"played"}
 function crLegend(){try{const el=document.getElementById("hicKey");if(!el)return;const R=crAll(),ids=Object.values(CAREERS).filter(c=>!isLocked(c.id)).map(c=>c.id);
  const p=ids.filter(i=>crState(i)==="played").length,d=ids.filter(i=>crState(i)==="done").length;
- el.innerHTML=p||d?'<span><i class="dot played"></i>Played '+(p+d)+'</span><span><i class="dot done"></i>Reached the top '+d+'</span><span class="sub">Tap a career to see how you did</span>':'<span class="sub">Tap a career to see what it’s about</span>'}catch(e){}}
+ el.innerHTML=p||d?'<span>'+ids.length+' careers</span><span><i class="dot played"></i>'+(p+d)+' played</span><span><i class="dot done"></i>'+d+' at the top</span>':'<span>'+ids.length+' careers to try</span>'}catch(e){}}
 function crModal(id){const c=CAREERS[id];if(!c)return;const r=crAll()[id];const ranks=c.ranks||[];
  const best=r&&r.bestRank!=null?(ranks[r.bestRank]?ranks[r.bestRank].t:r.bestRole):(r&&r.bestRole)||"";
  const ladder=ranks.map((k,i)=>'<li class="'+(r&&r.bestRank!=null&&i<=r.bestRank?"got":"")+'">'+esc(k.t)+'</li>').join("");
