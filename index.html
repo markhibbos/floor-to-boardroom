@@ -757,6 +757,20 @@ html,body{overflow-x:clip}
 .op-art{border-radius:15px 15px 0 0;margin:-14px -14px 10px;height:64px}
 .world-note .world-art{margin:-10px -12px 8px;height:52px;border-radius:13px 13px 0 0;border-bottom:0}
 .act-pic{display:block;max-width:240px;margin:10px auto 6px;pointer-events:none}
+.home-icons .hic{cursor:pointer;transition:transform .15s}
+.home-icons .hic:active{transform:scale(.94)}
+.home-icons .hic.played{background:color-mix(in srgb,#2E8B57 22%,var(--surface,#fff));border-color:#2E8B57}
+.home-icons .hic.played svg{color:#1F6B42}
+.home-icons .hic.done{background:color-mix(in srgb,#2F6FB3 22%,var(--surface,#fff));border-color:#2F6FB3}
+.home-icons .hic.done svg{color:#1E4F86}
+.hic-key{display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:center;font-size:12px;margin:6px 0 2px;color:var(--muted)}
+.hic-key .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.hic-key .dot.played{background:#2E8B57}.hic-key .dot.done{background:#2F6FB3}
+.cr-head{display:flex;align-items:center;gap:10px;margin-top:4px}.cr-head svg{width:34px;height:34px;color:var(--accent)}
+.cr-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cr-stats>div{background:var(--surface2,rgba(0,0,0,.04));border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.cr-stats .label{display:block;font-size:10.5px}.cr-stats b{font-size:15px}
+.cr-ladder{margin:4px 0 0;padding-left:20px;font-size:13.5px;line-height:1.5;color:var(--muted)}.cr-ladder li.got{color:inherit;font-weight:600}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -1023,7 +1037,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--field
 
 <div class="home" id="home" hidden>
   <div class="home-in">
-    <div class="home-icons" id="homeIcons" aria-hidden="true"></div>
+    <div class="home-icons" id="homeIcons"></div><div class="hic-key" id="hicKey"></div>
     <div class="label home-kicker">A career and life simulator</div>
     <h1 class="home-title">One Life</h1>
     <p class="home-lede">Pick a career. Start at the bottom. Climb to the top, and try to keep your money, your health and your family together on the way.</p>
@@ -3033,7 +3047,7 @@ function showHome(){document.getElementById("home").hidden=false;document.body.c
 function hideHome(){document.getElementById("home").hidden=true;document.body.classList.remove("at-home")}
 function renderHome(){
  const has=S&&!S.placeholder&&!S.over,nw=window.__newer;
- document.getElementById("homeIcons").innerHTML=Object.values(CAREERS).filter(c=>!isLocked(c.id)).map(c=>`<span title="${esc(c.n)}">${careerIcon(c.id)}</span>`).join("");homeIconsBalance();
+ document.getElementById("homeIcons").innerHTML=Object.values(CAREERS).filter(c=>!isLocked(c.id)).map(c=>{const st=crState(c.id);return `<span class="hic ${st}" role="button" tabindex="0" data-act="crshow" data-k="${c.id}" title="${esc(c.n)}${st==="done"?" · reached the top":st==="played"?" · played":""}">${careerIcon(c.id)}</span>`}).join("");homeIconsBalance();crLegend();
  document.getElementById("homeBtns").innerHTML=`
   ${nw?`<button class="btn primary big home-btn" data-act="loadnewer"><span>Continue from your other device</span><small>${esc(nw.meta.name)} · ${esc(nw.meta.role)}${nw.meta.age?` · Age ${nw.meta.age}`:""}</small></button>`:""}
   ${has?`<button class="btn ${nw?"":"primary"} big home-btn" data-act="continue"><span>Continue</span><small>${esc(S.name)} · ${esc(R().t)} · Age ${ageInt()} · ${money(netWorth())}</small></button>`:""}
@@ -4042,7 +4056,7 @@ EV.push(
 
 /* ============ Daily challenge: same start and same luck for everyone, ten years, one leaderboard ============ */
 const DAILY_MONTHS=120;
-const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const todayKey=()=>{const d=new Date();return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`};
 function seedOf(str){let h=2166136261;for(const ch of str){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 /* Today's plan is drawn from the date, so every player gets the same one */
 function dailyPlan(date){
@@ -15125,7 +15139,7 @@ function endModal(){
   <div class="label">${more?"Legacy so far":"Legacy score"}</div><div class="big-num" style="color:var(--accent)">${L.total.toLocaleString("en-GB")}</div>
   <table class="rep-table">${L.parts.map(p=>`<tr><td>${p[0]}</td><td>${p[1].toLocaleString("en-GB")}</td></tr>`).join("")}</table>
   <table class="rep-table facts"><tr><td>Highest role</td><td>${esc(role.n)}</td></tr><tr><td>Career${careers.length>1?"s":""}</td><td>${esc(careers.join(", "))}</td></tr><tr><td>Last employer</td><td>${esc(S.bank)}</td></tr>${S.fb?`<tr><td>Goals in ${S.fb.apps} games</td><td>${S.fb.goals}</td></tr>`:""}<tr><td>Net worth</td><td>${money(netWorth())}</td></tr><tr><td>Pension pot</td><td>${money(S.pension.pot)}</td></tr><tr><td>Home</td><td>${esc(S.home.n)}</td></tr><tr><td>Car</td><td>${esc(carOf(S.car.id).n)}</td></tr><tr><td>Family</td><td>${LIFE_STATUS[S.rel.st]}${S.rel.kids?`, ${S.rel.kids} child${S.rel.kids>1?"ren":""}`:""}${S.grandkids?`, ${S.grandkids} grandchild${S.grandkids>1?"ren":""}`:""}</td></tr><tr><td>Decisions made</td><td>${S.decisions}</td></tr><tr><td>Years</td><td>${((S.day-1)/YEAR).toFixed(1)}</td></tr></table>
-  <div class="btn-row"><button class="btn ${more||heirOk?"":"primary big"}" data-act="newcareer">New life</button><button class="btn" data-act="tiyl" data-i="0">This is your life</button><button class="btn" data-act="sharelife">Share my life</button><button class="btn" data-act="trophies">Trophies</button>${S.daily?'<button class="btn" data-act="dailyboard">Today\'s leaderboard</button>':'<button class="btn" data-act="hof">Hall of fame</button>'}<button class="btn" data-act="home">Main menu</button><button class="btn" data-act="hide">Look back at the log</button></div>`);
+  <div class="btn-row"><button class="btn ${more||heirOk?"":"primary big"}" data-act="newcareer">New life</button><button class="btn" data-act="tiyl" data-i="0">This is your life</button><button class="btn" data-act="sharelife">Share my life</button><button class="btn" data-act="trophies">Trophies</button>${S.daily?'<button class="btn primary" data-act="dailyshare">Share my score</button>'+(canCloud?'<button class="btn" data-act="dailyboard">Today\'s leaderboard</button>':''):'<button class="btn" data-act="hof">Hall of fame</button>'}<button class="btn" data-act="home">Main menu</button><button class="btn" data-act="hide">Look back at the log</button></div>`);
 }
 let pickDesk="fx",pickBg=pick(BGS).id,pickCareer="bank",pickTraits=[],pickChallenge="";
 function careerIcon(id){const st='fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"';
@@ -52789,6 +52803,57 @@ function homeIconsBalance(){try{const el=document.getElementById("homeIcons");if
  const per=Math.max(1,Math.floor((avail+gap)/(w+gap))),rows=Math.ceil(n/per),cols=Math.ceil(n/rows);
  el.style.display="grid";el.style.gridTemplateColumns="repeat("+cols+","+w+"px)";el.style.justifyContent="center";el.style.gap=gap+"px"}catch(e){}}
 addEventListener("resize",()=>{clearTimeout(homeIconsBalance._t);homeIconsBalance._t=setTimeout(homeIconsBalance,150)});
+/* CAREER record */
+/* ============ Your record in each career: coloured home icons, and tap one to see how you did ============ */
+const CR_KEY="ol-career-rec";
+const crAll=()=>{try{return JSON.parse(localStorage.getItem(CR_KEY)||"{}")}catch(e){return{}}};
+const crSave=o=>{try{localStorage.setItem(CR_KEY,JSON.stringify(o))}catch(e){}};
+function crTopTitle(id){try{const r=(CAREERS[id].ranks||[]);return r.length?r[r.length-1].t:""}catch(e){return""}}
+function crBackfill(){try{if(localStorage.getItem("ol-career-rec-bf"))return;const R=crAll(),byName={};for(const c of Object.values(CAREERS))byName[c.n]=c.id;
+ for(const e of (typeof hofLocal==="function"?hofLocal():[])){const names=String(e.careers||"").split(", ").filter(Boolean);
+  for(const n of names){const id=byName[n];if(!id)continue;const r=R[id]=R[id]||{lives:0};r.lives++;if((e.legacy||0)>(r.bestLegacy||0))r.bestLegacy=e.legacy;
+   if(names[names.length-1]===n){if(e.role&&(CAREERS[id].ranks||[]).some(k=>k.t===e.role)){const top=crTopTitle(id);if(top&&e.role===top){r.top=1}const ri=(CAREERS[id].ranks||[]).findIndex(k=>k.t===e.role);if(ri>(r.bestRank??-1)){r.bestRank=ri;r.bestRole=e.role}}r.last={ending:e.title||e.ending,age:e.age,when:e.when};if(e.bal&&e.bal.s!=null&&(r.bestBal==null||e.bal.s>r.bestBal))r.bestBal=e.bal.s}}}
+ crSave(R);localStorage.setItem("ol-career-rec-bf","1")}catch(e){}}
+function crTouch(){try{if(!S||S.placeholder||S.daily||!S.path)return;const R=crAll(),r=R[S.path]=R[S.path]||{lives:0};let ch=false;
+ if(!S.crCounted||!S.crCounted[S.path]){S.crCounted=S.crCounted||{};S.crCounted[S.path]=1;r.lives=(r.lives||0)+1;ch=true}
+ if((r.bestRank??-1)<S.rank){r.bestRank=S.rank;r.bestRole=R_t();ch=true}if(S.rank>=4&&!r.top){r.top=1;ch=true}
+ if(ch)crSave(R)}catch(e){}}
+const R_t=()=>{try{return R().t}catch(e){return""}};
+function crEnd(){try{if(!S||S.placeholder||S.daily)return;crTouch();const R=crAll(),r=R[S.path];if(!r)return;let lg=0;try{lg=legacy().total}catch(e){}
+ if(lg>(r.bestLegacy||0))r.bestLegacy=lg;let bal=null;try{bal=typeof wbFinal==="function"?wbFinal():null}catch(e){}if(bal&&bal.s!=null&&(r.bestBal==null||bal.s>r.bestBal))r.bestBal=bal.s;
+ r.last={ending:(typeof ENDINGS!=="undefined"&&ENDINGS[S.over]?ENDINGS[S.over][0]:S.over)||"",age:ageInt(),when:Date.now()};crSave(R)}catch(e){}}
+function crState(id){const r=crAll()[id];return !r||!r.lives?"":r.top?"done":"played"}
+function crLegend(){try{const el=document.getElementById("hicKey");if(!el)return;const R=crAll(),ids=Object.values(CAREERS).filter(c=>!isLocked(c.id)).map(c=>c.id);
+ const p=ids.filter(i=>crState(i)==="played").length,d=ids.filter(i=>crState(i)==="done").length;
+ el.innerHTML=p||d?'<span><i class="dot played"></i>Played '+(p+d)+'</span><span><i class="dot done"></i>Reached the top '+d+'</span><span class="sub">Tap a career to see how you did</span>':'<span class="sub">Tap a career to see what it’s about</span>'}catch(e){}}
+function crModal(id){const c=CAREERS[id];if(!c)return;const r=crAll()[id];const ranks=c.ranks||[];
+ const best=r&&r.bestRank!=null?(ranks[r.bestRank]?ranks[r.bestRank].t:r.bestRole):(r&&r.bestRole)||"";
+ const ladder=ranks.map((k,i)=>'<li class="'+(r&&r.bestRank!=null&&i<=r.bestRank?"got":"")+'">'+esc(k.t)+'</li>').join("");
+ const grade=v=>v==null?"":v>=72?"A":v>=58?"B":v>=44?"C":v>=30?"D":"E";
+ showModal('<div class="label">'+(r&&r.top?"Reached the top":r&&r.lives?"Your record":"Not tried yet")+'</div><div class="cr-head">'+careerIcon(id)+'<h2 style="margin:0">'+esc(c.n)+'</h2></div><p class="hint" style="margin:6px 0 10px">'+esc(c.blurb||"")+'</p>'+
+  (r&&r.lives?'<div class="cr-stats"><div><span class="label">Lives</span><b>'+r.lives+'</b></div><div><span class="label">Best job</span><b>'+esc(best||"—")+'</b></div><div><span class="label">Best legacy</span><b>'+(r.bestLegacy?Number(r.bestLegacy).toLocaleString("en-GB"):"—")+'</b></div><div><span class="label">Best balance</span><b>'+(r.bestBal!=null?grade(r.bestBal)+" ("+Math.round(r.bestBal)+")":"—")+'</b></div></div>'+(r.last?'<p class="hint" style="margin:8px 0 0">Last time: '+esc(r.last.ending||"")+(r.last.age?", aged "+r.last.age:"")+'.</p>':""):'<p>You haven’t lived this life yet.</p>')+
+  (ladder?'<div class="label" style="margin-top:12px">The ladder</div><ol class="cr-ladder">'+ladder+'</ol>':"")+
+  '<div class="btn-row"><button class="btn primary" data-act="crstart" data-k="'+id+'">Start a life as '+esc(c.n.toLowerCase())+'</button><button class="btn" data-act="hide">Close</button></div>')}
+XCLICK.crshow=t=>crModal(t.dataset.k);
+XCLICK.crstart=t=>{try{pickCareer=t.dataset.k;hideModal();startModal(wizSteps().indexOf("career"))}catch(e){}};
+document.addEventListener("keydown",e=>{try{if((e.key==="Enter"||e.key===" ")&&e.target&&e.target.dataset&&e.target.dataset.act==="crshow"){e.preventDefault();crModal(e.target.dataset.k)}}catch(x){}});
+crBackfill();
+{const _ld=lifeDay;lifeDay=function(){const r=_ld.apply(this,arguments);try{crTouch()}catch(e){}return r}}
+{const _rh=recordHof;recordHof=function(){try{crEnd()}catch(e){}return _rh.apply(this,arguments)}}
+
+/* DAILY share */
+const DAILY_URL="https://markhibbos.github.io/floor-to-boardroom/#daily";
+function dailyShareText(){let lg=0;try{lg=legacy().total}catch(e){}const d=new Date(String(S.daily)+"T12:00:00Z");
+ const day=isNaN(d)?S.daily:d.toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"});
+ const end=(typeof ENDINGS!=="undefined"&&ENDINGS[S.over]?ENDINGS[S.over][0]:"")||"";
+ let role="";try{role=R().t}catch(e){}
+ return "One Life daily · "+day+": "+role+" at "+ageInt()+", legacy "+Number(lg).toLocaleString("en-GB")+(end?". "+end:"")+". Same life, same luck. Can you beat me?"}
+XCLICK.dailyshare=async()=>{const text=dailyShareText(),url=/^https?:$/.test(location.protocol)&&!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())?location.origin+location.pathname+"#daily":DAILY_URL;
+ try{if(typeof nativeShareText==="function"&&await nativeShareText("One Life daily",text,url))return}catch(e){}
+ try{if(navigator.share){await navigator.share({title:"One Life daily",text,url});return}}catch(e){if(e&&e.name==="AbortError")return}
+ try{await navigator.clipboard.writeText(text+" "+url);toastMsg("Copied. Paste it to a friend.")}catch(e){toastMsg(text)}};
+{const _st=start;start=function(){const r=_st.apply(this,arguments);try{if(location.hash==="#daily")setTimeout(()=>{try{dailyModal()}catch(e){}},500)}catch(e){}return r}}
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
