@@ -714,6 +714,12 @@ html,body{overflow-x:clip}
 .mail.lf-mail{border-left:4px solid var(--accent)}
 .lf-stakes{font-size:12.5px;color:var(--muted);margin:2px 0 6px;font-weight:600}
 @media (max-width:420px){.wb-grades{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.phone-chat{background:var(--surface2,#EEF1F2);border:1px solid var(--line);border-radius:16px;padding:8px 10px 10px;gap:5px}
+.pc-head{display:flex;align-items:center;gap:6px;font-size:13px;padding:0 2px 6px;border-bottom:1px solid var(--line);margin-bottom:2px}
+.pc-head span:last-child{margin-left:auto;color:var(--muted);font-size:12px}
+.phone-chat .bubble{background:var(--surface,#fff);border:0;box-shadow:0 1px 1px rgba(0,0,0,.06);border-radius:4px 14px 14px 14px;max-width:82%}
+.phone-chat .bubble b{font-size:11.5px}
+.your-reply{margin:12px 0 4px}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
 .pet-stage.patted .pet-body{animation:petwag .6s ease}.pet-stage.patted .pet-say{animation:petsay 1.2s ease}
@@ -7433,7 +7439,7 @@ function chatMorning(){
   parents:{name:`${kid}'s class parents`,lines:pick([[["Jemma (Year 3)","Does anyone know if it's non-uniform day tomorrow??"],["Mark (Year 3)","It was today"],["Jemma (Year 3)","😱"]],[["Claire (Year 3)","Lost: one blue water bottle with a dinosaur on it"],["Claire (Year 3)","Also one child, joking"],["Mark (Year 3)","😂"]],[["Jemma (Year 3)","Who's volunteering for the summer fair cake stall? 🍰"],["Silence",""]]]),c:[{t:"Volunteer for the cake stall",fx:{home:3,stress:3},o:"You're now the cake-stall person. For ever."},{t:"Leave the chat on read",fx:{},o:"Nobody will notice. Jemma notices."}]}}[g];
  pushDyn({id:"chat_"+S.day,from:set.name,t:set.name,b:"",chat:set.lines,c:set.c});
 }
-const chatHTML=lines=>`<div class="chat">${lines.map(([w,t])=>`<div class="bubble"><b>${esc(w)}</b>${t?`<span>${esc(t)}</span>`:""}</div>`).join("")}</div>`;
+const chatHTML=lines=>{const ppl=[...new Set(lines.map(l=>l[0]))];const col=w=>["#2F7A6E","#B3562E","#5B5BB0","#A0457A","#3D7AB8","#8A6A2E"][ppl.indexOf(w)%6];return `<div class="chat phone-chat"><div class="pc-head"><span aria-hidden="true">💬</span> <b>Group chat</b><span>${ppl.length} ${ppl.length===1?"person":"people"}</span></div>${lines.map(([w,t])=>`<div class="bubble"><b style="color:${col(w)}">${esc(w)}</b>${t?`<span>${esc(t)}</span>`:""}</div>`).join("")}</div><div class="label your-reply">Your reply</div>`};
 
 /* ---- 8. Quarterly arcs at work ---- */
 const QUARTERS=["Budget season","The spring push","The summer slowdown","The year-end push"];
@@ -46130,10 +46136,10 @@ const IE_RULES=[
  {re:/\b(help (them|him|her) move|move house|babysit|look after|visit (her|him|them) in hospital|sit with|care for|nurse (her|him|them)|help out|help them out|lend a hand|give up your weekend)\b/i,e:8,cat:"family"},
  {re:/\b(go round|meet (up|them|him|her)|dinner|lunch|coffee|catch up|accept the invite|go along|say yes|have them over|host|go to the (wedding|party|do|reunion|match))\b/i,e:6,cat:"friends"}
 ];
-const IE_REST=/\b(stay in|early night|go to bed|sleep|decline|say no|ignore it|skip it|not tonight|stay home|turn it down|politely decline|rest)\b/i;
+const IE_REST=/\b(stay in|early night|go to bed|sleep|decline|say no|ignore it|skip it|not tonight|stay home|turn it down|politely decline|rest|pass|not this time|can't make it|maybe next time|leave it|mute|leave the group|send a gif|just a thumbs up|react|lurk)\b/i;
 function ieCost(e,c){
  try{if(!e||!c||typeof enS!=="function"||!enS())return null;const t=String(c.t||"");if(IE_REST.test(t))return null;
-  const R=IE_RULES.find(r=>r.re.test(t));if(!R)return null;let v=R.e;
+  const R=IE_RULES.find(r=>r.re.test(t));if(!R)return e&&e.chat?{e:8,cat:"friends"}:null;let v=R.e;
   if(R.big){const a=typeof ageInt==="function"?ageInt():30;v*=1+Math.max(0,a-35)*.02;try{if((S.traits||[]).includes("party"))v*=.7}catch(x){}}
   return {e:Math.round(v),cat:R.cat}}catch(x){return null}}
 {const _ch=choose;choose=function(i,ci){let m,c,cost=null;try{m=S.inbox[i];const e=getEv(m);c=choicesOf(e)[ci];cost=ieCost(e,c);if(cost&&(m.bd||m.csqBig))cost.e=Math.round(cost.e*1.5)}catch(x){}
@@ -47668,6 +47674,9 @@ const EN_BONUS_CAP=12;
 {const _ea=enAllowance;enAllowance=function(E,o){const r=_ea.apply(this,arguments);try{
  const core=/^(Your age|Health|Stress|Energy debt|Well rested|Unwell)/;let extra=0;for(const [n,x] of r.parts)if(!core.test(n)&&x>0)extra+=x;
  if(extra>EN_BONUS_CAP){const cut=extra-EN_BONUS_CAP;r.parts.push(["Diminishing returns (bonuses cap at +"+EN_BONUS_CAP+")",-cut]);r.v-=cut}}catch(e){}return r}}
+
+/* ILLNESS energy */
+{const _ea=enAllowance;enAllowance=function(E,o){const r=_ea.apply(this,arguments);try{const cs=(S.conds||[]);if(cs.length){const v=-cs.reduce((t,c)=>t+(c.ctl?1:3),0);r.parts.push(["Long-term conditions",v]);r.v+=v}}catch(e){}return r}}
 
 function start(data){
  S=(data&&data.S)||load();
