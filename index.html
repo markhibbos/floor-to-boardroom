@@ -3033,7 +3033,7 @@ function showHome(){document.getElementById("home").hidden=false;document.body.c
 function hideHome(){document.getElementById("home").hidden=true;document.body.classList.remove("at-home")}
 function renderHome(){
  const has=S&&!S.placeholder&&!S.over,nw=window.__newer;
- document.getElementById("homeIcons").innerHTML=Object.values(CAREERS).filter(c=>!isLocked(c.id)).map(c=>`<span title="${esc(c.n)}">${careerIcon(c.id)}</span>`).join("");
+ document.getElementById("homeIcons").innerHTML=Object.values(CAREERS).filter(c=>!isLocked(c.id)).map(c=>`<span title="${esc(c.n)}">${careerIcon(c.id)}</span>`).join("");homeIconsBalance();
  document.getElementById("homeBtns").innerHTML=`
   ${nw?`<button class="btn primary big home-btn" data-act="loadnewer"><span>Continue from your other device</span><small>${esc(nw.meta.name)} · ${esc(nw.meta.role)}${nw.meta.age?` · Age ${nw.meta.age}`:""}</small></button>`:""}
   ${has?`<button class="btn ${nw?"":"primary"} big home-btn" data-act="continue"><span>Continue</span><small>${esc(S.name)} · ${esc(R().t)} · Age ${ageInt()} · ${money(netWorth())}</small></button>`:""}
@@ -52783,6 +52783,12 @@ function avActPic(a){const d=AV_ACT[a.k]||AV_GRP[a.g];if(!d)return"";const [scs,
   return a+`<div class="mail-art world-art" aria-hidden="true">${avSvg(k,"")}</div>`+h.slice(a.length)}catch(e){return h}}}
 
 
+/* Home icons: rows of equal length, centred, whatever the number of careers and the screen width */
+function homeIconsBalance(){try{const el=document.getElementById("homeIcons");if(!el)return;const n=el.children.length;if(!n)return;
+ const first=el.children[0],w=first.getBoundingClientRect().width||34,gap=parseFloat(getComputedStyle(el).columnGap||getComputedStyle(el).gap)||6,avail=el.parentElement.clientWidth||el.clientWidth||320;
+ const per=Math.max(1,Math.floor((avail+gap)/(w+gap))),rows=Math.ceil(n/per),cols=Math.ceil(n/rows);
+ el.style.display="grid";el.style.gridTemplateColumns="repeat("+cols+","+w+"px)";el.style.justifyContent="center";el.style.gap=gap+"px"}catch(e){}}
+addEventListener("resize",()=>{clearTimeout(homeIconsBalance._t);homeIconsBalance._t=setTimeout(homeIconsBalance,150)});
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
