@@ -770,7 +770,7 @@ html,body{overflow-x:clip}
 .cr-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .cr-stats>div{background:var(--surface2,rgba(0,0,0,.04));border:1px solid var(--line);border-radius:10px;padding:7px 9px}
 .cr-stats .label{display:block;font-size:10.5px}.cr-stats b{font-size:15px}
-.cr-ladder{margin:4px 0 0;padding-left:20px;font-size:13.5px;line-height:1.5;color:var(--muted)}.cr-ladder li.got{color:inherit;font-weight:600}
+.cr-ladder{margin:4px 0 0;padding-left:20px;font-size:13.5px;line-height:1.5;color:var(--muted)}.cr-ladder li.got{color:inherit;font-weight:600}.cr-ladder .cr-tick{color:#2E8B57;margin-right:5px}.cr-ladder .cr-tag{display:inline-block;margin-left:8px;padding:0 7px;border-radius:9px;font-size:11px;font-weight:600;background:color-mix(in srgb,#2E8B57 18%,transparent);color:#1F6B42}.cr-ladder .cr-tag.now{background:color-mix(in srgb,#B8862B 22%,transparent);color:#8A5E14}
 .wk-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px;display:flex;align-items:center;gap:8px}.wk-head::after{content:"";flex:1;height:1px;background:var(--line)}
 .mort-box{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--glass,var(--surface));border:1px solid var(--glass-line,var(--line))}
 .pet-stage{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;margin:6px 0 8px}.pet-pic{display:block;width:100%;height:auto;aspect-ratio:11/8;max-height:260px;border-radius:14px}
@@ -4267,7 +4267,7 @@ function paperFor(day){
  return{big,day,date:fmtDate(day),lead,briefs,weather:((typeof WEATHER_BY!=="undefined"&&WEATHER_BY[S.country])||WEATHER)[m],ad:mpick(SMALL_ADS),ad2:mpick(SMALL_ADS),price:Math.round(90+day/12*4),issue:12000+day,bmd,letter,sport,star,horo};
 }
 function paperHTML(p,btn){
- return `<div class="paper"><div class="paper-mast"><span>Est. 1887 · No. ${p.issue||""}</span><b>The Daily Grind</b><span>${esc(p.date)} · ${p.price}p</span></div>
+ return `<div class="paper"><div class="paper-mast"><span>Est. 1887 · No. ${p.issue||""}</span><b>The Daily Grind</b><span>${esc(p.date)} · ${paperPrice(p.price)}</span></div>
   <div class="paper-strap">${esc((S.home&&S.home.area)||"Your town")}'s favourite paper · Now with fewer typos</div>
   <h2 class="paper-lead">${esc(p.lead[0])}</h2>
   <figure class="paper-photo">${workArt()}<div class="paper-av">${avatarSVG(64)}</div><figcaption>${p.cap?esc(p.cap):`Our photographer outside ${esc(S.prison?"HMP Thameside":S.bank)} this week.`}</figcaption></figure>
@@ -5848,7 +5848,7 @@ function kidWeave(notes){
   else if(ty==="rebel")ev("school",{from:"The head teacher",t:`${n} is in trouble`,b:`${n} has been caught selling sweets out of their school bag at a big markup.`,c:[{t:"Serious talking-to",fx:{home:-2},o:"Sulking. Then an apology note under your door."},{t:"Secretly impressed",fx:{home:3,karma:-1},o:"You give them some tips about margins."}]});
   else ev("play",{t:`${n}'s school play`,b:`${n} has a part in the school play: ${pick(["Third Shepherd","a talking tree","the Narrator","a slightly confused donkey"])}.`,c:[{t:"Be in the front row",fx:{home:7,stress:-2},o:"They wave at you mid-scene. Best performance of the year."},{t:"Miss it for work",fx:{home:-6,pnl:1},o:"They tell you it was fine. It wasn't."}]});
  }else if(a>=12&&a<18){
-  if(ty==="bookish")ev("exams",{t:`${n}'s exam results`,b:`Results day. ${n} opens the envelope in the kitchen.`,c:[{t:"Open it together",fx:{act:"kidstar",kid:n,home:8},o:"Top grades in everything. You both cry a bit."}]});
+  if(ty==="bookish"&&a>=15)ev("exams",{t:`${n}'s exam results`,b:`Results day. ${n} opens the envelope in the kitchen.`,c:[{t:"Open it together",fx:{act:"kidstar",kid:n,home:8},o:"Top grades in everything. You both cry a bit."}]});
   else if(ty==="rebel")ev("teen",{from:"A police officer",t:`${n} has been brought home by the police`,b:`${n} was caught spraying graffiti on the bus station.`,c:[{t:"Ground them for a month",fx:{home:-4},o:"Door slamming. But it stops."},{t:"Find them a proper art class",p:.6,win:{fx:{home:6,act:"kidtype",kid:n,ty:"creative"},o:`It turns out ${n} is genuinely talented.`},lose:{fx:{home:-2},o:"They skip the class and go back to the bus station."}}]});
   else ev("phone",{t:`${n} wants the latest phone`,b:`"Everyone has one." It costs £1,100.`,c:[{t:"Buy it",fx:{gbp:-1100,fixed:1,home:4},o:"You are briefly the best parent in the world."},{t:"Make them save half",fx:{home:-2,karma:2},o:`${n} gets a Saturday job. It's good for them.`}]});
  }else if(a>=18&&a<19&&!k.path){
@@ -6981,7 +6981,7 @@ async function sharePaper(){
  x.fillStyle="#F6F1E4";x.fillRect(0,0,W,H);x.fillStyle="#1A1A1A";
  x.font="700 96px Georgia,serif";x.textAlign="center";x.fillText("The Daily Grind",W/2,140);
  x.fillRect(60,170,W-120,4);x.fillRect(60,180,W-120,2);
- x.font="500 30px Georgia,serif";x.fillText(`${p.date} · No. ${p.issue||""} · ${p.price}p`,W/2,226);
+ x.font="500 30px Georgia,serif";x.fillText(`${p.date} · No. ${p.issue||""} · ${paperPrice(p.price)}`,W/2,226);
  x.textAlign="left";x.font="900 92px Georgia,serif";let y=340;for(const l of wrapText(x,p.lead[0],W-140).slice(0,4)){x.fillText(l,70,y);y+=96}
  try{const img=new Image();const svg=avatarSVG(300).replace("var(--accent-soft, #F3E2BD)","#E8DFC8");img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg.replace("<svg ","<svg xmlns=\"http://www.w3.org/2000/svg\" "));await new Promise((ok,bad)=>{img.onload=ok;img.onerror=bad});
   x.save();x.filter="grayscale(1) contrast(1.1) sepia(.25)";x.drawImage(img,70,y+10,300,300);x.restore();x.strokeStyle="#1A1A1A";x.lineWidth=3;x.strokeRect(70,y+10,300,300)}catch(e){}
@@ -14299,7 +14299,7 @@ const NET={bank:"A client dinner in Mayfair",elec:"A builders' merchant trade br
  law:"A law society dinner",doc:"A medical conference",nurse:"A nursing conference",teach:"An education conference",police:"A Police Federation dinner",pol:"Party conference",pilot:"An aviation expo",
  fire:"A fire service conference",vet:"A vet congress",arch:"An architecture festival",influencer:"A creator convention",soldier:"A regimental dinner",foot:"A charity golf day",music:"A music industry showcase",dj:"An industry night at a superclub"};
 const PROMO={elec:["Flyers through local doors","A van wrap and a website"],plumb:["Flyers through local doors","A van wrap and a website"],hair:["Instaglam before-and-afters","A launch party and local press"],
- chef:["Social media food photos","A food critic tasting night"],tech:["A personal blog and GitHub","Conference talks"],law:["LinkedIn articles","A seminar for clients"],vet:["Social media pet stories","A free pet health day"],
+ chef:["Social media food photos","A food critic tasting night"],tech:["A personal blog and open-source projects","Conference talks"],law:["Articles in the legal press","A seminar for clients"],vet:["Social media pet stories","A free pet health day"],
  arch:["A portfolio website","Enter a design competition"],influencer:["Collab with a bigger creator","A paid ad campaign"],bank:["Volunteer for a client pitch","Lead a big client roadshow"],pol:["Knock on doors all weekend","A national media blitz"]};
 const PUBLIC_PROMO=["Volunteer for extra responsibility","Lead a high-profile project"];
 const TEAM_N={elec:"an electrician",plumb:"an engineer",hair:"a stylist",chef:"a chef",tech:"a developer",law:"an associate",vet:"a vet nurse",arch:"an architect",influencer:"an editor",tvchef:"a producer",music:"a tour crew",dj:"a VJ and lighting crew"};
@@ -42890,16 +42890,16 @@ function locTextL(L,t){if(!L||!t)return t;let s=t;
   if(unit.toLowerCase()==="grand"){const nx=(str.slice(off+m.length).match(/^\s+([A-Za-z]+)/)||[])[1];if(nx&&!["on","for","in","a","to","of","and","from","each","cash","plus","more","less","off","up","down","back","into","per","with","or","is","was","it","now","later","short","richer","poorer","better","worse"].includes(nx.toLowerCase()))return m}return locMoney(unit.toLowerCase()==="grand"?n*1000:n,"",L)});s=s.replace(/\b([Aa]) (fiver|tenner)\b/g,(m,a,w)=>locMoney(w==="fiver"?5:10,"",L))}
  if(s.indexOf("£")>=0)s=s.replace(/£\s?(\d[\d,]*(?:\.\d+)?)(\s?(?:k|m|bn|million|billion)\b)?/gi,(m,num,unit)=>locMoney(parseFloat(num.replace(/,/g,"")),(unit||"").trim(),L));
  if(L.femRe)s=s.replace(L.femRe,(m,f,su)=>f+" "+su.replace(/sky$/,"skaya").replace(/(ov|ev|in)$/,"$1a"));
- if(L.re){let hit=false;s=s.replace(L.re,(m,pre,w)=>{if(!L.map.has(w))return m;hit=true;return pre+L.map.get(w)});
+ if(L.re){let hit=false;s=s.replace(L.re,(m,pre,w,off,str)=>{if(!L.map.has(w))return m;if(locInside(L,w,str,off+pre.length))return m;hit=true;return pre+L.map.get(w)});
   /* Tidy up after swapping: no "the the", and the right "a" or "an" in front of a swapped name */
   if(hit){s=s.replace(/\b(the|The) the\b/g,"$1");if(L.aRe)s=s.replace(L.aRe,(m,art,w)=>{const an=/^([aeiouAEIOU]|[FHLMNRSX][A-Z])/.test(w)&&!/^(uni|eu|one)/i.test(w);const want=an?"an":"a";return (art[0]==="A"?want[0].toUpperCase()+want.slice(1):want)+" "+w})}}return s}
 const locText=t=>locTextL(LOC,t);
 /* Swap the words in everything on screen, including new things as they appear */
 const LOC_SKIP=new Set(["SCRIPT","STYLE","TEXTAREA","INPUT","CODE"]);let locBusy=false;
-function localizeNode(root){if(!LOC||!root)return;locBusy=true;try{if(root.nodeType===3){if(root.parentNode&&root.parentNode.closest&&root.parentNode.closest("[data-noloc]"))return;const v=root.nodeValue,w=locText(v);if(w!==v)root.nodeValue=w;return}
- const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentNode&&(LOC_SKIP.has(n.parentNode.nodeName)||(n.parentNode.closest&&n.parentNode.closest("[data-noloc]")))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let n;while((n=tw.nextNode())){const v=n.nodeValue;if(!v||v.length<2)continue;const w=locText(v);if(w!==v)n.nodeValue=w}}finally{locBusy=false}}
+function localizeNode(root){if(!LOC||!root)return;locBusy=true;try{if(root.nodeType===3){if(root.parentNode&&root.parentNode.closest&&root.parentNode.closest("[data-noloc]"))return;const v=root.nodeValue,w=locText(v);if(w!==v)root.nodeValue=w;(window.__locDone||(window.__locDone=new WeakMap())).set(root,w);return}
+ const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentNode&&(LOC_SKIP.has(n.parentNode.nodeName)||(n.parentNode.closest&&n.parentNode.closest("[data-noloc]")))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let n;while((n=tw.nextNode())){const v=n.nodeValue;if(!v||v.length<2)continue;const w=locText(v);if(w!==v){n.nodeValue=w;(window.__locDone||(window.__locDone=new WeakMap())).set(n,w)}}}finally{locBusy=false}}
 function localizeAll(){if(typeof document!=="undefined"&&document.body)localizeNode(document.body)}
-try{const mo=new MutationObserver(ms=>{if(locBusy||!LOC)return;for(const m of ms){if(m.type==="characterData")localizeNode(m.target);else m.addedNodes.forEach(n=>localizeNode(n))}});mo.observe(document.documentElement,{childList:true,subtree:true,characterData:true})}catch(e){}
+try{const mo=new MutationObserver(ms=>{if(locBusy||!LOC)return;for(const m of ms){if(m.type==="characterData"){if(window.__locDone&&window.__locDone.get(m.target)===m.target.nodeValue)continue;localizeNode(m.target)}else m.addedNodes.forEach(n=>localizeNode(n))}});mo.observe(document.documentElement,{childList:true,subtree:true,characterData:true})}catch(e){}
 /* Work homes take local addresses abroad */
 {const _csh=careerStartHome;careerStartHome=function(){const r=_csh.apply(this,arguments);try{if(LOC&&S.home){const M={"Catterick Garrison":"the garrison","Hounslow":"near the airport","Pimlico":pick(LOC.c.areas.mid)};if(M[S.home.area])S.home.area=M[S.home.area]}}catch(e){}return r}}
 /* The new-game wizard asks where you live */
@@ -47352,7 +47352,7 @@ function mmStory(){if(!wbOk0()||S.prison||S.front||S.sel||S.wscene)return;
    {t:"\"It's not a competition\"",fx:{home:S.rel.trait==="romantic"?-12:-8,stress:3},o:`${P} goes quiet. The kind of quiet that lasts.`}]})}
  /* A friend who has stopped asking */
  const fm=(S.missed||[]).filter(x=>mmGrp(x)==="friends"&&S.day-x.d<=48);
- if(fm.length>=3&&cool("friend",96)){const who=fm[fm.length-1].who,p=(S.friend&&S.friend.n===who)?null:(S.people||[]).find(q=>q.n===who&&q.alive!==false),F=wbFirst(who||(S.friend&&S.friend.n)||"");
+ if(fm.length>=3&&cool("friend",96)){const who=fm[fm.length-1].who,p=(S.friend&&S.friend.n===who)?null:(S.people||[]).find(q=>q.n===who&&q.alive!==false),gone=!!who&&!(S.friend&&S.friend.n===who)&&(S.people||[]).some(q=>q.n===who&&q.alive===false),F=gone?"":wbFirst(who||(S.friend&&S.friend.n)||"");
   if(F)push("friend",{from:who||F,t:`${F} has stopped inviting you`,b:`You hear about ${F}'s night out afterwards, from someone else. After ${list(ex(x=>mmGrp(x)==="friends",2))}, they've stopped asking.`,c:[
    {t:"Turn up on their doorstep with a takeaway (⚡ 6)",fx:{act:"mm_fr",who,d:14,e:6,stress:-2},o:"An awkward minute, then a big hug and a very late night."},
    {t:"Send a long, honest message",fx:{act:"mm_fr",who,d:5},o:"\"Means a lot. Pint soon?\" It's a start."},
@@ -52831,7 +52831,8 @@ function crLegend(){try{const el=document.getElementById("hicKey");if(!el)return
  el.innerHTML=p||d?'<span>'+ids.length+' careers</span><span><i class="dot played"></i>'+(p+d)+' played</span><span><i class="dot done"></i>'+d+' at the top</span>':'<span>'+ids.length+' careers to try</span>'}catch(e){}}
 function crModal(id){const c=CAREERS[id];if(!c)return;const r=crAll()[id];const ranks=c.ranks||[];
  const best=r&&r.bestRank!=null?(ranks[r.bestRank]?ranks[r.bestRank].t:r.bestRole):(r&&r.bestRole)||"";
- const ladder=ranks.map((k,i)=>'<li class="'+(r&&r.bestRank!=null&&i<=r.bestRank?"got":"")+'">'+esc(k.t)+'</li>').join("");
+ /* CR ladder progress */const cur=(S&&!S.placeholder&&!S.daily&&!S.over&&S.path===id)?S.rank:-1;
+ const ladder=ranks.map((k,i)=>{const got=r&&r.bestRank!=null&&i<=r.bestRank,best=r&&r.bestRank===i;const tag=i===cur?'<span class="cr-tag now">you are here</span>':best?'<span class="cr-tag">'+(r.top&&i===ranks.length-1?"reached the top":"your best")+'</span>':"";return '<li class="'+(got?"got":"")+'">'+(got?'<span class="cr-tick">✓</span>':"")+esc(k.t)+tag+'</li>'}).join("");
  const grade=v=>v==null?"":v>=72?"A":v>=58?"B":v>=44?"C":v>=30?"D":"E";
  showModal('<div class="label">'+(r&&r.top?"Reached the top":r&&r.lives?"Your record":"Not tried yet")+'</div><div class="cr-head">'+careerIcon(id)+'<h2 style="margin:0">'+esc(c.n)+'</h2></div><p class="hint" style="margin:6px 0 10px">'+esc(c.blurb||"")+'</p>'+
   (r&&r.lives?'<div class="cr-stats"><div><span class="label">Lives</span><b>'+r.lives+'</b></div><div><span class="label">Best job</span><b>'+esc(best||"—")+'</b></div><div><span class="label">Best legacy</span><b>'+(r.bestLegacy?Number(r.bestLegacy).toLocaleString("en-GB"):"—")+'</b></div><div><span class="label">Best balance</span><b>'+(r.bestBal!=null?grade(r.bestBal)+" ("+Math.round(r.bestBal)+")":"—")+'</b></div></div>'+(r.last?'<p class="hint" style="margin:8px 0 0">Last time: '+esc(r.last.ending||"")+(r.last.age?", aged "+r.last.age:"")+'.</p>':""):'<p>You haven’t lived this life yet.</p>')+
@@ -53258,11 +53259,11 @@ function hoNight(w,what){try{if(!S||S.placeholder||S.over||S.prison||window.__ho
  else{S.log.unshift({d:S.day,t:["","A rough morning after ","A brutal hangover after ","A two-day hangover after "][sev]+(what||"a big night")+"."});try{toastMsg(pick(["Your head is pounding. Water. Toast. Regret.","You've aged five years overnight.","Never again. (Again.)"]))}catch(e){}}}catch(e){}}
 // Inbox choices (incl. group chats) that are big nights
 {const _ch=choose;choose=function(i,ci){let big=0,label="";try{const m=S.inbox[i],e=getEv(m),c=choicesOf(e)[ci],t=String(c&&c.t||"");const ctx=t+" "+(e&&e.chat?e.chat.map(l=>l[1]).join(" "):"")+" "+String(e&&e.t||"");
-  if(c&&!IE_REST.test(t)&&HO_BIG.test(ctx)&&(HO_BIG.test(t)||(e&&e.chat))){big=/stag|hen do|festival|bender|all night|3am|4am/i.test(ctx)?1.5:1;label=/stag/i.test(ctx)?"the stag do":/hen do/i.test(ctx)?"the hen do":/festival/i.test(ctx)?"the festival":"a big night out"}}catch(x){}
+  if(c&&!IE_REST.test(t)&&!/\b(soft drinks?|sober|on the water|lemonade|mocktails?)\b/i.test(t)&&HO_BIG.test(ctx)&&(HO_BIG.test(t)||(e&&e.chat))){big=/stag|hen do|festival|bender|all night|3am|4am/i.test(ctx)?1.5:1;label=/stag/i.test(ctx)?"the stag do":/hen do/i.test(ctx)?"the hen do":/festival/i.test(ctx)?"the festival":"a big night out"}}catch(x){}
  const m=S.inbox[i];const r=_ch.apply(this,arguments);try{if(big&&m&&m.done&&m.ci===ci)hoNight(big,label)}catch(x){}return r}}
 // Free-time nights out
 {const _da=doActivity;doActivity=function(k){const a=(typeof ACTIVITIES!=="undefined"?ACTIVITIES:[]).find(x=>(x.id||x.k)===k);const u0=typeof enUsed==="function"?enUsed():0;const r=_da.apply(this,arguments);
- try{if(a&&typeof enUsed==="function"&&enUsed()>u0){const n=String(a.n||a.t||k);if(/festival|karaoke|pub|club|party|cocktail|bar|quiz|stand-?up|singles|night/i.test(n+" "+k))hoNight(/festival|singles/i.test(n+" "+k)?1.5:1,n.toLowerCase().replace(/^(go to |go |a |an |the )/,"").replace(/^/,"the "))}}catch(e){}return r}}
+ try{if(a&&typeof enUsed==="function"&&enUsed()>u0){const n=String(a.n||a.t||k);if(/\b(festival|karaoke|pubs?|club\w*|party|cocktails?|bars?|quiz|stand-?up|singles|night)\b/i.test(n+" "+k))hoNight(/festival|singles/i.test(n+" "+k)?1.5:1,n.toLowerCase().replace(/^(go to |go |a |an |the )/,"").replace(/^/,"the "))}}catch(e){}return r}}
 // Stag and hen dos
 {const _wf=wsFinish;wsFinish=function(){const w=S.wscene;const r=_wf.apply(this,arguments);try{if(w&&w.kind==="do"&&!w.hoDone){w.hoDone=1;hoNight(1.8,"the stag or hen do")}}catch(e){}return r}}
 // The month: hangovers cost energy; sick days build an absence record
@@ -53329,12 +53330,900 @@ const leaveLeft=()=>{try{const E=enS();if(E&&!E.lv)enLeaveRoll(E);return E&&E.lv
  arts.forEach((a,k)=>{const m=done[k];if(!m||!m.ieE||a.querySelector(".en-chip"))return;let ch=a.querySelector(".chips");if(!ch){const out=a.querySelector(".outcome")||a;ch=document.createElement("div");ch.className="chips";out.appendChild(ch)}
   const sp=document.createElement("span");sp.className="chip en-chip "+(m.ieE>0?"b":"g");sp.textContent=(m.ieE>0?"−":"+")+Math.abs(m.ieE)+" energy";ch.appendChild(sp)})}catch(e){}return r}}
 
+/* CM: composed workplace scenes for the inbox banners. A backdrop for the job, the people in the story (with their own skin and hair) and a few props, chosen per message */
+/* ---- People in scenes: small flat figures with the real person's skin and hair ---- */
+/* a look: [skin, hair, style, flags(1 bald, 2 glasses, 4 beard, 8 tache), grey 0-4, tee] */
+const cmLook=(av,a)=>{av=avUp(av)||avDefault();const sx=av.sex||"x";a=a||35;
+ return [(av.skin||0)%11,(av.hair||0)%11,av.style||"short",(av.bald&&a>=30&&sx!=="f"?1:0)|(av.glasses?2:0)|(/beard/.test(av.face||"")?4:0)|(/tache|goatee/.test(av.face||"")?8:0),Math.max(0,Math.min(4,Math.round((a-40)/7))),(av.tee||0)%TEE_C.length]};
+const cmSeedLook=(seed,sex,a)=>cmLook(avDefault(seed,sex),a);
+const cmSkinOk=c=>{const m=/^#([0-9a-f]{6})$/i.exec(c||"");if(!m)return false;const n=parseInt(m[1],16),r=n>>16,g=n>>8&255,b=n&255;return r>=g&&g>=b&&r-b>=40};
+/* hair drawn around a head centred on (0,-30), radius 7; returns [behind the head, on top of the head] */
+function cmHair(L,hat){
+ const st=L[2],fl=L[3],hb=AV2_HAIR[L[1]%11],hc=L[1]>=8?hb:avMix(hb,"#C9C9C9",L[4]*.2),sk=AV2_SKIN[L[0]%11];
+ let back="",top="";
+ const cap=`M-7.2 -30.5 Q-8 -38.8 0 -38.8 Q8 -38.8 7.2 -30.5 Q3.5 -35 -7.2 -30.5Z`;
+ if(st==="scarf"){const c=SCARF_C[(L[0]+L[1])%SCARF_C.length];back=pa("M-8.6 -29 Q-9.4 -40 0 -40 Q9.4 -40 8.6 -29 L10 -19 H-10Z",c);return [back,pa("M-6.4 -32 Q0 -37.5 6.4 -32 Q0 -34 -6.4 -32Z",c)]}
+ if(st==="afro")back=iaCirc(0,-32,10,hc);
+ else if(st==="curly"){back=iaCirc(0,-32.4,8.8,hc);top=[-5,0,5].map(x=>iaCirc(x,-36.6,2.8,hc)).join("")}
+ else if(["long","braids","locs"].includes(st))back=pa("M-8.2 -32 Q-9.6 -17 -7 -16 H7 Q9.6 -17 8.2 -32Z",hc);
+ else if(st==="bob")back=pa("M-8.2 -32 Q-9 -22.5 -7.4 -22.5 H7.4 Q9 -22.5 8.2 -32Z",hc);
+ else if(st==="ponytail")back=pa("M-8 -32 Q-8.6 -24 -6.6 -24 H6.6 Q8.6 -24 8 -32Z",hc)+iaCirc(6.8,-35,2.8,hc);
+ if(hat)return [back,""];
+ if(fl&1)top=pa("M-7 -29 Q-7.4 -33 -5.6 -34 L-5 -30Z M7 -29 Q7.4 -33 5.6 -34 L5 -30Z",hc);
+ else if(st==="shaved")top=pa("M-6.8 -32.5 Q-6.8 -37.4 0 -37.4 Q6.8 -37.4 6.8 -32.5 Q0 -35.4 -6.8 -32.5Z",hc,'opacity=".55"');
+ else if(st==="buzz")top=pa("M-6.9 -32 Q-7 -37.8 0 -37.8 Q7 -37.8 6.9 -32 Q0 -35.2 -6.9 -32Z",hc);
+ else if(st==="mohawk")top=rc(-1.6,-42,3.2,7,hc,'rx="1.2"');
+ else if(st==="quiff")top=pa(cap,hc)+`<ellipse cx="1.5" cy="-38.4" rx="5" ry="2.4" fill="${hc}"/>`;
+ else if(st==="bun")top=pa(cap,hc)+iaCirc(0,-40,3.2,hc);
+ else if(st==="sidepart")top=pa("M-7.2 -30.5 Q-8 -38.8 0 -38.8 Q8 -38.8 7.2 -31.5 Q-1 -35.5 -7.2 -30.5Z",hc);
+ else if(st!=="afro")top+=pa(cap,hc);
+ if(fl&4)top+=pa("M-6.6 -29 Q-6 -21.6 0 -21.4 Q6 -21.6 6.6 -29 Q3 -24.6 0 -25.6 Q-3 -24.6 -6.6 -29Z",hc);
+ else if(fl&8)top+=rc(-3.2,-27.6,6.4,1.5,hc,'rx=".7"');
+ if(fl&2)top+=`<path d="M-5.4 -30.6 h4 M1.4 -30.6 h4 M-1.4 -30.6 h2.8" stroke="#2B2B2B" stroke-width="1.1" fill="none"/>`;
+ return [back,top];
+}
+const cmHead=(L,hat)=>{const [b,t]=cmHair(L,hat);return b+iaCirc(0,-30,7,AV2_SKIN[L[0]%11])+t};
+/* items held in the right hand (local coordinates) */
+const CM_HELD={
+ clip:rc(9,-15,7,9.5,"#B98A55",'rx="1"')+rc(10,-13,5,6.5,"#F7F4EC"),
+ phone:rc(10,-15,3.8,6.4,"#2B2B2B",'rx="1"')+rc(10.6,-14.2,2.6,4.6,"#7FB2E5"),
+ mug:rc(10,-10.5,5,5.5,"#F2F4F5",'rx="1"')+`<path d="M15 -9.5 h1.4 v3 h-1.4" stroke="#C9CDD1" stroke-width="1" fill="none"/>`,
+ file:rc(8,-12,10,7.5,"#E9C46A",'rx="1"')+rc(8,-12,10,1.6,"#C9A23A"),
+ tab:rc(8.5,-15,8,10.5,"#2B3A44",'rx="1.2"')+rc(9.6,-13.8,5.8,8,"#9FD0EE"),
+ tool:`<path d="M11 -4 L16 -15" stroke="#6F7579" stroke-width="2.2" stroke-linecap="round"/>`+iaCirc(16.4,-15.6,2.2,"none",'stroke="#6F7579" stroke-width="1.6"'),
+ bag:rc(8,-8,10,8,"#5A3A22",'rx="1.5"')+`<path d="M10.5 -8 q2.5 -4 5 0" stroke="#3A2A1A" stroke-width="1.2" fill="none"/>`,
+ flower:`<path d="M12 -6 L14 -16" stroke="#3E8E5E" stroke-width="1.4"/>`+iaCirc(14,-17.5,2.6,"#E86A7A")+iaCirc(11.6,-15.6,2.2,"#F2B8C6"),
+ mic:`<path d="M12 -6 L13 -15" stroke="#2B2B2B" stroke-width="1.8"/>`+iaCirc(13.2,-16.4,2.4,"#555")
+};
+/* a standing figure; feet on the floor line F. o: b body, lg legs, s scale, hat, vis, apron, tie, pose 1 holding / 2 arms up, held, f -1 faces left */
+function cmFig(x,F,L,o={}){
+ const s=o.s||.9,b=o.b||TEE_C[L[5]%TEE_C.length],lg=o.lg||"#2B3A44";
+ let g=cmHead(L,o.hat)+`<path d="M-9 -20 Q0 -25 9 -20 L11 6 H-11Z" fill="${b}"/>`+rc(-8,6,6,14,lg)+rc(2,6,6,14,lg);
+ if(o.apron)g+=pa("M-6 -16 H6 L8 6 H-8Z",o.apron);
+ if(o.vis)g+=rc(-10,-8,20,2.2,"#D7DDE0")+rc(-10.5,-2,21,2.2,"#D7DDE0");
+ if(o.tie)g+=pa("M-1.3 -21 H1.3 L2 -10 L0 -7.5 L-2 -10Z",o.tie);
+ if(o.hat)g+=w2Hat(o.hat,o.hc);
+ const arm=(x1,y1)=>`<path d="M${x1>0?7:-7} -18 L${x1} ${y1}" stroke="${b}" stroke-width="3.6" stroke-linecap="round"/>`;
+ if(o.pose===2)g+=arm(-13,-33)+arm(13,-33);
+ else if(o.held&&CM_HELD[o.held])g+=arm(12,-8)+CM_HELD[o.held];
+ return `<g transform="translate(${x} ${+(F-20*s).toFixed(1)}) scale(${(o.f||1)*s} ${s})">${g}</g>`;
+}
+/* ---- Recasting a hand-drawn scene: its people get the heads (skin and hair) of the people in the story ---- */
+const CM_PRE=/<g transform="translate\(([-\d.]+) ([-\d.]+)\) scale\(([-\d.]+)\)"><circle cx="0" cy="-30" r="7" fill="([^"]*)"\s*\/>/g;
+const CM_SIT=/<g transform="translate\(([-\d.]+) ([-\d.]+)\) scale\(([-\d.]+) ([-\d.]+)\)"><circle cx="0" cy="-26" r="6.5" fill="([^"]*)"\s*\/>/g;
+const CM_HATSIG=['x="-6" y="-44"',"M-8 -32 A8 8","M-9 -31 A9 9",'x="-8" y="-40"','cy="-30" r="10.5"',"M-9 -33 Q-6 -41","M-9 -28 Q-10 -41"];
+const CM_RCN={};
+function cmRecastN(k){if(CM_RCN[k]!=null)return CM_RCN[k];let n=0;try{const s=IA[k]();for(const re of[CM_PRE,CM_SIT]){re.lastIndex=0;let m;while((m=re.exec(s)))if(cmSkinOk(re===CM_PRE?m[4]:m[5]))n++}}catch(e){}return CM_RCN[k]=n}
+function cmRecast(k,P,car){
+ let s=IA[k]();let i=0;
+ s=s.replace(/<path d="M-7 -31 Q-8 -39 0 -39 Q8 -39 7 -31 Q4 -35 -7 -31Z" fill="[^"]*"\s*\/>|<circle cx="0" cy="-40" r="3.6" fill="[^"]*"\s*\/>/g,"");
+ const ws=[];
+ s=s.replace(new RegExp(CM_PRE.source+"|"+CM_SIT.source,"g"),(m0,x,y,sc,sk,x2,y2,a2,b2,sk2,at,str)=>{
+  const sit=x==null,c=sit?sk2:sk;if(!cmSkinOk(c))return m0;const p=P[i++];if(!p)return m0;const L=p[1];
+  const rest=str.slice(at+m0.length,at+m0.length+700),pre=sit?`translate(${x2} ${y2})`:`translate(${x} ${y})`;
+  const nx=rest.indexOf(`<g transform="${pre}`),hat=nx>=0&&nx<420&&CM_HATSIG.some(h=>rest.slice(nx,nx+260).includes(h));
+  const head=cmHead(L,hat);
+  if(p[2]==="boss"&&!sit&&CM_TIE[car])ws.push([at,pre]);
+  return sit?`<g transform="${pre} scale(${a2} ${b2})"><g transform="translate(0 1.9) scale(.93)">${head}</g>`:`<g transform="${pre} scale(${sc})">${head}`});
+ /* a tie for the boss in office jobs: drawn on top of their jacket */
+ if(ws.length)for(const [,pre] of ws){const j=s.indexOf(`<g transform="${pre} scale(`);if(j<0)continue;const e2=s.indexOf("</g>",j);if(e2<0)continue;s=s.slice(0,e2)+pa("M-1.3 -21 H1.3 L2 -10 L0 -7.5 L-2 -10Z",CM_TIE[car])+s.slice(e2)}
+ return s;
+}
+const CM_TIE={bank:"#7A1F2B",law:"#2F4F8A",pol:"#7A1F2B",tech:"",clubowner:"#7A1F2B",cardealer:"#2F4F8A"};
+
+/* ---- Who is in the picture ---- */
+const CM_WORK={doc:{b:"#F2F4F5"},nurse:{b:"#3E6FB0",lg:"#3E6FB0"},police:{b:"#1D3A6E",hat:"cap",hc:"#1C2A44",vis:1},fire:{b:"#2B2B2B",hat:"fire",vis:1},chef:{b:"#F7F7F4",hat:"chef",lg:"#3A3A3A"},tvchef:{b:"#F7F7F4",lg:"#3A3A3A"},
+ hair:{b:"#2B2B2B"},soldier:{b:"#5A6B3A",lg:"#4A5A30",hat:"beret",hc:"#7A1F2A"},pilot:{b:"#1C2A44",lg:"#1C2A44"},astronaut:{b:"#E6E9EC",lg:"#C9CDD1"},vet:{b:"#4BA3A0",lg:"#3A8A88"},
+ arch:{b:"#3E5C76"},elec:{b:"#2B3A44",vis:1},plumb:{b:"#1D5FA8",lg:"#1D5FA8"},foot:{b:"#B3262E",lg:"#F2F4F5"},manager:{b:"#1C2329"},clubowner:{b:"#2B3A44"},
+ bank:{b:"#2B3A44"},law:{b:"#1C2329"},pol:{b:"#2B3A44"},tech:{},cardealer:{b:"#3A4A5A"},teach:{},spy:{b:"#3A4250"},music:{},dj:{},influencer:{},actor:{}};
+const CM_SITE_HAT={arch:"hard",elec:"",plumb:""};
+const cmBody=(role,L,fam,car)=>{const w=CM_WORK[car]||{};const smart=["bank","law","pol","clubowner","cardealer"].includes(car);
+ if(role==="cli"||role==="fr"||role==="pt"||role==="st")return {b:TEE_C[L[5]%TEE_C.length],lg:["#2B3A44","#4A5A6A","#5A4636","#3A3A4A"][L[0]%4]};
+ if(role==="boss")return Object.assign({},w,{b:w.b&&!smart&&!["tech","teach","influencer","actor","manager"].includes(car)?w.b:"#2B3240",tie:CM_TIE[car]||"",hat:w.hat==="chef"?"chef":w.hat==="fire"?"fire":w.hat==="cap"?"cap":""},car==="soldier"?{b:"#4A5A30",hat:"beret",hc:"#1C2A44"}:{});
+ if(role==="me"&&car==="foot"&&fam==="press")return {b:"#1C2329"};
+ return Object.assign({},w,!w.b?{b:TEE_C[L[5]%TEE_C.length]}:{});
+};
+function cmWorkmate(i){const sd=(S.name||"")+"|"+S.path+"|wm"+i,a=Math.max(20,Math.floor(age())+(h32(sd)%21)-10);return cmSeedLook(sd,undefined,a)}
+function cmStranger(h){const a=18+h%55;return cmSeedLook("st"+h,undefined,a)}
+function cmPersonLook(n,a){return cmSeedLook(n+"p",sexN(genderOf(n)),a||Math.max(20,Math.floor(age())+(h32(n)%17)-8))}
+const CM_CLI=/\b(clients?|customers?|patients?|passengers?|punters?|diners?|guests?|fans?|followers?|pupils?|students?|parents?|owners?|buyers?|suspects?|witness(es)?|victims?|callers?|homeowners?|tenants?|viewers?|constituents?|voters?|residents?|kids|children|recruits?|audience|shoppers?|visitors?|inspectors?|journalists?|reporters?|investors?|founder)\b/i;
+const CM_CLI2=/\b(customers|patients|passengers|fans|pupils|students|parents|voters|residents|kids|children|recruits|audience|shoppers|visitors|journalists|reporters|investors)\b/i;
+const CM_TEAM=/\b(team|colleagues?|staff|crew|squad|everyone|department|ward|unit|band|cast|co-?workers?|workmates?|the office|lads|girls|gang|leaving do|night out|drinks|pint)\b/i;
+function cmCast(m,e,txt,raw,h){
+ const a=Math.floor(age()),out=[],has=r=>out.some(x=>x[0]===r);
+ const boss=S.boss&&S.boss.n,riv=S.rival&&S.rival.name;
+ if(boss&&(/\{boss\}/.test(raw)||txt.includes(boss)||/\b(your boss|the boss|your manager|line manager|head ?teacher|the chief|director|chairman|gaffer|sergeant|senior partner)\b/i.test(txt)))out.push(["boss",cmPersonLook(boss,a+5+h32(boss)%10)]);
+ if(riv&&(/\{r\}/.test(raw)||txt.includes(riv)||/\brival\b/i.test(txt)))out.push(["rival",cmPersonLook(riv,a+(h32(riv)%7)-3)]);
+ if(S.friend&&(/\{f\}/.test(raw)||txt.includes(S.friend.n)))out.push(["fr",cmSeedLook(S.friend.n.split(" ")[0]+"fr",sexN(genderOf(S.friend.n)),Math.max(18,a+(h32(S.friend.n)%7)-3))]);
+ if(out.length<2&&S.rel&&S.rel.name&&typeof inLove==="function"&&inLove()&&/\{p\}/.test(raw))out.push(["pt",cmSeedLook(S.rel.name.split(" ")[0]+"pt",sexN(genderOf(S.rel.name)),Math.max(18,a+(h32(S.rel.name)%9)-4))]);
+ if(out.length<2)for(const p of (S.people||[])){if(!p.alive||!p.n||p.n.length<5)continue;if(txt.includes(p.n)){out.push([/client|customer|patient|passenger|fan|viewer|pupil|constituent|supporter|sponsor|critic|follower/.test(p.role||"")?"cli":"col",cmPersonLook(p.n,p.age)]);break}}
+ if(out.length<2&&CM_CLI.test(txt)){out.push(["cli",cmStranger(h%997)]);if(out.length<2&&CM_CLI2.test(txt)&&h%3)out.push(["cli",cmStranger((h>>>5)%997+1000)])}
+ if(out.length<2&&CM_TEAM.test(txt)){out.push(["col",cmWorkmate(h%6)]);if(out.length<2)out.push(["col",cmWorkmate((h>>>3)%6===h%6?(h%6+1)%6:(h>>>3)%6)])}
+ out.splice(2);
+ const me=["me",cmLook(S.av,a)];
+ if(!out.length){const r=(h>>>7)%10;if(r<5)out.push(["col",cmWorkmate((h>>>2)%6)]);else if(r<7)out.push(["cli",cmStranger((h>>>4)%997)])}
+ out.splice((h>>>11)%2&&out.length?(h>>>12)%(out.length+1):0,0,me);
+ return out;
+}
+/* what the player is holding or doing, from the story */
+function cmPose(txt,role){
+ if(role==="me"&&/\b(promot\w*|won|wins?|award\w*|record|celebrat\w*|congrat\w*|bonus|great news|well done|hero|triumph|legend|clean sheet|goal)\b/i.test(txt))return [2,""];
+ if(role==="cli"&&/\b(angry|furious|complain\w*|shout\w*|rude|kicks? off|livid|abus\w*|threaten\w*|yell\w*|row)\b/i.test(txt))return [2,""];
+ const it=/\b(call\w*|phone|text\w*|message|rang|ring)\b/i.test(txt)?"phone":/\b(inspect\w*|audit\w*|checklist|report|review|survey|assess\w*|ofsted|regulator)\b/i.test(txt)?"clip":/\b(coffee|tea|break|brew|catch-up|chat)\b/i.test(txt)?"mug":/\b(file|paperwork|contract|case|documents?|forms?|letter|brief)\b/i.test(txt)?"file":/\b(data|app|code|online|spreadsheet|system|screen|computer|laptop|software)\b/i.test(txt)?"tab":/\b(flowers|thank\w*|sorry)\b/i.test(txt)?"flower":"";
+ return [it?1:0,it];
+}
+
+/* ---- drawing kit for backdrops: wall meets floor at y=62, people and props stand on y=76 ---- */
+const CMB={},CMP={},CM_PF={};
+const kJ=62;
+const kRoom=(wall,floor,sk)=>rc(0,0,IA_W,IA_H,wall)+rc(0,kJ,IA_W,IA_H-kJ,floor)+rc(0,kJ-1.5,IA_W,2,sk||avMix(floor,"#000",.18));
+const kOut=(sky,ground,y)=>rc(0,0,IA_W,IA_H,sky)+rc(0,y||kJ,IA_W,IA_H-(y||kJ),ground);
+const kWin=(x,y,w,h,sky,fr)=>rc(x-2,y-2,w+4,h+4,fr||"#F2F4F5")+rc(x,y,w,h,sky||"#BFDDF0")+rc(x+w/2-1,y,2,h,fr||"#F2F4F5");
+const kCity=(x,y,w,h,c,lit)=>AVq(Math.floor(w/14),i=>{const bh=h*(.45+((i*37)%50)/100);return rc(x+i*14,y+h-bh,12,bh,c||"#9AAEC0")+(lit?rc(x+i*14+3,y+h-bh+4,2.5,2.5,lit)+rc(x+i*14+7,y+h-bh+10,2.5,2.5,lit):"")});
+const kDoor=(x,w,h,c,k)=>rc(x,kJ-h,w,h,c)+rc(x+2,kJ-h+2,w-4,h-2,avMix(c,"#fff",.12))+iaCirc(x+w-5,kJ-h/2,1.4,k||"#C9A23A");
+const kShelf=(x,y,w,rows,cols,seed)=>AVq(rows,r=>rc(x,y+r*12+9,w,2,"#8A6A44")+AVq(Math.floor(w/7),i=>{const q=(i*7+r*13+(seed||0))%11;return q<2?"":rc(x+1+i*7,y+r*12+(q%3),5,9-(q%3),cols[(i+r+(seed||0))%cols.length],'rx=".6"')}));
+const kBooks=["#7A1F2B","#2F4F8A","#3E6B4A","#C9A23A","#5A3A22","#8A5A9A","#B3262E","#3A4650"];
+const kMon=(x,y,c)=>rc(x,y,22,14,"#1C2329",'rx="1.5"')+rc(x+2,y+2,18,10,c||"#7FB2E5")+rc(x+9,y+14,4,4,"#3A4650");
+const kDeskB=(x,w,c,leg)=>rc(x,kJ-14,w,3,c||"#C9B79A")+rc(x+3,kJ-11,3,11,leg||"#8A939C")+rc(x+w-6,kJ-11,3,11,leg||"#8A939C");
+const kBoard=(x,y,w,h,fill,fr)=>rc(x,y,w,h,fill||"#F7F7F4",`stroke="${fr||"#9AA0A6"}" stroke-width="2" rx="1"`);
+const kScrib=(x,y,w,c)=>`<path d="M${x} ${y} q${w/6} -5 ${w/3} 0 t${w/3} 0 M${x} ${y+7} h${w*.7} M${x} ${y+13} h${w*.5}" stroke="${c||"#3E6FB0"}" stroke-width="1.4" fill="none"/>`;
+const kPend=(x,len,c)=>rc(x-.5,0,1,len,"#555")+pa(`M${x-7} ${len+5} Q${x} ${len-3} ${x+7} ${len+5}Z`,c||"#3A4650")+iaCirc(x,len+5,2,"#FFF3C4");
+const kTube=(x,w)=>rc(x,2,w,3,"#F7F7F4",'opacity=".9"');
+const kBlind=(x,y,w,h,c)=>AVq(Math.floor(h/3),i=>rc(x,y+i*3,w,1.6,c||"#E6E2DA",'opacity=".9"'));
+const kTree=(x,y,s,c)=>`<g transform="translate(${x} ${y}) scale(${s||1})">${rc(-2,-2,4,14,"#6A4E30")}${iaCirc(0,-10,10,c||"#4E8A4A")}${iaCirc(-7,-4,7,c||"#4E8A4A")}${iaCirc(7,-4,7,c||"#5E9E58")}</g>`;
+const kCar=(x,y,c,s)=>`<g transform="translate(${x} ${y}) scale(${s||1})"><path d="M0 18 V10 Q1 6 8 5 L18 -2 H44 L54 5 Q62 6 62 10 V18Z" fill="${c}"/>${rc(20,0,11,6,"#9CC0D2")}${rc(34,0,11,6,"#9CC0D2")}${iaCirc(14,19,5,"#1B1B1B")}${iaCirc(48,19,5,"#1B1B1B")}${iaCirc(14,19,2,"#ccc")}${iaCirc(48,19,2,"#ccc")}</g>`;
+const kFence=(y,c)=>rc(0,y,IA_W,2,c)+rc(0,y+7,IA_W,2,c)+AVq(17,i=>rc(4+i*19,y-3,2.4,16,c));
+const kLamp=(x,y,c)=>rc(x-1,y,2,kJ+10-y,"#3A4650")+rc(x-4,y-2,8,4,"#3A4650")+iaCirc(x,y+3,2.2,c||"#F6E7A8");
+const kBld=(x,w,h,c,win)=>rc(x,kJ-h,w,h,c)+AVq(Math.floor(w/12)*Math.floor((h-6)/12),i=>{const cols=Math.floor(w/12);return rc(x+3+(i%cols)*12,kJ-h+4+Math.floor(i/cols)*12,6,7,win||"#DCE8EC")});
+const kRail=(y,c)=>rc(0,y,IA_W,2,c||"#9AA0A6");
+const CMV=(v,a)=>a[(v||0)%a.length];
+
+/* ---- Backdrops: offices, trading, tech, law, politics, car sales ---- */
+Object.assign(CMB,{
+ off_open:{fam:"office",w:[[40,14],[290,14]],f:v=>kRoom(CMV(v,["#E6E9EC","#EDE6DA","#E2E8E4"]),CMV(v,["#9AA3AA","#B9A27A","#8E9A92"]))+kTube(60,60)+kTube(200,60)+kWin(110,8,90,28,"#BFDDF0")+kCity(112,18,86,18,"#A9BBCB")
+  +AVq(4,i=>kDeskB(14+i*76,62,"#D9CBB0")+kMon(28+i*76,30,["#7FB2E5","#9FD0EE","#BFE3C6","#7FB2E5"][i])+rc(54+i*76,40,8,8,"#2B3A44",'rx="1"'))},
+ off_meet:{fam:"office",w:[[284,16]],f:v=>kRoom(CMV(v,["#E9E4DA","#DDE5EA","#E8E1E6"]),CMV(v,["#8C939A","#A8946A","#7E8C96"]))+kBoard(70,10,110,34,"#FBFBF8")+kScrib(80,20,50,"#3E6FB0")+kScrib(140,24,30,"#C0453A")
+  +rc(196,10,60,34,"#C9DCE3",'stroke="#9AA0A6" stroke-width="2"')+kBlind(198,12,56,20)+rc(30,kJ-12,260,4,"#7A5B3A")+AVq(6,i=>rc(44+i*42,kJ-20,12,12,"#2B3A44",'rx="3"'))},
+ off_corner:{fam:"office",f:v=>kRoom(CMV(v,["#2B3640","#3A3A44","#E6E1D8"]),CMV(v,["#6A5A4A","#5A4E44","#B9A27A"]))+rc(20,4,280,56,CMV(v,["#9FC7E6","#E9A77B","#BFDDF0"]))+kCity(22,18,276,42,CMV(v,["#5C6B78","#6A5A7A","#9AAEC0"]),v===1?"#F6D98A":"")
+  +AVq(4,i=>rc(18+i*70,4,4,56,"#1C2329"))+rc(18,2,284,3,"#1C2329")+rc(230,kJ-14,70,4,"#3A2A1A")+rc(296,kJ-10,3,10,"#3A2A1A")+kMon(250,kJ-30,"#4BBA85")},
+ off_kitchen:{fam:"office",kw:/\b(coffee|tea|kettle|biscuits?|lunch|fridge|snacks?|kitchen)\b/i,w:[[150,14],[40,16]],f:v=>kRoom(CMV(v,["#EDE8DE","#E4ECEA","#F0E4DA"]),CMV(v,["#A8A8A0","#9AA0A6","#B8A88A"]))
+  +rc(180,6,120,20,CMV(v,["#C9B79A","#8AAA9A","#B07A5A"]))+AVq(4,i=>rc(181+i*30,7,28,18,avMix(CMV(v,["#C9B79A","#8AAA9A","#B07A5A"]),"#fff",.12)))+rc(176,kJ-22,130,4,"#E9E4DA")+rc(178,kJ-18,126,18,CMV(v,["#C9B79A","#8AAA9A","#B07A5A"]))
+  +rc(196,kJ-30,10,8,"#3A3A3A",'rx="2"')+rc(232,kJ-29,7,7,"#F2F4F5")+rc(242,kJ-29,7,7,"#E86A7A")+rc(270,kJ-36,14,14,"#9AA0A6",'rx="2"')+rc(70,8,30,54,"#F2F4F5",'stroke="#C9CDD1"')+rc(70,28,30,1.4,"#C9CDD1")+rc(94,14,2,8,"#9AA0A6")+rc(94,34,2,12,"#9AA0A6")},
+ off_lobby:{fam:"office",sl:[30,80,200,250,296],f:v=>kRoom(CMV(v,["#E3DED4","#D9DEE3","#E6DCD2"]),CMV(v,["#C9C2B2","#A9A39A","#D2C7B4"]))+iaCirc(140,22,10,CMV(v,["#3E6FB0","#B3262E","#3E8E7A"]))+iaCirc(140,22,5,"#F2F4F5")
+  +rc(100,kJ-24,80,24,CMV(v,["#5A6670","#7A5B3A","#3A4650"]))+rc(96,kJ-26,88,3,"#F2F4F5")+kMon(128,kJ-42,"#9FD0EE")+AVq(2,i=>rc(214+i*42,14,36,48,"#B8C2C8",'stroke="#8A939C" stroke-width="2"')+rc(231+i*42,14,1.4,48,"#8A939C")+iaCirc(232+i*42,9,2.6,"#E9C46A"))+w2Plant(40,46,1.2)},
+ off_glass:{fam:"office",kw:/\b(meeting|presentation|pitch|board|quarterly|figures|strategy|interview)\b/i,f:v=>kRoom(CMV(v,["#E8ECEF","#ECE6DC","#E3E8EC"]),CMV(v,["#7E8C96","#8C7A66","#6E7C88"]))+rc(10,6,300,56,"#CFE3EE",'opacity=".55"')+AVq(6,i=>rc(10+i*60,6,2,56,"#9AA0A6"))+rc(10,6,300,2,"#9AA0A6")
+  +rc(120,14,80,34,"#1C2329",'rx="2"')+rc(124,18,72,26,CMV(v,["#2F4F8A","#3E6B4A","#5A3A6A"]))+[18,26,34].map((y,i)=>rc(132,y+2,[40,28,50][i],3,"#F2F4F5",'opacity=".8"')).join("")+rc(40,kJ-10,240,4,"#3A3A3A")},
+ /* trading */
+ trd_floor:{fam:"trading",kw:/\b(market|trade|trading|deal|shares|stocks?|bonds?|crash|rally|position|book)\b/i,f:v=>kRoom(CMV(v,["#34404C","#3A4450","#3C3C48"]),CMV(v,["#3A4650","#33404A","#3A3A44"]))+rc(0,4,IA_W,10,"#0E1418")+AVq(16,i=>rc(4+i*20,7,14,3,i%3?"#4BBA85":"#EA6B5D"))
+  +AVq(7,i=>kMon(8+i*44,22,i%3===1?"#3A1F24":"#14221C")+`<path d="M${11+i*44} ${32-(i%2)*3} l5 -3 l5 2 l5 -5 l6 2" stroke="${i%3===1?"#EA6B5D":"#4BBA85"}" stroke-width="1.4" fill="none"/>`+kMon(8+i*44+22,22,"#14221C"))+rc(0,kJ-14,IA_W,4,"#5A6670")},
+ trd_desk:{fam:"trading",f:v=>kRoom(CMV(v,["#E6E2DA","#DCE2E6","#E9E2D8"]),CMV(v,["#8E969A","#9A8C7A","#7E8A92"]))+rc(0,4,IA_W,16,"#2B3A44")+AVq(8,i=>rc(6+i*40,8,32,8,"#14221C")+rc(8+i*40,11,(i*7)%20+8,2,i%2?"#4BBA85":"#EA6B5D"))
+  +AVq(3,i=>kDeskB(10+i*104,96,"#C9C2B2")+AVq(3,j=>kMon(18+i*104+j*26,kJ-32,j===1?"#2B3A44":"#14221C")+`<path d="M${20+i*104+j*26} ${kJ-24} l6 -3 l5 2 l6 -4" stroke="${(i+j)%2?"#4BBA85":"#EA6B5D"}" stroke-width="1.2" fill="none"/>`))},
+ /* tech */
+ tech_loft:{fam:"tech",w:[[30,14],[296,16]],f:v=>kRoom(CMV(v,["#B0634A","#9A5A44","#E9E4DA"]),CMV(v,["#B8A88A","#9AA0A6","#C9B79A"]))+(v<2?AVq(48,i=>rc((i%12)*27+(Math.floor(i/12)%2)*13,Math.floor(i/12)*14+2,24,1.5,"#00000014")):"")
+  +rc(100,8,120,40,"#1C2329",'rx="3"')+AVq(6,i=>rc(108+(i%2)*10,14+i*5,30+(i*13)%40,2.4,["#7FD3B0","#E9C46A","#9FD0EE","#E86A9A"][i%4]))+AVq(3,i=>rc(60+i*90,0,1,10,"#555")+iaCirc(60+i*90,12,4,"#F6D98A"))+rc(20,kJ-14,280,3,"#F2F4F5")},
+ tech_server:{fam:"tech",kw:/\b(server|outage|down|crash\w*|bug|hack\w*|security|patch|data|cloud|deploy\w*)\b/i,sl:[30,90,150,210,270],f:v=>kRoom(CMV(v,["#1C2A3A","#202630","#24303C"]),"#3A4650")+AVq(7,i=>rc(6+i*46,6,40,56,"#14181C",'stroke="#3A4650"')+AVq(9,j=>rc(10+i*46,10+j*6,32,4,"#222A33")+iaCirc(14+i*46,12+j*6,1,["#4BBA85","#7FB2E5","#E9C46A","#EA6B5D"][(i*3+j)%4]))+rc(30+i*46,10,10,50,"#000",'opacity=".0"'))},
+ /* law */
+ law_court:{fam:"law",kw:/\b(court|trial|judge|jury|verdict|hearing|case|witness|appeal|sentenc\w*|defen\w*|prosecut\w*)\b/i,f:v=>kRoom(CMV(v,["#C9A87A","#B8946A","#D2B48A"]),"#7A5B3A")+rc(0,0,IA_W,10,"#8A6A44")+AVq(10,i=>rc(8+i*32,10,2,40,"#A88A5A"))
+  +rc(100,24,120,22,"#6A4A2A")+rc(96,22,128,4,"#5A3A1A")+iaCirc(160,12,8,"#E9C46A")+iaCirc(160,12,4.5,"#8A6A44")+rc(10,kJ-14,80,4,"#5A3A1A")+rc(230,kJ-14,80,4,"#5A3A1A")+AVq(5,i=>rc(12+i*18,kJ-10,2,10,"#5A3A1A")+rc(232+i*18,kJ-10,2,10,"#5A3A1A"))},
+ law_lib:{fam:"law",f:v=>kRoom(CMV(v,["#6A4A2A","#5A4030","#7A5A3A"]),CMV(v,["#7A1F2B","#3E4C6A","#5A6A4A"]))+kShelf(6,4,140,4,kBooks,v)+kShelf(176,4,140,4,kBooks,v+3)+rc(146,4,30,58,CMV(v,["#C9B79A","#BFB09A","#D2C2A8"]))+kLamp(161,30,"#F6E7A8")},
+ law_steps:{fam:"law",out:1,gen:false,f:v=>kOut(CMV(v,["#BFDDF0","#D9E3EA","#F2D9C2"]),"#C9C2B2",66)+iaCloud(40,14,.7)+pa("M60 22 L160 4 L260 22Z","#E3DED4")+rc(64,22,192,4,"#D2CBBE")+AVq(7,i=>rc(74+i*28,26,10,34,"#F2EEE6"))+rc(56,60,208,3,"#C9C2B2")+rc(48,63,224,3,"#BFB8A8")},
+ law_office:{fam:"law",w:[[40,18],[200,14]],f:v=>kRoom(CMV(v,["#E6DED0","#DCE0E4","#E8E0D6"]),CMV(v,["#5A4636","#6A5A4A","#4A4038"]))+kWin(232,8,64,40,"#BFDDF0","#E9E2D6")+kBlind(232,8,64,16)+kShelf(70,8,90,3,kBooks,v)+rc(90,kJ-14,120,4,"#5A3A1A")+rc(94,kJ-10,4,10,"#5A3A1A")+rc(202,kJ-10,4,10,"#5A3A1A")+rc(100,kJ-24,20,10,"#F2F4F5",'rx="1"')},
+ /* politics */
+ pol_chamber:{fam:"politics",kw:/\b(vote|votes|debate|bill|commons|chamber|speech|motion|whip|backbench\w*|minister\w*|pmqs)\b/i,f:v=>kRoom(CMV(v,["#6A4A2A","#5A3E26","#7A5634"]),"#4A3A2A")+AVq(10,i=>rc(4+i*32,4,26,26,"#7A5A3A",'stroke="#5A3E26"'))
+  +AVq(3,r=>rc(0,30+r*9,IA_W,7,CMV(v,["#3E6B4A","#3E6B4A","#7A2A30"]))+rc(0,37+r*9,IA_W,2,"#2B3A2B"))+rc(140,40,40,22,"#5A3E26")},
+ pol_press:{fam:"politics",kw:/\b(press|interview|journalists?|cameras?|announce\w*|statement|briefing|tv|news)\b/i,sl:[34,86,214,262,298],f:v=>kRoom(CMV(v,["#1D3A6E","#7A1F2B","#2F6E4A"]),"#3A3A44")+AVq(12,i=>iaCirc(14+i*27,16+(i%2)*20,5,"#fff",'opacity=".15"'))
+  +rc(136,kJ-30,48,30,"#5A3E26")+rc(130,kJ-32,60,4,"#3A2A1A")+iaCirc(160,kJ-18,7,"#E9C46A")+`<path d="M152 ${kJ-32} L156 ${kJ-44} M168 ${kJ-32} L164 ${kJ-44}" stroke="#2B2B2B" stroke-width="1.5"/>`+iaCirc(156,kJ-45,2,"#2B2B2B")+iaCirc(164,kJ-45,2,"#2B2B2B")},
+ pol_street:{fam:"politics",out:1,gen:false,kw:/\b(constituen\w*|canvass\w*|doorstep|campaign\w*|leaflets?|election|voters?|residents?|surgery)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFE0EA","#E9D6C2"]),"#9A9A96",64)+iaCloud(220,10,.7)
+  +AVq(4,i=>{const x=6+i*80;return rc(x,16,76,46,["#B0634A","#C98A5A","#A35A44","#B87055"][(i+v)%4])+rc(x,12,76,5,"#5A3A2E")+rc(x+10,40,12,22,["#2B3A44","#1D5FA8","#2F7A3E","#7A1F2B"][i])+rc(x+38,26,24,14,"#F6E7A8")+rc(x+49,26,2,14,"#F2F4F5")})+rc(0,62,IA_W,2,"#7A7A76")},
+ pol_office:{fam:"politics",w:[[200,14],[262,16]],f:v=>kRoom(CMV(v,["#EDE6D8","#E2E6EA","#EFE2DA"]),"#8C8478")+kWin(20,8,80,40,"#BFDDF0")+kCity(22,30,76,18,"#C9C2B2")+kBoard(130,8,52,40,"#C9A87A","#8A6A44")+AVq(6,i=>rc(134+(i%3)*16,12+Math.floor(i/3)*18,12,14,["#F2F4F5","#F6E7A8","#E86A7A","#9FD0EE"][(i+v)%4]))+kDeskB(120,90,"#A88A5A")},
+ /* car dealer */
+ car_show:{fam:"cars",kw:/\b(cars?|sale|sold|test drive|showroom|customers?|deal|finance|target|forecourt)\b/i,sl:[28,76,250,296],f:v=>kRoom(CMV(v,["#E8ECEF","#ECE8E2","#DDE3E8"]),"#C9CED1")+rc(0,4,IA_W,48,"#CFE3EE",'opacity=".6"')+AVq(6,i=>rc(i*64,4,2,58,"#9AA0A6"))+kTube(40,80)+kTube(200,80)
+  +`<ellipse cx="163" cy="76" rx="58" ry="5" fill="#000" opacity=".12"/>`+kCar(130,52,CMV(v,["#C0453A","#1D5FA8","#2B2B2B"]),1.1)},
+ car_fore:{fam:"cars",out:1,gen:false,f:v=>kOut(CMV(v,["#BFDDF0","#CFE0EA","#F2D9C2"]),"#9A9A96",56)+iaCloud(60,10,.7)+avBunting(8,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85"])+AVq(4,i=>kCar(8+i*80,38,["#F2F4F5","#C0453A","#3E6FB0","#2B2B2B","#E9C46A"][(i+v)%5],.95))+rc(0,62,IA_W,22,"#8A8E92")},
+ car_work:{fam:"cars",kw:/\b(service|repair|mot|garage|mechanic|workshop|broke|breakdown)\b/i,f:v=>kRoom(CMV(v,["#9AA3AA","#A8A296","#8E98A0"]),"#5A5F66")+rc(20,8,90,36,"#6A7078",'rx="2"')+AVq(10,i=>rc(26+(i%5)*16,12+Math.floor(i/5)*16,3,12,"#C9CDD1"))
+  +rc(150,kJ-30,120,4,"#E9C46A")+rc(160,kJ-26,4,26,"#E9C46A")+rc(256,kJ-26,4,26,"#E9C46A")+kCar(176,kJ-48,CMV(v,["#3E6FB0","#C0453A","#F2F4F5"]),1)}
+});
+
+/* ---- Backdrops: hospital, police, fire, aviation, army, spy, space ---- */
+const kBed=(x,c,skin)=>rc(x,kJ-16,64,6,"#F2F4F5")+rc(x,kJ-22,14,8,"#fff",'rx="3"')+rc(x+14,kJ-20,50,8,c||"#7FB2E5",'rx="2"')+iaCirc(x+8,kJ-24,5,skin||"#E0B37E")+rc(x,kJ-10,3,10,"#9AA0A6")+rc(x+61,kJ-10,3,10,"#9AA0A6")+rc(x-3,kJ-30,3,30,"#9AA0A6");
+const kCurt=(x,w,c)=>rc(x,6,w,1.6,"#9AA0A6")+AVq(Math.floor(w/8),i=>rc(x+i*8,7,7,kJ-12,c,'opacity=".9"')+rc(x+i*8+6,7,1,kJ-12,avMix(c,"#000",.15)));
+const kFlame=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s||1})">${pa("M0 0 Q-10 -8 -4 -20 Q-2 -12 2 -16 Q0 -26 8 -30 Q6 -18 12 -12 Q14 -4 8 0Z","#F6A33D")}${pa("M2 0 Q-4 -6 0 -12 Q2 -8 4 -10 Q6 -4 6 0Z","#F6D44A")}</g>`;
+const kTent=(x,w,c)=>pa(`M${x} ${kJ} L${x+w/2} ${kJ-w*.45} L${x+w} ${kJ}Z`,c)+pa(`M${x+w/2-5} ${kJ} L${x+w/2} ${kJ-14} L${x+w/2+5} ${kJ}Z`,avMix(c,"#000",.35));
+const kConsole=(x,w,c)=>rc(x,kJ-14,w,14,c||"#3A4650")+pa(`M${x} ${kJ-14} L${x+6} ${kJ-22} H${x+w-6} L${x+w} ${kJ-14}Z`,avMix(c||"#3A4650","#000",.2))+AVq(Math.floor(w/26),i=>kMon(x+4+i*26,kJ-38,["#2F4F8A","#3E6B4A","#4A3A6A"][i%3]));
+Object.assign(CMB,{
+ /* hospital */
+ hosp_ward:{fam:"hosp",kw:/\b(ward|bed|patients?|round|discharge\w*|admi\w+)\b/i,sl:[34,110,186,262,300],w:[[100,10]],f:v=>kRoom(CMV(v,["#E3EEF0","#EAE6DC","#E0E8EE"]),CMV(v,["#B9C7CA","#C9C2B2","#AFC0C8"]))+kWin(126,8,50,30,"#BFDDF0")+kBed(6,"#7FB2E5","#C68A5A")+kBed(240,"#9FD0EE","#F1C9A5")+rc(0,40,IA_W,2,"#9AA0A6",'opacity=".6"')},
+ hosp_corr:{fam:"hosp",w:[[60,12],[260,12]],f:v=>kRoom(CMV(v,["#E6EEF0","#EEEAE0","#E2EAEE"]),CMV(v,["#A9BDB8","#B8C2C8","#BFB6A6"]))+rc(0,30,IA_W,32,CMV(v,["#CFE3DD","#D9E3EA","#E6DCC8"]))+kRail(40,"#9AA0A6")+AVq(3,i=>kDoor(30+i*110,26,40,CMV(v,["#4BA3A0","#3E6FB0","#7A9A8A"]),"#F2F4F5")+rc(30+i*110+6,kJ-34,14,8,"#BFDDF0"))+rc(0,2,IA_W,3,"#F7F7F4")},
+ hosp_station:{fam:"hosp",kw:/\b(shift|handover|nurses?|staff|rota|overtime|agency)\b/i,w:[[40,12],[280,12]],f:v=>kRoom(CMV(v,["#E4EEEC","#E9E4EE","#EEE8DC"]),"#AFC0C8")+rc(70,kJ-22,180,22,CMV(v,["#4BA3A0","#7A8BB8","#C9A87A"]))+rc(66,kJ-25,188,4,"#F2F4F5")+kMon(100,kJ-42,"#7FB2E5")+kMon(196,kJ-42,"#4BBA85")+rc(140,kJ-34,30,8,"#F2F4F5")+rc(130,8,60,14,"#F2F4F5",'stroke="#9AA0A6"')+rc(156,10,8,10,"#C0453A")+rc(152,13,16,4,"#C0453A")},
+ hosp_theatre:{fam:"hosp",kw:/\b(theatre|operat\w*|surgery|surgeon|transplant|scalpel|anaesth\w*)\b/i,sl:[30,80,240,292],hat:"",pso:{b:"#4BA3A0",lg:"#4BA3A0"},f:v=>kRoom(CMV(v,["#CFE3DD","#D5E6E8","#C9DED6"]),"#9FB8B0")+[120,200].map(x=>rc(x-1,0,2,10,"#9AA0A6")+`<ellipse cx="${x}" cy="14" rx="22" ry="6" fill="#B5BBC1"/><ellipse cx="${x}" cy="16" rx="16" ry="3" fill="#FFF6C8"/>`+pa(`M${x-16} 18 L${x-30} 54 H${x+30} L${x+16} 18Z`,"#FFF6C8",'opacity=".3"')).join("")
+  +rc(108,kJ-6,104,8,"#F2F4F5")+rc(112,kJ-11,96,6,"#7FB2E5",'rx="2"')+rc(156,kJ+2,8,14,"#9AA0A6")+rc(258,20,40,26,"#1C2329",'rx="2"')+`<path d="M262 34 H270 L274 26 L278 40 L282 32 H294" stroke="#4BBA85" stroke-width="1.5" fill="none"/>`},
+ hosp_ae:{fam:"hosp",kw:/\b(a&e|emergency|ambulance|trauma|resus|cubicle|waiting)\b/i,f:v=>kRoom(CMV(v,["#E8EEF0","#EEE9E2","#E0E6EE"]),"#B8C2C8")+kCurt(4,96,CMV(v,["#7FB2E5","#9FD0EE","#BFE3C6"]))+kCurt(220,96,CMV(v,["#9FD0EE","#7FB2E5","#F2C9B8"]))+rc(118,16,84,30,"#1C2329",'rx="2"')+AVq(4,i=>rc(122,20+i*6,30+(i*17)%40,3,["#4BBA85","#E9C46A","#EA6B5D","#7FB2E5"][i]))},
+ hosp_bay:{fam:"hosp",out:1,gen:false,sl:[30,80,232,282],f:v=>kOut(CMV(v,["#BFDDF0","#D2DCE4","#F2D9C2"]),"#8A939C",64)+kBld(0,320,48,CMV(v,["#E9E4DA","#DCD6CC","#E6E2DA"]),"#BFD4E2")+rc(0,10,IA_W,6,"#C9C2B2")
+  +`<g transform="translate(112 34)"><path d="M0 34 V8 Q0 4 4 4 H66 Q74 4 78 14 L88 22 V34Z" fill="#F6E7A8"/>${rc(0,20,88,6,"#2F7A3E")}${rc(70,10,12,10,"#9CC0D2")}${rc(28,-2,10,6,"#1D5FA8")}${rc(38,-2,10,6,"#C0453A")}${iaCirc(18,35,7,"#1B1B1B")}${iaCirc(70,35,7,"#1B1B1B")}</g>`},
+ hosp_consult:{fam:"hosp",kw:/\b(clinic|appointment|consult\w*|gp|diagnos\w*|results|scan|test)\b/i,w:[[40,12],[90,14]],f:v=>kRoom(CMV(v,["#EAF0EE","#F0EAE2","#E6ECF2"]),CMV(v,["#A9BDB8","#B9A27A","#9AA8B2"]))+kWin(232,8,62,34,"#BFDDF0")+kBlind(232,8,62,14)+rc(140,kJ-18,70,6,"#9FD0EE",'rx="2"')+rc(140,kJ-12,70,3,"#F2F4F5")+rc(144,kJ-9,3,9,"#9AA0A6")+rc(203,kJ-9,3,9,"#9AA0A6")},
+ /* police */
+ cop_desk:{fam:"cop",w:[[40,12],[280,14]],sl:[34,86,138,190,242,290],f:v=>kRoom(CMV(v,["#D8DEE6","#E2DED4","#D2DAE2"]),CMV(v,["#8A939C","#9A9488","#7E8A94"]))+rc(90,kJ-24,150,24,"#4A5A6A")+rc(86,kJ-27,158,4,"#3A4650")+rc(90,8,150,30,"#CFE3EE",'opacity=".5" stroke="#9AA0A6"')+kMon(150,kJ-44,"#7FB2E5")+iaCirc(165,20,8,"#1D3A6E")+iaStar(165,20,.55,"#E9C46A")},
+ cop_interview:{fam:"cop",kw:/\b(interview\w*|suspect|confess\w*|question\w*|statement|solicitor|custody)\b/i,sl:[60,120,200,260],nohat:1,f:v=>kRoom(CMV(v,["#B8BEC4","#C4BEB4","#AEB6BE"]),"#7E868E")+rc(110,10,100,32,"#2B3A44",'stroke="#5A6066" stroke-width="3"')+rc(114,14,40,6,"#3A4A58",'opacity=".6"')+rc(110,kJ-12,100,4,"#5A6066")+rc(114,kJ-8,3,8,"#5A6066")+rc(203,kJ-8,3,8,"#5A6066")+rc(150,kJ-17,20,5,"#2B2B2B",'rx="1"')+rc(0,0,IA_W,3,"#F7F7F4")},
+ cop_street:{fam:"cop",out:1,gen:false,kw:/\b(patrol|beat|street|town centre|shop\w*|theft|stolen|robbery|disturbance|fight)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFD8E0","#E9D6C2"]),"#9A9A96",64)+AVq(4,i=>{const x=i*82,c=["#3E6B4A","#7A1F2B","#2F4F8A","#C98A2A"][(i+v)%4];return rc(x,10,80,54,["#C9B79C","#B8A68C","#D2C2A8","#BFAE94"][i])+rc(x+6,30,68,28,"#CFE3EE")+rc(x+4,22,72,8,c)+rc(x+50,36,14,28,"#3A4650")})+rc(0,62,IA_W,2,"#7A7A76")},
+ cop_brief:{fam:"cop",kw:/\b(brief\w*|investigation|case|evidence|operation|raid|leads?|detective|cctv)\b/i,w:[[290,14]],f:v=>kRoom(CMV(v,["#E2E6EA","#E6E0D6","#DDE2E8"]),"#8E969A")+kBoard(60,6,140,42,"#FBFBF8")+AVq(5,i=>rc(70+i*25,12,16,20,["#C9B79A","#B8C2C8","#E9C46A","#C9B79A","#9FD0EE"][i])+iaCirc(78+i*25,18,4,"#8A939C"))+`<path d="M78 34 L103 36 L128 30 L153 38 L178 32" stroke="#C0453A" stroke-width="1" fill="none"/>`+rc(30,kJ-12,250,4,"#7A5B3A")},
+ cop_cells:{fam:"cop",kw:/\b(cells?|custody|arrest\w*|charged|locked up|night in)\b/i,f:v=>kRoom(CMV(v,["#C9CED1","#D2CEC4","#C2CAD0"]),"#8A939C")+AVq(3,i=>rc(20+i*104,8,70,54,"#9AA3AA",'stroke="#6A7078" stroke-width="2"')+rc(45+i*104,16,20,8,"#3A4650")+AVq(3,j=>rc(48+i*104+j*6,17,2,6,"#9AA3AA")))+rc(0,0,IA_W,3,"#F7F7F4")},
+ cop_park:{fam:"cop",out:1,gen:false,f:v=>kOut(CMV(v,["#BFDDF0","#D9E3EA","#F2D9C2"]),"#7FB27A",60)+iaCloud(250,10,.8)+kTree(40,40,1.4)+kTree(150,44,1.1,"#5E9E58")+kTree(280,40,1.5)+rc(0,64,IA_W,6,"#C9B79A")+rc(196,50,40,4,"#7A5B3A")+rc(198,44,36,3,"#7A5B3A")+rc(200,54,2,8,"#5A4636")+rc(230,54,2,8,"#5A4636")},
+ /* fire */
+ fire_bay:{fam:"fire",w:[[290,12]],sl:[30,80,236,290],f:v=>kRoom(CMV(v,["#C9B79C","#BFB4A6","#D2C2A8"]),"#8A8E92")+rc(100,6,130,56,"#3A4650")+`<g transform="translate(104 22)">${rc(0,8,122,30,"#C0453A",'rx="2"')}${rc(84,0,38,22,"#C0453A",'rx="2"')}${rc(90,4,26,12,"#9CC0D2")}${rc(0,20,122,3,"#F2F4F5")}${rc(4,2,76,4,"#C9CDD1")}${iaCirc(24,40,7,"#1B1B1B")}${iaCirc(100,40,7,"#1B1B1B")}</g>`+AVq(4,i=>iaCirc(18+i*16,16,5,"#F2D24A")+rc(16+i*16,22,4,14,"#2B2B2B"))},
+ fire_scene:{fam:"fire",out:1,gen:false,kw:/\b(fire|blaze|call-?out|flames?|smoke|burning|house fire|rescue)\b/i,sl:[40,92,230,282],f:v=>kOut(CMV(v,["#3A3440","#5A4A50","#4A3A40"]),"#4A4E54",66)+iaCirc(90,20,30,"#7A6A6A",'opacity=".5"')+iaCirc(130,10,26,"#8A7A7A",'opacity=".4"')+kBld(120,90,52,"#8A5A44","#3A2A22")+kFlame(140,26,1)+kFlame(186,40,.9)+kFlame(160,12,.8)+rc(0,66,IA_W,2,"#E9C46A",'opacity=".5"')},
+ fire_yard:{fam:"fire",out:1,gen:false,kw:/\b(training|drill|exercise|ladder|fitness|test)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFDCE6","#E9D6C2"]),"#8A8E92",62)+iaCloud(40,10,.8)+rc(140,4,40,58,"#B0634A")+AVq(4,i=>rc(146,10+i*12,10,8,"#3A2A22")+rc(164,10+i*12,10,8,"#3A2A22"))+pa("M186 62 L214 6","none",'stroke="#C9CDD1" stroke-width="3"')+pa("M196 62 L224 6","none",'stroke="#C9CDD1" stroke-width="3"')+AVq(9,i=>rc(188+i*3.2,58-i*6.2,10,1.6,"#C9CDD1"))},
+ fire_mess:{fam:"fire",kw:/\b(watch|kitchen|dinner|cook\w*|mess|quiet night|tea|banter)\b/i,w:[[40,12],[130,12]],f:v=>kRoom(CMV(v,["#E9E2D2","#E2E8E4","#EDE0D6"]),"#9A9488")+rc(170,8,130,18,"#C9B79A")+rc(168,kJ-22,136,22,"#B8A88A")+rc(166,kJ-25,140,4,"#E9E4DA")+rc(190,kJ-32,22,7,"#2B2B2B")+rc(60,kJ-12,90,4,"#8A6A44")+rc(64,kJ-8,3,8,"#6A4E30")+rc(143,kJ-8,3,8,"#6A4E30")},
+ fire_rtc:{fam:"fire",out:1,gen:false,kw:/\b(crash|collision|rtc|motorway|road|car|cut free|trapped)\b/i,sl:[36,86,240,292],f:v=>kOut(CMV(v,["#BFCDD8","#4A4A5A","#D9C9B8"]),"#5A5F66",58)+rc(0,70,IA_W,2,"#E9C46A")+`<g transform="translate(118 38) rotate(8)">${kCar(0,0,CMV(v,["#3E6FB0","#F2F4F5","#7A9A4A"]),1.1)}</g>`+iaCirc(180,40,10,"#9AA0A6",'opacity=".5"')},
+ /* aviation */
+ air_gate:{fam:"air",kw:/\b(gate|delay\w*|passengers?|boarding|cancel\w*|terminal|airport)\b/i,f:v=>kRoom(CMV(v,["#DCE4EA","#E6E0D6","#D2DCE4"]),"#9AA0A6")+rc(0,4,IA_W,46,CMV(v,["#BFDDF0","#F2C9A0","#9FB8D0"]))+AVq(6,i=>rc(i*64,4,3,46,"#5A6670"))+rc(0,40,IA_W,10,"#8A939C")
+  +`<g transform="translate(90 18)"><path d="M0 14 Q4 6 20 6 H130 Q144 6 150 14 Q144 20 130 20 H20 Q4 20 0 14Z" fill="#F2F4F5" stroke="#9AA0A6"/>${rc(126,-6,10,14,"#3E6FB0")}${AVq(9,i=>iaCirc(28+i*11,12,1.8,"#7FB2E5"))}</g>`+AVq(8,i=>rc(10+i*40,kJ-12,30,6,"#2F4F8A",'rx="2"'))},
+ air_apron:{fam:"air",out:1,gen:false,kw:/\b(walkaround|weather|fuel|tarmac|runway|take-?off|land\w*|delay)\b/i,sl:[30,82,250,296],f:v=>kOut(CMV(v,["#BFDDF0","#E9B48A","#CFD8E0"]),"#8A939C",58)+iaCloud(260,10,.7)+rc(0,66,IA_W,2,"#E9C46A")
+  +`<g transform="translate(96 22)"><path d="M0 22 Q4 12 22 12 H120 Q136 12 142 22 Q136 30 120 30 H22 Q4 30 0 22Z" fill="#F2F4F5" stroke="#9AA0A6"/><path d="M60 26 L84 44 H96 L80 26Z" fill="#C9CDD1"/><path d="M118 12 L130 -6 H138 L134 14Z" fill="${CMV(v,["#C0453A","#1D5FA8","#2F7A3E"])}"/>${AVq(7,i=>iaCirc(26+i*11,19,1.8,"#7FB2E5"))}${iaCirc(50,34,4,"#2B2B2B")}${iaCirc(110,34,4,"#2B2B2B")}</g>`},
+ air_cabin:{fam:"air",kw:/\b(cabin|crew|turbulence|passenger|seat|aisle|flight|medical|unruly)\b/i,nohat:1,f:v=>kRoom(CMV(v,["#E6E8EA","#E9E4DC","#E0E4EA"]),CMV(v,["#3E4C6A","#5A3A4A","#3A5A5A"]))+rc(0,4,IA_W,14,"#D2D6DA")+AVq(10,i=>rc(4+i*32,16,26,2,"#B8BEC4"))+AVq(8,i=>rc(18+i*40,24,8,10,"#9FD0EE",'rx="4"'))+AVq(8,i=>rc(6+i*40,kJ-26,22,26,CMV(v,["#2F4F8A","#7A2A3A","#2F6E6A"]),'rx="4"')+rc(8+i*40,kJ-28,18,5,"#F2F4F5",'rx="2"'))},
+ air_crew:{fam:"air",w:[[280,14]],f:v=>kRoom(CMV(v,["#E2E6EA","#E9E2D8","#DDE4E8"]),"#8E969A")+AVq(5,i=>rc(10+i*22,8,20,54,"#9AA3AA",'stroke="#7A848C"')+rc(26+i*22,30,2,6,"#5A6066"))+rc(150,10,90,40,"#1C2329",'rx="2"')+rc(154,14,82,32,"#2F4F8A")+iaCloud(170,30,.5)+`<path d="M196 36 l8 -10 l8 10" stroke="#E9C46A" stroke-width="2" fill="none"/>`},
+ air_hangar:{fam:"air",kw:/\b(engineer\w*|maintenance|check|hangar|simulator|sim|training)\b/i,f:v=>kRoom(CMV(v,["#9AA3AA","#A8A296","#8E98A0"]),"#7E868E")+pa("M0 20 Q160 -14 320 20 V4 H0Z","#6A7078")+AVq(8,i=>rc(i*42,0,2,30,"#5A6066"))+`<g transform="translate(160 30)"><path d="M-60 16 Q-56 4 -30 2 H60 V30 H-30 Q-56 28 -60 16Z" fill="#F2F4F5" stroke="#9AA0A6"/>${rc(-40,8,14,6,"#2B3A44",'rx="2"')}</g>`},
+ /* army */
+ army_camp:{fam:"army",out:1,gen:false,f:v=>kOut(CMV(v,["#E9D9B8","#BFD0DC","#D9C8A8"]),CMV(v,["#C9B07A","#8A9A6A","#B8A070"]),58)+kTent(10,90,"#6B7A4A")+kTent(210,100,"#5A6B3A")+rc(150,14,2,44,"#5A4636")+rc(152,14,22,13,"#3E6B4A")+rc(152,19,22,3,"#E9C46A")},
+ army_desert:{fam:"army",out:1,gen:false,kw:/\b(patrol|convoy|deploy\w*|tour|desert|front|ambush|checkpoint|ied)\b/i,sl:[32,84,236,290],f:v=>kOut(CMV(v,["#F2D9A8","#E9C9A0","#BFD8E6"]),"#D9B87A",56)+iaCirc(270,16,10,"#F6E7A8")+pa("M0 56 Q80 44 160 52 T320 50 V60 H0Z","#E3C48A")
+  +`<g transform="translate(118 34)"><path d="M0 24 V10 H20 L28 0 H60 V10 H80 V24Z" fill="#7A6A44"/>${rc(32,2,12,7,"#9CC0D2")}${iaCirc(16,25,7,"#2B2B2B")}${iaCirc(64,25,7,"#2B2B2B")}${rc(62,-6,2,10,"#3A3A3A")}</g>`},
+ army_barracks:{fam:"army",w:[[104,14]],f:v=>kRoom(CMV(v,["#C9C2A8","#BFC4B4","#D2C8B0"]),"#7A7A6A")+AVq(2,i=>rc(10+i*230,kJ-34,70,3,"#5A6066")+rc(10+i*230,kJ-14,70,3,"#5A6066")+rc(10+i*230,kJ-38,70,4,"#6B7A4A")+rc(10+i*230,kJ-18,70,4,"#6B7A4A")+rc(10+i*230,kJ-40,3,40,"#5A6066")+rc(77+i*230,kJ-40,3,40,"#5A6066"))+kWin(130,12,60,24,"#BFDDF0")},
+ army_range:{fam:"army",out:1,gen:false,kw:/\b(range|training|exercise|drill|fitness|march|assault course|recruits?)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFD8DC","#E6D8BE"]),"#7A9A5A",56)+iaCloud(60,10,.7)+AVq(4,i=>rc(150+i*40,30,14,18,"#F2EEE6")+iaCirc(157+i*40,38,5,"none",'stroke="#C0453A" stroke-width="2"')+rc(156+i*40,48,2,8,"#5A4636"))+pa("M0 56 Q60 50 120 56Z","#6A8A4A")},
+ army_mess:{fam:"army",f:v=>kRoom(CMV(v,["#8A9A6A","#7A8A5A","#9AA27A"]),"#6A5A44")+pa("M0 0 H320 V14 Q160 26 0 14Z","#6B7A4A")+AVq(3,i=>kPend(60+i*100,18,"#3A3A3A"))+rc(20,kJ-14,120,4,"#8A6A44")+rc(180,kJ-14,120,4,"#8A6A44")+AVq(4,i=>rc(24+i*80+(i>1?40:0),kJ-10,3,10,"#5A4636"))},
+ /* spy */
+ spy_street:{fam:"spy",out:1,gen:false,night:1,kw:/\b(tail\w*|follow\w*|surveillance|drop|meet\w*|asset|contact|handler|night)\b/i,f:v=>kOut(CMV(v,["#1C2438","#2A2440","#22303A"]),"#2A2E36",62)+AVq(14,i=>iaCirc((i*53)%320,(i*13)%20+2,.9,"#fff",'opacity=".6"'))+AVq(4,i=>rc(i*82,8,78,54,["#2B3240","#33303E","#2A3438","#343040"][i])+rc(i*82+8,18,14,10,i%2?"#F6D98A":"#3A4656")+rc(i*82+48,18,14,10,i%2?"#3A4656":"#F6D98A")+rc(i*82+28,40,20,22,"#1C2028"))+kLamp(150,18)+pa("M138 24 L120 72 H180 L162 24Z","#F6E7A8",'opacity=".14"')},
+ spy_safe:{fam:"spy",kw:/\b(safe ?house|debrief|hide|lie low|cover|identity|passport)\b/i,w:[[60,14]],f:v=>kRoom(CMV(v,["#8A7A6A","#6A6A5A","#7A6A7A"]),"#4A3A2A")+kWin(200,10,70,40,"#1C2438")+kBlind(200,10,70,40,"#C9B79A")+rc(110,kJ-20,60,4,"#5A3A22")+kLamp(150,kJ-36,"#F6E7A8")+pa("M140 30 L128 52 H172 L160 30Z","#F6E7A8",'opacity=".25"')},
+ spy_ops:{fam:"spy",kw:/\b(ops|intelligence|intel|analys\w*|briefing|target|signals|intercept\w*|hack\w*)\b/i,f:v=>kRoom("#141A24",CMV(v,["#222A36","#1E2630","#262A34"]))+AVq(6,i=>rc(10+i*52,8,46,28,"#0E1418",'stroke="#2B3A50"')+rc(13+i*52,11,40,22,["#14303A","#2A1A2A","#1A2A40"][i%3])+iaCirc(33+i*52,22,(i*3)%6+2,"none",`stroke="${["#4BBA85","#EA6B5D","#7FB2E5"][i%3]}" stroke-width="1"`))+kConsole(20,280,"#2B3640")},
+ spy_roof:{fam:"spy",out:1,gen:false,night:1,f:v=>kOut(CMV(v,["#2A3150","#3A2E4A","#E9A77B"]),"#3A3E46",62)+kCity(0,22,320,40,CMV(v,["#1E2638","#2A2438","#6A5A7A"]),"#F6D98A")+rc(0,58,IA_W,4,"#4A4E56")+rc(250,40,24,22,"#4A4E56")+iaCirc(60,16,7,"#F6E7A8")},
+ spy_park:{fam:"spy",out:1,gen:false,kw:/\b(park|bench|newspaper|pigeons?|handover|exchange)\b/i,f:v=>kOut(CMV(v,["#C9D6DE","#BFDDF0","#E0D6C8"]),"#7FB27A",60)+kTree(30,38,1.4,"#4E7A4A")+kTree(290,40,1.3,"#5E8A58")+rc(0,64,IA_W,8,"#B8A88A")+rc(140,48,50,4,"#4A5A3A")+rc(142,42,46,3,"#4A5A3A")+rc(144,52,2,10,"#2B2B2B")+rc(184,52,2,10,"#2B2B2B")+AVq(3,i=>iaCirc(100+i*8,70,2,"#8A939C"))},
+ /* space */
+ sp_module:{fam:"space",kw:/\b(station|module|orbit|spacewalk|experiment|zero-g|weightless|iss)\b/i,f:v=>kRoom(CMV(v,["#C9CDD1","#D2D6DA","#BFC4C9"]),"#9AA0A6")+rc(0,0,IA_W,8,"#9AA0A6")+AVq(8,i=>rc(4+i*40,10,36,40,"#E3E7E9",'stroke="#B8BEC4"')+rc(8+i*40,14,12,8,["#3A4650","#E9C46A","#4BBA85","#3A4650"][i%4])+iaCirc(30+i*40,40,3,"#7FB2E5"))+iaCirc(160,30,12,"#0A1020",'stroke="#9AA0A6" stroke-width="3"')+iaCirc(156,27,5,"#3E6FB0")},
+ sp_control:{fam:"space",kw:/\b(mission control|control|launch|countdown|ground|houston|comms|data)\b/i,f:v=>kRoom("#1C2329",CMV(v,["#2B3640","#33303A","#2A3440"]))+rc(60,4,200,36,"#0E1418")+`<path d="M70 30 Q120 6 160 22 T250 14" stroke="#E9C46A" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/>`+iaCirc(160,22,4,"#7FB2E5")+kConsole(10,140,"#3A4650")+kConsole(170,140,"#3A4650")},
+ sp_pad:{fam:"space",out:1,gen:false,kw:/\b(launch|rocket|pad|lift-?off|countdown|scrub\w*)\b/i,sl:[32,84,240,292],f:v=>kOut(CMV(v,["#BFDDF0","#E9A77B","#2A3150"]),"#8A8E92",62)+rc(130,0,4,62,"#C0453A")+AVq(10,i=>rc(130,i*6,22,1.4,"#C0453A"))+`<g transform="translate(160 0)">${pa("M10 4 C20 12 22 30 20 56 H0 C-2 30 0 12 10 4Z","#F2F4F5")}${rc(0,36,20,4,"#2B2B2B")}${pa("M0 46 L-8 60 H0Z M20 46 L28 60 H20Z","#C0453A")}</g>`},
+ sp_pool:{fam:"space",kw:/\b(pool|training|spacesuit|suit|underwater|neutral buoyancy|centrifuge)\b/i,f:v=>kRoom(CMV(v,["#2F7AB0","#2A6A9A","#3A8AB8"]),"#1E4E7A")+AVq(8,i=>`<path d="M${i*40} ${8+(i%2)*4} q10 -4 20 0 t20 0" stroke="#9FD0EE" stroke-width="1.2" fill="none" opacity=".5"/>`)+rc(100,30,120,20,"#9AA0A6",'rx="6" opacity=".7"')+AVq(3,i=>iaCirc(130+i*30,40,5,"#3A4650",'opacity=".7"'))},
+ sp_lab:{fam:"space",w:[[60,12],[260,12]],f:v=>kRoom(CMV(v,["#EEF0F2","#E6EAEE","#F0ECE6"]),"#B8BEC4")+rc(100,kJ-18,120,4,"#E3E7E9")+rc(104,kJ-14,112,14,"#C9CDD1")+AVq(4,i=>rc(110+i*26,kJ-30,10,12,["#9FD0EE","#BFE3C6","#F2B8C6","#E9C46A"][i],'rx="2"'))+rc(130,8,60,20,"#1C2329",'rx="2"')+AVq(3,i=>rc(134,12+i*5,20+i*10,2.4,"#4BBA85"))}
+});
+
+/* ---- Backdrops: football, school, kitchens, studios, stages ---- */
+const kCrowd=(y,rows,cols)=>AVq(rows*20,i=>{const r=Math.floor(i/20),x=6+(i%20)*16+(r%2)*8;return iaCirc(x,y+r*9,3.4,["#E0B37E","#C68A5A","#8D5A3B","#F1C9A5"][(i*7)%4])+rc(x-4,y+r*9+3,8,5,cols[(i*3+r)%cols.length])});
+const kGoal=(x,y,w,h)=>rc(x,y,w,2,"#F2F4F5")+rc(x,y,2,h,"#F2F4F5")+rc(x+w-2,y,2,h,"#F2F4F5")+AVq(Math.floor(w/6),i=>rc(x+i*6,y,.6,h,"#F2F4F5",'opacity=".5"'))+AVq(Math.floor(h/5),i=>rc(x,y+i*5,w,.6,"#F2F4F5",'opacity=".5"'));
+const kHood=(x,w)=>pa(`M${x} 22 L${x+10} 6 H${x+w-10} L${x+w} 22Z`,"#B5BBC1")+rc(x+w/2-8,0,16,6,"#9AA0A6");
+const kRange=(x,w)=>rc(x,kJ-20,w,20,"#5A6066")+rc(x,kJ-22,w,3,"#C9CED2")+AVq(Math.floor(w/22),i=>rc(x+4+i*22,kJ-27,16,5,"#2B2B2B")+pa(`M${x+6+i*22} ${kJ-27} q3 -6 6 -2 q2 -6 6 2Z`,"#E07A2E",'opacity=".8"'));
+const kLight=(x,c)=>`<path d="M${x} 6 L${x-26} 60 H${x+26}Z" fill="${c||"#F6E7A8"}" opacity=".13"/>`+rc(x-5,2,10,6,"#2B2B2B",'rx="1"');
+const kAmp=(x,h)=>rc(x,kJ-h,24,h,"#1C1C24",'stroke="#3A3A44"')+iaCirc(x+12,kJ-h/2,h/4,"#2B2B33")+rc(x+2,kJ-h+2,20,3,"#555");
+Object.assign(CMB,{
+ st_pitch:{fam:"stad",out:1,gen:false,kw:/\b(match|game|goal|score\w*|derby|cup|final|fans?|crowd|win|won|lost|draw)\b/i,f:v=>kOut(CMV(v,["#7FB2E5","#2A3150","#BFCDD8"]),CMV(v,["#4A9A55","#3E8A4A","#58A862"]),46)+rc(0,10,IA_W,36,"#5C6B78")+kCrowd(14,4,CMV(v,[["#B3262E","#F2F4F5"],["#1D5FA8","#F2F4F5"],["#E9C46A","#2B2B2B"]]))+AVq(8,i=>rc(i*40,46,20,38,"#000",'opacity=".05"'))+rc(0,62,IA_W,1.5,"#F2F4F5",'opacity=".7"')},
+ st_dress:{fam:"stad",kw:/\b(dressing room|half-?time|team talk|squad|changing|kit|dropped|selection|captain)\b/i,f:v=>kRoom(CMV(v,["#E6E2DA","#DDE3E8","#E9E2D8"]),"#8A939C")+AVq(8,i=>rc(16+i*38,6,32,4,"#8A6A44")+pa(`M${20+i*38} 12 h24 l4 8 l-5 2 v16 h-22 v-16 l-5 -2Z`,CMV(v,["#B3262E","#1D5FA8","#E9C46A"]))+rc(29+i*38,18,6,6,"#F2F4F5"))+rc(0,kJ-12,IA_W,5,"#8A6A44")+rc(0,kJ-7,IA_W,7,"#6A4E30")},
+ st_train:{fam:"stad",out:1,gen:false,kw:/\b(training|session|fitness|drills?|pre-?season|injur\w*|recovery|form)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFD8E0","#F2D9C2"]),CMV(v,["#58A862","#4A9A55","#62B06A"]),50)+iaCloud(220,12,.8)+kTree(30,36,1.2)+kTree(70,40,1,"#5E9E58")+kTree(290,38,1.3)+kGoal(120,24,80,26)+AVq(6,i=>rc(i*56,50,28,34,"#000",'opacity=".04"'))},
+ st_tunnel:{fam:"stad",f:v=>kRoom(CMV(v,["#8A949C","#7E8A94","#949A9E"]),"#5A6670")+pa("M90 62 V24 Q160 -6 230 24 V62Z",CMV(v,["#7FB2E5","#2A3150","#BFCDD8"]))+pa("M90 62 V40 H230 V62Z","#4A9A55")+kCrowd(30,1,["#B3262E","#F2F4F5"]).replace(/<circle cx="(\d+)/g,(m,x)=>+x<92||+x>228?'<circle cx="-99':m)+rc(84,20,6,42,"#5A6670")+rc(230,20,6,42,"#5A6670")},
+ st_press:{fam:"stad",kw:/\b(press|interview|journalists?|media|sacked|questions?|pundit|reporters?)\b/i,sl:[34,86,234,286],f:v=>kRoom(CMV(v,["#B3262E","#1D5FA8","#2B2B33"]),"#3A3A44")+AVq(24,i=>iaCirc(10+(i%8)*42+(Math.floor(i/8)%2)*21,10+Math.floor(i/8)*16,4,"#fff",'opacity=".18"'))+rc(110,kJ-16,100,16,"#2B2B33")+rc(106,kJ-18,108,3,"#F2F4F5")+AVq(3,i=>rc(130+i*28,kJ-26,2,8,"#2B2B2B")+iaCirc(131+i*28,kJ-27,2,"#555"))},
+ st_gym:{fam:"stad",f:v=>kRoom(CMV(v,["#E2E6EA","#D9DEE2","#EAE4DA"]),"#5A6066")+AVq(3,i=>rc(20+i*110,8,80,34,"#9FB8D0",'opacity=".5" stroke="#9AA0A6"'))+rc(60,kJ-20,40,20,"#3A3A3A")+rc(64,kJ-28,32,8,"#2B2B2B",'rx="2"')+rc(220,kJ-6,60,6,"#2B2B2B")+rc(226,kJ-24,4,18,"#9AA0A6")+rc(270,kJ-24,4,18,"#9AA0A6")+rc(222,kJ-26,56,3,"#9AA0A6")},
+ /* school */
+ sc_class:{fam:"school",kw:/\b(class|lesson|pupils?|kids|year \d+|marking|homework|exam\w*|results|behaviour|ofsted)\b/i,w:[[284,14]],f:v=>kRoom(CMV(v,["#F2E8D5","#E8EEDC","#EAE4F0"]),CMV(v,["#C9A87A","#9AA0A6","#B8A88A"]))+rc(50,8,170,40,CMV(v,["#2F5D46","#F7F7F4","#2F5D46"]),'stroke="#8C6A44" stroke-width="3"')+kScrib(64,22,70,v===1?"#3E6FB0":"#F2F4F5")+iaCirc(190,26,8,"none",`stroke="${v===1?"#C0453A":"#F2F4F5"}" stroke-width="1.5"`)+AVq(5,i=>rc(10+i*14,6,10,12,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85","#B98ACA"][(i+v)%5]))},
+ sc_corr:{fam:"school",f:v=>kRoom(CMV(v,["#E8E2D2","#DCE6EA","#ECE2E2"]),"#9AA0A6")+AVq(10,i=>rc(6+i*31,22,28,40,CMV(v,["#3E6FB0","#C0453A","#3E8E5E"]),'stroke="#2B3A44" stroke-width=".8"')+rc(30+i*31,40,2,6,"#C9CDD1")+rc(10+i*31,26,20,1.4,"#2B3A44",'opacity=".4"'))+rc(80,4,120,14,"#C9A87A")+AVq(6,i=>rc(84+i*19,6,15,10,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85","#F2F4F5","#B98ACA"][i]))},
+ sc_staff:{fam:"school",kw:/\b(staff ?room|colleagues?|head|break|lunch|marking|coffee|tea|union|strike)\b/i,w:[[40,14],[160,12]],f:v=>kRoom(CMV(v,["#EDE6D8","#E6E8E2","#EFE4DA"]),"#8C8478")+kWin(220,8,80,36,"#BFDDF0")+rc(80,kJ-22,90,4,"#E9E4DA")+rc(82,kJ-18,86,18,"#B8A88A")+rc(100,kJ-30,10,8,"#3A3A3A",'rx="2"')+AVq(3,i=>rc(126+i*8,kJ-27,6,5,["#F2F4F5","#E9C46A","#7FB2E5"][i]))},
+ sc_play:{fam:"school",out:1,gen:false,kw:/\b(playground|break ?time|duty|outside|sports day|trip|gate|parents?)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFE0EA","#F2E0C8"]),"#9A9A96",58)+kBld(10,140,48,CMV(v,["#B0634A","#C98A5A","#A88A6A"]),"#DCE8EC")+kFence(48,"#3E6B4A")+AVq(4,i=>rc(200+i*18,66,14,10,"none",'stroke="#F2F4F5" stroke-width="1.4"'))+iaCloud(250,10,.7)},
+ sc_hall:{fam:"school",kw:/\b(hall|assembly|play|nativity|concert|pe|gym|sport\w*)\b/i,f:v=>kRoom(CMV(v,["#E9DCC2","#DCE2E6","#E6D8CC"]),"#C9A87A")+AVq(12,i=>rc(4+i*8,6,4,56,"#A8865A"))+AVq(8,i=>rc(4,10+i*7,92,2,"#A8865A"))+rc(150,6,160,40,"#7A1F2B")+rc(150,46,160,6,"#5A3A22")+AVq(5,i=>rc(156+i*30,6,6,40,"#5A1520",'opacity=".5"'))},
+ sc_lib:{fam:"school",w:[[160,10]],f:v=>kRoom(CMV(v,["#E8E0D0","#E0E6EA","#EDE2D6"]),CMV(v,["#4E8A9A","#B8A88A","#8A9A6A"]))+kShelf(6,6,120,4,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85","#B98ACA","#E07A2E"],v)+kShelf(196,6,120,4,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85","#B98ACA","#E07A2E"],v+2)},
+ /* kitchen */
+ k_line:{fam:"kitch",kw:/\b(service|rush|orders?|tickets?|covers|line|burn\w*|fire|flames?|grill|saturday)\b/i,f:v=>kRoom(CMV(v,["#D9DEE0","#E2E2DC","#D2D8DC"]),"#B5BBC1")+AVq(40,i=>rc((i%20)*16,8+Math.floor(i/20)*16,15,15,"#E9ECEE",'stroke="#D2D6D8" stroke-width=".6"'))+kHood(20,280)+kRange(20,280)},
+ k_pass:{fam:"kitch",kw:/\b(pass|plates?|plating|dish|critic|review|inspect\w*|michelin|star|food)\b/i,f:v=>kRoom(CMV(v,["#E2E2DC","#D9DEE0","#E8E4DA"]),"#9AA0A6")+AVq(5,i=>iaCirc(60+i*50,12,5,"#E07A2E",'opacity=".8"')+rc(57+i*50,0,6,8,"#5A6066"))+rc(30,kJ-28,260,4,"#C9CED2")+AVq(6,i=>w2Plate(60+i*42,kJ-30,7)+iaCirc(60+i*42,kJ-32,3,["#C0453A","#4E8A4A","#E9C46A"][i%3]))+rc(40,4,240,2,"#9AA0A6")+AVq(7,i=>rc(60+i*32,6,10,12,"#F7F4EC"))+w2Steel(20,kJ-24,280).replace(/height="[\d.]+"/g,(m)=>m)},
+ k_prep:{fam:"kitch",kw:/\b(prep|delivery|veg|stock|walk-?in|morning|early|suppliers?)\b/i,f:v=>kRoom(CMV(v,["#E6EAEC","#E2E4DC","#DCE2E6"]),"#B5BBC1")+kShelf(10,6,300,2,["#C9A060","#7A9A4A","#F2F4F5","#C0453A","#E9DCC0"],v)+w2Steel(20,kJ-16,280)+AVq(4,i=>rc(40+i*70,kJ-22,20,6,"#D9A86A",'rx="1"'))},
+ k_dining:{fam:"kitch",kw:/\b(diners?|customers?|tables?|booking|restaurant|guests?|front of house|waiter|complain\w*)\b/i,f:v=>kRoom(CMV(v,["#7A3A2A","#2F4F46","#E9DCC6"]),CMV(v,["#5A3A22","#6A5A4A","#A88A6A"]))+AVq(3,i=>kPend(60+i*100,16,"#B8862B"))+AVq(3,i=>rc(30+i*100,kJ-16,60,4,"#F2F4F5")+rc(56+i*100,kJ-12,8,12,"#3A2A1A")+rc(44+i*100,kJ-20,4,4,"#E9C46A"))+kWin(250,8,50,30,"#1C2438")},
+ k_yard:{fam:"kitch",out:1,gen:false,f:v=>kOut(CMV(v,["#BFCDD8","#2A3150","#D9C9B8"]),"#7A7A76",60)+AVq(5,i=>rc(i*64,8,64,52,"#8A5A44")+AVq(8,j=>rc(i*64+(j%2)*16,10+j*6,30,1.2,"#00000022")))+kDoor(140,28,44,"#3A4650")+rc(220,40,24,22,"#2F6E4A",'rx="2"')+rc(250,40,24,22,"#5A6066",'rx="2"')+iaCirc(148,12,3,"#F6E7A8")},
+ /* studios */
+ tv_set:{fam:"studio",kw:/\b(show|episode|live|filming|presenter|guest|audience|viewers|ratings|series)\b/i,f:v=>kRoom(CMV(v,["#2B2440","#1C2A3A","#3A2030"]),"#3A3A44")+rc(60,8,200,44,CMV(v,["#3E6FB0","#B3262E","#3E8E7A"]))+AVq(5,i=>iaCirc(90+i*35,30,10,"#fff",'opacity=".12"'))+kLight(30)+kLight(290)+rc(110,kJ-12,100,12,"#E9C46A",'rx="4"')},
+ tv_gallery:{fam:"studio",kw:/\b(producer|director|gallery|edit\w*|cut|ratings|schedule|executive)\b/i,f:v=>kRoom("#1C2329","#2B3640")+AVq(8,i=>rc(10+i*38,8,34,22,"#0E1418",'stroke="#3A4650"')+rc(13+i*38,11,28,16,["#3E6FB0","#B3262E","#3E8E7A","#7A4A9A"][(i+v)%4],'opacity=".7"'))+rc(64,8,0,0,"#000")+kConsole(10,300,"#3A4650")},
+ tv_green:{fam:"studio",kw:/\b(green room|make-?up|nerves|waiting|backstage|dressing)\b/i,w:[[160,10]],f:v=>kRoom(CMV(v,["#4E7A5A","#5A6A8A","#7A5A6A"]),"#5A4E44")+AVq(2,i=>rc(20+i*220,10,70,36,"#DCE8EC",'stroke="#B8862B" stroke-width="2"')+AVq(6,j=>iaCirc(22+i*220+j*13,8,2.4,"#F6E7A8")))+rc(120,kJ-18,80,14,"#B3262E",'rx="4"')+rc(116,kJ-24,88,8,"#9A1F28",'rx="4"')},
+ tv_loc:{fam:"studio",out:1,gen:false,kw:/\b(location|outside|street|abroad|travel|shoot)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#E9B48A","#CFD8E0"]),"#9A9A96",62)+kCity(0,10,320,52,CMV(v,["#C9B79C","#B8A68C","#A9BBCB"]),"#F2F4F5")+iaCloud(40,10,.8)},
+ infl_room:{fam:"influ",kw:/\b(followers|post\w*|video|views|viral|brand|sponsor\w*|collab|unbox\w*|stream\w*|content)\b/i,w:[[60,12],[250,14]],f:v=>kRoom(CMV(v,["#F4E1E6","#E6E1F4","#E1F0EA"]),"#E0CFC4")+rc(100,10,120,40,"#F7F4F2",'stroke="#E8B8C2" stroke-width="2"')+AVq(6,i=>iaCirc(120+i*16,22+(i%2)*10,3,["#E86A7A","#E9C46A","#7FB2E5"][i%3]))+rc(20,kJ-14,60,14,"#B98ACA",'rx="3"')},
+ infl_cafe:{fam:"influ",kw:/\b(cafe|brunch|coffee|meet\w*|fans?|lunch)\b/i,f:v=>kRoom(CMV(v,["#E9DCC6","#DCE8E0","#F0E0D6"]),"#B88A5A")+kWin(20,8,120,40,"#BFDDF0","#3A4650")+kCity(22,26,116,22,"#C9B79C")+rc(170,10,130,10,"#3A4650")+AVq(5,i=>rc(176+i*24,22,14,18,["#F2F4F5","#E9C46A","#C9A06A"][i%3],'rx="2"'))+rc(160,kJ-20,150,20,"#5A3A22")+rc(156,kJ-22,158,3,"#E9E4DA")},
+ film_set:{fam:"film",kw:/\b(film\w*|scene|take|director|set|shoot|lines|role|audition|cast\w*)\b/i,f:v=>kRoom(CMV(v,["#16141F","#1C1A24","#201A1A"]),"#2B2B2B")+rc(70,6,180,56,CMV(v,["#C9B79A","#8AAA9A","#B07A5A"]))+kDoor(150,30,44,"#7A5B3A")+kWin(90,16,40,24,"#BFDDF0")+rc(70,6,2,56,"#555")+rc(248,6,2,56,"#555")+kLight(30)+kLight(290)},
+ film_trailer:{fam:"film",out:1,gen:false,f:v=>kOut(CMV(v,["#BFDDF0","#E9B48A","#2A3150"]),"#9A9A96",62)+rc(40,18,160,40,"#E9E4DA",'rx="6"')+rc(60,26,30,16,"#9CC0D2")+kDoor(120,22,36,"#B8A88A")+iaCirc(70,60,6,"#2B2B2B")+iaCirc(170,60,6,"#2B2B2B")+iaStar(131,30,.6,"#E9C46A")+rc(220,30,2,32,"#5A4636")},
+ film_stage:{fam:"film",kw:/\b(theatre|stage|play|curtain|audience|rehears\w*|opening night|west end)\b/i,f:v=>kRoom("#2B1A1A","#6A4A2A")+rc(0,0,60,62,"#7A1F2B")+rc(260,0,60,62,"#7A1F2B")+AVq(4,i=>rc(4+i*14,0,6,62,"#5A1520",'opacity=".5"')+rc(264+i*14,0,6,62,"#5A1520",'opacity=".5"'))+rc(0,0,IA_W,10,"#7A1F2B")+kLight(160,"#FFF6C8")},
+ /* stage & music */
+ stg_gig:{fam:"stage",kw:/\b(gig|show|crowd|tour|encore|venue|sold out|support|headlin\w*|set)\b/i,f:v=>kRoom(CMV(v,["#1C1A2A","#241A2A","#1A2430"]),"#3A3040")+rc(0,0,IA_W,6,"#2B2B2B")+kLight(60,"#E86A9A")+kLight(160,"#7FB2E5")+kLight(260,"#E9C46A")+kAmp(14,30)+kAmp(40,22)+kAmp(256,30)+kAmp(282,22)+rc(130,kJ-14,60,14,"#2B2B33")+iaCirc(160,kJ-20,8,"#C0453A",'stroke="#C9CDD1"')},
+ stg_club:{fam:"stage",kw:/\b(club|night|set|dancefloor|residency|ibiza|booth|decks|mix)\b/i,night:1,f:v=>kRoom("#120E1C","#1E1A2A")+AVq(6,i=>pa(`M160 4 L${i*64-20} 62 L${i*64+10} 62Z`,["#E86A9A","#7FB2E5","#4BBA85","#E9C46A","#B98ACA","#E86A9A"][i],'opacity=".14"'))+iaCirc(160,8,6,"#C9CDD1")+rc(110,kJ-20,100,20,"#2B2B33")+rc(120,kJ-24,30,5,"#1C1C24")+rc(170,kJ-24,30,5,"#1C1C24")},
+ stg_rehearse:{fam:"stage",kw:/\b(rehears\w*|practi\w*|jam|band|songs?|writ\w*|new material)\b/i,f:v=>kRoom(CMV(v,["#4A3A5A","#3A4A5A","#5A4A3A"]),"#5A4E44")+AVq(30,i=>pa(`M${(i%10)*32} ${Math.floor(i/10)*20+2} l16 8 l-16 8Z`,"#000",'opacity=".12"'))+kAmp(30,26)+kAmp(270,26)+rc(130,kJ-16,60,16,"#7A1F2B",'rx="2"')},
+ stg_studio:{fam:"stage",kw:/\b(studio|record\w*|album|single|track|producer|mix\w*|master\w*)\b/i,f:v=>kRoom(CMV(v,["#3A3440","#2B3440","#40382E"]),"#4A3A2A")+rc(110,8,100,34,"#1C2438",'stroke="#5A4E44" stroke-width="3"')+rc(120,kJ-18,80,18,"#2B2B33")+AVq(16,i=>rc(124+(i%8)*9,kJ-17+Math.floor(i/8)*6,2,4,"#C9CDD1"))+AVq(2,i=>rc(30+i*230,10,30,40,"#2B2B33")+iaCirc(45+i*230,24,8,"#3A3A44")+iaCirc(45+i*230,40,5,"#3A3A44"))},
+ stg_fest:{fam:"stage",out:1,gen:false,kw:/\b(festival|field|glastonbury|summer|outdoor|mud)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#E9A77B","#2A3150"]),"#7FA05A",54)+pa("M110 54 V20 L160 6 L210 20 V54Z","#2B2B33")+rc(120,24,80,30,"#3A3A44")+kTent(14,60,"#E86A7A")+kTent(240,64,"#7FB2E5")+AVq(14,i=>pa(`M${i*24} 6 l12 8 l12 -8`,"none",'stroke="#9AA0A6" stroke-width=".6"')+pa(`M${i*24+4} 7 l8 6 l8 -5Z`,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85"][i%4]))}
+});
+
+/* ---- Backdrops: vets, architects, electricians and plumbers, salons ---- */
+const kMirror=(x,y,w,h)=>rc(x,y,w,h,"#DCE8EC",`stroke="#B8862B" stroke-width="2.4" rx="${Math.min(w,h)/2.4}"`)+pa(`M${x+5} ${y+h-6} L${x+w-8} ${y+6}`,"none",'stroke="#fff" stroke-width="2" opacity=".6"');
+const kHouseX=(x,w,h,c,roof)=>rc(x,kJ-h,w,h,c)+pa(`M${x-4} ${kJ-h} L${x+w/2} ${kJ-h-18} L${x+w+4} ${kJ-h}Z`,roof)+rc(x+w/2-6,kJ-20,12,20,"#3A4650")+rc(x+8,kJ-h+8,14,12,"#DCE8EC")+rc(x+w-22,kJ-h+8,14,12,"#DCE8EC");
+Object.assign(CMB,{
+ v_consult:{fam:"vet",kw:/\b(consult\w*|appointment|owners?|jab|vaccin\w*|check-?up|diagnos\w*|poorly)\b/i,w:[[40,12],[280,14]],f:v=>kRoom(CMV(v,["#E4F0EE","#EEE8DC","#E6E8F0"]),CMV(v,["#A9BDB8","#B8A88A","#9AA8B2"]))+rc(120,kJ-20,80,4,"#C9CDD1")+rc(156,kJ-16,8,16,"#9AA0A6")+w2Dog(170,kJ-20,CMV(v,["#C98A5A","#2B2B2B","#E9DCC0"]),.9,-1)+kWin(214,8,50,30,"#BFDDF0")},
+ v_kennel:{fam:"vet",kw:/\b(kennels?|recovery|overnight|boarding|rescue|stray)\b/i,f:v=>kRoom(CMV(v,["#DDE6E2","#E6E2DA","#D9E2E8"]),"#9AA0A6")+AVq(4,i=>rc(8+i*78,14,70,48,"#C9CED1",'stroke="#8A939C" stroke-width="2"')+AVq(8,j=>rc(12+i*78+j*8,14,1.4,48,"#8A939C"))+(i%2?w2Cat(46+i*78,58,["#E07A2E","#2B2B2B"][i%2],.8):w2Dog(46+i*78,58,["#C98A5A","#E9DCC0","#8C5A3C"][i%3],.75)))},
+ v_farm:{fam:"vet",out:1,gen:false,kw:/\b(farm\w*|cows?|calv\w*|lamb\w*|sheep|horses?|livestock|field|tb)\b/i,sl:[30,80,230,286],f:v=>kOut(CMV(v,["#BFDDF0","#CFDCE6","#F2D9C2"]),"#7FB27A",52)+iaCloud(240,10,.8)+pa("M0 52 Q80 40 160 48 T320 44 V56 H0Z","#9CCB96")+kFence(46,"#8A6A44")+w2Cow(150,62,.9)+rc(250,20,50,32,"#8A3A2A")+pa("M246 20 L275 6 L304 20Z","#5A2A1A")},
+ v_recep:{fam:"vet",w:[[40,12]],f:v=>kRoom(CMV(v,["#E8F0EC","#F0EAE0","#E4EAF2"]),"#C9C2B2")+rc(180,kJ-22,120,22,CMV(v,["#4BA3A0","#7A9A8A","#3E6FB0"]))+rc(176,kJ-25,128,4,"#F2F4F5")+kMon(220,kJ-42,"#9FD0EE")+kShelf(80,8,80,3,["#C0453A","#E9C46A","#4BA3A0","#F2F4F5"],v)},
+ v_stable:{fam:"vet",kw:/\b(horse|stable|equine|lame|foal|pony)\b/i,f:v=>kRoom(CMV(v,["#8A5A3A","#7A5034","#9A6A44"]),"#C9A86A")+AVq(3,i=>rc(10+i*104,10,90,52,"#6A4026",'stroke="#4A2A16" stroke-width="2"')+rc(10+i*104,34,90,3,"#4A2A16"))+w2Horse(150,kJ-4,"#8C5A3C",.9)+AVq(10,i=>pa(`M${i*32} 84 l6 -5 l4 5`,"none",'stroke="#E9C46A" stroke-width="1"'))},
+ /* architects */
+ ar_studio:{fam:"arch",kw:/\b(design\w*|drawings?|plans?|concept|model|studio|deadline|competition|render)\b/i,w:[[20,12]],f:v=>kRoom(CMV(v,["#F2EEE6","#E6EAEE","#EDE6E0"]),CMV(v,["#B9A27A","#9AA0A6","#A88A6A"]))+AVq(3,i=>kWin(60+i*84,6,70,40,"#BFDDF0","#3A3A3A"))+kCity(62,30,236,16,"#A9BBCB")+AVq(4,i=>rc(70+i*60,kJ-22,40,3,"#F2F4F5")+pa(`M${74+i*60} ${kJ-22} L${82+i*60} ${kJ} M${106+i*60} ${kJ-22} L${98+i*60} ${kJ}`,"none",'stroke="#3A3A3A" stroke-width="1.6"'))},
+ ar_site:{fam:"arch",out:1,gen:false,hat:"hard",kw:/\b(site|build\w*|construction|contractors?|crane|foundations?|concrete|steel|delay\w*|planning)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFD8E0","#E9D6C2"]),"#A88E6A",58)+rc(210,0,4,58,"#E8B73A")+rc(150,0,140,4,"#E8B73A")+rc(250,4,1.4,20,"#555")+rc(246,24,10,6,"#6F7579")+AVq(3,r=>rc(40,20+r*12,140,3,"#8A939C"))+AVq(6,i=>rc(40+i*27,20,3,38,"#8A939C"))+rc(40,20,140,38,"#C9CED1",'opacity=".35"')},
+ ar_meet:{fam:"arch",kw:/\b(clients?|meeting|presentation|pitch|brief|council|approval)\b/i,sl:[30,80,240,290],f:v=>kRoom(CMV(v,["#E6E2DA","#DDE3E8","#EAE2DA"]),"#8E969A")+kBoard(20,10,60,36,"#FBFBF8")+pa("M30 40 L30 22 L44 16 L58 22 L58 40Z M62 40 V26 H74 V40","none",'stroke="#3E6FB0" stroke-width="1.2"')+rc(110,kJ-12,100,4,"#7A5B3A")+rc(130,kJ-30,20,18,"#F2F4F5",'stroke="#9AA0A6" stroke-width=".6"')+rc(154,kJ-40,14,28,"#F2F4F5",'stroke="#9AA0A6" stroke-width=".6"')+pa(`M172 ${kJ-12} V${kJ-24} L182 ${kJ-30} L192 ${kJ-24} V${kJ-12}Z`,"#F2F4F5",'stroke="#9AA0A6" stroke-width=".6"')},
+ ar_plaza:{fam:"arch",out:1,gen:false,kw:/\b(opening|finished|complete\w*|award\w*|landmark|tower|ribbon)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#E9B48A","#CFD8E0"]),"#C9C2B2",60)+pa("M120 60 V8 Q160 -4 200 8 V60Z",CMV(v,["#9FC7E6","#7FB2E5","#B8D4E6"]))+AVq(10,i=>rc(122,12+i*5,76,1,"#F2F4F5",'opacity=".7"'))+kBld(20,70,40,"#C9B79C")+kBld(230,80,34,"#B8A68C")+kTree(100,46,.9)+kTree(220,46,.9)},
+ ar_cabin:{fam:"arch",w:[[40,12],[280,12]],f:v=>kRoom(CMV(v,["#D9E0E4","#E2DCD0","#D2DAE0"]),"#8A8478")+kWin(100,10,60,26,"#BFDDF0","#9AA0A6")+rc(102,26,56,10,"#A88E6A")+rc(108,18,3,8,"#E8B73A")+AVq(4,i=>rc(190+i*20,16,14,10,"#F2F4F5",'stroke="#9AA0A6" stroke-width=".6"'))+AVq(4,i=>pa(`M${196+i*20} 34 A5 5 0 0 1 ${206+i*20} 34Z`,["#E8B73A","#F2F4F5","#E8B73A","#4BBA85"][i]))+rc(180,kJ-14,100,4,"#8A6A44")},
+ /* trades: other people's houses */
+ tr_kitchen:{fam:"trade",kw:/\b(kitchen|sink|tap|dishwasher|washing machine|cooker|oven|socket|fridge)\b/i,w:[[166,12]],f:v=>kRoom(CMV(v,["#F2E6CF","#E2ECE6","#EDE0E6"]),CMV(v,["#C9B79A","#B8BEC4","#A88A6A"]))+AVq(5,i=>rc(10+i*28,8,26,22,CMV(v,["#7A9A8A","#C9B79A","#3E5C76"]),'stroke="#00000022"'))+kWin(180,8,60,30,"#BFDDF0")+rc(0,kJ-22,IA_W,4,"#E9E4DA")+AVq(11,i=>rc(i*30,kJ-18,28,18,CMV(v,["#7A9A8A","#C9B79A","#3E5C76"]),'stroke="#00000022"'))+rc(196,kJ-26,30,4,"#B8BEC4")+pa(`M211 ${kJ-26} V${kJ-34} H217`,"none",'stroke="#9AA0A6" stroke-width="2"')},
+ tr_bath:{fam:"trade",kw:/\b(bath\w*|shower|toilet|loo|leak\w*|drip\w*|tiles?|flood\w*|pipe)\b/i,f:v=>kRoom(CMV(v,["#E6F0F2","#F0ECE4","#E8E6F0"]),"#9AA8B2")+AVq(60,i=>rc((i%20)*16,6+Math.floor(i/20)*14,15,13,CMV(v,["#DCEBEE","#EDE6DA","#E2E0EE"]),'stroke="#C9CED1" stroke-width=".6"'))+rc(20,kJ-18,100,18,"#F2F4F5",'rx="4" stroke="#C9CED1"')+rc(30,kJ-28,4,10,"#9AA0A6")+rc(250,kJ-24,30,24,"#F2F4F5",'stroke="#C9CED1"')+rc(246,kJ-28,38,4,"#F2F4F5")+pa(`M262 ${kJ-28} V${kJ-36} H268`,"none",'stroke="#9AA0A6" stroke-width="2"')},
+ tr_loft:{fam:"trade",kw:/\b(loft|attic|roof|insulation|wiring|rewire|tank)\b/i,f:v=>kRoom("#6A5A4A",CMV(v,["#8A7A5A","#9A8A6A","#7A6A4A"]))+pa("M0 0 L160 -40 L320 0 V30 L160 -10 L0 30Z","#5A4636")+AVq(9,i=>pa(`M${i*40} ${i<=4?30-i*10:30-(8-i)*10} L${i*40} 62`,"none",'stroke="#8A6A44" stroke-width="5"'))+AVq(8,i=>rc(i*40+6,40,28,22,"#E9C46A",'opacity=".55"'))+iaCirc(160,16,3,"#F6E7A8")+pa("M160 19 L130 62 H190Z","#F6E7A8",'opacity=".15"')},
+ tr_van:{fam:"trade",out:1,gen:false,kw:/\b(van|drive|traffic|parking|job|call-?out|customer|street|next job|merchant)\b/i,sl:[30,80,250,298],f:v=>kOut(CMV(v,["#BFDDF0","#CFDCE6","#F2D9C2"]),"#9A9A96",64)+kHouseX(20,70,36,"#B0634A","#5A3A2E")+kHouseX(230,80,40,"#C98A5A","#4A3A2E")
+  +`<g transform="translate(110 30)"><path d="M0 32 V6 Q0 2 4 2 H70 L84 14 Q94 16 94 22 V32Z" fill="${CMV(v,["#F2F4F5","#3E6FB0","#E8B73A"])}" stroke="#9AA0A6"/><polygon points="72,6 84,16 72,16" fill="#9CC0D2"/>${rc(4,14,50,4,CMV(v,["#1D5FA8","#F2F4F5","#2B3A44"]))}${iaCirc(18,33,6,"#1B1B1B")}${iaCirc(76,33,6,"#1B1B1B")}${rc(10,-3,60,3,"#9AA0A6")}</g>`},
+ tr_hall:{fam:"trade",kw:/\b(fuse\w*|meter|boiler|consumer unit|trip\w*|power|hall\w*|heating|radiator|thermostat)\b/i,w:[[122,10],[290,12]],f:v=>kRoom(CMV(v,["#E9DCC2","#DCE6E2","#E6DCE6"]),CMV(v,["#8A6A44","#7A8A8A","#9A7A5A"]))+pa("M150 62 L230 10 H260 V16 L190 62Z","#C9B79A")+AVq(8,i=>rc(158+i*9.6,56-i*6.2,12,1.6,"#A88A6A"))+kDoor(20,30,48,CMV(v,["#2F4F8A","#7A1F2B","#3E6B4A"]))+rc(60,10,30,22,"#F2F4F5",'stroke="#9AA0A6"')+AVq(6,i=>rc(63+i*4,16,3,8,i===3?"#C0453A":"#3A4650"))},
+ tr_garden:{fam:"trade",out:1,gen:false,kw:/\b(garden|outside|solar|panels?|ev|charger|drain\w*|gutter|heat pump|exterior)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFE0EA","#F2E0C8"]),"#7FB27A",62)+kHouseX(90,150,40,CMV(v,["#C98A5A","#E9DCC0","#B0634A"]),"#5A3A2E")+AVq(4,i=>rc(108+i*30,7,26,10,"#2F4F8A",'stroke="#9AA0A6" stroke-width=".6" transform="skewX(-20)"'))+kTree(40,42,1.2)+kFence(54,"#B8A88A")},
+ tr_merchant:{fam:"trade",kw:/\b(merchant|supplier|parts?|stock|order\w*|wholesaler|prices?|materials?)\b/i,f:v=>kRoom(CMV(v,["#C9CED1","#D2CEC4","#BFC6CC"]),"#8A8E92")+AVq(3,r=>rc(0,10+r*17,IA_W,2.4,"#E36F2C")+AVq(16,i=>rc(4+i*20,r*17-2+(i%3),14,12-(i%3),["#9AA0A6","#C9A06A","#3E6FB0","#E9C46A","#5A6066"][(i+r*2)%5])))+rc(60,kJ-20,200,20,"#5A6670")+rc(56,kJ-22,208,3,"#3A4650")},
+ /* salon */
+ sa_chairs:{fam:"salon",kw:/\b(clients?|cut|colou?r|chair|booked|appointments?|regulars?|style|trim|blow-?dry)\b/i,sl:[34,110,186,262],f:v=>kRoom(CMV(v,["#EADFD6","#E6E2EE","#DCEAE4"]),CMV(v,["#CFC4B8","#C9C2B2","#BFB3A6"]))+AVq(4,i=>kMirror(60+i*76-20,8,40,34)+rc(60+i*76-14,46,28,4,"#1A1C1E"))},
+ sa_basins:{fam:"salon",kw:/\b(wash\w*|basin|shampoo|towels?|junior|apprentice)\b/i,f:v=>kRoom(CMV(v,["#D8E8E4","#EADFD6","#E6E1F4"]),"#BFB3A6")+rc(0,10,IA_W,3,"#B8862B")+AVq(3,i=>`<g transform="translate(${40+i*100} 0)">${rc(-2,40,34,22,"#2B2B2B")}${pa("M0 40 Q15 31 30 40Z","#F2F4F5")}${rc(14,28,2,8,"#C9CDD1")}${rc(14,28,6,2,"#C9CDD1")}</g>`)+AVq(3,i=>rc(290,62-i*8,24,7,["#F2F4F5","#E8D4C4","#F2F4F5"][i],'rx="3.5"'))},
+ sa_recep:{fam:"salon",kw:/\b(booking|reception|prices?|products?|walk-?in|till|cash|shop)\b/i,w:[[120,10]],f:v=>kRoom(CMV(v,["#F4E1E6","#E1EEF4","#EEE8DC"]),"#E0CFC4")+kShelf(10,8,90,3,["#2B2B2B","#C9A27A","#F2F4F5","#4E8A4A","#7A2A5A"],v)+rc(140,kJ-24,90,24,"#2B3A44")+rc(136,kJ-26,98,3,"#F7F4EC")+kMon(176,kJ-44,"#DDE8F2")+kMirror(262,8,40,36)},
+ sa_window:{fam:"salon",f:v=>kRoom(CMV(v,["#EADFD6","#E2E6EA","#F0E4DA"]),"#CFC4B8")+rc(20,6,280,52,"#BFDDF0",'stroke="#2B2B2B" stroke-width="3"')+kCity(22,28,276,30,CMV(v,["#C9B79C","#B8A68C","#A9BBCB"]))+rc(20,30,280,2,"#2B2B2B")+pa("M20 6 h280 v8 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0 q-14 6 -28 0Z",CMV(v,["#7A2A5A","#2F6E6A","#B3262E"]))},
+ sa_staff:{fam:"salon",kw:/\b(staff|colleagues?|break|lunch|gossip|rota|team)\b/i,w:[[160,12],[290,14]],f:v=>kRoom(CMV(v,["#E6DDD2","#DDE4E0","#E8DDE4"]),"#A8988A")+rc(20,kJ-22,90,4,"#F7F4EC")+rc(22,kJ-18,86,18,"#C9B9A0")+rc(30,kJ-30,10,8,"#3A3A3A",'rx="2"')+AVq(3,i=>rc(200+i*28,10,4,4,"#6A6A6A")+pa(`M${194+i*28} 14 h16 l2 30 h-20Z`,["#7A2A5A","#2B2B2B","#C0453A"][i]))}
+});
+
+/* ---- Props: floor props stand on (x,F) centred on x; wall props hang from (x,y) ---- */
+const cpG=(x,y,s,g)=>`<g transform="translate(${x} ${y})${s&&s!==1?` scale(${s})`:""}">${g}</g>`;
+Object.assign(CMP,{
+ /* generic */
+ plant:{f:(x,F)=>cpG(x,F,1,pa("M-7 0 L-6 -12 H6 L7 0Z","#B5653A")+iaCirc(-5,-17,6,"#4E8A4A")+iaCirc(5,-18,6,"#5E9E58")+iaCirc(0,-25,6.5,"#4E8A4A")+iaCirc(-1,-20,4,"#6EAE68"))},
+ tallplant:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-6,-10,12,10,"#E9E4DA")+pa("M0 -10 Q-12 -24 -10 -38 M0 -10 Q2 -30 0 -44 M0 -10 Q12 -22 12 -36","none",'stroke="#3E7E4A" stroke-width="5" stroke-linecap="round"'))},
+ bin:{f:(x,F)=>cpG(x,F,1,pa("M-6 0 L-7 -14 H7 L6 0Z","#6F7579")+rc(-7.5,-15,15,2,"#5A6066"))},
+ boxes:{f:(x,F)=>cpG(x,F,1,rc(-14,-12,16,12,"#C9A06A")+rc(0,-10,14,10,"#B98A55")+rc(-9,-22,14,10,"#D2AE7A")+rc(-14,-7,16,1.4,"#A87A45")+rc(-9,-17,14,1.4,"#A87A45"))},
+ cooler:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-6,-24,12,24,"#E9ECEF",'rx="1.5"')+rc(-5,-38,10,14,"#9FD0EE",'rx="4"')+rc(-2,-20,4,2,"#3E6FB0"))},
+ chair:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-6,-26,12,12,"#2B3A44",'rx="3"')+rc(-8,-14,16,4,"#2B3A44",'rx="1.5"')+rc(-1,-10,2,7,"#555")+pa("M-8 0 L0 -3 L8 0","none",'stroke="#555" stroke-width="2"'))},
+ coat:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-46,2,46,"#5A3A22")+pa("M-7 0 L0 -4 L7 0","none",'stroke="#5A3A22" stroke-width="2"')+pa("M-1 -44 Q-10 -40 -9 -24 L-3 -24Z","#7A2A30")+pa("M1 -42 Q9 -38 8 -28 L3 -28Z","#3E5C76"))},
+ cabinet:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-9,-30,18,30,"#9AA3AA")+AVq(3,i=>rc(-7,-28+i*10,14,8,"#B8C0C6")+rc(-2,-25+i*10,4,1.4,"#5A6066")))},
+ printer:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-11,-16,22,16,"#5A6066")+rc(-13,-26,26,10,"#D9DEE0",'rx="1.5"')+rc(-8,-28,16,2.4,"#F7F7F4")+rc(4,-23,5,2,"#4BBA85"))},
+ lamp:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-40,2,40,"#3A3A3A")+pa("M-7 -38 L-4 -48 H4 L7 -38Z","#F6E7A8")+rc(-5,-1,10,2,"#3A3A3A"))},
+ /* story props */
+ xtree:{f:(x,F)=>cpG(x,F,1,rc(-2,-6,4,6,"#6A4A30")+pa("M0 -42 L12 -18 H6 L14 -6 H-14 L-6 -18 H-12Z","#2F7A3E")+iaStar(0,-42,.5,"#E9C46A")+iaCirc(-5,-12,1.8,"#EA6B5D")+iaCirc(6,-16,1.8,"#E9C46A")+iaCirc(-2,-24,1.8,"#7FB2E5")+iaCirc(4,-9,1.8,"#7FB2E5"))},
+ balloons:{io:"i",f:(x,F)=>cpG(x,F,1,`<path d="M0 0 Q-2 -14 -6 -30 M0 0 Q1 -16 4 -36 M0 0 Q3 -12 9 -26" stroke="#9AA0A6" stroke-width=".7" fill="none"/>`+`<ellipse cx="-6" cy="-35" rx="5" ry="6" fill="#E86A7A"/><ellipse cx="4" cy="-41" rx="5" ry="6" fill="#E9C46A"/><ellipse cx="9" cy="-31" rx="5" ry="6" fill="#7FB2E5"/>`+rc(-3,-3,6,3,"#5A6066"))},
+ cake:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-16,24,3,"#8A6A44")+rc(-10,-13,2.4,13,"#6A4E30")+rc(7.6,-13,2.4,13,"#6A4E30")+rc(-7,-25,14,9,"#F2E0C8",'rx="1"')+rc(-7,-25,14,3,"#E86A7A",'rx="1"')+rc(-1,-30,2,5,"#7FB2E5")+iaCirc(0,-31,1.2,"#F6A33D"))},
+ umbrella:{io:"o",f:(x,F)=>cpG(x,F,1,pa("M-12 -26 A12 9 0 0 1 12 -26Z","#3E6FB0")+rc(-.7,-26,1.4,24,"#3A3A3A")+pa("M0 -2 q0 3 -3 3","none",'stroke="#3A3A3A" stroke-width="1.4"'))},
+ wetfloor:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M-6 0 L-2 -20 H2 L6 0Z","#E9C46A")+pa("M0 -14 L-2.6 -9 H2.6Z","#2B2B2B"))},
+ extinguisher:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-4.5,-20,9,20,"#C0453A",'rx="3"')+rc(-2,-24,4,4,"#2B2B2B")+pa("M2 -23 q6 0 6 8","none",'stroke="#2B2B2B" stroke-width="1.6"')+rc(-4.5,-12,9,3,"#F2F4F5"))},
+ smoke:{f:(x,F)=>cpG(x,F,1,iaCirc(-6,-12,8,"#9AA0A6",'opacity=".55"')+iaCirc(4,-22,10,"#A8AEB4",'opacity=".5"')+iaCirc(-4,-34,9,"#B8BEC4",'opacity=".45"')+iaCirc(8,-40,7,"#C9CED1",'opacity=".4"'))},
+ vase:{f:(x,F)=>cpG(x,F,1,rc(-8,-14,16,3,"#8A6A44")+rc(-1.5,-11,3,11,"#6A4E30")+pa("M-3 -14 Q-4 -20 -2 -22 H2 Q4 -20 3 -14Z","#7FB2E5")+`<path d="M0 -22 L-4 -30 M0 -22 L1 -32 M0 -22 L5 -29" stroke="#3E8E5E" stroke-width="1"/>`+iaCirc(-4,-31,2.4,"#E86A7A")+iaCirc(1,-33,2.4,"#E9C46A")+iaCirc(5,-30,2.4,"#F2B8C6"))},
+ coffee:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-10,-18,20,18,"#8A6A44")+rc(-8,-36,16,18,"#2B2B2B",'rx="2"')+rc(-5,-32,10,4,"#9AA0A6")+rc(-2,-25,4,5,"#F2F4F5")+`<path d="M-1 -31 q2 -4 0 -7" stroke="#fff" stroke-width="1" fill="none" opacity=".6"/>`)},
+ laptop:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-14,-18,28,3,"#C9B79A")+rc(-12,-15,2.4,15,"#8A939C")+rc(9.6,-15,2.4,15,"#8A939C")+pa("M-9 -18 L-7 -30 H7 L9 -18Z","#5A6066")+pa("M-6.5 -20 L-5.4 -28 H5.4 L6.5 -20Z","#9FD0EE"))},
+ /* wall */
+ clock:{wall:1,f:(x,y)=>w2Clock(x,y+6,6)},
+ picture:{wall:1,f:(x,y)=>rc(x-12,y,24,17,"#8A6A44")+rc(x-10,y+2,20,13,"#BFDDF0")+pa(`M${x-10} ${y+15} L${x-3} ${y+7} L${x+2} ${y+12} L${x+5} ${y+9} L${x+10} ${y+15}Z`,"#7FB27A")},
+ notice:{wall:1,f:(x,y)=>rc(x-14,y,28,20,"#C9A87A",'stroke="#8A6A44" stroke-width="1.5"')+AVq(5,i=>rc(x-12+(i%3)*9,y+2+Math.floor(i/3)*9,7,7,["#F2F4F5","#F6E7A8","#E86A7A","#9FD0EE","#F2F4F5"][i]))},
+ calendar:{wall:1,f:(x,y)=>rc(x-8,y,16,20,"#F2F4F5",'stroke="#C9CDD1"')+rc(x-8,y,16,5,"#C0453A")+AVq(9,i=>rc(x-6+(i%3)*4.4,y+7+Math.floor(i/3)*4,3,2.6,i===4?"#4BBA85":"#C9CDD1"))},
+ tinsel:{wall:1,f:(x,y)=>`<path d="M${x-24} ${y} Q${x-12} ${y+8} ${x} ${y} T${x+24} ${y}" stroke="#C0453A" stroke-width="2.4" fill="none"/>`+iaCirc(x-12,y+5,2.2,"#E9C46A")+iaCirc(x+12,y+5,2.2,"#7FB2E5")+iaCirc(x,y+1,2,"#2F7A3E")},
+ bunt:{wall:1,f:(x,y)=>AVq(5,i=>pa(`M${x-25+i*10} ${y} l5 8 l5 -8Z`,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85","#E86A7A"][i]))+`<path d="M${x-25} ${y} H${x+25}" stroke="#9AA0A6" stroke-width=".6"/>`},
+ wallscreen:{wall:1,f:(x,y)=>rc(x-16,y,32,20,"#1C2329",'rx="1.5"')+rc(x-14,y+2,28,16,"#2F4F8A")+`<path d="M${x-12} ${y+14} l6 -4 l5 2 l6 -6 l7 3" stroke="#4BBA85" stroke-width="1.4" fill="none"/>`},
+ /* office */
+ deskpc:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-16,-18,32,3,"#C9B79A")+rc(-14,-15,2.4,15,"#8A939C")+rc(11.6,-15,2.4,15,"#8A939C")+kMon(-11,-34,"#9FD0EE")+rc(6,-22,8,4,"#F2F4F5"))},
+ papers:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-9,-14,18,14,"#C9B79A")+AVq(5,i=>rc(-7+(i%2),-18-i*2.2,14,2,i%2?"#F2F4F5":"#E6E2DA")))},
+ whiteboard:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-20,2,20,"#8A939C")+pa("M-8 0 L0 -6 L8 0","none",'stroke="#8A939C" stroke-width="1.6"')+rc(-15,-44,30,24,"#FBFBF8",'stroke="#9AA0A6" stroke-width="1.5"')+kScrib(-11,-36,20,"#C0453A"))},
+ sofa:{io:"i",sp:2,f:(x,F)=>cpG(x,F,1,rc(-28,-18,56,12,CMV(0,["#5A7A8A"]),'rx="3"')+rc(-30,-12,60,8,"#4A6A7A",'rx="3"')+rc(-26,-4,3,4,"#3A2A1A")+rc(23,-4,3,4,"#3A2A1A"))},
+ /* trading */
+ phones:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-14,-18,28,3,"#5A6670")+rc(-12,-15,2.4,15,"#3A4650")+rc(9.6,-15,2.4,15,"#3A4650")+rc(-10,-23,10,5,"#2B2B2B",'rx="1.5"')+rc(2,-26,9,8,"#1C2329")+AVq(4,i=>rc(3.5+(i%2)*3.5,-24.5+Math.floor(i/2)*3,2,2,"#9AA0A6")))},
+ cups:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-10,-14,20,3,"#8A6A44")+rc(-8,-11,2,11,"#6A4E30")+rc(6,-11,2,11,"#6A4E30")+AVq(4,i=>rc(-9+i*5,-20-(i%2)*1,4,6,["#F2F4F5","#E9DCC2","#F2F4F5","#C9A06A"][i])))},
+ tickerstand:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-24,2,24,"#3A4650")+rc(-16,-44,32,20,"#14221C",'stroke="#3A4650"')+`<path d="M-13 -30 l7 -5 l5 3 l6 -7 l8 4" stroke="#4BBA85" stroke-width="1.4" fill="none"/>`+rc(-13,-41,10,2,"#EA6B5D"))},
+ /* tech */
+ beanbag:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M-14 0 Q-16 -14 -4 -16 Q8 -18 14 -8 Q16 0 10 0Z",CMV(0,["#E86A7A"])))},
+ rack:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-9,-40,18,40,"#14181C")+AVq(6,i=>rc(-7,-37+i*6,14,4,"#222A33")+iaCirc(-5,-35+i*6,.9,["#4BBA85","#7FB2E5","#E9C46A"][i%3])))},
+ standdesk:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-14,-30,28,3,"#E9E4DA")+rc(-1.5,-27,3,27,"#5A6066")+rc(-9,-1,18,2,"#5A6066")+pa("M-8 -30 L-6 -42 H8 L10 -30Z","#3A3A44")+pa("M-5.4 -32 L-4.4 -40 H6.4 L7.4 -32Z","#7FD3B0"))},
+ pingpong:{io:"i",sp:2,f:(x,F)=>cpG(x,F,1,rc(-26,-16,52,3,"#2F6E4A")+rc(-.5,-21,1,5,"#F2F4F5")+rc(-24,-13,2.4,13,"#3A3A3A")+rc(21.6,-13,2.4,13,"#3A3A3A")+iaCirc(10,-26,1.5,"#F6A33D"))},
+ stickies:{wall:1,f:(x,y)=>AVq(9,i=>rc(x-14+(i%3)*10,y+Math.floor(i/3)*8,8,7,["#F6E7A8","#F2B8C6","#BFE3C6","#9FD0EE"][(i*5)%4]))},
+ /* law & politics */
+ lectern:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M-8 0 L-6 -22 H6 L8 0Z","#6A4A2A")+pa("M-10 -22 L10 -22 L8 -28 L-8 -28Z","#5A3A1A"))},
+ casefiles:{io:"i",f:(x,F)=>cpG(x,F,1,AVq(4,i=>rc(-9+(i%2),-6-i*6,18,6,["#F2EEE6","#E9DCC2","#F2EEE6","#E9DCC2"][i],'stroke="#C9B79A" stroke-width=".6"'))+rc(-1,-24,2,24,"#B3262E",'opacity=".8"'))},
+ briefcase:{f:(x,F)=>cpG(x,F,1,rc(-9,-12,18,12,"#5A3A22",'rx="1.5"')+pa("M-4 -12 V-15 H4 V-12","none",'stroke="#3A2A1A" stroke-width="1.6"')+rc(-9,-7,18,1.4,"#3A2A1A"))},
+ scales:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-6,-2,12,2,"#B8862B")+rc(-1,-30,2,28,"#B8862B")+rc(-14,-30,28,1.6,"#B8862B")+pa("M-14 -30 L-18 -22 H-10Z M14 -30 L10 -22 H18Z","none",'stroke="#B8862B" stroke-width="1"')+pa("M-19 -22 Q-14 -18 -9 -22Z M9 -22 Q14 -18 19 -22Z","#D7A744"))},
+ bookpile:{io:"i",f:(x,F)=>cpG(x,F,1,AVq(5,i=>rc(-10+(i%2)*2,-4-i*4,18-(i%3)*2,4,kBooks[i])))},
+ flagstand:{f:(x,F)=>cpG(x,F,1,rc(-1,-48,2,48,"#B8862B")+pa("M1 -46 Q10 -50 18 -45 V-32 Q10 -37 1 -33Z","#1D5FA8")+pa("M1 -42 Q10 -46 18 -41 V-37 Q10 -41 1 -38Z","#F2F4F5")+rc(-5,-2,10,2,"#3A3A3A"))},
+ ballot:{f:(x,F)=>cpG(x,F,1,rc(-10,-18,20,18,"#2B2B2B")+rc(-6,-19,12,2,"#9AA0A6")+rc(-3,-24,6,6,"#F2F4F5"))},
+ rosettes:{wall:1,f:(x,y)=>AVq(3,i=>iaCirc(x-12+i*12,y+6,4.5,["#C0453A","#1D5FA8","#E9C46A"][i])+rc(x-14+i*12,y+10,4,8,["#C0453A","#1D5FA8","#E9C46A"][i]))},
+ redbox:{f:(x,F)=>cpG(x,F,1,rc(-11,-9,22,9,"#9A2A2A",'rx="1"')+rc(-3,-12,6,3,"#B8862B"))},
+ micstand:{f:(x,F)=>cpG(x,F,1,rc(-.7,-36,1.4,36,"#2B2B2B")+pa("M-6 0 L0 -3 L6 0","none",'stroke="#2B2B2B" stroke-width="1.6"')+iaCirc(0,-37,2.4,"#555"))},
+ /* cars */
+ tyres:{f:(x,F)=>cpG(x,F,1,AVq(3,i=>`<ellipse cx="0" cy="${-4-i*7}" rx="10" ry="3.6" fill="#2B2B2B" stroke="#555"/>`))},
+ cone:{f:(x,F)=>cpG(x,F,1,pa("M-5 0 L-1.6 -14 H1.6 L5 0Z","#E36F2C")+rc(-3.4,-7,6.8,2,"#F2F4F5")+rc(-6,-1.5,12,1.5,"#E36F2C"))},
+ pricesign:{f:(x,F)=>cpG(x,F,1,rc(-1,-16,2,16,"#5A6066")+rc(-10,-32,20,16,"#F6D44A",'stroke="#C0453A" stroke-width="1.6"')+rc(-6,-27,12,2,"#C0453A")+rc(-6,-22,8,2,"#C0453A"))},
+ keyboard:{wall:1,f:(x,y)=>rc(x-14,y,28,18,"#8A6A44")+AVq(8,i=>rc(x-11+(i%4)*7,y+3+Math.floor(i/4)*8,1.2,4,"#C9CDD1")+iaCirc(x-10.4+(i%4)*7,y+8+Math.floor(i/4)*8,1.5,["#C0453A","#1D5FA8","#2B2B2B","#E9C46A"][i%4]))},
+ toolchest:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-11,-26,22,26,"#C0453A",'rx="1"')+AVq(4,i=>rc(-9,-24+i*6,18,4.4,"#A8352C")+rc(-3,-22.5+i*6,6,1.2,"#C9CDD1")))}
+});
+Object.assign(CM_PF,{
+ gen:{p:["plant","bin","boxes"],w:["clock","picture","calendar"]},
+ office:{p:["cooler","chair","coat","cabinet","printer","deskpc","papers","whiteboard","tallplant","coffee"],w:["notice","wallscreen","clock"]},
+ trading:{p:["phones","cups","tickerstand","deskpc","chair","papers"],w:["wallscreen"]},
+ tech:{p:["beanbag","rack","standdesk","pingpong","laptop","sofa","tallplant"],w:["stickies","wallscreen"]},
+ law:{p:["lectern","casefiles","briefcase","scales","bookpile","papers","chair"],w:["picture","clock"]},
+ politics:{p:["flagstand","ballot","redbox","micstand","lectern","papers","briefcase"],w:["rosettes","notice"]},
+ cars:{p:["tyres","cone","pricesign","toolchest","balloons","chair"],w:["keyboard","notice"]}
+});
+/* story words that bring a prop into the picture */
+const CM_KW=[[/\b(christmas|xmas|festive|secret santa)\b/i,"xtree"],[/\b(christmas|xmas|festive)\b/i,"tinsel"],[/\b(birthday|cake|leaving do|retire\w*|farewell)\b/i,"cake"],[/\b(party|celebrat\w*|promot\w*|congrat\w*|anniversary|launch)\b/i,"balloons"],[/\b(party|leaving do)\b/i,"bunt"],
+ [/\b(rain\w*|soaked|wet|storm|flood\w*)\b/i,"umbrella"],[/\b(rain\w*|soaked|wet|leak\w*|flood\w*)\b/i,"wetfloor"],[/\b(fire|smoke|alarm|blaze|burn\w*)\b/i,"extinguisher"],[/\b(redundan\w*|leaving|moving|relocat\w*|clear (out|your desk)|boxes|new office)\b/i,"boxes"],
+ [/\b(sorry|thank\w*|condolence\w*|funeral|died|passed away|grief)\b/i,"vase"],[/\b(coffee|caffeine|espresso)\b/i,"coffee"],[/\b(laptop|email|reply-all|spreadsheet|online|zoom|video call)\b/i,"laptop"]];
+
+/* ---- Props: hospital, police, fire, aviation, army, spy, space ---- */
+Object.assign(CMP,{
+ drip:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-46,2,46,"#9AA0A6")+rc(-7,-46,14,1.6,"#9AA0A6")+rc(-8,-44,6,9,"#D8EEF5",'rx="2" stroke="#9AA0A6" stroke-width=".6"')+pa("M-5 -35 Q-5 -20 4 -14","none",'stroke="#9AA0A6" stroke-width=".8"')+pa("M-7 0 L0 -3 L7 0","none",'stroke="#9AA0A6" stroke-width="1.6"'))},
+ wheelchair:{f:(x,F)=>cpG(x,F,1,iaCirc(-2,-8,8,"none",'stroke="#5A6066" stroke-width="1.8"')+iaCirc(9,-2,2.4,"#5A6066")+rc(-6,-16,14,3,"#3E6FB0")+rc(-7,-28,3,14,"#3E6FB0")+pa("M-7 -28 L-11 -30","none",'stroke="#5A6066" stroke-width="1.6"')+pa("M8 -14 L10 -4","none",'stroke="#5A6066" stroke-width="1.6"'))},
+ crashcart:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-10,-26,20,22,"#C0453A",'rx="1"')+AVq(3,i=>rc(-8,-24+i*7,16,5,"#A8352C"))+rc(-12,-29,24,3,"#9AA0A6")+iaCirc(-7,-2,2,"#3A3A3A")+iaCirc(7,-2,2,"#3A3A3A")+rc(-6,-36,12,7,"#1C2329")+pa("M-5 -32 h3 l1 -2 l2 4 l1 -2 h3","none",'stroke="#4BBA85" stroke-width=".8"'))},
+ monitor:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-30,2,30,"#9AA0A6")+pa("M-7 0 L0 -3 L7 0","none",'stroke="#9AA0A6" stroke-width="1.6"')+rc(-10,-44,20,14,"#1C2329",'rx="1.5"')+pa("M-8 -37 h4 l2 -4 l2 7 l2 -3 h6","none",'stroke="#4BBA85" stroke-width="1"'))},
+ oxygen:{f:(x,F)=>cpG(x,F,1,rc(-4,-24,8,24,"#F2F4F5",'rx="3"')+rc(-4,-24,8,6,"#3E8E5E",'rx="3"')+rc(-1.5,-28,3,4,"#9AA0A6"))},
+ screen:{io:"i",f:(x,F)=>cpG(x,F,1,AVq(3,i=>rc(-15+i*10,-34,9,30,"#9FD0EE",'stroke="#9AA0A6" stroke-width=".8"'))+rc(-15,-4,30,1.5,"#9AA0A6")+iaCirc(-12,0,1.5,"#3A3A3A")+iaCirc(12,0,1.5,"#3A3A3A"))},
+ gel:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-30,2,30,"#C9CDD1")+rc(-4,-38,8,10,"#F2F4F5",'stroke="#9AA0A6" stroke-width=".6"')+rc(-2,-36,4,3,"#7FB2E5")+pa("M-6 0 L0 -2 L6 0","none",'stroke="#C9CDD1" stroke-width="1.6"'))},
+ clinbin:{f:(x,F)=>cpG(x,F,1,pa("M-6 0 L-7 -14 H7 L6 0Z","#E9C46A")+rc(-7.5,-15,15,2,"#C9A23A"))},
+ trolley:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-22,24,2,"#C9CDD1")+rc(-12,-10,24,2,"#C9CDD1")+rc(-12,-22,2,20,"#9AA0A6")+rc(10,-22,2,20,"#9AA0A6")+iaCirc(-10,-1,1.6,"#3A3A3A")+iaCirc(10,-1,1.6,"#3A3A3A")+rc(-8,-27,6,5,"#F2F4F5")+rc(1,-26,8,4,"#7FB2E5"))},
+ xray:{wall:1,f:(x,y)=>rc(x-14,y,28,20,"#F2F4F5",'stroke="#9AA0A6"')+rc(x-12,y+2,24,16,"#1C2329")+pa(`M${x} ${y+4} V${y+16} M${x-6} ${y+7} Q${x} ${y+9} ${x+6} ${y+7} M${x-7} ${y+11} Q${x} ${y+13} ${x+7} ${y+11}`,"none",'stroke="#C9DCE3" stroke-width="1"')},
+ handsign:{wall:1,f:(x,y)=>rc(x-8,y,16,20,"#9FD0EE",'rx="1.5"')+iaCirc(x,y+9,4.5,"#F2F4F5")+rc(x-5,y+15,10,2,"#F2F4F5")},
+ /* police */
+ patrolcar:{out:1,io:"o",sp:2,f:(x,F)=>cpG(x-34,F-26,1,`<path d="M0 22 V12 Q2 6 10 5 L22 -2 H48 L60 5 Q68 6 68 12 V22Z" fill="#F2F4F5"/>${rc(0,12,68,5,"#1D5FA8")}${rc(8,12,10,5,"#E9C46A")}${rc(32,12,10,5,"#E9C46A")}${rc(26,-6,7,4,"#1D5FA8")}${rc(33,-6,7,4,"#C0453A")}${rc(24,0,10,6,"#9CC0D2")}${rc(38,0,10,6,"#9CC0D2")}${iaCirc(14,23,5,"#1B1B1B")}${iaCirc(54,23,5,"#1B1B1B")}`)},
+ tape:{io:"o",sp:2,f:(x,F)=>cpG(x,F,1,rc(-24,-18,2,18,"#3A3A3A")+rc(22,-18,2,18,"#3A3A3A")+rc(-24,-16,48,3,"#E9C46A")+AVq(6,i=>rc(-22+i*8,-16,4,3,"#2B2B2B")))},
+ bike:{f:(x,F)=>cpG(x,F,1,iaCirc(-10,-7,7,"none",'stroke="#2B2B2B" stroke-width="1.6"')+iaCirc(10,-7,7,"none",'stroke="#2B2B2B" stroke-width="1.6"')+pa("M-10 -7 L-2 -18 H8 L10 -7 M-2 -18 L0 -7 L8 -18 M-4 -21 H1","none",'stroke="#1D3A6E" stroke-width="1.6"'))},
+ evidence:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-12,14,12,"#C9A06A")+rc(0,-10,13,10,"#B98A55")+rc(-8,-20,10,8,"#F2F4F5",'stroke="#9AA0A6" stroke-width=".6"')+rc(-8,-20,10,2,"#C0453A"))},
+ barrier:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-14,-16,28,6,"#F2F4F5")+AVq(3,i=>rc(-12+i*9,-16,4.5,6,"#C0453A"))+rc(-12,-10,2,10,"#5A6066")+rc(10,-10,2,10,"#5A6066"))},
+ wanted:{wall:1,f:(x,y)=>rc(x-16,y,32,22,"#C9A87A",'stroke="#8A6A44"')+AVq(3,i=>rc(x-13+i*10,y+3,8,10,"#F2F4F5")+iaCirc(x-9+i*10,y+7,2.4,"#8A939C"))+`<path d="M${x-9} ${y+16} L${x+1} ${y+18} L${x+11} ${y+15}" stroke="#C0453A" stroke-width=".8" fill="none"/>`},
+ radio:{f:(x,F)=>cpG(x,F,1,rc(-10,-14,20,3,"#5A6066")+rc(-8,-11,2,11,"#3A4650")+rc(6,-11,2,11,"#3A4650")+rc(-6,-24,8,10,"#2B2B2B",'rx="1"')+rc(-4,-30,1.4,6,"#2B2B2B")+rc(4,-20,5,6,"#F2F4F5"))},
+ /* fire */
+ hose:{f:(x,F)=>cpG(x,F,1,iaCirc(0,-11,11,"#C0453A")+iaCirc(0,-11,7,"#A8352C")+iaCirc(0,-11,3,"#9AA0A6")+pa("M10 -6 Q16 0 22 0","none",'stroke="#C0453A" stroke-width="3"'))},
+ ladder:{f:(x,F)=>cpG(x,F,1,pa("M-8 0 L-4 -48 M8 0 L4 -48","none",'stroke="#C9CDD1" stroke-width="2.4"')+AVq(6,i=>rc(-7+i*.6,-7-i*7.6,14-i*1.2,1.6,"#C9CDD1")))},
+ hydrant:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-5,-16,10,16,"#C0453A",'rx="2"')+rc(-7,-18,14,3,"#A8352C")+rc(-8,-10,16,3,"#A8352C")+iaCirc(0,-19,3,"#C0453A"))},
+ ba:{f:(x,F)=>cpG(x,F,1,AVq(3,i=>rc(-11+i*8,-22,6,22,"#E9C46A",'rx="3"')+rc(-10+i*8,-25,4,3,"#3A3A3A")))},
+ helmets:{wall:1,f:(x,y)=>rc(x-20,y+8,40,2,"#5A4636")+AVq(3,i=>pa(`M${x-17+i*13} ${y+8} A6 6 0 0 1 ${x-5+i*13} ${y+8}Z`,["#F2D24A","#F2D24A","#F2F4F5"][i]))},
+ engine:{io:"o",sp:2,f:(x,F)=>cpG(x-38,F-30,1,rc(0,6,76,20,"#C0453A",'rx="2"')+rc(54,0,22,16,"#C0453A",'rx="2"')+rc(58,3,15,8,"#9CC0D2")+rc(0,16,76,2,"#F2F4F5")+rc(4,2,46,3,"#C9CDD1")+iaCirc(14,27,5,"#1B1B1B")+iaCirc(62,27,5,"#1B1B1B")+rc(60,-4,6,4,"#1D5FA8"))},
+ /* aviation */
+ suitcase:{f:(x,F)=>cpG(x,F,1,rc(-7,-18,14,18,CMV(0,["#2F4F8A"]),'rx="2"')+rc(-1.5,-26,3,8,"#3A3A3A")+rc(-4,-27,8,2,"#3A3A3A")+iaCirc(-4,0,1.5,"#2B2B2B")+iaCirc(4,0,1.5,"#2B2B2B"))},
+ cabintrolley:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-8,-26,16,26,"#C9CDD1",'rx="1.5"')+rc(-8,-26,16,3,"#9AA0A6")+rc(-6,-20,12,1,"#9AA0A6")+rc(-6,-12,12,1,"#9AA0A6")+rc(-6,-30,5,4,"#E9C46A"))},
+ chocks:{io:"o",f:(x,F)=>cpG(x,F,1,pa("M-12 0 L-8 -6 H-2 L2 0Z","#E9C46A")+pa("M2 0 L6 -6 H12 L14 0Z","#E9C46A")+rc(-12,-1,26,1,"#3A3A3A"))},
+ tug:{io:"o",sp:2,f:(x,F)=>cpG(x-24,F-20,1,rc(0,4,48,12,"#E9C46A",'rx="2"')+rc(30,-6,14,10,"#9CC0D2",'stroke="#E9C46A" stroke-width="2"')+iaCirc(10,17,4,"#1B1B1B")+iaCirc(40,17,4,"#1B1B1B")+rc(-6,10,6,2,"#3A3A3A"))},
+ seats:{io:"i",sp:2,f:(x,F)=>cpG(x,F,1,AVq(3,i=>rc(-26+i*18,-20,15,10,"#2F4F8A",'rx="2"')+rc(-26+i*18,-12,15,4,"#2F4F8A"))+rc(-26,-8,51,2,"#9AA0A6")+rc(-22,-6,2,6,"#9AA0A6")+rc(20,-6,2,6,"#9AA0A6"))},
+ depboard:{wall:1,f:(x,y)=>rc(x-20,y,40,20,"#14181C")+AVq(4,i=>rc(x-17,y+3+i*4,20,2,"#E9C46A")+rc(x+6,y+3+i*4,10,2,i===1?"#EA6B5D":"#4BBA85"))},
+ windsock:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-1,-46,2,46,"#9AA0A6")+pa("M1 -46 L20 -43 L20 -38 L1 -36Z","#E36F2C")+rc(7,-45,4,8,"#F2F4F5"))},
+ /* army */
+ sandbags:{f:(x,F)=>cpG(x,F,1,AVq(5,i=>rc(-18+(i%3)*12+(i>2?6:0),-7-(i>2?7:0),12,7,"#B8A070",'rx="3" stroke="#8A7A50" stroke-width=".6"')))},
+ crates:{f:(x,F)=>cpG(x,F,1,rc(-14,-14,16,14,"#6B7A4A")+rc(0,-11,14,11,"#5A6B3A")+rc(-11,-24,14,10,"#7A8A5A")+rc(-14,-8,16,1.2,"#4A5A30")+rc(-11,-19,14,1.2,"#4A5A30"))},
+ jerry:{f:(x,F)=>cpG(x,F,1,rc(-11,-14,9,14,"#4A5A30",'rx="1"')+rc(1,-14,9,14,"#4A5A30",'rx="1"')+rc(-9,-17,4,3,"#3A3A3A")+rc(3,-17,4,3,"#3A3A3A"))},
+ fieldradio:{f:(x,F)=>cpG(x,F,1,rc(-9,-14,18,14,"#5A6B3A",'rx="1"')+rc(-6,-11,7,4,"#1C2329")+iaCirc(5,-9,2,"#3A3A3A")+rc(6,-32,1.2,18,"#2B2B2B"))},
+ camonet:{io:"o",sp:2,f:(x,F)=>cpG(x,F,1,pa("M-30 0 L-24 -20 Q0 -26 24 -20 L30 0Z","#5A6B3A")+AVq(8,i=>iaCirc(-22+i*6.4,-14+(i%3)*4,3,["#7A8A5A","#4A5A30","#8A7A50"][i%3])))},
+ jeep:{io:"o",sp:2,f:(x,F)=>cpG(x-30,F-26,1,`<path d="M0 22 V10 H16 L22 2 H46 V10 H60 V22Z" fill="#5A6B3A"/>${rc(26,4,10,6,"#9CC0D2")}${iaCirc(12,22,6,"#2B2B2B")}${iaCirc(48,22,6,"#2B2B2B")}${rc(46,-4,2,8,"#3A3A3A")}`)},
+ /* spy */
+ bench:{io:"o",sp:2,f:(x,F)=>cpG(x,F,1,rc(-22,-12,44,3,"#7A5B3A")+rc(-22,-20,44,3,"#7A5B3A")+rc(-20,-9,2,9,"#3A3A3A")+rc(18,-9,2,9,"#3A3A3A")+rc(-4,-15,10,2,"#F2EEE6"))},
+ phonebox:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-8,-44,16,44,"#2B3A50")+rc(-6,-38,12,30,"#9FB8D0",'opacity=".7"')+rc(-8,-46,16,3,"#1C2438"))},
+ darkcar:{io:"o",sp:2,f:(x,F)=>cpG(x-31,F-24,1,`<path d="M0 18 V10 Q1 6 8 5 L18 -2 H44 L54 5 Q62 6 62 10 V18Z" fill="#1C1C24"/>${rc(20,0,11,6,"#3A4656")}${rc(34,0,11,6,"#3A4656")}${iaCirc(14,19,5,"#0B0B0B")}${iaCirc(48,19,5,"#0B0B0B")}`)},
+ shredder:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-8,-18,16,18,"#3A3A3A")+rc(-9,-21,18,3,"#5A5A5A")+rc(-5,-28,10,7,"#F2F4F5"))},
+ mapwall:{wall:1,f:(x,y)=>rc(x-18,y,36,22,"#D9CBA8",'stroke="#8A6A44"')+pa(`M${x-14} ${y+6} q8 -4 14 2 t14 4 M${x-10} ${y+16} q10 -2 18 2`,"none",'stroke="#7FA27A" stroke-width="2"')+iaCirc(x-6,y+8,1.6,"#C0453A")+iaCirc(x+8,y+14,1.6,"#C0453A")+`<path d="M${x-6} ${y+8} L${x+8} ${y+14}" stroke="#C0453A" stroke-width=".6"/>`},
+ /* space */
+ o2tank:{f:(x,F)=>cpG(x,F,1,rc(-5,-24,10,24,"#E3E7E9",'rx="4" stroke="#9AA0A6" stroke-width=".6"')+rc(-5,-16,10,3,"#E9C46A"))},
+ suitstand:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-6,2,6,"#9AA0A6")+pa("M-10 -6 L-8 -30 Q0 -34 8 -30 L10 -6Z","#F2F4F5",'stroke="#C9CDD1"')+iaCirc(0,-38,8,"#F2F4F5",'stroke="#C9CDD1"')+iaCirc(0,-38,5,"#33507A")+rc(-4,-24,8,5,"#9FD0EE"))},
+ console:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-18,24,18,"#3A4650")+rc(-10,-30,20,12,"#1C2329",'rx="1"')+AVq(3,i=>rc(-8,-27+i*3,8+i*3,1.6,["#4BBA85","#E9C46A","#7FB2E5"][i]))+AVq(4,i=>iaCirc(-8+i*5,-12,1.4,["#EA6B5D","#4BBA85","#E9C46A","#7FB2E5"][i])))},
+ toolbox:{f:(x,F)=>cpG(x,F,1,rc(-9,-10,18,10,"#C0453A",'rx="1"')+pa("M-4 -10 V-13 H4 V-10","none",'stroke="#3A3A3A" stroke-width="1.6"')+rc(-9,-6,18,1.2,"#A8352C"))},
+ plantpod:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-9,-26,18,26,"#E3E7E9",'stroke="#9AA0A6" stroke-width=".6"')+rc(-7,-24,14,16,"#C9F0D6")+AVq(3,i=>iaCirc(-4+i*4,-14,2.6,"#4E8A4A")))}
+});
+Object.assign(CM_PF,{
+ hosp:{p:["drip","wheelchair","crashcart","monitor","oxygen","screen","gel","clinbin","trolley"],w:["xray","handsign","clock"]},
+ cop:{p:["patrolcar","tape","bike","evidence","barrier","radio","cone","cabinet","papers"],w:["wanted","notice","clock"]},
+ fire:{p:["hose","ladder","hydrant","ba","engine","extinguisher","cone","toolbox"],w:["helmets","notice","clock"]},
+ air:{p:["suitcase","cabintrolley","chocks","tug","seats","windsock","cone"],w:["depboard","clock"]},
+ army:{p:["sandbags","crates","jerry","fieldradio","camonet","jeep","toolbox"],w:["mapwall","notice"]},
+ spy:{p:["briefcase","bench","phonebox","darkcar","shredder","laptop","papers"],w:["mapwall","wallscreen"]},
+ space:{p:["o2tank","suitstand","console","toolbox","plantpod","laptop"],w:["wallscreen","stickies"]}
+});
+
+/* ---- Props: football, school, kitchen, studio, stage, vet, architect, trades, salon ---- */
+Object.assign(CMP,{
+ ball:{f:(x,F)=>cpG(x,F,1,iaCirc(0,-5,5,"#F2F4F5",'stroke="#2B2B2B" stroke-width=".8"')+pa("M-1.6 -6.6 L1.6 -6.6 L2.4 -3.8 L0 -2.2 L-2.4 -3.8Z","#2B2B2B"))},
+ balls:{f:(x,F)=>cpG(x,F,1,rc(-12,-14,24,14,"#2B3A44",'rx="2" opacity=".85"')+AVq(5,i=>iaCirc(-8+i*4,-15-(i%2)*4,4,"#F2F4F5",'stroke="#2B2B2B" stroke-width=".6"')))},
+ goal:{io:"o",sp:2,f:(x,F)=>cpG(x,F,1,kGoal(-26,-26,52,26))},
+ kitbag:{f:(x,F)=>cpG(x,F,1,rc(-13,-11,26,11,"#B3262E",'rx="5"')+pa("M-6 -11 q6 -6 12 0","none",'stroke="#2B2B2B" stroke-width="1.4"')+rc(-13,-6,26,1.4,"#F2F4F5"))},
+ bottles:{f:(x,F)=>cpG(x,F,1,rc(-11,-9,22,9,"#3E6FB0")+AVq(4,i=>rc(-9+i*5,-17,4,8,"#9FD0EE")+rc(-8.4+i*5,-19,2.8,2,"#2B2B2B")))},
+ tactics:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-20,2,20,"#8A939C")+rc(-15,-42,30,22,"#3E8A4A",'stroke="#F2F4F5" stroke-width="1.5"')+rc(-.4,-42,.8,22,"#F2F4F5")+AVq(5,i=>iaCirc(-10+i*5,-36+(i%2)*10,1.6,i%2?"#C0453A":"#1D5FA8")))},
+ cornerflag:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-.8,-30,1.6,30,"#F2F4F5")+pa("M.8 -30 L12 -26 L.8 -22Z","#E9C46A"))},
+ trophy:{f:(x,F)=>cpG(x,F,1,rc(-8,-14,16,14,"#5A3A22")+pa("M-8 -30 H8 V-24 A8 8 0 0 1 -8 -24Z","#E9C46A")+rc(-2,-18,4,4,"#D7A744")+rc(-5,-15,10,2,"#B8862B"))},
+ camera:{f:(x,F)=>cpG(x,F,1,pa("M0 -24 L-8 0 M0 -24 L8 0 M0 -24 V0","none",'stroke="#3A3A3A" stroke-width="1.4"')+rc(-10,-34,18,11,"#2B2B2B",'rx="1.5"')+iaCirc(10,-29,4,"#3A3A3A")+iaCirc(10,-29,2,"#7FB2E5"))},
+ /* school */
+ pupdesk:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-13,-16,26,3,"#C9A060")+rc(-11,-13,2,13,"#5A6066")+rc(9,-13,2,13,"#5A6066")+rc(-6,-20,9,4,"#F2F4F5")+rc(4,-19,5,3,"#E86A7A"))},
+ globe:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-6,-16,12,16,"#8A6A44")+rc(-1,-20,2,4,"#B8862B")+iaCirc(0,-28,8,"#7FB2E5")+pa("M-5 -32 q3 2 2 6 q4 0 4 4 M2 -34 q2 3 5 2","none",'stroke="#4E8A4A" stroke-width="2"'))},
+ easel:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M-10 0 L-4 -40 M10 0 L4 -40 M0 -40 L2 0","none",'stroke="#8A6A44" stroke-width="2"')+rc(-13,-38,26,20,"#F7F4EC",'stroke="#C9B79A"')+AVq(3,i=>iaCirc(-6+i*6,-28,3,["#E86A7A","#E9C46A","#7FB2E5"][i])))},
+ backpack:{f:(x,F)=>cpG(x,F,1,rc(-6,-14,12,14,CMV(0,["#E07A2E"]),'rx="3"')+rc(-4,-7,8,5,"#C0653A",'rx="1"')+pa("M-3 -14 q3 -4 6 0","none",'stroke="#5A3A22" stroke-width="1.2"'))},
+ piano:{io:"i",sp:2,f:(x,F)=>cpG(x,F,1,rc(-24,-30,48,26,"#3A2A1A")+rc(-22,-16,44,4,"#F2F4F5")+AVq(8,i=>rc(-20+i*5.4,-16,2.4,2.4,"#2B2B2B"))+rc(-22,-4,3,4,"#3A2A1A")+rc(19,-4,3,4,"#3A2A1A"))},
+ artwall:{wall:1,f:(x,y)=>AVq(4,i=>rc(x-18+(i%2)*19,y+Math.floor(i/2)*12,16,10,"#F7F4EC",'stroke="#C9B79A" stroke-width=".6"')+iaCirc(x-12+(i%2)*19,y+5+Math.floor(i/2)*12,2.6,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85"][i]))},
+ /* kitchen */
+ stockpot:{f:(x,F)=>cpG(x,F,1,rc(-10,-16,20,16,"#5A6066")+rc(-9,-28,18,12,"#C9CED2",'rx="1"')+rc(-11,-29,22,2,"#9AA0A6")+pa("M-4 -31 q3 -6 0 -12 M4 -31 q3 -6 0 -12","none",'stroke="#fff" stroke-width="1.4" opacity=".6"'))},
+ vegcrate:{f:(x,F)=>cpG(x,F,1,rc(-12,-10,24,10,"#C9A060")+AVq(5,i=>iaCirc(-8+i*4,-11,3.4,["#E07A2E","#4E8A4A","#C0453A","#E07A2E","#7A9A4A"][i]))+rc(-12,-6,24,1.2,"#A87A45"))},
+ sacks:{f:(x,F)=>cpG(x,F,1,pa("M-14 0 Q-15 -14 -8 -16 Q-2 -14 -2 0Z","#E9DCC0")+pa("M0 0 Q-1 -18 6 -20 Q13 -18 12 0Z","#F2EAD6"))},
+ mop:{f:(x,F)=>cpG(x,F,1,rc(-8,-10,16,10,"#E9C46A",'rx="1"')+rc(-1,-40,1.6,30,"#8A6A44")+pa("M-3 -10 L-1 -14 L2 -14 L4 -10Z","#C9CDD1"))},
+ platecart:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-11,-26,22,2,"#C9CDD1")+rc(-11,-14,22,2,"#C9CDD1")+rc(-11,-26,2,24,"#9AA0A6")+rc(9,-26,2,24,"#9AA0A6")+AVq(4,i=>`<ellipse cx="0" cy="${-28-i*1.6}" rx="8" ry="1.6" fill="#F7F7F4" stroke="#D5D8DA" stroke-width=".4"/>`)+iaCirc(-9,-1,1.6,"#3A3A3A")+iaCirc(9,-1,1.6,"#3A3A3A"))},
+ mixer:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-14,24,3,"#C9CED2")+rc(-10,-11,2,11,"#9AA0A6")+rc(8,-11,2,11,"#9AA0A6")+rc(-6,-30,12,6,"#C0453A",'rx="2"')+rc(2,-24,4,8,"#C0453A")+pa("M-5 -14 Q0 -10 5 -14 L4 -20 H-4Z","#C9CDD1"))},
+ pans:{wall:1,f:(x,y)=>rc(x-20,y,40,2,"#5A6066")+AVq(4,i=>rc(x-16+i*10,y+2,1,5,"#5A6066")+iaCirc(x-16+i*10,y+10,3+i%2,"#2B2B2B"))},
+ ticketrail:{wall:1,f:(x,y)=>rc(x-20,y,40,2,"#9AA0A6")+AVq(5,i=>rc(x-18+i*8,y+2,6,9+(i%2)*3,"#F7F4EC",'stroke="#D2D6D8" stroke-width=".4"'))},
+ /* studio */
+ softbox:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M0 -30 L-7 0 M0 -30 L7 0","none",'stroke="#3A3A3A" stroke-width="1.4"')+rc(-1,-36,2,6,"#3A3A3A")+rc(-10,-50,20,15,"#F7F4EC",'stroke="#3A3A3A" stroke-width="1.4"'))},
+ ringlight:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-.8,-30,1.6,30,"#3A3A3A")+pa("M-6 0 L0 -3 L6 0","none",'stroke="#3A3A3A" stroke-width="1.6"')+iaCirc(0,-38,8,"none",'stroke="#FFF6D8" stroke-width="3"')+rc(-2,-41,4,7,"#2B2B2B",'rx="1"'))},
+ boom:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-.8,-30,1.6,30,"#3A3A3A")+pa("M0 -30 L22 -44","none",'stroke="#9AA0A6" stroke-width="1.6"')+`<ellipse cx="24" cy="-45" rx="5" ry="2.4" fill="#6F7579"/>`)},
+ dirchair:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M-8 0 L8 -14 M8 0 L-8 -14","none",'stroke="#8A6A44" stroke-width="2"')+rc(-9,-16,18,3,"#2B2B2B")+rc(-9,-28,18,6,"#2B2B2B")+rc(-9,-28,2,14,"#8A6A44")+rc(7,-28,2,14,"#8A6A44"))},
+ rail:{io:"i",sp:2,f:(x,F)=>cpG(x,F,1,rc(-24,-40,48,2,"#9AA0A6")+rc(-24,-40,2,40,"#9AA0A6")+rc(22,-40,2,40,"#9AA0A6")+AVq(5,i=>pa(`M${-18+i*9} -38 l-4 6 v16 h8 v-16Z`,["#B3262E","#2B2B2B","#E9C46A","#7FB2E5","#7A2A5A"][i])))},
+ clapper:{f:(x,F)=>cpG(x,F,1,rc(-8,-16,16,12,"#2B2B2B")+pa("M-8 -16 L8 -20 L8 -17 L-8 -13Z","#F2F4F5")+rc(-2,-4,4,4,"#2B2B2B"))},
+ /* stage */
+ amp:{f:(x,F)=>cpG(x,F,1,rc(-11,-22,22,22,"#1C1C24",'stroke="#3A3A44"')+iaCirc(0,-10,6,"#2B2B33")+rc(-9,-20,18,3,"#555"))},
+ guitar:{f:(x,F)=>cpG(x,F,1,pa("M-6 0 L0 -4 L6 0","none",'stroke="#2B2B2B" stroke-width="1.4"')+`<ellipse cx="0" cy="-10" rx="7" ry="6" fill="${CMV(0,["#C0453A"])}"/><ellipse cx="0" cy="-17" rx="5" ry="4.4" fill="#C0453A"/>`+iaCirc(0,-11,1.8,"#2B2B2B")+rc(-1,-38,2,20,"#5A3A22")+rc(-2,-41,4,4,"#2B2B2B"))},
+ drums:{sp:2,f:(x,F)=>cpG(x,F,1,iaCirc(0,-12,11,"#F2F4F5",'stroke="#C0453A" stroke-width="2.4"')+rc(-24,-20,12,10,"#C0453A")+rc(12,-22,10,8,"#C0453A")+pa("M-20 -32 L-14 -30 M18 -34 L24 -32","none",'stroke="#E9C46A" stroke-width="2"')+rc(-18,-30,1,10,"#9AA0A6")+rc(20,-32,1,10,"#9AA0A6"))},
+ speakers:{f:(x,F)=>cpG(x,F,1,rc(-10,-40,20,40,"#1C1C24")+iaCirc(0,-30,5,"#3A3A44")+iaCirc(0,-12,7,"#3A3A44"))},
+ decks:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-16,-16,32,16,"#2B2B33")+rc(-18,-20,36,4,"#3A3A44")+iaCirc(-8,-21,4,"#1C1C24")+iaCirc(8,-21,4,"#1C1C24")+rc(-1.5,-23,3,3,"#4BBA85"))},
+ flightcase:{f:(x,F)=>cpG(x,F,1,rc(-12,-16,24,16,"#2B2B33",'stroke="#9AA0A6" stroke-width="1.2"')+rc(-12,-9,24,1.2,"#9AA0A6")+rc(-14,-3,28,3,"#555"))},
+ keys:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M-10 0 L10 -22 M10 0 L-10 -22","none",'stroke="#3A3A3A" stroke-width="1.6"')+rc(-16,-26,32,6,"#2B2B2B")+AVq(7,i=>rc(-14+i*4,-25,3,3,"#F2F4F5")))},
+ discoball:{wall:1,f:(x,y)=>rc(x-.5,0,1,y,"#555")+iaCirc(x,y+6,6,"#C9CDD1")+AVq(4,i=>rc(x-5+i*3,y+3,1.4,1.4,"#fff"))},
+ /* vet */
+ dog:{f:(x,F,v)=>w2Dog(x,F,["#C98A5A","#2B2B2B","#E9DCC0","#8C5A3C"][(x+(v||0))%4],.75,x%2?1:-1)},
+ cat:{f:(x,F,v)=>w2Cat(x,F,["#E07A2E","#8E969A","#2B2B2B"][(x+(v||0))%3],.75,x%2?1:-1)},
+ carrier:{f:(x,F)=>cpG(x,F,1,rc(-11,-14,22,14,"#9FB8D0",'rx="3"')+rc(4,-11,6,8,"#2B3A44",'rx="1"')+AVq(3,i=>rc(4.5+i*2,-11,.8,8,"#9AA0A6"))+pa("M-6 -14 q6 -6 12 0","none",'stroke="#5A6066" stroke-width="1.6"'))},
+ petbed:{f:(x,F)=>cpG(x,F,1,`<ellipse cx="0" cy="-4" rx="14" ry="5" fill="#B3262E"/><ellipse cx="0" cy="-5" rx="10" ry="3" fill="#E9DCC0"/>`)},
+ feed:{f:(x,F)=>cpG(x,F,1,pa("M-8 0 L-9 -20 Q0 -23 9 -20 L8 0Z","#C9A060")+iaCirc(0,-11,4,"#E9C46A")+rc(-7,-19,14,2,"#A87A45"))},
+ bucket:{f:(x,F)=>cpG(x,F,1,pa("M-6 0 L-7 -11 H7 L6 0Z","#7FB2E5")+pa("M-7 -11 Q0 -20 7 -11","none",'stroke="#5A6066" stroke-width="1"'))},
+ hay:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-14,-12,28,12,"#E9C46A",'rx="2"')+AVq(4,i=>rc(-12+i*7,-11,1,10,"#C9A23A")))},
+ sheep:{io:"o",f:(x,F)=>cpG(x,F,.9,`<ellipse cx="0" cy="-12" rx="11" ry="7" fill="#F4F2EE"/>`+iaCirc(11,-14,4,"#2B2B2B")+rc(-7,-6,2,6,"#2B2B2B")+rc(5,-6,2,6,"#2B2B2B"))},
+ vetposter:{wall:1,f:(x,y)=>rc(x-10,y,20,24,"#F2F4F5",'stroke="#9AA0A6"')+pa(`M${x-6} ${y+14} q2 -6 6 -4 q4 -2 6 4 q-6 4 -12 0Z`,"#C98A5A")+rc(x-6,y+18,12,2,"#4BA3A0")},
+ /* architect */
+ drafting:{io:"i",f:(x,F)=>cpG(x,F,1,pa("M-12 0 L-4 -20 M12 0 L4 -20","none",'stroke="#5A6066" stroke-width="1.8"')+pa("M-16 -20 L16 -26 L16 -22 L-16 -16Z","#F2F4F5",'stroke="#9AA0A6" stroke-width=".6"')+pa("M-8 -21 L6 -24","none",'stroke="#3E6FB0" stroke-width=".8"'))},
+ model:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-16,24,16,"#F2F4F5",'stroke="#C9CDD1"')+rc(-9,-30,8,14,"#F7F7F4",'stroke="#9AA0A6" stroke-width=".6"')+rc(0,-38,8,22,"#F7F7F4",'stroke="#9AA0A6" stroke-width=".6"')+iaCirc(-8,-18,2,"#7FB27A"))},
+ plansroll:{f:(x,F)=>cpG(x,F,1,rc(-7,-20,14,20,"#9AA0A6",'rx="2"')+AVq(4,i=>rc(-6+i*3,-32+(i%2)*3,2.4,14,["#DCE8F2","#F2F4F5"][i%2])))},
+ hardhats:{f:(x,F)=>cpG(x,F,1,rc(-12,-8,24,8,"#8A6A44")+pa("M-10 -8 A5 5 0 0 1 0 -8Z","#E8B73A")+pa("M1 -8 A5 5 0 0 1 11 -8Z","#F2F4F5"))},
+ mixerc:{io:"o",f:(x,F)=>cpG(x,F,1,pa("M-10 -14 L6 -24 L12 -12 L-4 -4Z","#E36F2C")+rc(-8,-6,16,3,"#5A6066")+iaCirc(-6,-2,2.4,"#2B2B2B")+iaCirc(6,-2,2.4,"#2B2B2B"))},
+ scaffold:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-14,-46,2,46,"#8A939C")+rc(12,-46,2,46,"#8A939C")+AVq(3,i=>rc(-14,-46+i*15,28,2,"#8A939C"))+pa("M-12 -1 L12 -15 M-12 -16 L12 -30","none",'stroke="#8A939C" stroke-width="1.2"')+rc(-14,-32,28,2.4,"#A88E6A"))},
+ theodolite:{io:"o",f:(x,F)=>cpG(x,F,1,pa("M0 -18 L-8 0 M0 -18 L8 0 M0 -18 V0","none",'stroke="#E8B73A" stroke-width="1.4"')+rc(-4,-25,8,7,"#E9C46A")+rc(4,-23,4,3,"#3A3A3A"))},
+ /* trades */
+ stepladder:{f:(x,F)=>cpG(x,F,1,pa("M-8 0 L-2 -34 L6 0","none",'stroke="#9AA0A6" stroke-width="2"')+AVq(3,i=>rc(-6.4+i*1.2,-9-i*8,8-i*1.6,1.6,"#9AA0A6"))+rc(-4,-36,6,3,"#9AA0A6"))},
+ pipes:{f:(x,F)=>cpG(x,F,1,AVq(4,i=>rc(-16,-3-i*3.2,32,2.6,"#C98A3A",'rx="1.3"'))+rc(-18,-1,36,1,"#8A6A44"))},
+ cabledrum:{f:(x,F)=>cpG(x,F,1,iaCirc(0,-9,9,"#E36F2C")+iaCirc(0,-9,5,"#2B2B2B")+iaCirc(0,-9,2,"#9AA0A6"))},
+ radiator:{wall:1,f:(x,y)=>rc(x-16,y+16,32,14,"#F2F4F5",'stroke="#C9CDD1"')+AVq(6,i=>rc(x-14+i*5,y+17,1,12,"#D2D6DA"))},
+ boilerw:{wall:1,f:(x,y)=>rc(x-10,y,20,26,"#F2F4F5",'stroke="#C9CDD1" rx="2"')+rc(x-6,y+18,12,4,"#2B3A44")+iaCirc(x+3,y+20,1,"#4BBA85")+pa(`M${x-6} ${y+26} v6 M${x} ${y+26} v6 M${x+6} ${y+26} v6`,"none",'stroke="#C98A3A" stroke-width="1.6"')},
+ fusebox:{wall:1,f:(x,y)=>rc(x-14,y,28,16,"#F2F4F5",'stroke="#9AA0A6"')+AVq(6,i=>rc(x-11+i*4,y+4,3,8,i===2?"#C0453A":"#3A4650"))},
+ solarstack:{io:"o",f:(x,F)=>cpG(x,F,1,AVq(4,i=>rc(-14,-4-i*4,28,3.4,"#2F4F8A",'stroke="#9AA0A6" stroke-width=".4"')))},
+ sinkunit:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-18,24,18,"#F2F4F5",'stroke="#C9CDD1"')+rc(-13,-20,26,3,"#E9E4DA")+pa("M0 -20 V-26 H5","none",'stroke="#9AA0A6" stroke-width="1.6"'))},
+ wheeliebin:{io:"o",f:(x,F)=>cpG(x,F,1,pa("M-7 0 L-8 -22 H8 L7 0Z","#2F6E4A")+rc(-9,-24,18,3,"#255A3C")+iaCirc(-5,0,1.8,"#2B2B2B"))},
+ /* salon */
+ salonchair:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-2,-8,4,8,"#555")+rc(-8,-1,16,1.4,"#555")+rc(-9,-16,18,8,"#1A1C1E",'rx="2"')+rc(-8,-30,16,15,"#1A1C1E",'rx="3"'))},
+ hooddryer:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-1,-30,2,30,"#9AA0A6")+pa("M-7 0 L0 -3 L7 0","none",'stroke="#9AA0A6" stroke-width="1.6"')+pa("M-10 -30 Q-10 -44 4 -44 Q12 -44 12 -34 L6 -30Z","#E8D4C4",'stroke="#C9A0AA" stroke-width=".8"'))},
+ foils:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-8,-22,16,20,"#2B2B2B",'rx="1"')+AVq(3,i=>rc(-6,-20+i*6,12,4,"#3A3A3A"))+AVq(4,i=>rc(-6+i*3.4,-27,2.6,5,"#D8DCDF"))+iaCirc(-6,-1,1.5,"#555")+iaCirc(6,-1,1.5,"#555"))},
+ towels:{f:(x,F)=>cpG(x,F,1,AVq(4,i=>rc(-10,-5-i*5,20,4.6,["#F2F4F5","#E8D4C4","#2B2B2B","#F2F4F5"][i],'rx="2.2"')))},
+ products:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-12,-30,24,30,"#F7F4EC",'stroke="#E0CFC4"')+AVq(2,r=>rc(-12,-20+r*10,24,1.4,"#E0CFC4")+AVq(4,i=>rc(-10+i*6,-29+r*10,4,8,["#2B2B2B","#C9A27A","#7A2A5A","#4E8A4A"][(i+r)%4],'rx="1"'))))},
+ broom:{f:(x,F)=>cpG(x,F,1,rc(-.8,-40,1.6,34,"#8A6A44")+pa("M-6 0 L-4 -6 H4 L6 0Z","#C9A060"))},
+ mirrorlights:{wall:1,f:(x,y)=>kMirror(x-14,y,28,22)+AVq(5,i=>iaCirc(x-12+i*6,y-2,1.6,"#F6E7A8"))}
+});
+Object.assign(CM_PF,{
+ stad:{p:["ball","balls","goal","kitbag","bottles","tactics","cornerflag","trophy","camera","cone"],w:["wallscreen","clock"]},
+ school:{p:["pupdesk","globe","easel","backpack","piano","bookpile","whiteboard","balls","chair"],w:["artwall","clock","notice"]},
+ kitch:{p:["stockpot","vegcrate","sacks","mop","platecart","mixer","bin","extinguisher"],w:["pans","ticketrail"]},
+ studio:{p:["camera","softbox","boom","dirchair","rail","monitor","sofa"],w:["wallscreen","mirrorlights"]},
+ influ:{p:["ringlight","laptop","camera","boxes","sofa","tallplant","products"],w:["picture","stickies"]},
+ film:{p:["camera","softbox","boom","dirchair","clapper","rail"],w:["mirrorlights"]},
+ stage:{p:["amp","guitar","drums","speakers","decks","flightcase","keys","micstand"],w:["discoball"]},
+ vet:{p:["dog","cat","carrier","petbed","feed","bucket","hay","sheep","trolley"],w:["vetposter","clock"]},
+ arch:{p:["drafting","model","plansroll","hardhats","mixerc","scaffold","theodolite","cone","deskpc"],w:["picture","notice"]},
+ trade:{p:["toolbox","stepladder","pipes","cabledrum","sinkunit","wheeliebin","bucket","boxes"],w:["radiator","boilerw","fusebox"]},
+ elecx:{p:["cabledrum","solarstack","stepladder"],w:["fusebox"]},
+ plumbx:{p:["pipes","sinkunit","bucket"],w:["boilerw","radiator"]},
+ salon:{p:["salonchair","hooddryer","foils","towels","products","broom","plant"],w:["mirrorlights","clock"]}
+});
+
+/* which backdrop families each job uses */
+const CM_CAR={bank:["office","trading"],tech:["office","tech"],law:["office","law"],pol:["office","politics"],clubowner:["office","stad"],cardealer:["office","cars"],
+ doc:["hosp"],nurse:["hosp"],police:["cop"],fire:["fire"],pilot:["air"],foot:["stad"],manager:["stad"],teach:["school"],soldier:["army"],spy:["spy"],astronaut:["space"],
+ chef:["kitch"],tvchef:["kitch","studio"],influencer:["studio","influ"],actor:["studio","film"],music:["stage"],dj:["stage"],vet:["vet"],arch:["arch"],elec:["trade","elecx"],plumb:["trade","plumbx"],hair:["salon"]};
+
+/* ---- The composer: backdrop + people + props, chosen per message and remembered on it ---- */
+const CM_SL=[34,86,138,190,242,290];
+const CM_BESPOKE=35,CM_CAP=12,CM_RECAST=38;
+const cmFams=car=>CM_CAR[car]||[];
+const cmBackdrops=car=>{const f=cmFams(car);return Object.keys(CMB).filter(id=>f.includes(CMB[id].fam))};
+const cmRecastPool=()=>{let p=[];try{p=avCareerPool().filter(k=>!/^phc_/.test(k)&&cmRecastN(k)>0&&!(avNoSnow()&&AV_SNOWY.has(k)))}catch(e){}return p};
+const cmIO=(id,b)=>{const p=CMP[id];return !(p.io==="i"&&b.out)&&!(p.io==="o"&&!b.out)};
+function cmPropsFor(car,b,wall){const out=[];for(const f of cmFams(car).concat(b.gen===false?[]:["gen"]))for(const id of ((CM_PF[f]||{})[wall?"w":"p"]||[]))if(CMP[id]&&!out.includes(id)&&!(b.no||[]).includes(id)&&cmIO(id,b))out.push(id);return out}
+function cmBuildB(bid,cast,txt,hh,car){
+ const b=CMB[bid],sl=(b.sl||CM_SL).slice(),n=cast.length,free=sl.map(()=>true),R=[],W=[],P=[];
+ const rot=(arr,k)=>arr.map((_,i)=>arr[(k+i)%arr.length]);
+ /* people: spread across the slots */
+ const idx=rot(sl.map((_,i)=>i),hh%sl.length).slice(0,n).sort((a,c)=>a-c);
+ idx.forEach((si,j)=>{free[si]=false;const [role,L]=cast[j];const [pose,held]=cmPose(txt,role);P.push([sl[si],L,role,pose,held])});
+ /* props: a story prop first, then the workplace's own */
+ const fp=cmPropsFor(car,b,0),wp=cmPropsFor(car,b,1);let want=[];
+ for(const [re,id] of CM_KW)if(re.test(txt)&&CMP[id]&&!want.includes(id)&&!(b.no||[]).includes(id)&&cmIO(id,b)&&(!CMP[id].wall||(b.w||[]).length)){want.push(id);if(want.length>=1)break}
+ const np=Math.max(1,Math.min(3,1+((hh>>>9)%2)+(n<2?1:0)))-(n>=3?1:0);
+ want=want.concat(rot(fp,(hh>>>5)%Math.max(1,fp.length)).slice(0,np+2)).concat(rot(wp,(hh>>>6)%Math.max(1,wp.length)).slice(0,2));
+ const ws=(b.w||[]).map(()=>true);let nfp=0,nwp=0;const maxW=(b.w||[]).length?(hh>>>13)%3:0;
+ const fstart=(hh>>>15)%sl.length;
+ for(const id of want){const p=CMP[id];if(!p||R.some(r=>r[1]===id)||W.some(r=>r[1]===id))continue;
+  if(p.wall){if(nwp>=Math.max(maxW,CM_KW.some(([re,k])=>k===id&&re.test(txt))?1:0))continue;const wi=rot(ws.map((_,i)=>i),(hh>>>8)%Math.max(1,ws.length)).find(i=>ws[i]);if(wi==null)continue;ws[wi]=false;W.push([wi,id]);nwp++;continue}
+  if(nfp>=np)continue;const sp=p.sp||1;
+  const si=rot(sl.map((_,i)=>i),fstart).find(i=>free[i]&&(sp<2||(i+1<sl.length&&free[i+1])));if(si==null)continue;
+  free[si]=false;if(sp>1)free[si+1]=false;R.push([sp>1?(sl[si]+sl[si+1])/2:sl[si],id]);nfp++}
+ return {t:"b",s:bid,v:(hh>>>3)%3,P,R,W};
+}
+function cmRenderB(c,car){
+ const b=CMB[c.s];if(!b)return"";let s=b.f(c.v||0);const F=b.F||76;
+ for(const [wi,id] of c.W||[]){const w=(b.w||[])[wi],p=CMP[id];if(w&&p)s+=p.f(w[0],w[1])}
+ for(const [x,id] of c.R||[]){const p=CMP[id];if(p)s+=p.f(x,F,c.v||0)}
+ for(const [x,L,role,pose,held] of c.P||[]){const o=Object.assign({},cmBody(role,L,b.fam,car),b.pso||{});if(b.nohat)o.hat="";if(b.hat&&role!=="cli")o.hat=b.hat;if(pose===2)o.pose=2;else if(held)o.held=held;s+=cmFig(x,F,L,o)}
+ return s;
+}
+function cmRender(p){
+ const car=p.c||S.path;let inner="";
+ if(p.t==="r"&&IA[p.s])inner=cmRecast(p.s,p.P||[],car);else if(p.t==="b")inner=cmRenderB(p,car);
+ if(!inner)return"";
+ /* indoors at night: darker, but no stars on the ceiling */
+ const ov=p.t==="b"&&p.o==="night"&&CMB[p.s]&&!CMB[p.s].out?rc(0,0,IA_W,IA_H,"#0B1530",'opacity=".36"'):avOverlay(p.o);
+ return `<svg viewBox="0 0 ${IA_W} ${IA_H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${inner}${ov}</svg>`;
+}
+const cmKey=c=>h32(c.t+":"+c.s+":"+(c.v||0)+":"+(c.P||[]).map(p=>p.slice(0,2).join("/")+(p[4]||p[3]||"")).join(",")+":"+(c.R||[]).map(r=>r.join("/")).join(",")+":"+(c.W||[]).map(r=>r.join("/")).join(",")).toString(36);
+function cmIsWork(m,e){let k;try{k=iaKey2(m,e)}catch(x){return null}const car=IA_CAREER[S.path];if(!k||!car)return null;return k===car||(IA_ALT[S.path]||[]).includes(k)?k:null}
+function cmPick(m,e){
+ if(!S||!CM_CAR[S.path])return null;const k=cmIsWork(m,e);if(!k)return null;
+ const h=h32(String(m.id||"")+"|"+(e.t||"")+"|"+S.day);
+ let txt="",raw=(e.t||"")+" "+(e.b||"");try{txt=fill(e.t||"",m)+" "+fill(e.b||"",m)}catch(x){txt=raw}
+ const N=S.cmN=S.cmN&&typeof S.cmN==="object"?S.cmN:{};
+ /* some of the time, the hand-drawn scene as it is (each one only so often in a life) */
+ if((h>>>4)%100<CM_BESPOKE){const p0=m.avIa;const p=avIaPick(m,e);if(p&&!p.cm&&(N[p.k]||0)<CM_CAP){N[p.k]=(N[p.k]||0)+1;return null}if(m.avIa===p&&p&&!p.cm)m.avIa=p0}
+ const R=S.cmR=Array.isArray(S.cmR)?S.cmR:[],RB=S.cmB=Array.isArray(S.cmB)?S.cmB:[];
+ const used=typeof iaUsed!=="undefined"&&iaUsed?iaUsed:null;
+ const bds=cmBackdrops(S.path),rcs=cmRecastPool(),kwB=bds.filter(id=>CMB[id].kw&&CMB[id].kw.test(txt));
+ if(!bds.length&&!rcs.length)return null;
+ let best=null;
+ for(let t=0;t<16;t++){
+  const hh=h32(h+":"+t);let c;
+  const cast=cmCast(m,e,txt,raw,hh);
+  const useR=rcs.length&&!(kwB.length&&t<6)&&(!bds.length||(hh>>>2)%100<CM_RECAST);
+  if(useR){const sk=rcs[hh%rcs.length],n=cmRecastN(sk);const P=[];const ord=cast.slice();
+   for(let i=0;i<n;i++){const j=(i+(hh>>>9))%Math.max(n,ord.length);P.push(j<ord.length?[0,ord[j][1],ord[j][0]]:[0,cmWorkmate((hh>>>i)%6+i),"col"])}
+   c={t:"r",s:sk,P};}
+  else{const pool=kwB.length&&t<6?kwB:bds;const bid=pool[(hh>>>1)%pool.length];c=cmBuildB(bid,cast,txt,hh,S.path)}
+  const key=cmKey(c),bk=c.t+c.s;
+  if(!best)best=c;
+  if(t<15&&(R.includes(key)||(t<10&&RB.includes(bk))||(used&&used.has("cm:"+bk))))continue;
+  best=c;break;
+ }
+ const c=best,key=cmKey(c),bk=c.t+c.s;
+ R.unshift(key);if(R.length>40)R.length=40;RB.unshift(bk);if(RB.length>3)RB.length=3;if(used)used.add("cm:"+bk);
+ const out=c.t==="r"?c.s:(CMB[c.s].out?"court":"office");
+ c.o=avMood(out,txt,h>>>8);if(c.t==="b"&&CMB[c.s].night&&!c.o)c.o="";
+ c.cm=1;c.c=S.path;c.k=c.t==="r"?c.s:(IA[IA_CAREER[S.path]]?IA_CAREER[S.path]:k);
+ return c;
+}
+/* other stories keep their own pictures; once one has been seen a lot this life, the people in it become the people in the story */
+const CM_CAP2=8;
+function cmSocial(m,e){
+ if(!S)return null;const q=avIaPick(m,e);if(!q||q.cm||!IA[q.k])return null;
+ const N=S.cmN=S.cmN&&typeof S.cmN==="object"?S.cmN:{};N[q.k]=(N[q.k]||0)+1;
+ const n=cmRecastN(q.k);if(N[q.k]<=CM_CAP2||!n)return null;
+ const h=h32(String(m.id||"")+"|"+(e.t||"")+"|"+S.day);let txt="",raw=(e.t||"")+" "+(e.b||"");try{txt=fill(e.t||"",m)+" "+fill(e.b||"",m)}catch(x){txt=raw}
+ const cast=cmCast(m,e,txt,raw,h).filter(c=>c[0]!=="col");const P=[];
+ for(let i=0;i<n;i++){const j=(i+(h>>>9))%Math.max(n,cast.length);P.push(j<cast.length?[0,cast[j][1],cast[j][0]]:[0,cmStranger((h>>>(i%20))%997+i*1009),"st"])}
+ const c={cm:1,t:"r",s:q.k,P,o:q.o,c:S.path,k:q.k};m.avIa=c;return c;
+}
+{const _ia=inboxArt;inboxArt=function(m,e){try{
+  if(m&&m.avIa&&m.avIa.cm){const s=cmRender(m.avIa);if(s)return `<div class="mail-art" aria-hidden="true">${s}</div>`}
+  else if(m&&!m.avIa&&e){const p=cmPick(m,e);if(p){m.avIa=p;const s=cmRender(p);if(s)return `<div class="mail-art" aria-hidden="true">${s}</div>`}
+   else if(!cmIsWork(m,e)){const q=cmSocial(m,e);if(q){const s=cmRender(q);if(s)return `<div class="mail-art" aria-hidden="true">${s}</div>`}}}
+ }catch(x){}return _ia.apply(this,arguments)}}
+
+
+{const _ng=newGame;newGame=function(){const r=_ng.apply(this,arguments);setTimeout(()=>{try{crTouch()}catch(e){}},0);return r}}
+
+
+/* REGFIX: regression-suite fixes (tests/regress.js) */
+/* ---- The localiser: a swap never re-matches inside a value it produced ("city council" stays "city council") ---- */
+function locInside(L,w,str,at){
+ if(!L.ins){L.ins=new Map();const vals=[...new Set([...L.map.values()])];for(const k of L.map.keys()){const re=new RegExp("(^|[^A-Za-z0-9])"+reEsc(k)+"(?=[^A-Za-z0-9]|$)");const c=vals.filter(v=>v!==k&&re.test(v));if(c.length)L.ins.set(k,c)}}
+ const hit=(w,at)=>{const c=L.ins.get(w);if(!c)return false;for(const v of c){let i=v.indexOf(w);while(i>=0){const st=at-i;if(st>=0&&str.substr(st,v.length)===v)return true;i=v.indexOf(w,i+1)}}return false};
+ if(hit(w,at))return true;
+ /* "the City" inside "the City Hospital": the key's own "the" sits outside the value it produced */
+ const m=/^(the|The) (.+)$/.exec(w);if(m){const core=m[2];if(!L.ins.has(core)){const vals=[...new Set([...L.map.values()])],re=new RegExp("(^|[^A-Za-z0-9])"+reEsc(core)+"(?=[^A-Za-z0-9]|$)");const c=vals.filter(v=>v!==core&&re.test(v));if(c.length)L.ins.set(core,c)}if(hit(core,at+m[1].length+1))return true}
+ return false}
+/* ---- Countries: fill the gaps in each swap table, so no UK area or institution slips through ---- */
+const LOC_FILL={"Clam card":"travel card","Cotswold":"country","Cotswolds":"countryside","the Cotswolds":"the countryside","UK stamp duty":"property taxes","stamp duty":"property tax","Stamp duty":"Property tax",
+ "National Insurance":"social security","King's Counsel-ish":"Senior Counsel-ish","King's Counsel":"Senior Counsel","HMP Thameside":"the state prison","Pub quiz":"Quiz night","pub quiz":"quiz night",
+ "Pubs":"Bars","pubs":"bars","pub":"bar","The Treasury":"The Finance Ministry","the Treasury":"the finance ministry","a knighthood":"a national honour","constituents":"voters","Boxing Day":"the day after Christmas",
+ "Kent Police":"the regional police","Kent Fire and Rescue":"the regional fire service","10 Downing Street":"the leader's residence","Houses of Parliament":"the parliament building","council estate":"housing estate",
+ "The Chancellor":"The finance minister","the Chancellor":"the finance minister","Foreign Office-ish":"Foreign Ministry-ish","Foreign Office":"Foreign Ministry","PMQs":"question time",
+ "panto":"Christmas show","Luton":"the budget airport","Sunday roasts":"Sunday lunches","Sunday roast":"Sunday lunch","The Scottish Highlands":"The mountains","the Scottish Highlands":"the mountains","the Highlands":"the mountains","England":c=>c.n,"An NHS trust":"A hospital group","an NHS trust":"a hospital group","NHS Trust":"Hospital Group","22 Special Air Squadron-ish":c=>c.sf,"Special Air Squadron-ish":c=>c.sf,"SAS-ish":c=>c.sf};
+const LOC_AREA_SKIP=["Broadway","Hale","Greenwich"];
+(function locSupplement(){try{for(const code of Object.keys(COUNTRIES)){if(code==="uk")continue;const c=COUNTRIES[code];if(!c||!Array.isArray(c.swap)||!c.areas)continue;
+  const have=new Set(c.swap.map(p=>p[0])),add=(k,v)=>{if(k&&v&&!have.has(k)){c.swap.push([k,v]);have.add(k)}};
+  for(const[k,list]of Object.entries(UK_ORIG.areas)){const band=AREA_BAND[k],to=band&&c.areas[band];if(!to||!to.length)continue;(list||[]).forEach((x,i)=>{const a=Array.isArray(x)?x[0]:x;if(!LOC_AREA_SKIP.includes(a))add(a,to[i%to.length])})}
+  if(c.start){add(UK_ORIG.start.parA[0][0],c.start.parentsArea);add(UK_ORIG.start.roomA[0][0],c.start.roomArea)}
+  add("Catterick Garrison","the garrison");add("Hounslow","near the airport");if(c.areas.mid)add("Pimlico",c.areas.mid[0]);
+  for(const[k,v]of Object.entries(LOC_FILL))add(k,typeof v==="function"?v(c):v);
+  /* a lowercase swap also works at the start of a sentence or headline ("High street…", "Constituency…") */
+  /* ("A knighthood-ish" too; locInside stops "Council" -> "City council" being swapped again into "Wall Street council") */
+  const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
+  for(const[k,v]of c.swap.slice())if(/^[a-z]/.test(k))add(cap(k),cap(v))}
+ for(const k of Object.keys(LOC_CACHE))delete LOC_CACHE[k];if(typeof S!=="undefined"&&S&&S.country&&S.country!=="uk")LOC=buildLoc(S.country)}catch(e){}})();
+/* Stored places are local too, not just the words on screen (an Australian's home was "Romford" underneath, and UPPERCASE headlines missed the swap) */
+function locArea(a){try{if(!LOC||!a)return a;return LOC.map.get(a)||a}catch(e){return a}}
+const locUp=t=>{try{return (LOC?locText(String(t)):String(t)).toUpperCase()}catch(e){return String(t).toUpperCase()}};
+function locHome(){try{if(S&&S.home&&S.home.area&&S.country&&S.country!=="uk")S.home.area=locArea(S.home.area)}catch(e){}}
+{const _ng=newGame;newGame=function(){const r=_ng.apply(this,arguments);locHome();return r}}
+{const _csh=careerStartHome;careerStartHome=function(){const r=_csh.apply(this,arguments);locHome();return r}}
+{const _st=start;start=function(){const r=_st.apply(this,arguments);try{locHome();render()}catch(e){}return r}}
+/* The newspaper costs money, not pence, abroad */
+function paperPrice(n){try{if(typeof LOC!=="undefined"&&LOC)return locMoney(n/100,"",LOC)}catch(e){}return n+"p"}
+/* ---- Stories that need something you haven't got: children of the right age, a marriage, a cold climate ---- */
+const RG_KIDS=/\byour (kids|children|child|daughter|son|toddler|little ones?)\b|\b(with|for|to) the kids\b/i,RG_SCHOOL=/\b(nativity|school play|sports day|school run|parents' evening|third sheep)\b/i,
+ RG_AGED=/\b(\d+)-year-old (daughter|son)\b/i,RG_ANNIV=/\b(your|our) (wedding )?anniversary\b|\bwedding anniversary\b/i,
+ RG_SNOW=/\b(snow|snowed|snowman|snowball|sledg\w*|blizzard|icy roads|gritters?)\b/i,RG_SNOW_OK=/\b(fake snow|snow machine|ski\w*|abroad|mountains?|alps)\b/i,RG_WARM=["australia","india","nigeria"];
+const RG_NEED=new Map();
+function rgNeed(e){let n=RG_NEED.get(e);if(n)return n;const t=(typeof e.t==="string"?e.t:"")+" "+(typeof e.b==="string"?e.b:"");
+ n={kids:RG_KIDS.test(t),school:RG_SCHOOL.test(t),aged:+((t.match(RG_AGED)||[])[1]||0),anniv:RG_ANNIV.test(t),snow:RG_SNOW.test(t)&&!RG_SNOW_OK.test(t),
+  parents:/\byour (parents|mum|dad|mother|father)('s|')?\b/i.test(t)&&!/\b(died|death|funeral|grave|late|memory|remember|inherit|will)\b/i.test(t),
+  partner:/\{p\}/.test(t+" "+(typeof e.from==="string"?e.from:""))&&!e.vars&&!/\b(meet|meets|someone new|date|dating|match|matches|swipe|single)\b/i.test(t)};RG_NEED.set(e,n);return n}
+{const _el=eligible;eligible=function(e){if(!_el.apply(this,arguments))return false;try{if(e&&!e.dyn){const n=rgNeed(e);
+  if(n.partner&&!inLove())return false;
+  if(n.parents&&S.folks&&S.folks.length&&!S.folks.some(f=>f.alive))return false;
+  if(n.kids||n.school||n.aged||n.anniv||n.snow){const ages=(S.children||[]).filter(k=>!k.dead).map(k=>kidAge(k)).filter(a=>a>=0);
+   if((n.kids||n.school||n.aged)&&!ages.length)return false;
+   if(n.school&&!ages.some(a=>a>=3&&a<12))return false;
+   if(n.aged&&!ages.some(a=>Math.abs(a-n.aged)<=4))return false;
+   if(n.anniv&&S.rel.st!=="married")return false;
+   if(n.snow&&RG_WARM.includes(S.country))return false}}}catch(x){}return true}}
+/* ---- Friends' chatter and repeat offers get a gap too (only these: the game's own STORY_GAP list for generated stories is left alone,
+   because blocking those starves the stress relief some of them carry and burnout shot up in the balance test) ---- */
+/* (friends' invitations are NOT gapped: they carry the stress relief, and gapping them tripled burnout in the balance test) */
+/* (nor side-hustle check-ins "...: 3 months on" or career invitations "Join ...?": they are where you stop or change course, and gapping them pushed burnout to 60%+) */
+const RG_GAP=[[/^A cake from /,18],[/ needs a loan$/,24]];
+const rgGapKey=t=>{const g=RG_GAP.find(([re])=>re.test(String(t||"")));return g?["rg:"+String(g[0]),g[1]]:null};
+{const _pd=pushDyn;pushDyn=function(ev){try{const g=ev&&typeof ev.t==="string"&&rgGapKey(ev.t);if(g&&!S.inbox.some(m=>m.id===ev.id)){S.storyAt=S.storyAt||{};const at=S.storyAt[g[0]];if(at!=null&&S.day-at<g[1])return;S.storyAt[g[0]]=S.day}
+  /* hot countries don't get snow stories */
+  if(ev&&RG_WARM.includes(S.country)&&RG_SNOW.test((ev.t||"")+" "+(ev.b||""))&&!RG_SNOW_OK.test((ev.t||"")+" "+(ev.b||"")))return}catch(e){}return _pd.apply(this,arguments)}}
+/* Burnout warnings come back while you keep overdoing it, but not in the same words every time */
+const RG_BS={en_s1_:[["Sleeping badly",""],["Running on fumes","You're getting through the days on caffeine and adrenaline. "],["Wired and tired","Your body is exhausted and your brain won't switch off. "],["4am, again","Another night staring at the ceiling. "]],
+ en_s2_:[["Snapping at people",""],["A short fuse","Little things set you off at the moment. "],["Not yourself","People have started to tiptoe round you. "]],
+ en_s3_:[["Something has to give",""],["Your doctor's verdict","Your doctor has seen this before, many times. "],["Running on empty","There is nothing left in the tank. "]]};
+{const _pd2=pushDyn;pushDyn=function(ev){try{const k=ev&&Object.keys(RG_BS).find(p=>String(ev.id).startsWith(p));if(k){S.rgBs=S.rgBs||{};const n=S.rgBs[k]=(S.rgBs[k]||0)+1,v=RG_BS[k][(n-1)%RG_BS[k].length];ev=Object.assign({},ev,{t:v[0],b:v[1]+ev.b})}}catch(e){}return _pd2.call(this,ev)}}
+/* No event back before its own 'again' gap or inside its STORY_GAP, no doubles, and (after the morning) no more than 5 messages waiting */
+const rgKeep=m=>/^(offer|fund|trial|callup|st_|cal_|en_col)/.test(m.id||"")||m.bd||m.csqBig;
+function rgPrune(before,used0,cap){let changed=false;const drop=m=>{const i=S.inbox.indexOf(m);if(i>=0){S.inbox.splice(i,1);changed=true}};
+ for(const m of S.inbox.filter(m=>!m.done&&!before.has(m))){
+  const t=m.dyn&&m.dyn.t;const g=typeof t==="string"&&(/^offer/.test(m.id||"")?gapKey(t):rgGapKey(t));if(g){S.storyAt=S.storyAt||{};const at=S.storyAt[g[0]];if(at!=null&&at!==S.day&&S.day-at<g[1]){drop(m);continue}S.storyAt[g[0]]=S.day}
+  /* the same story twice at once, or twice in the same month (even if the first was already answered) */
+  if(S.inbox.some(o=>o!==m&&(!o.done||o.rgD===S.day)&&(o.id===m.id||(m.dyn&&o.dyn&&t&&o.dyn.t===t))))drop(m);else m.rgD=S.day}
+ if(cap){let pend=S.inbox.filter(m=>!m.done).length;
+  if(pend>5)for(const m of S.inbox.filter(m=>!m.done&&!before.has(m)&&!m.dyn&&!rgKeep(m)).reverse()){if(pend<=5)break;const e=EV.find(x=>x.id===m.id);if(!e||e.req||e.ill||e.front||e.prison)continue;drop(m);pend--}}
+ return changed}
+{const _cd=closeDay;closeDay=function(off){const before=S&&S.inbox?new Set(S.inbox):null,d0=S&&S.day,used0=S&&S.used?Object.assign({},S.used):{};const r=_cd.apply(this,arguments);
+ try{if(S&&before&&S.day!==d0&&!S.over){let changed=rgPrune(before,used0,true);const a0=S.home&&S.home.area;locHome();if(S.home&&S.home.area!==a0)changed=true;if(changed)render()}}catch(e){}return r}}
+{const _chP=choose;choose=function(i,ci){const before=S&&S.inbox?new Set(S.inbox):null,used0=S&&S.used?Object.assign({},S.used):{};const r=_chP.apply(this,arguments);
+ try{if(S&&before&&!S.over&&rgPrune(before,used0,false))render()}catch(e){}return r}}
+/* The country's own seasons: no Big Freeze in hot countries, Australia's heatwave comes in January */
+{const _nat=natMorning;natMorning=function(){const fz=NAT.freeze&&NAT.freeze.mo,hw=NAT.heatwave&&NAT.heatwave.mo;
+ try{if(RG_WARM.includes(S.country)&&NAT.freeze)NAT.freeze.mo=[99];if(S.country==="australia"&&NAT.heatwave)NAT.heatwave.mo=[0,1]}catch(e){}
+ try{return _nat.apply(this,arguments)}finally{if(NAT.freeze)NAT.freeze.mo=fz;if(NAT.heatwave)NAT.heatwave.mo=hw}}}
+/* Pence written as "20p" abroad becomes local money */
+{const _lt=locTextL;locTextL=function(L,t){let s=_lt.apply(this,arguments);try{if(L&&s&&/\dp\b/.test(s))s=s.replace(/(^|[^\w.,£$€₹₽¥₦])(\d{1,3})p\b/g,(m,pre,n)=>{const v=+n/100*L.c.cur.rate;return pre+(v<10?L.c.cur.sym+v.toFixed(2).replace(/\.00$/,""):locMoney(+n/100,"",L))})}catch(e){}return s}}
+/* ---- Fund allocation books only take 0-4 units: a short left over from trading showed "undefined · −₹210bn capital" ---- */
+function rgClampAlloc(){try{if(!S||!S.pos)return;for(const id of Object.keys(S.pos)){const b=B[id];if(b&&b.alloc){const p=S.pos[id]||0;if(p<0||p>4)S.pos[id]=clamp(Math.round(p),0,4)}}}catch(e){}}
+{const _rd=renderDesk;renderDesk=function(){rgClampAlloc();return _rd.apply(this,arguments)}}
+{const _mc=marketsClose;marketsClose=function(){rgClampAlloc();return _mc.apply(this,arguments)}}
+/* ---- Stale messages: more situations that can pass before you open the message ---- */
+try{if(typeof STALE_RULES!=="undefined")STALE_RULES.push(
+ {re:/^sit_burnout_/,gone:()=>S.stress<60,ct:"Feel a bit better",o:"A few better nights since. The panic has eased, for now."},
+ {re:/^sit_ultimatum_/,gone:()=>!inLove()||S.homeLife>=45,ct:"Talk it through",o:"Things at home have calmed down since. The ultimatum is quietly dropped."},
+ {re:/^sit_rich_/,gone:()=>S.wealth<1e6,ct:"Ignore it",o:"With less money about, the requests have dried up."},
+ {re:/^sit_health_/,gone:()=>S.health>=55,ct:"Keep it up",o:"Your health has already picked up. Your GP is happy to leave it there."},
+ {re:/^sit_heat_/,gone:()=>(S.heat||0)<45,ct:"File it",o:"Things have calmed down. The solicitor's letter goes in a drawer."},
+ {re:/^sit_star_/,gone:()=>S.rep<70,ct:"Let it go",o:"Your reputation has taken a knock since. The invitation quietly goes to someone else."},
+ {re:/^en_s1_/,gone:()=>((S.en&&S.en.strain)||0)<1.5,ct:"Sleep it off",o:"A few easier weeks and you're sleeping again."},
+ {re:/^en_s2_/,gone:()=>((S.en&&S.en.strain)||0)<3,ct:"Say sorry",o:"An easier few weeks and you're yourself again."},
+ {re:/^en_s3_/,gone:()=>((S.en&&S.en.strain)||0)<5,ct:"Keep it easy",o:"You've already eased off. Your doctor says keep it that way."})}catch(e){}
+/* ---- The month-end report fits a phone: notes after the first two fold away ---- */
+{const _nm=nextModal;nextModal=function(){const r=_nm.apply(this,arguments);try{const box=document.querySelector("#sheet .me-notes");if(box){const ns=[...box.children].filter(x=>x.classList.contains("note"));
+ if(ns.length>1){const d=document.createElement("details");d.className="me-more";d.innerHTML="<summary>"+(ns.length-1)+" more note"+(ns.length>2?"s":"")+"</summary>";ns.slice(1).forEach(n=>d.appendChild(n));box.appendChild(d)}}
+ /* this month's choices tally and energy line fold into one row too */
+ const sh=document.getElementById("sheet"),mc=sh?[...sh.children].filter(x=>x.classList&&x.classList.contains("mc-line")):[];
+ if(mc.length&&sh.querySelector(".me-strip")){const d=document.createElement("details");d.className="me-more";d.innerHTML="<summary>Your choices and energy this month</summary>";mc[0].parentNode.insertBefore(d,mc[0]);mc.forEach(x=>d.appendChild(x))}}catch(e){}return r}}
+
+/* CM2: composed social scenes for the inbox banners. Parties, nights out and money stories get composed pictures with the friends, partner and people in the story */
+/* ---- Social backdrops: nights out, parties at home, and money matters ---- */
+const kTaps=(x)=>rc(x,kJ-28,4,10,"#C9A23A")+rc(x-2,kJ-30,8,3,"#B8862B");
+const kBottles=(x,y,n,seed)=>AVq(n,i=>{const c=["#3E6B4A","#7A3A2A","#C9A23A","#2F4F6F","#8A5A9A","#B8C9A0"][(i*5+(seed||0))%6];return rc(x+i*7,y,5,10,c,'rx="1.5"')+rc(x+i*7+1.5,y-3,2,3,c)});
+const kFairy=(y,n)=>`<path d="M0 ${y} Q80 ${y+8} 160 ${y} T320 ${y}" stroke="#5A5A5A" stroke-width=".6" fill="none"/>`+AVq(n,i=>iaCirc(6+i*(308/(n-1)),y+Math.sin(i*.9)*3+3,1.8,["#F6E7A8","#F2B8C6","#9FD0EE","#F6E7A8"][i%4]));
+const kSofaB=(x,w,c)=>rc(x,kJ-26,w,14,c,'rx="4"')+rc(x-4,kJ-18,w+8,14,avMix(c,"#000",.12),'rx="4"')+rc(x-6,kJ-24,8,18,avMix(c,"#000",.2),'rx="3"')+rc(x+w-2,kJ-24,8,18,avMix(c,"#000",.2),'rx="3"');
+Object.assign(CMB,{
+ so_pub:{fam:"soc_party",kw:/\b(pub|pint|quiz|drinks?|local|darts|round)\b/i,w:[[40,14],[290,12]],f:v=>kRoom(CMV(v,["#6A3A2A","#3E4A3A","#5A3A3A"]),CMV(v,["#4A3020","#3A2A1E","#5A3A24"]))+rc(0,0,IA_W,6,"#3A2416")+AVq(3,i=>kPend(110+i*50,10,"#B8862B"))
+  +rc(90,10,160,2,"#3A2416")+kBottles(96,18,21,v)+rc(90,28,160,2,"#3A2416")+kBottles(96,36,21,v+3)+rc(80,kJ-20,180,20,"#5A3A22")+rc(76,kJ-23,188,4,"#7A5A3A")+kTaps(150)+kTaps(170)+kTaps(190)},
+ so_lounge:{fam:"soc_party",kw:/\b(house|home|round at|dinner party|birthday|sofa|tv|film|takeaway|movie)\b/i,w:[[40,14],[250,12]],f:v=>kRoom(CMV(v,["#E9DCC6","#D9E2E6","#E8D6DA"]),CMV(v,["#9A7A5A","#8A8478","#7A6A5A"]))+kWin(110,8,70,34,"#BFDDF0","#F2F4F5")+kFairy(6,14)+kSofaB(196,90,CMV(v,["#5A7A8A","#8A5A6A","#6A7A5A"]))+rc(30,kJ-30,30,30,"#7A5A3A")+rc(34,kJ-44,22,14,"#1C2329",'rx="1"')},
+ so_garden:{fam:"soc_party",out:1,kw:/\b(bbq|barbecue|garden|summer|sunday|picnic|street party)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFE0EA","#F2D9C2"]),"#7FB27A",58)+iaCirc(280,14,9,"#F6D44A")+kFence(42,"#B8946A")+kTree(30,30,1.3)+avBunting(4,["#E86A7A","#E9C46A","#7FB2E5","#4BBA85"])+rc(0,62,IA_W,2,"#6EA26A")},
+ so_rest:{fam:"soc_party",kw:/\b(dinner|restaurant|meal|table for|anniversary|date|lunch|brunch|tasting)\b/i,f:v=>kRoom(CMV(v,["#7A3A2A","#2F4F46","#3A3450"]),CMV(v,["#5A3A22","#4A3A2A","#3A2A2A"]))+AVq(4,i=>kPend(40+i*80,14,"#B8862B"))+AVq(3,i=>rc(30+i*100,12,40,30,"#F6E7A8",'opacity=".18" rx="2"'))+AVq(4,i=>rc(18+i*80,kJ-14,44,4,"#F2F4F5")+rc(36+i*80,kJ-10,8,10,"#2B1E1A")+rc(38+i*80,kJ-20,2,6,"#F2F4F5")+iaCirc(39+i*80,kJ-21,1.4,"#F6A33D"))},
+ so_bar:{fam:"soc_party",night:1,kw:/\b(cocktails?|bar|club|dancing|night out|hen|stag|karaoke|new year)\b/i,f:v=>kRoom(CMV(v,["#1E1A2E","#2A1A26","#1A2430"]),"#2A2236")+AVq(5,i=>rc(30+i*56,6,40,3,["#E86A9A","#7FB2E5","#4BBA85","#E9C46A","#B98ACA"][(i+v)%5],'opacity=".85"'))+rc(60,14,200,30,"#2E2840")+kBottles(70,26,26,v)+rc(50,kJ-18,220,18,"#3A2E48")+rc(46,kJ-21,228,4,"#B98ACA",'opacity=".7"')},
+ so_hall:{fam:"soc_party",kw:/\b(reunion|wedding|christening|do\b|function|hall|charity|raffle|retirement|leaving)\b/i,w:[[60,14],[260,14]],f:v=>kRoom(CMV(v,["#E6DCC6","#DCE2D6","#E8DCD0"]),"#B8946A")+avBunting(4,["#E86A7A","#F2F4F5","#7FB2E5"])+AVq(3,i=>kWin(110+i*40,18,26,30,"#BFDDF0"))+AVq(12,i=>rc(i*28,kJ-1,14,2,"#9A7A54"))},
+ so_street:{fam:"soc_party",out:1,kw:/\b(street|neighbours?|jubilee|coronation|fete|festival|fireworks)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#E9B48A","#CFD8E0"]),"#9A9A96",62)+AVq(4,i=>avHouse(8+i*80,64,34,["#B0634A","#C98A5A","#A35A44","#B87055"][(i+v)%4],"#5A3A2E",v===1))+avBunting(16,["#C0453A","#F2F4F5","#1D5FA8"])},
+ /* money */
+ mo_table:{fam:"soc_money",kw:/\b(bills?|budget|debt|owe\w*|overdraft|loan|rent|mortgage|savings|tax)\b/i,w:[[40,14]],f:v=>kRoom(CMV(v,["#EFE6D6","#E2E8E2","#ECE2E6"]),CMV(v,["#B8946A","#9AA0A6","#A88A6A"]))+kWin(200,8,70,34,"#BFDDF0","#F2F4F5")+rc(250,kJ-24,50,24,"#C9B79A")+rc(254,kJ-20,42,1,"#A88A6A")},
+ mo_bank:{fam:"soc_money",kw:/\b(bank|branch|account|mortgage|advisor|adviser|loan|cash|cheque|savings|interest)\b/i,f:v=>kRoom(CMV(v,["#E3E8EC","#E6E2DA","#DDE5E2"]),"#C9C2B2")+rc(0,0,IA_W,10,CMV(v,["#1D5FA8","#2F6E4A","#7A1F2B"]))+AVq(3,i=>rc(40+i*90,14,70,30,"#CFE3EE",'stroke="#9AA0A6" stroke-width="2"')+rc(40+i*90,kJ-18,70,18,"#8A939C")+rc(36+i*90,kJ-20,78,3,"#F2F4F5"))},
+ mo_shops:{fam:"soc_money",out:1,kw:/\b(shop\w*|black friday|sale|bargain|spend\w*|bought|buy|wallet|card|cash|treat)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#CFD8E0","#E9D6C2"]),"#9A9A96",64)+AVq(4,i=>{const x=i*82,c=["#3E6B4A","#7A1F2B","#2F4F8A","#C98A2A","#7A4A9A"][(i+v)%5];return rc(x,10,80,54,["#C9B79C","#B8A68C","#D2C2A8","#BFAE94"][i])+rc(x+6,30,68,28,"#CFE3EE")+rc(x+4,22,72,8,c)+AVq(3,j=>rc(x+12+j*20,44,12,14,["#E86A7A","#E9C46A","#7FB2E5"][(i+j)%3]))})+rc(0,62,IA_W,2,"#7A7A76")},
+ mo_study:{fam:"soc_money",kw:/\b(invest\w*|pension|shares|crypto|app|online|isa|portfolio|spreadsheet|scam|email)\b/i,w:[[60,14],[150,12]],f:v=>kRoom(CMV(v,["#DCE4EA","#E8E2D6","#E2DCE6"]),CMV(v,["#7A6A5A","#8A8478","#6A5A4A"]))+kShelf(200,8,110,3,kBooks,v)+rc(20,kJ-16,120,4,"#8A6A44")+rc(24,kJ-12,4,12,"#6A4E30")+rc(132,kJ-12,4,12,"#6A4E30")+kMon(68,kJ-34,"#2F4F8A")+`<path d="M71 ${kJ-25} l4 -3 l4 2 l5 -5 l4 2" stroke="#4BBA85" stroke-width="1.2" fill="none"/>`},
+ mo_cashpoint:{fam:"soc_money",out:1,night:0,kw:/\b(cash|wallet|card|declined|lottery|ticket|scratch\w*|win|jackpot|coins?)\b/i,f:v=>kOut(CMV(v,["#BFDDF0","#2A3150","#CFD8E0"]),"#9A9A96",64)+rc(0,8,IA_W,56,CMV(v,["#C9B79C","#8A7A6A","#B8A68C"]))+rc(120,20,80,40,"#5A6670")+rc(132,26,56,20,"#1C2329")+rc(136,30,48,12,"#7FB2E5")+rc(146,48,28,4,"#2B2B2B")+rc(146,54,28,6,"#9AA0A6")+rc(20,20,80,40,"#CFE3EE",'stroke="#5A6670" stroke-width="2"')+rc(220,20,80,40,"#CFE3EE",'stroke="#5A6670" stroke-width="2"')+rc(0,62,IA_W,2,"#7A7A76")}
+});
+
+/* ---- Social props ---- */
+Object.assign(CMP,{
+ pints:{f:(x,F)=>cpG(x,F,1,rc(-12,-16,24,3,"#6A4A2A")+rc(-1.5,-13,3,13,"#5A3A22")+rc(-7,-2,14,2,"#5A3A22")+avPint(-9,-27)+avPint(2,-27))},
+ wine:{f:(x,F)=>cpG(x,F,1,rc(-12,-16,24,3,"#F2F4F5")+rc(-1.5,-13,3,13,"#5A3A22")+rc(-7,-2,14,2,"#5A3A22")+rc(-8,-30,5,14,"#3E6B4A",'rx="1.5"')+rc(-7,-34,3,4,"#3E6B4A")+pa("M3 -26 h6 l-1 5 h-4Z","#7A1F2B")+rc(5.5,-21,1,5,"#C9CDD1"))},
+ presents:{f:(x,F)=>avGift(x-12,F-12,12,12,"#B3262E")+avGift(x+1,F-9,10,9,"#1D5FA8","#F2F4F5")+avGift(x-6,F-20,9,8,"#4BBA85","#F2F4F5")},
+ speaker:{f:(x,F)=>cpG(x,F,1,rc(-7,-26,14,26,"#2B2B33",'rx="1.5"')+iaCirc(0,-19,3,"#4A4A55")+iaCirc(0,-8,5,"#4A4A55"))},
+ bbq:{io:"o",f:(x,F)=>cpG(x,F,1,pa("M-12 -22 A12 8 0 0 0 12 -22Z","#2B2B2B")+rc(-13,-23,26,2,"#5A5A5A")+pa("M-8 -16 L-10 0 M8 -16 L10 0","none",'stroke="#2B2B2B" stroke-width="1.6"')+pa("M-4 -26 q2 -5 0 -9 M3 -26 q2 -5 0 -9","none",'stroke="#C9CDD1" stroke-width="1.2" opacity=".7"'))},
+ deckchair:{io:"o",f:(x,F)=>cpG(x,F,1,pa("M-10 0 L4 -24 M8 0 L-4 -14","none",'stroke="#8A6A44" stroke-width="2"')+pa("M-6 -10 L4 -24 L8 -22 L-2 -8Z","#E86A7A"))},
+ coolbox:{io:"o",f:(x,F)=>cpG(x,F,1,rc(-10,-12,20,12,"#3E6FB0",'rx="2"')+rc(-10,-14,20,3,"#F2F4F5",'rx="1"'))},
+ partytable:{sp:2,f:(x,F)=>cpG(x,F,1,rc(-24,-16,48,3,"#F2F4F5")+rc(-22,-13,2,13,"#9AA0A6")+rc(20,-13,2,13,"#9AA0A6")+rc(-16,-22,10,6,"#E9C46A",'rx="1"')+`<ellipse cx="4" cy="-18" rx="6" ry="2" fill="#E86A7A"/>`+AVq(3,i=>rc(12+i*4,-23,3,7,["#7FB2E5","#F2F4F5","#E86A7A"][i])))},
+ bottleshelf:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-10,-30,20,30,"#5A3A22")+rc(-10,-16,20,1.6,"#3A2416")+kBottles(-9,-29,3,1)+kBottles(-9,-14,3,4))},
+ stool:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-6,-20,12,3,"#7A5A3A",'rx="1.5"')+pa("M-4 -17 L-6 0 M4 -17 L6 0","none",'stroke="#3A2A1A" stroke-width="1.6"')+rc(-5,-8,10,1.2,"#3A2A1A"))},
+ dartboard:{wall:1,f:(x,y)=>iaCirc(x,y+10,9,"#2B2B2B")+iaCirc(x,y+10,6.5,"#C0453A")+iaCirc(x,y+10,4,"#E9DCC0")+iaCirc(x,y+10,1.4,"#3E6B4A")},
+ fairy:{wall:1,f:(x,y)=>`<path d="M${x-24} ${y} Q${x} ${y+9} ${x+24} ${y}" stroke="#5A5A5A" stroke-width=".6" fill="none"/>`+AVq(7,i=>iaCirc(x-22+i*7.3,y+Math.sin(i/6*Math.PI)*6+1,1.7,["#F6E7A8","#F2B8C6","#9FD0EE"][i%3]))},
+ mirror:{wall:1,f:(x,y)=>rc(x-10,y,20,22,"#DCE8EC",'stroke="#B8862B" stroke-width="2" rx="9"')},
+ tvset:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-14,-12,28,12,"#7A5A3A")+rc(-16,-32,32,19,"#1C2329",'rx="1.5"')+rc(-14,-30,28,15,"#2F4F8A"))},
+ /* money */
+ billtable:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-14,-16,28,3,"#C9B79A")+rc(-12,-13,2,13,"#8A6A44")+rc(10,-13,2,13,"#8A6A44")+AVq(3,i=>rc(-10+i*7,-21-i,7,5,"#F2F4F5",'stroke="#C9CDD1" stroke-width=".4"'))+rc(-10,-21,7,1,"#C0453A"))},
+ piggy:{f:(x,F)=>cpG(x,F,1,rc(-8,-10,16,10,"#8A6A44")+`<ellipse cx="0" cy="-15" rx="8" ry="5.5" fill="#F2B8C6"/>`+iaCirc(7,-16,2.4,"#F2B8C6")+rc(-2,-21,4,1.4,"#7A3A4A")+rc(-5,-11,2,2,"#F2B8C6")+rc(3,-11,2,2,"#F2B8C6"))},
+ coinstack:{f:(x,F)=>cpG(x,F,1,AVq(4,i=>`<ellipse cx="-4" cy="${-2-i*3}" rx="6" ry="2" fill="#D7A744" stroke="#B8862B" stroke-width=".5"/>`)+AVq(2,i=>`<ellipse cx="6" cy="${-2-i*3}" rx="5" ry="1.8" fill="#E9C46A" stroke="#B8862B" stroke-width=".5"/>`))},
+ shopbags:{f:(x,F)=>cpG(x,F,1,rc(-12,-14,10,14,"#E86A7A")+pa("M-10 -14 q3 -5 6 0","none",'stroke="#3A3A3A" stroke-width="1"')+rc(0,-12,11,12,"#7FB2E5")+pa("M2 -12 q3.5 -5 7 0","none",'stroke="#3A3A3A" stroke-width="1"'))},
+ safe:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-10,-22,20,22,"#5A6066",'rx="1.5"')+iaCirc(0,-11,5,"#9AA0A6")+iaCirc(0,-11,1.6,"#3A3A3A")+rc(-8,-20,16,1,"#7A8086"))},
+ queue:{io:"i",f:(x,F)=>cpG(x,F,1,rc(-14,-20,2,20,"#C9A23A")+rc(12,-20,2,20,"#C9A23A")+rc(-14,-18,28,2,"#B3262E"))},
+ receipt:{wall:1,f:(x,y)=>rc(x-6,y,12,22,"#F7F4EC",'stroke="#C9CDD1" stroke-width=".5"')+AVq(5,i=>rc(x-4,y+3+i*3.6,i%2?6:8,1,"#9AA0A6"))},
+ chart:{wall:1,f:(x,y)=>rc(x-14,y,28,20,"#F7F7F4",'stroke="#9AA0A6"')+`<path d="M${x-11} ${y+16} l6 -5 l5 2 l6 -8 l6 3" stroke="#C0453A" stroke-width="1.4" fill="none"/>`}
+});
+Object.assign(CM_PF,{
+ socgen:{p:["plant"],w:["picture","clock"]},
+ soc_party:{p:["pints","wine","presents","speaker","bbq","deckchair","coolbox","partytable","bottleshelf","stool","balloons","cake","tvset"],w:["dartboard","fairy","mirror","bunt"]},
+ soc_money:{p:["billtable","piggy","coinstack","shopbags","safe","queue","laptop","boxes","chair"],w:["receipt","chart","calendar"]}
+});
+
+/* ---- Social stories (nights out, parties, money worries) get composed scenes too, with the friends, partner and people in the story ---- */
+const CM_SOC={party:["soc_party"],money:["soc_money"]};
+const CM_SOC_BESPOKE=40,CM_SOC_CAP=9;
+/* office stories are workplace stories for bankers too (their office pictures were never in the work mix) */
+{const _w=cmIsWork;cmIsWork=function(m,e){const k=_w(m,e);if(k)return k;try{if(S&&S.path==="bank"&&iaKey2(m,e)==="office")return "office"}catch(x){}return null}}
+/* props for a social backdrop come from its own family, whatever the job */
+{const _pf=cmPropsFor;cmPropsFor=function(car,b,wall){if(!b||!/^soc_/.test(b.fam||""))return _pf.apply(this,arguments);const out=[];
+ for(const f of [b.fam,"socgen"])for(const id of ((CM_PF[f]||{})[wall?"w":"p"]||[]))if(CMP[id]&&!out.includes(id)&&!(b.no||[]).includes(id)&&cmIO(id,b))out.push(id);return out}}
+const cmPal=i=>{const sd=(S.name||"")+"|pal"+i,a=Math.max(18,Math.floor(age())+(h32(sd)%15)-7);return cmSeedLook(sd,undefined,a)};
+function cmSocCast(m,e,txt,raw,h,fam){
+ const out=cmCast(m,e,txt,raw,h).map(([r,L])=>[r==="me"?"me":r==="fr"||r==="pt"||r==="cli"?r:"st",L]);
+ const a=Math.floor(age()),has=r=>out.some(x=>x[0]===r);
+ if(fam==="soc_party"){
+  if(out.length<3&&!has("pt")&&S.rel&&S.rel.name&&typeof inLove==="function"&&inLove()&&h%3!==0)out.push(["pt",cmSeedLook(S.rel.name.split(" ")[0]+"pt",sexN(genderOf(S.rel.name)),Math.max(18,a+(h32(S.rel.name)%9)-4))]);
+  if(out.length<3&&!has("fr")&&S.friend&&(h>>>3)%3!==0)out.push(["fr",cmSeedLook(S.friend.n.split(" ")[0]+"fr",sexN(genderOf(S.friend.n)),Math.max(18,a+(h32(S.friend.n)%7)-3))]);
+  if(out.length<2)out.push(["st",cmPal((h>>>5)%8)]);
+ }
+ /* everyone off duty: no uniforms */
+ return out.slice(0,3).map(([r,L])=>[r==="me"?"st":r,L]);
+}
+cmSocial=function(m,e){
+ if(!S)return null;let k0=null;try{k0=iaKey2(m,e)}catch(x){}
+ const fams=CM_SOC[k0];
+ if(!fams){ /* other families: the earlier rule (recast people once a picture has been seen a lot) */
+  const q=avIaPick(m,e);if(!q||q.cm||!IA[q.k])return null;const N=S.cmN=S.cmN&&typeof S.cmN==="object"?S.cmN:{};N[q.k]=(N[q.k]||0)+1;
+  const n=cmRecastN(q.k);if(N[q.k]<=CM_CAP2||!n)return null;
+  const h=h32(String(m.id||"")+"|"+(e.t||"")+"|"+S.day);let txt="",raw=(e.t||"")+" "+(e.b||"");try{txt=fill(e.t||"",m)+" "+fill(e.b||"",m)}catch(x){txt=raw}
+  const cast=cmCast(m,e,txt,raw,h).filter(c=>c[0]!=="col");const P=[];
+  for(let i=0;i<n;i++){const j=(i+(h>>>9))%Math.max(n,cast.length);P.push(j<cast.length?[0,cast[j][1],cast[j][0]==="me"?"me":"st"]:[0,cmStranger((h>>>(i%20))%997+i*1009),"st"])}
+  const c={cm:1,t:"r",s:q.k,P,o:q.o,c:S.path,k:q.k};m.avIa=c;return c}
+ const h=h32(String(m.id||"")+"|"+(e.t||"")+"|"+S.day);let txt="",raw=(e.t||"")+" "+(e.b||"");try{txt=fill(e.t||"",m)+" "+fill(e.b||"",m)}catch(x){txt=raw}
+ const N=S.cmN=S.cmN&&typeof S.cmN==="object"?S.cmN:{};
+ /* some of the time the hand-drawn picture, each one only so often in a life */
+ if((h>>>4)%100<CM_SOC_BESPOKE){const p=avIaPick(m,e);if(p&&!p.cm&&(N[p.k]||0)<CM_SOC_CAP){N[p.k]=(N[p.k]||0)+1;return null}if(m.avIa===p)m.avIa=null}
+ const bds=Object.keys(CMB).filter(id=>fams.includes(CMB[id].fam));if(!bds.length)return null;
+ const kwB=bds.filter(id=>CMB[id].kw&&CMB[id].kw.test(txt));
+ const R=S.cmR=Array.isArray(S.cmR)?S.cmR:[],RB=S.cmB=Array.isArray(S.cmB)?S.cmB:[];
+ const used=typeof iaUsed!=="undefined"&&iaUsed?iaUsed:null;let best=null;
+ for(let t=0;t<16;t++){const hh=h32(h+":s"+t);const pool=kwB.length&&t<6?kwB:bds;const bid=pool[(hh>>>1)%pool.length];
+  const c=cmBuildB(bid,cmSocCast(m,e,txt,raw,hh,CMB[bid].fam),txt,hh,S.path);const key=cmKey(c),bk=c.t+c.s;if(!best)best=c;
+  if(t<15&&(R.includes(key)||(t<10&&RB.includes(bk))||(used&&used.has("cm:"+bk))))continue;best=c;break}
+ const c=best,key=cmKey(c),bk=c.t+c.s;R.unshift(key);if(R.length>40)R.length=40;RB.unshift(bk);if(RB.length>3)RB.length=3;if(used)used.add("cm:"+bk);
+ c.o=avMood(CMB[c.s].out?"court":"office",txt,h>>>8);c.cm=1;c.c=S.path;c.k=IA[k0]?k0:"party";m.avIa=c;return c;
+};
+
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
  if(S)ensure(S);
  const hot=!!(data&&data.S);rngState=S&&S.daily&&S.rs!=null?S.rs:null;
  if(!S){newGame("Alex Morgan","bank","fx");S.placeholder=true}
+ try{crTouch()}catch(e){}
  render();
  if(hot&&!S.placeholder){if(S.over)endModal();return}
  showHome();
