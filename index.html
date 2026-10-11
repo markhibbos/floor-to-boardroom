@@ -53289,8 +53289,8 @@ ACTS.bossmood=fx=>{try{if(S.boss)S.boss.mood=clamp((S.boss.mood||50)+(fx.d||0),0
 {const _ch=choose;choose=function(i,ci){const was=window.__wkParent;try{const m=S.inbox[i];window.__wkParent=m&&m.wk!=null?m.wk:1}catch(e){}try{return _ch.apply(this,arguments)}finally{window.__wkParent=was}}}
 function wkAssign(){try{const P=S.inbox.filter(m=>!m.done&&m.wk==null);if(!P.length)return;const taken=S.inbox.filter(m=>!m.done&&m.wk!=null).map(m=>m.wk);
  P.forEach((m,j)=>{let w=1+((h32(String(m.id))+j)%4);if(P.length<=4){const free=[1,2,3,4].filter(x=>!taken.includes(x));if(free.length)w=free[j%free.length]}m.wk=w;taken.push(w)})}catch(e){}}
-function wkLabel(w){try{const d=dateFor(S.day),y=d.getUTCFullYear(),mo=d.getUTCMonth(),last=new Date(Date.UTC(y,mo+1,0)).getUTCDate(),a=(w-1)*7+1,b=w===4?last:w*7;
- const mn=d.toLocaleDateString("en-GB",{month:"short",timeZone:"UTC"});return "Week "+w+" · "+a+"–"+b+" "+mn}catch(e){return "Week "+w}}
+function wkLabel(w){try{const mo=((S.day-1)%12+12)%12,y=START_YEAR+(S.yo||0)+Math.floor((S.day-1)/12),last=new Date(Date.UTC(y,mo+1,0)).getUTCDate(),a=(w-1)*7+1,b=w===4?last:w*7;
+ const mn=MONTHS[mo].slice(0,3);return "Week "+w+" · "+a+"–"+b+" "+mn}catch(e){return "Week "+w}}
 {const _ri=renderInbox;renderInbox=function(){try{wkAssign()}catch(e){}const r=_ri.apply(this,arguments);try{
  const pane=document.getElementById("pane-inbox");if(!pane)return r;const cards=[...pane.querySelectorAll("article.mail.pending")];if(cards.length<2)return r;
  const wkOf=a=>{const b=a.querySelector('[data-act="choose"]');const m=b?S.inbox[+b.dataset.i]:null;return m&&m.wk?m.wk:1};
@@ -53307,6 +53307,27 @@ function hoNight(w,what){try{if(!S||S.placeholder||S.over||S.prison||window.__ho
 ACTS.hoin=fx=>{try{S.evPnl=(S.evPnl||0)-Math.round(Math.abs(S.evPnl||0)*.02*(fx.sev||1));S.rep=clamp(S.rep-(fx.sev>=3?1:0),0,100)}catch(e){}};
 ACTS.hosick=fx=>{try{const H=S.ho=S.ho||{};H.sick=(H.sick||[]).concat(S.day).slice(-30);if(H.cur)H.cur.sick=1;S.rep=clamp(S.rep-1,0,100);if(S.boss)S.boss.mood=clamp((S.boss.mood||50)-3,0,100);
  S.evPnl=(S.evPnl||0)-Math.round(Math.abs(S.evPnl||0)*.03);S.stress=clamp(S.stress-2,0,100);S.log.unshift({d:S.day,t:"Called in sick after "+(fx.what||"a big night")+"."})}catch(e){}};
+
+/* SUMMER holiday rules */
+const SUMMER_BY={australia:[11,0,1],nigeria:[11,0,1],india:[3,4,5]};
+const isSummerHol=e=>!!e&&(e.id==="holiday"||e.t==="Summer holiday");
+const summerNow=()=>{const mo=((S.day-1)%12+12)%12;return (SUMMER_BY[S.country]||[5,6,7]).includes(mo)};
+{const _el=eligible;eligible=function(e){if(isSummerHol(e)&&!summerNow())return false;return _el.apply(this,arguments)}}
+const holSkip=t=>/\bskip|stay home|staycation at home|work is too busy|not this year|cancel|save the money\b/i.test(String(t||""));
+const leaveLeft=()=>{try{const E=enS();if(E&&!E.lv)enLeaveRoll(E);return E&&E.lv?E.lv.left:null}catch(e){return null}};
+{const _ch=choose;choose=function(i,ci){let book=false,what="";try{const m=S.inbox[i],e=getEv(m),c=choicesOf(e)[ci];if(isSummerHol(e)&&c&&!holSkip(c.t)&&!m.done){book=true;what=String(c.t).replace(/\s*\(.*$/,"")}}catch(x){}
+ const m=S.inbox[i];const r=_ch.apply(this,arguments);
+ try{if(book&&m&&m.done&&m.ci===ci&&typeof enUseLeave==="function"){const txt=enUseLeave(10,false,"Summer holiday: "+what);try{const back=Math.round(20*(typeof enRecov==="function"?enRecov(age()):1));enCharge("rest",-back,"Two weeks away");m.ieE=(m.ieE||0)-back}catch(e){}if(txt){m.o=(m.o?m.o+" ":"")+txt;try{toastMsg(txt)}catch(e){}render()}}}catch(x){}return r}}
+{const _ri=renderInbox;renderInbox=function(){const r=_ri.apply(this,arguments);try{const left=leaveLeft();if(left==null||(typeof selfPaid==="function"&&selfPaid()))return r;
+ document.querySelectorAll('#pane-inbox .mail.pending [data-act="choose"]').forEach(b=>{if(b.querySelector(".lv-note"))return;const m=S.inbox[+b.dataset.i];if(!m)return;const e=getEv(m);if(!isSummerHol(e))return;const c=choicesOf(e)[+b.dataset.c];if(!c||holSkip(c.t))return;
+  const sp=document.createElement("span");sp.className="odds lv-note"+(left<10?" danger":"");sp.textContent=left>=10?"Uses 10 days' leave · "+left+" left":"Only "+left+" days' leave left · "+(10-left)+" unpaid";b.appendChild(sp)})}catch(e){}return r}}
+
+/* ENERGY chips */
+/* ============ Finished inbox cards show the energy they used (or gave back) ============ */
+{const _ri=renderInbox;renderInbox=function(){const r=_ri.apply(this,arguments);try{
+ const pane=document.getElementById("pane-inbox");if(!pane)return r;const arts=[...pane.querySelectorAll("article.mail:not(.pending)")];const done=S.inbox.filter(m=>m.done&&getEv(m));
+ arts.forEach((a,k)=>{const m=done[k];if(!m||!m.ieE||a.querySelector(".en-chip"))return;let ch=a.querySelector(".chips");if(!ch){const out=a.querySelector(".outcome")||a;ch=document.createElement("div");ch.className="chips";out.appendChild(ch)}
+  const sp=document.createElement("span");sp.className="chip en-chip "+(m.ieE>0?"b":"g");sp.textContent=(m.ieE>0?"−":"+")+Math.abs(m.ieE)+" energy";ch.appendChild(sp)})}catch(e){}return r}}
 
 function start(data){
  S=(data&&data.S)||load();
