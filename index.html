@@ -55051,6 +55051,13 @@ const noParents=()=>{try{return (S.parentsAlive??2)<=0}catch(x){return false}};
 {const _el=eligible;eligible=function(e){if(parentFrom(e)&&noParents())return false;return _el.apply(this,arguments)}}
 {const _pd=pushDyn;pushDyn=function(ev){if(parentFrom(ev)&&noParents())return;return _pd.apply(this,arguments)}}
 
+/* NHS cap */
+/* A swap at the start of a button or sentence keeps its capital letter (e.g. "NHS treatment" -> "Public hospital treatment") */
+(function(){try{const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);for(const code of Object.keys(COUNTRIES)){if(code==="uk")continue;const c=COUNTRIES[code];if(!c||!Array.isArray(c.swap))continue;
+ const have=new Set(c.swap.map(p=>p[0])),nhs=(c.swap.find(p=>p[0]==="NHS")||[])[1];
+ if(nhs&&!have.has("NHS treatment"))c.swap.unshift(["NHS treatment",cap(nhs)+" treatment"])}
+ for(const k of Object.keys(LOC_CACHE))delete LOC_CACHE[k];if(typeof S!=="undefined"&&S&&S.country&&S.country!=="uk")LOC=buildLoc(S.country)}catch(e){}})();
+
 function start(data){
  S=(data&&data.S)||load();
  if(S&&!S.v)S=null;
