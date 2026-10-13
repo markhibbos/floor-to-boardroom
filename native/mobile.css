@@ -1,0 +1,11 @@
+/* The game already owns top/bottom insets. Protect landscape notch edges too. */
+html.native-ios .top-in,
+html.native-ios .wrap,
+html.native-ios .home-in {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+html.native-ios .sheet {
+  padding-left: max(22px, env(safe-area-inset-left, 0px));
+  padding-right: max(22px, env(safe-area-inset-right, 0px));
+}

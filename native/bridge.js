@@ -7,6 +7,7 @@ import { App } from '@capacitor/app';
 import { createNativeStorage } from './storage.js';
 
 if (Capacitor.isNativePlatform()) {
+  document.documentElement.classList.add('native-ios');
   // Existing game hooks use this interface. Register official plugin proxies.
   Object.assign(window.Capacitor.Plugins, { Preferences, Filesystem, Share, StatusBar, App });
   const report = () => {
