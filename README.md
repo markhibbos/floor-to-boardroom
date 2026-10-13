@@ -31,6 +31,7 @@ The app mirrors all `ftb-` storage keys into native Preferences, including slots
 settings, avatar, records and the current game. Startup restores that snapshot
 before executing the game's start hooks. Writes are serialized; deleted slots
 stay deleted, and a failed read stops startup instead of replacing a good save.
+If a force quit interrupted a native write, a newer local snapshot is retained.
 Background transitions request another save. JSON backups use the iOS share
 sheet, and the existing file input imports web or native backup files. Existing
 image and life-link sharing hooks use Filesystem and Share. Browser saves do not

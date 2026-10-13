@@ -54,3 +54,12 @@ test('a failed write is reported and subsequent saves can recover', async () => 
   fail = false; local.setItem('ftb-save-v1', 'recovered'); await p.flush();
   assert.equal(JSON.parse(final)['ftb-save-v1'], 'recovered');
 });
+test('keeps the newer local snapshot after a force quit interrupts native writing', async () => {
+  const local = memory({ 'ftb-save-v1': 'latest life', 'ftb-native-revision': '20' });
+  let backup = JSON.stringify({ 'ftb-save-v1': 'older life', 'ftb-slot-2': 'deleted slot', 'ftb-native-revision': '19' });
+  const p = createNativeStorage(local, { get: async () => ({ value: backup }), set: async ({ value }) => { backup = value; } });
+  await p.restore();
+  assert.equal(local.getItem('ftb-save-v1'), 'latest life');
+  assert.equal(JSON.parse(backup)['ftb-slot-2'], undefined);
+  assert.equal(JSON.parse(backup)['ftb-save-v1'], 'latest life');
+});

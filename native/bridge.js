@@ -22,7 +22,7 @@ if (Capacitor.isNativePlatform()) {
     original[name] = Storage.prototype[name];
     Storage.prototype[name] = function (...args) {
       const result = original[name].apply(this, args);
-      if (this === localStorage && (name === 'clear' || String(args[0]).startsWith('ftb-'))) persistence.flush();
+      if (this === localStorage && args[0] !== 'ftb-native-revision' && (name === 'clear' || String(args[0]).startsWith('ftb-'))) persistence.changed();
       return result;
     };
   }

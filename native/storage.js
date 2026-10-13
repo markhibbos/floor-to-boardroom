@@ -25,15 +25,26 @@ export function createNativeStorage(storage, preferences, onError = console.erro
       if (!data || typeof data !== 'object' || Array.isArray(data) || Object.entries(data).some(([k, v]) => !k.startsWith('ftb-') || typeof v !== 'string')) {
         throw new Error('Invalid native save snapshot');
       }
-      // Native storage is authoritative, including deletions. Never resurrect a slot.
-      const keys = [];
-      for (let i = 0; i < storage.length; i++) keys.push(storage.key(i));
-      for (const key of keys) if (key.startsWith('ftb-')) storage.removeItem(key);
-      for (const [key, entry] of Object.entries(data)) storage.setItem(key, entry);
+      // A force quit can interrupt the last native write. Keep a newer complete
+      // WebView snapshot when it still exists; otherwise restore native storage.
+      const localRevision = Number(storage.getItem('ftb-native-revision')) || 0;
+      const nativeRevision = Number(data['ftb-native-revision']) || 0;
+      if (localRevision <= nativeRevision) {
+        const keys = [];
+        for (let i = 0; i < storage.length; i++) keys.push(storage.key(i));
+        for (const key of keys) if (key.startsWith('ftb-')) storage.removeItem(key);
+        for (const [key, entry] of Object.entries(data)) storage.setItem(key, entry);
+      }
     }
     ready = true;
     await flush();
     return !!value;
   };
-  return { restore, flush };
+  const changed = () => {
+    if (!ready) return tail;
+    const revision = Math.max(Date.now(), (Number(storage.getItem('ftb-native-revision')) || 0) + 1);
+    storage.setItem('ftb-native-revision', String(revision));
+    return flush();
+  };
+  return { restore, flush, changed };
 }
