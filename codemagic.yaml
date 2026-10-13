@@ -1,0 +1,101 @@
+definitions:
+  install: &install
+    name: Install locked dependencies
+    script: npm ci
+  verify: &verify
+    name: Verify native save recovery
+    script: npm test
+  sync: &sync
+    name: Bundle the offline game and sync iOS
+    script: npm run ios:sync
+  resolve: &resolve
+    name: Resolve Swift packages
+    script: xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+
+workflows:
+  ios-register-bundle:
+    # Manual, idempotent onboarding through the existing secure Apple integration.
+    name: One Life register Apple bundle identifier
+    instance_type: mac_mini_m2
+    max_build_duration: 10
+    integrations:
+      app_store_connect: currents-apple
+    scripts:
+      - name: Register the separate bundle identifier if missing
+        script: |
+          set -eu
+          app-store-connect bundle-ids list --bundle-id-identifier com.sigosi.onelife --strict-match-identifier --json > /tmp/onelife-bundle.json
+          if python3 -c 'import json; d=json.load(open("/tmp/onelife-bundle.json")); raise SystemExit(0 if d else 1)'; then
+            echo "One Life bundle identifier already exists."
+          else
+            app-store-connect bundle-ids create com.sigosi.onelife --name "One Life" --platform IOS
+          fi
+
+  ios-simulator:
+    name: One Life iOS compile check
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      node: 22
+      xcode: latest
+    scripts:
+      - *install
+      - *verify
+      - *sync
+      - *resolve
+      - name: Compile for the simulator without signing
+        script: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -derivedDataPath build/ios-simulator CODE_SIGNING_ALLOWED=NO build
+    artifacts:
+      - build/ios-simulator/Build/Products/Debug-iphonesimulator/*.app
+      - /tmp/xcodebuild_logs/*.log
+
+  ios-testflight:
+    name: One Life iOS TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: currents-apple
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        # Reuse the secure certificate from Subs HQ; One Life needs its own profile.
+        certificates:
+          - certificate: currents-apple-distribution
+        provisioning_profiles:
+          - profile: onelife-app-store-profile
+      vars:
+        BUNDLE_ID: com.sigosi.onelife
+        XCODE_PROJECT: ios/App/App.xcodeproj
+        XCODE_SCHEME: App
+        # Set APP_STORE_APPLE_ID in this application's Codemagic environment
+        # after creating the separate One Life App Store Connect record.
+    scripts:
+      - *install
+      - *verify
+      - *sync
+      - *resolve
+      - name: Apply signing profiles
+        script: xcode-project use-profiles
+      - name: Set a new TestFlight build number
+        script: |
+          set -eu
+          : "${APP_STORE_APPLE_ID:?Set One Life's numeric Apple ID in Codemagic}"
+          LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID")
+          cd ios/App
+          agvtool new-version -all "$(( ${LATEST:-0} + 1 ))"
+      - name: Build the signed IPA
+        script: xcode-project build-ipa --project "$XCODE_PROJECT" --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Upload for internal TestFlight. External beta review is a later choice.
+        submit_to_testflight: false
+        submit_to_app_store: false

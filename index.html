@@ -3043,6 +3043,7 @@ async function useCode(){
  catch(e){enterCodeModal(e.message)}
 }
 function exportSave(){
+ if(isNative()){nativeExportSave();return}
  save();const blob=new Blob([JSON.stringify({meta:saveMeta(),S},null,0)],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`floor-to-boardroom-${(S.name||"save").replace(/[^a-z0-9]+/gi,"-").toLowerCase()}-day${S.day}.json`;
  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
@@ -8834,18 +8835,27 @@ const capPlugin=n=>isNative()&&window.Capacitor.Plugins?window.Capacitor.Plugins
 /* Browser storage inside an app can be cleared by the phone, so every game key is mirrored into the app's own storage */
 let nbTimer=null;
 function nativeBackup(now){
+ if(window.OneLifeNative){window.OneLifeNative.flush();return}
  const P=capPlugin("Preferences");if(!P)return;clearTimeout(nbTimer);
  const go=()=>{try{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^ftb-/.test(k))o[k]=localStorage.getItem(k)}P.set({key:"ftb-backup",value:JSON.stringify(o)}).catch(()=>{})}catch(e){}};
  if(now)go();else nbTimer=setTimeout(go,1500);
 }
 async function nativeRestore(){
+ if(window.OneLifeNative)return window.OneLifeNative.ready;
  const P=capPlugin("Preferences");if(!P)return false;
  try{if(localStorage.getItem(KEY))return false;const r=await P.get({key:"ftb-backup"});if(!r||!r.value)return false;const o=JSON.parse(r.value);let n=0;for(const k in o)if(/^ftb-/.test(k)&&localStorage.getItem(k)==null){localStorage.setItem(k,o[k]);n++}return n>0}catch(e){return false}
 }
 {const _sv=save;save=function(){_sv.apply(this,arguments);if(isNative())nativeBackup(false)}}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"&&isNative())nativeBackup(true)});
 window.addEventListener("pagehide",()=>{if(isNative())nativeBackup(true)});
-{const _st=start;start=function(data){if(!isNative())return _st(data);nativeRestore().then(()=>_st(data),()=>_st(data));try{const SB=capPlugin("StatusBar"),dark=themeIsDark();if(SB){SB.setOverlaysWebView({overlay:false}).catch(()=>{});SB.setStyle({style:dark?"DARK":"LIGHT"}).catch(()=>{});SB.setBackgroundColor({color:dark?"#0B141B":"#E8EDEB"}).catch(()=>{})}}catch(e){}}}
+{const _st=start;start=function(data){const r=_st(data);if(!isNative())return r;try{const SB=capPlugin("StatusBar"),dark=themeIsDark();if(SB){SB.setOverlaysWebView({overlay:true}).catch(()=>{});SB.setStyle({style:dark?"DARK":"LIGHT"}).catch(()=>{})}}catch(e){}return r}}
+async function nativeExportSave(){
+ try{save();await window.OneLifeNative?.flush();const F=capPlugin("Filesystem"),Sh=capPlugin("Share");
+  const name=`one-life-${(S.name||"save").replace(/[^a-z0-9]+/gi,"-").toLowerCase()}-day${S.day}.json`;
+  const w=await F.writeFile({path:name,data:JSON.stringify({meta:saveMeta(),S}),directory:"CACHE",encoding:"utf8"});
+  await Sh.share({title:"One Life save",files:[w.uri]})
+ }catch(e){if(!/cancel/i.test(e.message||""))toastMsg("Couldn't share your backup. Please try again.")}
+}
 /* The phone's own share sheet for pictures and links */
 async function nativeShareBlob(blob,text){
  const F=capPlugin("Filesystem"),Sh=capPlugin("Share");if(!F||!Sh||!blob)return false;
@@ -55071,7 +55081,10 @@ function start(data){
  if(/^#life=/.test(location.hash))setTimeout(showRecordFromHash,150);
 }
 try{window.claude?.hot?.snapshot?.(()=>({S}))}catch(e){}
-window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+function bootGame(){window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{})}
+if(window.OneLifeNative){window.OneLifeNative.ready.then(bootGame,()=>{
+ document.body.innerHTML='<main style="padding:calc(32px + env(safe-area-inset-top)) 20px"><h1>One Life</h1><p>Your saved progress could not be opened. Close and reopen the app to try again.</p><button onclick="location.reload()">Try again</button></main>';
+})}else bootGame();
 </script>
 </body>
 </html>

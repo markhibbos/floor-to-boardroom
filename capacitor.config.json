@@ -1,0 +1,9 @@
+{
+  "appId": "com.sigosi.onelife",
+  "appName": "One Life",
+  "webDir": "dist",
+  "backgroundColor": "#E8EDEB",
+  "ios": {
+    "contentInset": "never"
+  }
+}

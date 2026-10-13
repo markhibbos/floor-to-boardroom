@@ -1,0 +1,16 @@
+node_modules/
+dist/
+work/
+build/
+*.p12
+*.p8
+*.mobileprovision
+.env*
+!.env.example
+.DS_Store
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+ios/App/App/config.xml
+ios/App/App.xcodeproj/xcuserdata/
+ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+ios/App/CapApp-SPM/.build/
