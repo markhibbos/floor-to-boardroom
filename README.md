@@ -41,6 +41,8 @@ and use **Load from file** in the app.
 ## Codemagic and TestFlight
 
 Bundle ID: `com.sigosi.onelife`. Native display name: **One Life**.
+App Store Connect name: **One Life: Career Simulator** (the shorter name was
+already reserved). Apple ID: `6823714337`; SKU: `onelife-ios`.
 
 The workflows in `codemagic.yaml` are manual:
 
@@ -55,8 +57,8 @@ In Codemagic's secure code signing identities, create/fetch an App Store
 provisioning profile for that ID using the existing
 `currents-apple-distribution` certificate; save it as
 `onelife-app-store-profile`. Keep its existing private key in Codemagic.
-Set `APP_STORE_APPLE_ID` to One Life's numeric Apple ID in this application's
-Codemagic environment. The release workflow queries TestFlight before assigning
+`APP_STORE_APPLE_ID` is set to One Life's numeric Apple ID in `codemagic.yaml`.
+The release workflow queries TestFlight before assigning
 the next build number and fails if that query is unavailable.
 
 Publishing uploads for internal TestFlight testing. Both beta review and public

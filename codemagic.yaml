@@ -71,8 +71,7 @@ workflows:
         BUNDLE_ID: com.sigosi.onelife
         XCODE_PROJECT: ios/App/App.xcodeproj
         XCODE_SCHEME: App
-        # Set APP_STORE_APPLE_ID in this application's Codemagic environment
-        # after creating the separate One Life App Store Connect record.
+        APP_STORE_APPLE_ID: '6823714337'
     scripts:
       - *install
       - *verify
