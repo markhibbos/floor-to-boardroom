@@ -82,7 +82,7 @@ workflows:
       - name: Set a new TestFlight build number
         script: |
           set -eu
-          : "${APP_STORE_APPLE_ID:?Set One Life's numeric Apple ID in Codemagic}"
+          : "${APP_STORE_APPLE_ID:?Set the numeric Apple ID in Codemagic}"
           LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID")
           cd ios/App
           agvtool new-version -all "$(( ${LATEST:-0} + 1 ))"
