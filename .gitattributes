@@ -1,0 +1,6 @@
+# Release assets are validated as bytes. Preserve the build output in Git and Pages.
+/index.html -text
+/privacy.html -text
+/manifest.webmanifest -text
+/fonts/** -text
+/icon-*.png -text
